@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador para Grupo</title>
+    <style>
+        /* CONFIGURAÇÕES GERAIS DE ESTILO */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1a1a1a; /* Fundo escuro para vídeo */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #FFD700; /* Dourado */
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* ÁREA DE INPUT DOS NOMES */
+        .input-area {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        textarea {
+            width: 90%;
+            height: 100px;
+            background-color: #404040;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        /* BOTÃO DE AÇÃO */
+        button {
+            background: linear-gradient(45deg, #2196F3, #21CBF3);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(33, 203, 243, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(33, 203, 243, 0.6);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* O PALCO PRINCIPAL (ONDE APARECE O NOME) */
+        #display-sorteio {
+            margin-top: 30px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            border: 4px solid #333;
+            border-radius: 15px;
+            font-size: 3rem; /* Letra bem grande */
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* EFEITO DE VENCEDOR */
+        .vencedor {
+            border-color: #FFD700 !important;
+            color: #FFD700 !important;
+            animation: pulsar 1s infinite alternate;
+            background-color: #1a1a00 !important;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3) !important;
+        }
+
+        @keyframes pulsar {
+            from { transform: scale(1); text-shadow: 0 0 10px #FFD700; }
+            to { transform: scale(1.05); text-shadow: 0 0 20px #FFD700, 0 0 40px #FF4500; }
+        }
+
+        /* Efeito de confettis simples (pontos) */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            animation: cair 2s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes cair {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🎲 Grande Sorteio 🎲</h1>
+        
+        <div class="input-area">
+            <label for="lista-nomes">Colar lista de participantes (um por linha):</label>
+            <!-- Já deixei alguns nomes de exemplo -->
+            <textarea id="lista-nomes">Maria Silva
+João Santos
+Ana Pereira
+Carlos Oliveira
+Beatriz Costa
+Pedro Alves
+Sofia Martins
+Ricardo Gomes</textarea>
+            <br><br>
+            <button id="btn-sortear" onclick="iniciarSorteio()">🎥 Iniciar Sorteio</button>
+        </div>
+
+        <!-- Aqui é onde a magia acontece -->
+        <div id="display-sorteio">...</div>
+    </div>
+
+    <script>
+        function iniciarSorteio() {
+            const textarea = document.getElementById('lista-nomes');
+            const display = document.getElementById('display-sorteio');
+            const btn = document.getElementById('btn-sortear');
+
+            // 1. Preparar a lista
+            // Filtra linhas vazias para não sortear "espaço em branco"
+            const nomes = textarea.value.split('\n').filter(n => n.trim() !== '');
+
+            if (nomes.length < 2) {
+                alert("Por favor, coloca pelo menos 2 nomes na lista!");
+                return;
+            }
+
+            // 2. Estado inicial da animação
+            let tempoCorrido = 0;
+            const duracaoTotal = 10000; // 10 segundos
+            const velocidadeTroca = 80; // Troca de nome a cada 80ms (bem rápido)
+            
+            btn.disabled = true; // Desabilita botão para não clicar duas vezes
+            btn.innerText = "Sorteando...";
+            display.classList.remove('vencedor'); // Limpa efeito anterior
+
+            // 3. O Loop da Animação
+            const intervalo = setInterval(() => {
+                // Sorteia um índice aleatório temporário
+                const indiceAleatorio = Math.floor(Math.random() * nomes.length);
+                display.innerText = nomes[indiceAleatorio];
+
+                tempoCorrido += velocidadeTroca;
+
+                // 4. Finalizar o Sorteio
+                if (tempoCorrido >= duracaoTotal) {
+                    clearInterval(intervalo);
+                    
+                    // Sorteio DEFINITIVO
+                    const vencedorFinal = nomes[Math.floor(Math.random() * nomes.length)];
+                    display.innerText = vencedorFinal;
+                    
+                    // Aplica estilo de vitória
+                    display.classList.add('vencedor');
+                    btn.innerText = "Sortear Novamente";
+                    btn.disabled = false;
+                    
+                    // Dispara confettis (efeito visual)
+                    celebrar();
+                }
+
+            }, velocidadeTroca);
+        }
+
+        // Função extra apenas para criar uns "confettis" na tela
+        function celebrar() {
+            const cores = ['#FFD700', '#FF0000', '#00FF00', '#0000FF', '#FF00FF'];
+            for(let i=0; i<50; i++) {
+                const confete = document.createElement('div');
+                confete.classList.add('confetti');
+                confete.style.left = Math.random() * 100 + 'vw';
+                confete.style.backgroundColor = cores[Math.floor(Math.random() * cores.length)];
+                confete.style.top = '-10px';
+                // Velocidade aleatória para cada confete
+                confete.style.animationDuration = (Math.random() * 2 + 1) + 's'; 
+                document.body.appendChild(confete);
+
+                // Remove o elemento do HTML depois que cair
+                setTimeout(() => confete.remove(), 3000);
+            }
+        }
+    </script>
+</body>
+</html>
