@@ -43,17 +43,27 @@
             --cor-fundo: #fafafa;
         }
 
+        html {
+            background-color: #e0e0e0; /* Fundo cinza para desktop */
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--cor-fundo);
             color: var(--cor-texto);
-            margin: 0;
+            margin: 0 auto; /* Centraliza no Desktop */
             padding: 0;
             padding-bottom: 120px; /* Espaço para a barra fixa */
             font-size: 18px;
             line-height: 1.6;
             -webkit-user-select: none;
             user-select: none;
+            
+            /* Limita largura no Desktop para parecer App */
+            max-width: 480px; 
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative; /* Necessário para posicionamento absoluto dentro */
         }
 
         /* --- CABEÇALHO --- */
@@ -61,14 +71,14 @@
             background-color: var(--cor-primaria);
             color: white;
             text-align: center;
-            padding: 10px; /* Padding reduzido para a logo caber melhor */
+            padding: 10px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         /* Estilo da Logo (Horizontal) */
         .header-logo {
-            max-width: 100%; /* Garante que não vaze a tela no celular */
-            height: auto;    /* Mantém a proporção */
-            max-height: 100px; /* Limita altura para não ocupar a tela toda */
+            max-width: 100%; 
+            height: auto;    
+            max-height: 100px;
             object-fit: contain;
             display: block;
             margin: 0 auto;
@@ -217,6 +227,8 @@
             width: 100%; border: none; border-radius: 10px; margin-top: 10px;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
             font-weight: bold; box-shadow: 0 4px 0 #0d47a1; text-decoration: none;
+            /* Correção do estouro lateral */
+            box-sizing: border-box; 
         }
 
         .escolha-cadastro { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -241,9 +253,13 @@
         .sugestao-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
         .sugestao-item:hover { background-color: #f0f0f0; }
 
-        /* --- BARRA FIXA (Ajustada para 4 itens) --- */
+        /* --- BARRA FIXA (Ajustada para 4 itens + Desktop) --- */
         .barra-app {
-            position: fixed; bottom: 0; left: 0; width: 100%;
+            position: fixed; bottom: 0; 
+            /* Centraliza no Desktop */
+            left: 50%; transform: translateX(-50%);
+            width: 100%; max-width: 480px; 
+            
             background-color: white; border-top: 1px solid #ddd;
             display: flex; justify-content: space-around; padding: 12px 0;
             z-index: 2000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
@@ -262,28 +278,29 @@
         .bg-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         .bg-share { background: linear-gradient(45deg, #607D8B, #455A64); }
 
-        /* --- AVISO FLUTUANTE (PWA - MAIS ALTO) --- */
+        /* --- AVISO FLUTUANTE (PWA - MAIS ALTO e Desktop) --- */
         .aviso-instalar {
-            position: fixed; bottom: 85px; /* Subi um pouco */
-            left: 10px; right: 10px;
+            position: fixed; bottom: 85px; 
+            /* Centraliza no Desktop */
+            left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 460px; /* Um pouco menor que o container */
+            
             background: linear-gradient(135deg, #FF6B6B, #D32F2F); color: white;
-            padding: 20px 15px; /* Aumentei o padding vertical para ficar mais alto */
-            border-radius: 15px; z-index: 1900;
+            padding: 20px 15px; border-radius: 15px; z-index: 1900;
             box-shadow: 0 4px 20px rgba(211, 47, 47, 0.5);
             display: none; flex-direction: row; align-items: center;
             justify-content: space-between; gap: 15px; animation: piscarSuave 3s infinite;
         }
         @keyframes piscarSuave {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
-            50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(211, 47, 47, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
         }
-        .texto-instalar-banner { flex: 1; font-size: 15px; line-height: 1.3; } /* Fonte um pouco maior */
+        .texto-instalar-banner { flex: 1; font-size: 15px; line-height: 1.3; } 
         .texto-instalar-banner strong { display: block; font-size: 17px; color: #FFEB3B; }
         .btn-acao-banner {
             background: white; color: var(--cor-primaria); font-weight: bold;
-            padding: 12px 20px; /* Botão maior */
-            border-radius: 30px; border: none;
+            padding: 12px 20px; border-radius: 30px; border: none;
             font-size: 14px; cursor: pointer; white-space: nowrap;
             box-shadow: 0 3px 0 rgba(0,0,0,0.1);
         }
@@ -352,7 +369,8 @@
 
     <header>
         <!-- Logo Horizontal (535x167) -->
-<img src="img/logo.png" alt="Logo Dona Antônia" class="header-logo">    </header>
+        <img src="img/logo.png" onerror="this.src='https://placehold.co/535x167/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="header-logo">
+    </header>
 
     <!-- NAVEGAÇÃO POR ABAS (Com URLs) -->
     <nav>
