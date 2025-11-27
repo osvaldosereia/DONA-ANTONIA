@@ -25,7 +25,7 @@
             color: var(--cor-texto);
             margin: 0;
             padding: 0;
-            padding-bottom: 150px; /* Aumentei o espaço para caber o botão de instalar + menu */
+            padding-bottom: 150px; /* Espaço para a barra fixa */
             font-size: 19px;
             line-height: 1.6;
         }
@@ -102,7 +102,7 @@
             border: 1px solid #eee;
         }
         
-        /* --- ESTILOS DE PAGAMENTO (NOVO) --- */
+        /* --- ESTILOS DE PAGAMENTO --- */
         .lista-pagamento {
             list-style: none;
             padding: 0;
@@ -164,7 +164,17 @@
         .btn-whatsapp { background-color: var(--cor-whatsapp); }
         .btn-compartilhar { background-color: #0288D1; margin-top: 15px; }
         .btn-convite { background-color: #FBC02D; color: #333; margin-top: 20px; }
-        .btn-agenda { background-color: #f5f5f5; color: #333; border: 1px solid #ddd; margin-bottom: 10px; }
+        
+        /* Ajuste do botão agenda para alinhar a esquerda */
+        .btn-agenda { 
+            background-color: #f5f5f5; 
+            color: #333; 
+            border: 1px solid #ddd; 
+            margin-bottom: 10px;
+            justify-content: flex-start; /* Alinha tudo à esquerda */
+            text-align: left; /* Garante que o texto fique alinhado */
+            padding-left: 20px; /* Um espaço extra na esquerda */
+        }
         
         .escolha-cadastro { display: flex; gap: 10px; margin-bottom: 20px; }
         .btn-opcao {
@@ -180,30 +190,16 @@
             border-radius: 10px; margin-bottom: 15px; box-sizing: border-box;
         }
         
-        .container-input { position: relative; } /* Para posicionar a lista de sugestões */
+        .container-input { position: relative; }
         
         .lista-sugestoes {
-            position: absolute;
-            top: 85px; /* Ajuste conforme altura do input */
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 0 0 10px 10px;
-            z-index: 1000;
-            max-height: 200px;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            display: none; /* Escondido por padrão */
+            position: absolute; top: 85px; left: 0; right: 0; background: white;
+            border: 1px solid #ccc; border-radius: 0 0 10px 10px; z-index: 1000;
+            max-height: 200px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
         }
-        .sugestao-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            font-size: 18px;
-        }
+        .sugestao-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 18px; }
         .sugestao-item:hover { background-color: #f0f0f0; }
-        .sugestao-item strong { color: var(--cor-primaria); }
 
         /* --- BARRA FIXA (Rodapé) --- */
         .barra-app {
@@ -214,65 +210,79 @@
         }
         .item-barra {
             text-align: center; text-decoration: none; color: #666;
-            font-size: 11px; flex: 1;
+            font-size: 10px; /* Reduzi um pouco a fonte para caber 5 itens */
+            flex: 1;
         }
         .icone-container {
-            width: 40px; height: 40px; border-radius: 50%;
+            width: 35px; height: 35px; /* Ícone levemente menor */
+            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 4px auto; color: white; font-size: 20px;
+            margin: 0 auto 3px auto; color: white; font-size: 18px;
         }
         .bg-zap { background: linear-gradient(45deg, #25D366, #128C7E); }
         .bg-grupo { background: linear-gradient(45deg, #075e54, #128C7E); }
         .bg-face { background: linear-gradient(45deg, #1877F2, #165EAB); }
         .bg-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .bg-share { background: linear-gradient(45deg, #607D8B, #455A64); }
 
-        /* --- BOTÃO DE INSTALAÇÃO (Piscando) --- */
+        /* --- BOTÃO DE INSTALAÇÃO (Mais estreito) --- */
         .aviso-instalar {
             position: fixed;
-            bottom: 70px; /* Acima da barra de apps (que tem uns 60-70px) */
+            bottom: 70px;
             left: 10px;
             right: 10px;
-            background: linear-gradient(135deg, #FF6B6B, #D32F2F);
+            background: linear-gradient(135deg, #D32F2F, #b71c1c); /* Vermelho forte */
             color: white;
-            padding: 15px;
+            padding: 10px 15px; /* Menos padding (mais estreito) */
             border-radius: 12px;
             z-index: 1900;
-            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.4);
-            display: none; /* Controlado via JS */
-            flex-direction: column;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: none;
+            flex-direction: row; /* Itens lado a lado para economizar altura */
             align-items: center;
-            text-align: center;
-            animation: piscarSuave 2s infinite;
+            justify-content: space-between;
+            gap: 10px;
+            animation: piscarSuave 3s infinite;
         }
         
         @keyframes piscarSuave {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
-            50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(211, 47, 47, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
+            50% { box-shadow: 0 0 10px 5px rgba(211, 47, 47, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
         }
+
+        .texto-instalar {
+            flex: 1;
+            font-size: 14px;
+            line-height: 1.3;
+        }
+        .texto-instalar strong { display: block; font-size: 15px; color: #FFEB3B; }
 
         .btn-acao-instalar {
             background: white;
             color: var(--cor-primaria);
             font-weight: bold;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 20px;
-            margin-top: 10px;
             border: none;
-            font-size: 16px;
+            font-size: 13px;
             cursor: pointer;
-            width: 100%;
+            white-space: nowrap;
         }
         
         .btn-fechar-aviso {
             position: absolute;
-            top: 5px;
-            right: 10px;
-            background: none;
+            top: -10px;
+            right: -5px;
+            background: #333;
+            color: white;
             border: none;
-            color: rgba(255,255,255,0.7);
-            font-size: 20px;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
             cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         /* --- MODAL DE IMAGEM --- */
@@ -307,12 +317,12 @@
             </p>
         </div>
 
-        <!-- Cestas (Exemplos resumidos) -->
+        <!-- 1. Cesta Econômica -->
         <div class="card">
-            <h3>Cesta Econômica</h3>
+            <h3>1. Cesta Econômica</h3>
             <div class="galeria-fotos">
-                <img src="https://placehold.co/400x400/e0e0e0/333333?text=Alimentos" onclick="abrirImagem(this.src)">
-                <img src="https://placehold.co/400x400/e0e0e0/333333?text=Cesta" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-economica.jpg" onerror="this.src='https://placehold.co/400x400/e0e0e0/333333?text=Foto+1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-economica-2.jpg" onerror="this.src='https://placehold.co/400x400/e0e0e0/333333?text=Foto+2'" onclick="abrirImagem(this.src)">
             </div>
             <p>Arroz, feijão, óleo, açúcar e sal. O básico que não pode faltar.</p>
             <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">
@@ -323,11 +333,12 @@
             </button>
         </div>
 
+        <!-- 2. Cesta Família -->
         <div class="card">
-            <h3>Cesta Família</h3>
+            <h3>2. Cesta Família</h3>
             <div class="galeria-fotos">
-                <img src="https://placehold.co/400x400/ffebee/d32f2f?text=Completa" onclick="abrirImagem(this.src)">
-                <img src="https://placehold.co/400x400/ffebee/d32f2f?text=Limpeza" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-familia.jpg" onerror="this.src='https://placehold.co/400x400/ffebee/d32f2f?text=Foto+1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-familia-2.jpg" onerror="this.src='https://placehold.co/400x400/ffebee/d32f2f?text=Foto+2'" onclick="abrirImagem(this.src)">
             </div>
             <p>Alimentos + Kit Limpeza. Ideal para o mês todo.</p>
             <button class="btn btn-whatsapp" onclick="encomendar('Cesta Família')">
@@ -338,9 +349,55 @@
             </button>
         </div>
         
-        <!-- (Outras cestas omitidas para brevidade, mas o código mantém a estrutura) -->
+        <!-- 3. Cesta Limpeza -->
+        <div class="card">
+            <h3>3. Cesta Limpeza</h3>
+            <div class="galeria-fotos">
+                <img src="img/cesta-limpeza.jpg" onerror="this.src='https://placehold.co/400x400/e3f2fd/1565c0?text=Foto+1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-limpeza-2.jpg" onerror="this.src='https://placehold.co/400x400/e3f2fd/1565c0?text=Foto+2'" onclick="abrirImagem(this.src)">
+            </div>
+            <p>Sabão em pó, detergente, água sanitária, desinfetante e esponja.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Limpeza')">
+                <i class="fab fa-whatsapp"></i> Pedir Agora
+            </button>
+            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Limpeza')">
+                <i class="fas fa-share-alt"></i> Mostrar pra amiga
+            </button>
+        </div>
 
-        <!-- NOVA SEÇÃO: FORMAS DE PAGAMENTO -->
+        <!-- 4. Cesta Café -->
+        <div class="card">
+            <h3>4. Cesta Café da Manhã</h3>
+            <div class="galeria-fotos">
+                <img src="img/cesta-cafe.jpg" onerror="this.src='https://placehold.co/400x400/fff3e0/e65100?text=Foto+1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-cafe-2.jpg" onerror="this.src='https://placehold.co/400x400/fff3e0/e65100?text=Foto+2'" onclick="abrirImagem(this.src)">
+            </div>
+            <p>Café, leite em pó, bolachas, torradas, margarina e achocolatado.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Café')">
+                <i class="fab fa-whatsapp"></i> Pedir Agora
+            </button>
+            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Café')">
+                <i class="fas fa-share-alt"></i> Mostrar pra amiga
+            </button>
+        </div>
+
+        <!-- 5. Cesta Solidária -->
+        <div class="card">
+            <h3>5. Cesta Solidária</h3>
+            <div class="galeria-fotos">
+                <img src="img/cesta-solidaria.jpg" onerror="this.src='https://placehold.co/400x400/f3e5f5/7b1fa2?text=Foto+1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-solidaria-2.jpg" onerror="this.src='https://placehold.co/400x400/f3e5f5/7b1fa2?text=Foto+2'" onclick="abrirImagem(this.src)">
+            </div>
+            <p>Preço especial para quem quer comprar para doar.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Solidária')">
+                <i class="fab fa-whatsapp"></i> Pedir Agora
+            </button>
+            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Solidária')">
+                <i class="fas fa-share-alt"></i> Mostrar pra amiga
+            </button>
+        </div>
+
+        <!-- FORMAS DE PAGAMENTO -->
         <div class="card" style="border-left: 5px solid var(--cor-whatsapp);">
             <h3>💳 Formas de Pagamento</h3>
             <ul class="lista-pagamento">
@@ -384,6 +441,9 @@
     <div id="pag-sorteio" class="pagina">
         <div class="card">
             <h2>🍀 Sorteio Semanal</h2>
+            <p style="background-color: #ffebee; padding: 10px; border-radius: 8px; color: #d32f2f;">
+                <strong>Atenção:</strong> Só participa do sorteio quem tiver o nosso <strong>Aplicativo instalado</strong> no celular!
+            </p>
             <p>Participe toda sexta-feira!</p>
 
             <div class="escolha-cadastro">
@@ -413,7 +473,7 @@
                 </button>
             </div>
 
-            <!-- Formulário: Já Tenho Cadastro (COM AUTOCOMPLETE) -->
+            <!-- Formulário: Já Tenho Cadastro -->
             <div id="form-antigo" style="display: none;">
                 <p style="background: #e3f2fd; padding: 10px; border-radius: 5px;">
                     <i class="fas fa-info-circle"></i> Comece a digitar seu nome que nós completamos para você:
@@ -422,7 +482,6 @@
                 <label>Digite seu nome:</label>
                 <div class="container-input">
                     <input type="text" id="busca-nome" placeholder="Ex: Maria..." autocomplete="off">
-                    <!-- Lista de Sugestões aparecerá aqui -->
                     <div id="lista-sugestoes" class="lista-sugestoes"></div>
                 </div>
 
@@ -447,7 +506,15 @@
                 <li style="padding: 10px; border-bottom: 1px solid #eee; font-size: 20px;">
                     <strong>1. Dona Lúcia</strong> <br> <span style="font-size: 16px; color: #666;">Bairro: CPA 3</span>
                 </li>
-                <!-- Outros ganhadores... -->
+                <li style="padding: 10px; border-bottom: 1px solid #eee; font-size: 20px;">
+                    <strong>2. Sr. José Pedro</strong> <br> <span style="font-size: 16px; color: #666;">Bairro: Tijucal</span>
+                </li>
+                <li style="padding: 10px; border-bottom: 1px solid #eee; font-size: 20px;">
+                    <strong>3. Maria Aparecida</strong> <br> <span style="font-size: 16px; color: #666;">Bairro: Centro</span>
+                </li>
+                <li style="padding: 10px; border-bottom: 1px solid #eee; font-size: 20px;">
+                    <strong>4. Ana Clara</strong> <br> <span style="font-size: 16px; color: #666;">Bairro: Cristo Rei</span>
+                </li>
                 <li style="padding: 10px; border-bottom: 1px solid #eee; font-size: 20px;">
                     <strong>5. João Silva</strong> <br> <span style="font-size: 16px; color: #666;">Bairro: Imperial</span>
                 </li>
@@ -455,21 +522,19 @@
         </div>
     </div>
 
-    <!-- AVISO DE INSTALAÇÃO (FIXO EMBAIXO) -->
+    <!-- AVISO DE INSTALAÇÃO (Mais estreito) -->
     <div id="aviso-instalar" class="aviso-instalar">
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
-        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">
-            <i class="fas fa-download"></i> Baixe nosso App!
-        </div>
-        <div style="font-size: 14px; opacity: 0.9;">
-            Tenha a Dona Antônia na tela do seu celular.
+        <div class="texto-instalar">
+            <strong>O Sorteio é exclusivo do App!</strong>
+            Baixe agora para poder participar.
         </div>
         <button class="btn-acao-instalar" onclick="instalarApp()">
-            📲 ADICIONAR AGORA
+            <i class="fas fa-download"></i> BAIXAR
         </button>
     </div>
 
-    <!-- BARRA FIXA -->
+    <!-- BARRA FIXA (Com 5 botões) -->
     <div class="barra-app">
         <a href="https://wa.me/5565998150975" class="item-barra">
             <div class="icone-container bg-zap"><i class="fab fa-whatsapp"></i></div>
@@ -487,6 +552,10 @@
             <div class="icone-container bg-insta"><i class="fab fa-instagram"></i></div>
             Instagram
         </a>
+        <a href="#" class="item-barra" onclick="compartilharSite(); return false;">
+            <div class="icone-container bg-share"><i class="fas fa-share-alt"></i></div>
+            Compartilhar
+        </a>
     </div>
 
     <!-- MODAL DE IMAGEM -->
@@ -497,7 +566,7 @@
     <script>
         const TELEFONE = "5565998150975";
 
-        // --- DADOS DOS CLIENTES (Simulação do JSON) ---
+        // --- DADOS (Simulação) ---
         const bancoDadosClientes = [
             { nome: "Maria da Silva", cidade: "Cuiabá", bairro: "CPA 1" },
             { nome: "Maria José", cidade: "Cuiabá", bairro: "Centro" },
@@ -512,14 +581,13 @@
 
         inputBusca.addEventListener('input', function() {
             const textoDigitado = this.value.toLowerCase();
-            listaSugestoes.innerHTML = ''; // Limpa sugestões anteriores
+            listaSugestoes.innerHTML = ''; 
 
             if (textoDigitado.length < 2) {
                 listaSugestoes.style.display = 'none';
                 return;
             }
 
-            // Filtra o banco de dados
             const encontrados = bancoDadosClientes.filter(cliente => 
                 cliente.nome.toLowerCase().includes(textoDigitado)
             );
@@ -530,13 +598,10 @@
                     const div = document.createElement('div');
                     div.classList.add('sugestao-item');
                     div.innerHTML = `<strong>${cliente.nome}</strong> <small>(${cliente.bairro})</small>`;
-                    
-                    // Ao clicar na sugestão
                     div.onclick = function() {
-                        inputBusca.value = cliente.nome; // Preenche o campo
-                        listaSugestoes.style.display = 'none'; // Esconde a lista
+                        inputBusca.value = cliente.nome;
+                        listaSugestoes.style.display = 'none';
                     };
-                    
                     listaSugestoes.appendChild(div);
                 });
             } else {
@@ -544,52 +609,52 @@
             }
         });
 
-        // Esconder lista se clicar fora
         document.addEventListener('click', function(e) {
-            if (e.target !== inputBusca) {
-                listaSugestoes.style.display = 'none';
-            }
+            if (e.target !== inputBusca) { listaSugestoes.style.display = 'none'; }
         });
 
-        // --- LÓGICA DO BOTÃO INSTALAR ---
+        // --- LÓGICA DO BOTÃO INSTALAR (PERSISTENTE) ---
         const avisoInstalar = document.getElementById('aviso-instalar');
 
-        // Verifica se já foi "instalado" ou fechado antes
-        if (!localStorage.getItem('appDonaAntoniaInstalado')) {
-            // Mostra o botão com delay de 1 segundo para chamar atenção
+        // Verifica se a pessoa JÁ instalou de verdade
+        const jaInstalou = localStorage.getItem('appDonaAntoniaInstaladoDefinitivo');
+        
+        // Verifica se fechou SÓ NESTA SESSÃO (usando sessionStorage)
+        const fechouAgora = sessionStorage.getItem('fechouBannerSessao');
+
+        // Se ainda não instalou e não fechou agora, mostra
+        if (!jaInstalou && !fechouAgora) {
             setTimeout(() => {
                 avisoInstalar.style.display = 'flex';
             }, 1000);
         }
 
         function instalarApp() {
-            // Tenta o método nativo se disponível (PWA)
             if (window.deferredPrompt) {
                 window.deferredPrompt.prompt();
             } else {
-                alert("Para instalar: \n1. Toque nos 3 pontinhos do navegador (ou compartilhar no iPhone)\n2. Escolha 'Adicionar à Tela Inicial'");
+                alert("Para instalar: \n1. Toque nos 3 pontinhos do navegador\n2. Escolha 'Adicionar à Tela Inicial'");
             }
-            // Salva que já "instalou" para não mostrar mais
-            fecharInstalacao();
+            // Se clicar em instalar, aí sim gravamos que instalou para não mostrar mais
+            localStorage.setItem('appDonaAntoniaInstaladoDefinitivo', 'true');
+            avisoInstalar.style.display = 'none';
         }
 
         function fecharInstalacao() {
             avisoInstalar.style.display = 'none';
-            localStorage.setItem('appDonaAntoniaInstalado', 'true');
+            // Salva na SESSÃO. Quando fechar o navegador e abrir de novo, aparece de novo.
+            sessionStorage.setItem('fechouBannerSessao', 'true');
+            alert("Atenção: Para participar do sorteio você precisa do App instalado!");
         }
 
-        // Captura evento de instalação PWA (Chrome/Android)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             window.deferredPrompt = e;
-            // Garante que mostre se o evento disparar
-            if (!localStorage.getItem('appDonaAntoniaInstalado')) {
-                avisoInstalar.style.display = 'flex';
-            }
+            if (!jaInstalou && !fechouAgora) { avisoInstalar.style.display = 'flex'; }
         });
 
 
-        // --- FUNÇÕES EXISTENTES (Navegação, etc) ---
+        // --- FUNÇÕES GERAIS ---
         function mostrarPagina(idPagina, botaoClicado) {
             document.querySelectorAll('.pagina').forEach(div => div.classList.remove('visivel'));
             document.getElementById('pag-' + idPagina).classList.add('visivel');
@@ -624,10 +689,7 @@
         function buscarEEnviar() {
             const nomeBusca = document.getElementById('busca-nome').value.trim();
             if(!nomeBusca) { alert("Digite seu nome."); return; }
-            
-            // Busca exata ou parcial para envio
             const cliente = bancoDadosClientes.find(c => c.nome.toLowerCase() === nomeBusca.toLowerCase());
-            
             let texto = "";
             if(cliente) {
                 texto = `*JÁ SOU CADASTRADO*%0AQuero participar!%0ANome: ${cliente.nome}%0ABairro: ${cliente.bairro}`;
@@ -638,9 +700,7 @@
         }
 
         function convidarAmigos() {
-            if (navigator.share) {
-                navigator.share({ title: 'Sorteio Dona Antônia', text: 'Vem participar do sorteio!', url: window.location.href });
-            } else { alert("Copie o link e mande no Zap!"); }
+            compartilharSite(); // Reusa a mesma função
         }
 
         function encomendar(produto) {
@@ -652,6 +712,12 @@
             if (navigator.share) {
                 navigator.share({ title: 'Dona Antônia', text: `Olha essa ${produto}!`, url: window.location.href });
             } else { alert("Tire print para mandar!"); }
+        }
+        
+        function compartilharSite() {
+            if (navigator.share) {
+                navigator.share({ title: 'Cestas Dona Antônia', text: 'Baixe o App da Dona Antônia e participe dos sorteios!', url: window.location.href });
+            } else { alert("Copie o link e mande para os amigos!"); }
         }
 
         function abrirImagem(src) {
