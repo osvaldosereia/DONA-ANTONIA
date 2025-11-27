@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Link para o Manifesto (ESSENCIAL PARA A INSTALAÇÃO FUNCIONAR) -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Cor da barra do navegador no Android -->
+    <meta name="theme-color" content="#D32F2F">
+    
     <title>Cestas Dona Antônia</title>
     
     <!-- Ícones -->
@@ -28,6 +33,9 @@
             padding-bottom: 150px; /* Espaço para a barra fixa */
             font-size: 19px;
             line-height: 1.6;
+            /* Evita seleção de texto acidental ao tocar muito */
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* --- CABEÇALHO --- */
@@ -685,7 +693,7 @@
         }
 
         function instalarApp() {
-            // Tenta o método automático PRIMEIRO
+            // Tenta o método automático PRIMEIRO (Funciona se o manifesto estiver linkado e o browser permitir)
             if (window.deferredPrompt) {
                 window.deferredPrompt.prompt();
                 
@@ -699,8 +707,9 @@
                     window.deferredPrompt = null;
                 });
             } else {
-                // Se o navegador não deu a opção automática (Ex: iPhone ou Desktop sem PWA)
-                alert("Neste aparelho, a instalação automática não está disponível.\n\nPor favor, vá no menu do navegador e clique em 'Adicionar à Tela Inicial'.");
+                // Se o navegador não deu a opção automática (Ex: iPhone ou Desktop sem suporte)
+                // Mensagem educativa sobre Web App
+                alert("Como este é um Web App moderno, não precisa baixar da loja!\n\nPara instalar:\n1. Toque nos '3 pontinhos' do navegador (ou 'Compartilhar' no iPhone).\n2. Escolha a opção 'Adicionar à Tela Inicial'.\n\nPronto! O ícone aparecerá no seu celular.");
             }
         }
 
