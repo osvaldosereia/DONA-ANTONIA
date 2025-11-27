@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CORREÇÃO GLOBAL DE TAMANHO (Isso resolve o botão estourado) --- */
+        /* --- CORREÇÃO GLOBAL DE TAMANHO --- */
         * {
             box-sizing: border-box;
         }
@@ -259,7 +259,7 @@
         .sugestao-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
         .sugestao-item:hover { background-color: #f0f0f0; }
 
-        /* --- BARRA FIXA (ÍCONES) --- */
+        /* --- BARRA FIXA (4 BOTÕES GRANDES) --- */
         .barra-app {
             position: fixed; bottom: 0; 
             left: 50%; transform: translateX(-50%);
@@ -274,22 +274,30 @@
             flex: 1; padding: 5px;
             display: flex; flex-direction: column; 
             justify-content: center; align-items: center;
-            font-size: 11px; font-weight: bold;
+            font-size: 10px; /* Fonte levemente menor para caber */
+            font-weight: bold;
             border-right: 1px solid #eee;
             cursor: pointer; 
         }
         .item-barra:last-child { border-right: none; }
+        
+        /* ÍCONES PADRONIZADOS */
         .icone-container {
             width: 32px; height: 32px; 
             display: flex; align-items: center; justify-content: center;
-            color: #D32F2F; font-size: 24px; margin-bottom: 3px;
+            background-color: var(--cor-primaria);
+            color: white;
+            font-size: 18px; margin-bottom: 3px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(211, 47, 47, 0.3);
         }
         .item-barra:active { background-color: #f5f5f5; }
 
-        .bg-zap { background: linear-gradient(45deg, #25D366, #128C7E); }
-        .bg-face { background: linear-gradient(45deg, #1877F2, #165EAB); }
-        .bg-insta { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .bg-share { background: linear-gradient(45deg, #607D8B, #455A64); }
+        /* CORES ESPECÍFICAS PARA OS MODAIS */
+        .bg-zap { background: #25D366; }
+        .bg-grupo { background: linear-gradient(45deg, #075e54, #128C7E); }
+        .bg-face { background: #1877F2; }
+        .bg-insta { background: #E1306C; }
 
         /* --- MODAIS GERAIS --- */
         .modal-geral {
@@ -308,7 +316,7 @@
         .modal-card h3 { margin-top: 0; color: #333; font-size: 22px; }
         .modal-card p { color: #666; font-size: 16px; margin-bottom: 20px; }
         
-        /* ESTILO DOS BOTÕES DO MODAL (CORRIGIDO) */
+        /* ESTILO DOS BOTÕES DO MODAL */
         .btn-modal-acao {
             display: flex; align-items: center; justify-content: center;
             width: 100%; 
@@ -318,10 +326,11 @@
             cursor: pointer; color: white; text-decoration: none;
             box-shadow: 0 3px 0 rgba(0,0,0,0.2);
         }
-        /* Cores explícitas para garantir que apareçam */
-        .btn-modal-acao.bg-zap { background: #25D366; }
-        .btn-modal-acao.bg-face { background: #1877F2; }
-        .btn-modal-acao.bg-insta { background: #E1306C; }
+        /* Aplica as cores via classe auxiliar */
+        .btn-modal-acao.bg-zap { background-color: #25D366; }
+        .btn-modal-acao.bg-grupo { background: linear-gradient(45deg, #075e54, #128C7E); }
+        .btn-modal-acao.bg-face { background-color: #1877F2; }
+        .btn-modal-acao.bg-insta { background-color: #E1306C; }
         
         .btn-fechar-modal-x {
             position: absolute; top: 10px; right: 10px;
@@ -649,19 +658,23 @@
         </button>
     </div>
 
-    <!-- NOVA BARRA FIXA (3 BOTOES COM MODAIS) -->
+    <!-- NOVA BARRA FIXA (4 BOTOES COM MODAIS) -->
     <div class="barra-app">
         <div class="item-barra" onclick="abrirModalSalvar()">
-            <div class="icone-container bg-zap"><i class="fas fa-address-book"></i></div>
+            <div class="icone-container"><i class="fas fa-address-book"></i></div>
             SALVAR ZAP
         </div>
         <div class="item-barra" onclick="abrirModalCompartilhar()">
-            <div class="icone-container bg-share"><i class="fas fa-share-alt"></i></div>
+            <div class="icone-container"><i class="fas fa-share-alt"></i></div>
             COMPARTILHAR
         </div>
         <div class="item-barra" onclick="abrirModalAvaliar()">
-            <div class="icone-container bg-zap" style="background: linear-gradient(45deg, #FFC107, #FF9800);"><i class="fas fa-star"></i></div>
+            <div class="icone-container" style="background-color: #FFC107;"><i class="fas fa-star"></i></div>
             AVALIAR
+        </div>
+        <div class="item-barra" onclick="mostrarBrinde()">
+            <div class="icone-container"><i class="fas fa-gift"></i></div>
+            BRINDE
         </div>
     </div>
 
@@ -693,6 +706,10 @@
             
             <a href="#" onclick="compartilharZap(); return false;" class="btn-modal-acao bg-zap">
                 <i class="fab fa-whatsapp" style="margin-right:10px;"></i> Enviar no WhatsApp
+            </a>
+            <!-- Botão Grupo VIP -->
+            <a href="https://chat.whatsapp.com/SEU_LINK_DO_GRUPO" target="_blank" class="btn-modal-acao bg-grupo">
+                <i class="fas fa-users" style="margin-right:10px;"></i> Grupo de Sorteio
             </a>
             <a href="#" onclick="compartilharFace(); return false;" class="btn-modal-acao bg-face">
                 <i class="fab fa-facebook-f" style="margin-right:10px;"></i> Compartilhar Facebook
@@ -867,19 +884,31 @@
 
         // --- BRINDE ---
         let brindeMostrado = false;
+        
+        // Mantém a rolagem automática
         window.onscroll = function() {
             const paginaCestas = document.getElementById('pag-cestas');
             if (!paginaCestas.classList.contains('visivel')) return;
             if (brindeMostrado || sessionStorage.getItem('brindeVisto')) return;
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 250) {
-                mostrarBrinde();
+                mostrarBrinde(true); // True indica que foi automático via scroll
             }
         };
 
-        function mostrarBrinde() {
+        function mostrarBrinde(isAutomatic) {
+            // Se for automático (scroll) e já tiver sido visto, não mostra.
+            // Se for manual (clique no botão), mostra sempre!
+            if (isAutomatic && (brindeMostrado || sessionStorage.getItem('brindeVisto'))) {
+                return;
+            }
+
+            // Marca como visto
             brindeMostrado = true;
             sessionStorage.setItem('brindeVisto', 'true');
+            
             document.getElementById('modalBrinde').style.display = 'flex';
+            
+            // Dispara Confetes!
             var duration = 3 * 1000;
             var animationEnd = Date.now() + duration;
             var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 3000 };
