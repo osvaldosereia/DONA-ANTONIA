@@ -36,7 +36,7 @@
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
         "name": "Dona Antônia Cestas Básicas",
-        "image": "https://donaantonia.com.br/img/logo1.png",
+        "image": "https://donaantonia.com.br/img/logo.png",
         "telephone": "+5565998150975",
         "url": "https://donaantonia.com.br/",
         "address": {
@@ -248,7 +248,7 @@
         h2, h3 { color: var(--cor-primaria); margin-top: 0; }
         h3 { font-size: 18px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
 
-        /* SEO SECTION - Agora com estilo ajustado para o final */
+        /* SEO SECTION */
         .seo-text-block {
             font-size: 12px; 
             color: #888; 
@@ -345,88 +345,154 @@
         .texto-brinde { font-size: 18px; color: #333; margin: 15px 0; font-weight: 500; }
         .btn-fechar-brinde { background: #D32F2F; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 0 #b71c1c; }
         
-        /* --- AVISO FLUTUANTE (PWA - DISCRETO - Pílula) --- */
+        /* --- AVISO FLUTUANTE (PWA - ESTILO BOTTOM SHEET PROFISSIONAL) --- */
         .aviso-instalar {
             position: fixed; 
-            bottom: 20px; 
-            left: 50%; 
-            transform: translateX(-50%);
-            width: auto;
-            min-width: 280px;
-            max-width: 90%;
-            background-color: #333; /* Fundo escuro elegante */
-            color: white;
-            padding: 8px 15px; /* Bem menor e compacto */
-            border-radius: 50px; /* Formato Pílula */
-            z-index: 1900;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            bottom: 0; 
+            left: 0;
+            width: 100%;
+            background-color: white; 
+            color: #333;
+            padding: 15px;
+            z-index: 2900;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15); /* Sombra suave para cima */
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
             display: none; 
             flex-direction: row; 
             align-items: center; 
             justify-content: space-between; 
-            gap: 12px;
+            gap: 15px;
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Logo do App no Banner */
+        .app-icon-banner {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .texto-instalar-banner { 
-            flex: 1; font-size: 12px; color: #ddd; line-height: 1.2;
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         } 
         .texto-instalar-banner strong { 
-            display: inline; font-size: 13px; color: #fff; margin-right: 4px;
+            font-size: 15px; 
+            color: #222;
+            margin-bottom: 2px;
+        }
+        .texto-instalar-banner span {
+            font-size: 13px;
+            color: #666;
         }
         
         .btn-acao-banner { 
-            background: var(--cor-primaria); color: white; font-weight: bold; 
-            padding: 6px 14px; border-radius: 20px; border: none; 
-            font-size: 11px; cursor: pointer; white-space: nowrap; box-shadow: none;
+            background-color: var(--cor-primaria); /* Vermelho Marca */
+            color: white; 
+            font-weight: bold; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            border: none; 
+            font-size: 14px; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+            transition: transform 0.2s;
         }
+        .btn-acao-banner:active { transform: scale(0.95); }
+
         .btn-fechar-aviso { 
-            position: static; background: transparent; color: #777; 
-            border: none; width: auto; height: auto; font-size: 18px; 
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            margin-left: -5px; padding: 5px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent; 
+            color: #999; 
+            border: none; 
+            font-size: 20px; 
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
         }
 
-        /* --- BANNERS EMBUTIDOS (NOVO DESIGN DISCRETO) --- */
+        /* --- BANNERS EMBUTIDOS (CORREÇÃO DE TEXTO ENCAVALADO) --- */
         .card-instalacao-fixo { 
-            background-color: #f9f9f9; 
+            background-color: white; 
             border: 1px solid #eee; 
-            border-radius: 8px; 
-            padding: 10px 15px; /* Padding Reduzido */
+            border-radius: 12px; 
+            padding: 15px; 
             margin-bottom: 20px; 
-            display: flex; /* Layout Horizontal */
+            display: flex; 
             align-items: center;
             justify-content: space-between;
             gap: 15px;
-            box-shadow: none; /* Sem sombra pesada */
+            flex-wrap: wrap; /* PERMITE QUEBRA DE LINHA NO MOBILE */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
+        .banner-content-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1; /* Ocupa espaço disponível */
+            min-width: 200px; /* Garante que não esmague */
+        }
+
         .conteudo-banner-interno {
             display: flex;
             flex-direction: column;
             text-align: left;
         }
         .conteudo-banner-interno strong {
-            font-size: 14px;
+            font-size: 15px;
             color: #333;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
         .conteudo-banner-interno span {
-            font-size: 11px;
-            color: #666;
+            font-size: 13px;
+            color: #777;
         }
         
-        /* Botão pequeno interno */
+        /* Botão interno */
         .btn-instalacao-inline { 
-            background-color: #444; /* Cor neutra */
+            background-color: #222; /* Preto/Cinza Escuro Profissional */
             color: white; 
-            font-size: 11px; 
-            padding: 8px 15px; 
+            font-size: 13px; 
+            padding: 10px 20px; 
             border: none; 
-            border-radius: 20px; 
+            border-radius: 6px; 
             cursor: pointer; 
-            font-weight: bold;
-            text-transform: uppercase;
+            font-weight: 600;
             white-space: nowrap;
+            flex-shrink: 0; /* Impede o botão de encolher */
+        }
+        
+        /* Ajuste Mobile para Banners Internos */
+        @media (max-width: 360px) {
+            .card-instalacao-fixo {
+                justify-content: center;
+                text-align: center;
+            }
+            .banner-content-wrapper {
+                flex-direction: column;
+                text-align: center;
+                min-width: 100%;
+            }
+            .conteudo-banner-interno {
+                align-items: center;
+            }
+            .btn-instalacao-inline {
+                width: 100%; /* Botão full width em telas muito pequenas */
+            }
         }
     </style>
 </head>
@@ -436,12 +502,12 @@
     <header>
         <div class="header-top">
             <div class="header-left">
-                <img src="img/logo1.png" onerror="this.src='https://placehold.co/180x60/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="logo-pequena">
+                <img src="img/logo.png" onerror="this.src='https://placehold.co/180x60/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="logo-pequena">
             </div>
             <div class="header-icons">
                 <a href="https://wa.me/5565998150975" class="icon-btn ic-zap" onclick="abrirLinkExterno(event, this)" aria-label="Fale conosco no WhatsApp"><i class="fab fa-whatsapp"></i></a>
-                <a href="https://facebook.com/super.cestas.cuiaba/" class="icon-btn ic-face" onclick="abrirLinkExterno(event, this)" aria-label="Visite nosso Facebook"><i class="fab fa-facebook"></i></a>
-                <a href="https://instagram.com/super.cestas.dona.antonia/" class="icon-btn ic-insta" onclick="abrirLinkExterno(event, this)" aria-label="Siga-nos no Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://facebook.com/SEU_FACEBOOK" class="icon-btn ic-face" onclick="abrirLinkExterno(event, this)" aria-label="Visite nosso Facebook"><i class="fab fa-facebook"></i></a>
+                <a href="https://instagram.com/SEU_INSTA" class="icon-btn ic-insta" onclick="abrirLinkExterno(event, this)" aria-label="Siga-nos no Instagram"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
 
@@ -583,14 +649,17 @@
             </div>
         </div>
 
-        <!-- BANNER DISCRETO (SUBSTITUI O CARTÃO GRANDE) -->
+        <!-- BANNER INTERNO ORGANIZADO E RESPONSIVO -->
         <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="conteudo-banner-interno">
-                <strong>📱 App Dona Antônia</strong>
-                <span>Baixe para ver ofertas e sorteios.</span>
+            <div class="banner-content-wrapper">
+                <img src="img/logo.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner" style="width: 45px; height: 45px; border-radius: 8px;">
+                <div class="conteudo-banner-interno">
+                    <strong>App Dona Antônia</strong>
+                    <span>Baixe para ver ofertas exclusivas.</span>
+                </div>
             </div>
             <button class="btn-instalacao-inline" onclick="instalarApp()">
-                Instalar
+                <i class="fas fa-download"></i> BAIXAR
             </button>
         </div>
     </div>
@@ -613,14 +682,17 @@
             <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo para 30 dias.</p>
         </div>
 
-        <!-- BANNER DISCRETO -->
+        <!-- BANNER INTERNO ORGANIZADO -->
         <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="conteudo-banner-interno">
-                <strong>📱 App Dona Antônia</strong>
-                <span>Baixe para ver ofertas e sorteios.</span>
+            <div class="banner-content-wrapper">
+                <img src="img/logo.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner" style="width: 45px; height: 45px; border-radius: 8px;">
+                <div class="conteudo-banner-interno">
+                    <strong>App Dona Antônia</strong>
+                    <span>Mais facilidade no pagamento.</span>
+                </div>
             </div>
             <button class="btn-instalacao-inline" onclick="instalarApp()">
-                Instalar
+                <i class="fas fa-download"></i> BAIXAR
             </button>
         </div>
     </div>
@@ -647,14 +719,17 @@
             </form>
         </div>
         
-        <!-- BANNER DISCRETO -->
+        <!-- BANNER INTERNO ORGANIZADO -->
         <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="conteudo-banner-interno">
-                <strong>📱 App Dona Antônia</strong>
-                <span>Baixe para ver ofertas e sorteios.</span>
+            <div class="banner-content-wrapper">
+                <img src="img/logo.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner" style="width: 45px; height: 45px; border-radius: 8px;">
+                <div class="conteudo-banner-interno">
+                    <strong>App Dona Antônia</strong>
+                    <span>Participe dos sorteios semanais.</span>
+                </div>
             </div>
             <button class="btn-instalacao-inline" onclick="instalarApp()">
-                Instalar
+                <i class="fas fa-download"></i> BAIXAR
             </button>
         </div>
 
@@ -666,11 +741,21 @@
     </div>
 
     <!-- BANNERS E MODAIS -->
-    <!-- BANNER DISCRETO EM PÍLULA (FLUTUANTE) -->
+    
+    <!-- BANNER FLUTUANTE (BOTTOM SHEET) -->
     <div id="aviso-instalar" class="aviso-instalar pwa-install-promo">
-        <div class="texto-instalar-banner"><strong>Baixe nosso App!</strong></div>
-        <button class="btn-acao-banner" onclick="instalarApp()"><i class="fas fa-download"></i> INSTALAR</button>
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
+        
+        <img src="img/logo.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner">
+        
+        <div class="texto-instalar-banner">
+            <strong>Instalar App Dona Antônia</strong>
+            <span>Receba ofertas e participe de sorteios.</span>
+        </div>
+        
+        <button class="btn-acao-banner" onclick="instalarApp()">
+            OBTER
+        </button>
     </div>
 
     <div id="modalVisualizador" class="modal-imagem" onclick="fecharImagem()">
@@ -697,33 +782,28 @@
         const TELEFONE = "5565998150975";
         const LINK_SITE = "donaantonia.com.br/oferta";
 
-        // --- SISTEMA DE ROLAGEM INFINITA (NOVO) ---
+        // --- SISTEMA DE ROLAGEM INFINITA ---
         let paginasReveladas = {
-            'cestas': true, // Sempre começa visível
+            'cestas': true,
             'pagamento': false,
             'sorteio': false
         };
 
-        // Função para mostrar uma seção específica (e anteriores)
         function revelarSecao(id, rolar = false) {
             const el = document.getElementById('pag-' + id);
             if (!el) return;
             
-            // Marca como revelada e exibe
             paginasReveladas[id] = true;
             el.classList.add('visivel');
-            // Pequeno delay para a animação CSS funcionar (opacity)
             setTimeout(() => {
                 el.classList.add('animar');
             }, 50);
 
-            // Garante que as anteriores também apareçam (se clicar direto em Sorteio)
             if (id === 'sorteio' && !paginasReveladas['pagamento']) {
                 revelarSecao('pagamento', false); 
             }
 
             if (rolar) {
-                // Ajusta o scroll considerando o header fixo
                 const headerOffset = 140; 
                 const elementPosition = el.getBoundingClientRect().top;
                 const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
@@ -734,18 +814,14 @@
             }
         }
 
-        // Função dos botões do menu (Agora rolam em vez de trocar)
         function rolarPara(id) {
             revelarSecao(id, true);
         }
 
-        // Detecta rolagem para "Infinito Scroll" e Menu Ativo
         window.onscroll = function() {
-            // 1. Lógica do Infinite Scroll (Revelar ao chegar no fundo)
             const scrollTotal = document.documentElement.scrollHeight;
             const scrollAtual = window.scrollY + window.innerHeight;
             
-            // Se chegou perto do fundo (buffer de 100px)
             if (scrollAtual >= scrollTotal - 150) {
                 if (!paginasReveladas['pagamento']) {
                     revelarSecao('pagamento', false);
@@ -754,10 +830,7 @@
                 }
             }
 
-            // 2. Lógica de destacar botão do menu
             atualizarMenuAtivo();
-            
-            // 3. Brinde
             checarBrinde();
         };
 
@@ -765,25 +838,21 @@
             const ids = ['cestas', 'pagamento', 'sorteio'];
             let atual = 'cestas';
 
-            // Verifica qual seção está ocupando o meio da tela
             ids.forEach(id => {
                 const el = document.getElementById('pag-' + id);
                 if (el && el.classList.contains('visivel')) {
                     const rect = el.getBoundingClientRect();
-                    // Se o topo da seção está na metade superior da tela ou visível
                     if (rect.top < window.innerHeight / 2 && rect.bottom > 140) {
                         atual = id;
                     }
                 }
             });
 
-            // Atualiza classes
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('ativo'));
             const btnAtual = document.getElementById('btn-' + atual);
             if(btnAtual) btnAtual.classList.add('ativo');
         }
 
-        // --- MANTER LÓGICAS ANTIGAS ---
         function abrirLinkExterno(event, element) {
             event.preventDefault();
             let url = element.getAttribute('href');
@@ -810,7 +879,6 @@
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // Galeria
         let currentImages = [];
         let currentIndex = 0;
         function abrirGaleria(imgElement) {
@@ -837,11 +905,9 @@
         }
         function fecharImagem() { document.getElementById('modalVisualizador').style.display = 'none'; }
 
-        // Brinde
         let brindeMostrado = false;
         function checarBrinde() {
             if(brindeMostrado) return;
-            // Mostra brinde se rolar bastante na página inicial ou se pagamento já estiver visível
             if(window.scrollY > 1500 || paginasReveladas['pagamento']) {
                  brindeMostrado = true;
                  document.getElementById('modalBrinde').style.display = 'flex';
@@ -849,7 +915,6 @@
             }
         }
 
-        // PWA
         let deferredPrompt;
         const avisoPwa = document.getElementById('aviso-instalar');
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -858,7 +923,7 @@
             localStorage.removeItem('appInstalado'); 
             if(!sessionStorage.getItem('bannerFechado')) {
                 avisoPwa.style.display = 'flex';
-                document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'block');
+                document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'flex'); /* Alterado para flex para funcionar com o novo CSS */
             }
         });
         function instalarApp() {
@@ -880,7 +945,6 @@
             if (localStorage.getItem('appInstalado')) {
                  document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'none');
             }
-            // Revela primeira seção com animação
             revelarSecao('cestas', false);
         };
     </script>
