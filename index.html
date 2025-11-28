@@ -3,17 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Link para o Manifesto -->
+    
+    <!-- PWA: Link para o Manifesto -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#D32F2F">
     
-    <title>Cesta Básica em Cuiabá e Várzea Grande | Dona Antônia</title>
-    <meta name="description" content="A melhor Cesta Básica de Cuiabá e Várzea Grande. Entregamos no CPA, Tijucal, Cristo Rei e região.">
+    <!-- SEO OTIMIZADO PARA GOOGLE -->
+    <title>Cesta Básica Dona Antônia | Cuiabá e Várzea Grande</title>
+    <meta name="description" content="A melhor Cesta Básica de Cuiabá e Várzea Grande. Entregas rápidas no CPA, Tijucal, Cristo Rei e toda região. Preço justo e qualidade garantida.">
+    <meta name="keywords" content="cesta básica cuiabá, cesta básica várzea grande, comprar cesta básica, doação de alimentos, mercado delivery">
+    <meta name="robots" content="index, follow">
     
-    <!-- Biblioteca de Confetes -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- OPEN GRAPH (Para ficar bonito no WhatsApp/Facebook) -->
+    <meta property="og:title" content="Cesta Básica Dona Antônia | Menor Preço">
+    <meta property="og:description" content="Entregamos Cestas Básicas completas em Cuiabá e Várzea Grande. Participe dos nossos sorteios!">
+    <meta property="og:image" content="https://donaantonia.com.br/img/logo.png">
+    <meta property="og:url" content="https://donaantonia.com.br">
+    <meta property="og:type" content="website">
 
-    <!-- DADOS ESTRUTURADOS (FAQ) -->
+    <!-- DADOS ESTRUTURADOS (JSON-LD) - SEGREDO DO SEO LOCAL -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Cestas Básicas Dona Antônia",
+      "image": "https://donaantonia.com.br/img/logo.png",
+      "telephone": "+5565998150975",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cuiabá",
+        "addressRegion": "MT",
+        "addressCountry": "BR"
+      },
+      "areaServed": ["Cuiabá", "Várzea Grande"],
+      "url": "https://donaantonia.com.br"
+    }
+    </script>
+    
+    <!-- FAQ para o Google -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -21,36 +49,29 @@
       "mainEntity": [{
         "@type": "Question",
         "name": "Onde comprar cesta básica em Cuiabá?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Na Dona Antônia! Temos o melhor preço e entregamos em todos os bairros." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Na Dona Antônia! Temos o melhor preço e entregamos em todos os bairros como CPA, Tijucal e Pedra 90." }
       }, {
         "@type": "Question",
         "name": "Vocês entregam em Várzea Grande?",
-        "acceptedAnswer": { "@type": "Answer", "text": "Sim! Atendemos toda a região de Várzea Grande." }
+        "acceptedAnswer": { "@type": "Answer", "text": "Sim! Atendemos toda a região de Várzea Grande, incluindo Cristo Rei e Centro." }
       }]
     }
     </script>
     
+    <!-- Bibliotecas -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- CORREÇÃO GLOBAL DE TAMANHO --- */
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
 
-        /* --- ESTILOS GERAIS --- */
         :root {
             --cor-primaria: #D32F2F; 
-            --cor-ativa: #ffffff;
-            --cor-inativa: #ffebee;
-            --cor-whatsapp: #25D366;
-            --cor-texto: #222;
             --cor-fundo: #fafafa;
+            --cor-texto: #333;
         }
 
-        html {
-            background-color: #e0e0e0;
-        }
+        html { background-color: #e0e0e0; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -58,136 +79,133 @@
             color: var(--cor-texto);
             margin: 0 auto; 
             padding: 0;
-            padding-bottom: 120px; 
-            font-size: 18px;
-            line-height: 1.6;
-            -webkit-user-select: none;
-            user-select: none;
+            padding-top: 70px; /* Espaço para o cabeçalho fixo */
+            padding-bottom: 80px; /* Espaço para a barra inferior */
             max-width: 480px; 
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             position: relative; 
         }
 
-        /* --- CABEÇALHO --- */
+        /* --- NOVO CABEÇALHO (Topo Fixo) --- */
         header {
-            background-color: var(--cor-primaria);
-            color: white;
-            text-align: center;
-            padding: 15px 10px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .header-logo {
-            max-width: 100%; 
-            height: auto;    
-            max-height: 100px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* --- NAVEGAÇÃO SUPERIOR --- */
-        nav {
-            background-color: var(--cor-primaria);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 5px 10px 10px 10px; 
-        }
-        .nav-tabs {
+            background-color: white;
+            height: 70px; /* Um pouco mais alto para logo horizontal */
+            padding: 5px 15px;
             display: flex;
             justify-content: space-between;
-            background-color: rgba(0,0,0,0.1);
-            border-radius: 12px;
-            padding: 5px;
-            gap: 8px;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 1000;
         }
-        .nav-btn {
+
+        .header-left {
+            display: flex;
+            align-items: center;
             flex: 1;
-            padding: 15px 2px;
-            border: none;
-            background-color: rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.9);
-            font-weight: bold;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.05);
         }
-        .nav-btn.ativo {
-            background-color: white;
+
+        .logo-pequena {
+            height: 50px; /* Altura ideal para horizontal */
+            width: auto;
+            max-width: 180px; /* Garante que não invada os ícones */
+            object-fit: contain;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            font-size: 22px;
             color: var(--cor-primaria);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .icon-btn:active { transform: scale(0.9); }
+        
+        .ic-zap { color: #25D366; }
+        .ic-face { color: #1877F2; }
+        .ic-insta { color: #E1306C; }
+        .ic-vcard { color: #333; font-size: 20px; } /* Ícone de salvar contato */
+
+        /* --- BARRA DE NAVEGAÇÃO INFERIOR (Menu Principal) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background-color: white;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.ativo {
+            color: var(--cor-primaria);
+            font-weight: bold;
         }
 
         /* --- PÁGINAS --- */
         .pagina {
             display: none;
             padding: 15px;
-            animation: fadeIn 0.4s;
+            animation: fadeIn 0.3s ease;
         }
         .pagina.visivel { display: block; }
-        
+
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes fadeInModal {
             from { opacity: 0; }
             to { opacity: 1; }
         }
 
-        h2 {
-            color: var(--cor-primaria);
-            border-bottom: 2px solid #ffcdd2;
-            padding-bottom: 5px;
-            font-size: 22px;
-        }
-        
-        h3 {
-            color: #333;
-            font-size: 18px;
-            margin-top: 20px;
-            margin-bottom: 10px;
-        }
-
-        /* --- CARTÕES --- */
+        /* --- CARTÕES E ELEMENTOS --- */
         .card {
             background: white;
-            border-radius: 15px;
+            border-radius: 12px;
             padding: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
-        }
-        
-        /* --- CONTEÚDO --- */
-        .faq-item {
-            border-bottom: 1px solid #eee;
-            padding: 15px 0;
-        }
-        .faq-item h4 { margin: 0 0 5px 0; color: var(--cor-primaria); font-size: 17px; }
-        .faq-item p { margin: 0; font-size: 15px; color: #555; }
-
-        .tabela-precos {
-            width: 100%;
-            border-collapse: collapse;
             margin-bottom: 15px;
+            border: 1px solid #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .tabela-precos td {
-            padding: 10px 0;
-            border-bottom: 1px dotted #ccc;
-            font-size: 17px;
-        }
-        .preco-destaque {
-            color: var(--cor-primaria);
-            font-weight: bold;
-            text-align: right;
-        }
+
+        h2, h3 { color: var(--cor-primaria); margin-top: 0; }
+        h3 { font-size: 18px; border-bottom: 1px solid #f0f0f0; padding-bottom: 8px; }
 
         .galeria-fotos {
             display: flex;
@@ -199,667 +217,359 @@
             aspect-ratio: 1 / 1;
             object-fit: cover;
             border-radius: 8px;
-            background-color: #ddd;
+            background: #eee;
         }
 
-        /* --- BOTÕES GERAIS --- */
         .btn {
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             border: none;
-            border-radius: 12px;
-            font-size: 18px;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             margin-top: 10px;
             color: white;
         }
-        .btn:active { transform: scale(0.98); }
-        .btn i { margin-right: 10px; font-size: 20px; }
+        .btn-whatsapp { background-color: #25D366; }
+        .btn-compartilhar { background-color: #0288D1; font-size: 14px; padding: 10px; }
 
-        .btn-whatsapp { background-color: var(--cor-whatsapp); }
-        .btn-compartilhar { background-color: #0288D1; margin-top: 15px; }
-        .btn-convite { background-color: #FBC02D; color: #333; margin-top: 20px; }
-        
-        .btn-agenda { 
-            background-color: #f5f5f5; color: #333; border: 1px solid #ddd; margin-bottom: 10px;
-            justify-content: flex-start; padding-left: 20px;
+        /* Lista de Pagamento */
+        .lista-pagamento {
+            list-style: none;
+            padding: 0;
         }
-        
-        .btn-google-review {
-            background-color: #4285F4; color: white; font-size: 18px; padding: 15px;
-            width: 100%; border: none; border-radius: 10px; margin-top: 10px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-weight: bold; box-shadow: 0 4px 0 #0d47a1; text-decoration: none;
+        .lista-pagamento li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+        .lista-pagamento i {
+            color: var(--cor-primaria);
+            width: 30px;
+            font-size: 18px;
         }
 
-        .escolha-cadastro { display: flex; gap: 10px; margin-bottom: 20px; }
-        .btn-opcao {
-            flex: 1; padding: 15px 5px; font-size: 15px; background-color: #fff;
-            border: 2px solid var(--cor-primaria); color: var(--cor-primaria);
-            border-radius: 10px; cursor: pointer;
-        }
-        .btn-opcao.selecionado { background-color: var(--cor-primaria); color: white; }
-
-        /* --- FORMULÁRIOS --- */
+        /* Formulários */
         input, select {
-            width: 100%; padding: 15px; font-size: 18px; border: 2px solid #ccc;
-            border-radius: 10px; margin-bottom: 15px;
-        }
-        .container-input { position: relative; }
-        .lista-sugestoes {
-            position: absolute; top: 85px; left: 0; right: 0; background: white;
-            border: 1px solid #ccc; border-radius: 0 0 10px 10px; z-index: 1000;
-            max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .sugestao-item { padding: 15px; border-bottom: 1px solid #eee; cursor: pointer; }
-        .sugestao-item:hover { background-color: #f0f0f0; }
-
-        /* --- BARRA FIXA (4 BOTÕES GRANDES) --- */
-        .barra-app {
-            position: fixed; bottom: 0; 
-            left: 50%; transform: translateX(-50%);
-            width: 100%; max-width: 480px; 
-            background-color: white; border-top: 1px solid #ddd;
-            display: flex; justify-content: space-around; 
-            padding: 8px 0; 
-            z-index: 2000; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        }
-        .item-barra {
-            text-align: center; text-decoration: none; color: #555;
-            flex: 1; padding: 5px;
-            display: flex; flex-direction: column; 
-            justify-content: center; align-items: center;
-            font-size: 10px; /* Fonte levemente menor para caber */
-            font-weight: bold;
-            border-right: 1px solid #eee;
-            cursor: pointer; 
-        }
-        .item-barra:last-child { border-right: none; }
-        
-        /* ÍCONES PADRONIZADOS */
-        .icone-container {
-            width: 32px; height: 32px; 
-            display: flex; align-items: center; justify-content: center;
-            background-color: var(--cor-primaria);
-            color: white;
-            font-size: 18px; margin-bottom: 3px;
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(211, 47, 47, 0.3);
-        }
-        .item-barra:active { background-color: #f5f5f5; }
-
-        /* CORES ESPECÍFICAS PARA OS MODAIS */
-        .bg-zap { background: #25D366; }
-        .bg-grupo { background: linear-gradient(45deg, #075e54, #128C7E); }
-        .bg-face { background: #1877F2; }
-        .bg-insta { background: #E1306C; }
-
-        /* --- MODAIS GERAIS --- */
-        .modal-geral {
-            display: none; position: fixed; z-index: 3000; 
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.85); justify-content: center; align-items: center;
-            flex-direction: column; 
-            animation: fadeInModal 0.3s;
-        }
-        .modal-card {
-            background: white; width: 85%; max-width: 350px;
-            border-radius: 20px; padding: 25px; text-align: center;
-            position: relative; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            max-height: 90vh; overflow-y: auto;
-        }
-        .modal-card h3 { margin-top: 0; color: #333; font-size: 22px; }
-        .modal-card p { color: #666; font-size: 16px; margin-bottom: 20px; }
-        
-        /* ESTILO DOS BOTÕES DO MODAL */
-        .btn-modal-acao {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; 
-            padding: 15px; 
-            border: none; border-radius: 10px;
-            font-size: 18px; font-weight: bold; margin-bottom: 10px;
-            cursor: pointer; color: white; text-decoration: none;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-        }
-        /* Aplica as cores via classe auxiliar */
-        .btn-modal-acao.bg-zap { background-color: #25D366; }
-        .btn-modal-acao.bg-grupo { background: linear-gradient(45deg, #075e54, #128C7E); }
-        .btn-modal-acao.bg-face { background-color: #1877F2; }
-        .btn-modal-acao.bg-insta { background-color: #E1306C; }
-        
-        .btn-fechar-modal-x {
-            position: absolute; top: 10px; right: 10px;
-            background: #eee; border: none; border-radius: 50%;
-            width: 30px; height: 30px; font-size: 20px; color: #333; cursor: pointer;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 16px;
         }
 
-        /* --- AVISO FLUTUANTE (PWA) --- */
-        .aviso-instalar {
-            position: fixed; bottom: 80px; 
-            left: 50%; transform: translateX(-50%);
-            width: 95%; max-width: 460px;
-            background: linear-gradient(135deg, #FF6B6B, #D32F2F); color: white;
-            padding: 15px; border-radius: 15px; z-index: 1900;
-            box-shadow: 0 4px 20px rgba(211, 47, 47, 0.5);
-            display: none; flex-direction: row; align-items: center;
-            justify-content: space-between; gap: 15px; animation: piscarSuave 3s infinite;
-        }
-        @keyframes piscarSuave {
-            0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.7); }
-            50% { box-shadow: 0 0 20px 10px rgba(211, 47, 47, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
-        }
-        .texto-instalar-banner { flex: 1; font-size: 15px; line-height: 1.3; } 
-        .texto-instalar-banner strong { display: block; font-size: 17px; color: #FFEB3B; }
-        .btn-acao-banner {
-            background: white; color: var(--cor-primaria); font-weight: bold;
-            padding: 10px 20px; border-radius: 30px; border: none;
-            font-size: 14px; cursor: pointer; white-space: nowrap;
-            box-shadow: 0 3px 0 rgba(0,0,0,0.1);
-        }
-        .btn-fechar-aviso {
-            position: absolute; top: -10px; right: -5px; background: #333;
-            color: white; border: none; border-radius: 50%; width: 25px; height: 25px;
-            font-size: 14px; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-
-        /* Cartão Fixo no Final das Páginas */
-        .card-instalacao-fixo {
-            background: linear-gradient(135deg, #fff, #f3e5f5);
-            border: 2px solid #7b1fa2; border-radius: 15px;
-            padding: 20px; margin-bottom: 20px; text-align: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .card-instalacao-fixo h3 { color: #7b1fa2; margin-top: 0; font-size: 22px; }
-        .btn-instalacao-grande {
-            background-color: #7b1fa2; color: white; font-size: 20px; padding: 20px;
-            width: 100%; border: none; border-radius: 10px; margin-top: 15px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 0 #4a148c;
-        }
-        .btn-instalacao-grande:active { transform: scale(0.98); box-shadow: 0 2px 0 #4a148c; }
-
-        /* --- MODAL BRINDE --- */
-        .modal-brinde {
-            display: none; position: fixed; z-index: 2500; 
-            left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center;
-            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.5); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .conteudo-brinde {
-            background: linear-gradient(135deg, #FFEB3B, #FFF59D);
-            width: 85%; max-width: 400px;
-            border-radius: 20px; padding: 30px 20px;
-            text-align: center; border: 4px solid #FBC02D;
-            box-shadow: 0 0 50px rgba(255, 235, 59, 0.6);
-            position: relative;
-        }
-        .icone-brinde { font-size: 60px; margin-bottom: 10px; display: block; }
-        .titulo-brinde { color: #D32F2F; font-size: 26px; font-weight: 900; margin: 0; text-transform: uppercase; }
-        .texto-brinde { font-size: 18px; color: #333; margin: 15px 0; font-weight: 500; }
-        .marca-brinde { color: #1565C0; font-weight: bold; font-size: 20px; }
-        .btn-fechar-brinde {
-            background-color: #D32F2F; color: white; border: none;
-            padding: 12px 30px; font-size: 18px; border-radius: 30px;
-            font-weight: bold; cursor: pointer; margin-top: 15px;
-            box-shadow: 0 4px 0 #b71c1c;
-        }
-        .btn-fechar-brinde:active { transform: scale(0.98); box-shadow: 0 2px 0 #b71c1c; }
-
-        /* --- MODAL IMAGEM --- */
+        /* Modal Imagem */
         .modal-imagem {
             display: none; position: fixed; z-index: 3000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.95); justify-content: center; align-items: center;
         }
-        .modal-conteudo { max-width: 95%; max-height: 80%; border: 2px solid white; }
+        .modal-conteudo { max-width: 95%; max-height: 80%; }
+
+        /* Modal Brinde */
+        .modal-brinde {
+            display: none; position: fixed; z-index: 2500; 
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.7); justify-content: center; align-items: center;
+        }
+        .conteudo-brinde {
+            background: #fff; width: 85%; padding: 20px; border-radius: 15px; text-align: center;
+            border: 3px solid #FFC107;
+        }
+        .btn-fechar-brinde { background: #D32F2F; color: white; padding: 10px 20px; border: none; border-radius: 20px; margin-top: 15px;}
+
+        /* --- AVISO FLUTUANTE (PWA - BANNER) --- */
+        .aviso-instalar {
+            position: fixed; bottom: 80px; 
+            left: 50%; transform: translateX(-50%);
+            width: 95%; max-width: 440px; 
+            background: #333; color: white;
+            padding: 10px 15px; border-radius: 50px; z-index: 2000;
+            display: none; /* Controlado via JS */
+            align-items: center; justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: slideUp 0.5s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translate(-50%, 50px); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .btn-acao-instalar {
+            background: #FFC107; color: #333; border: none; padding: 8px 15px;
+            border-radius: 20px; font-weight: bold; font-size: 12px; cursor: pointer;
+        }
+        .btn-fechar-aviso { background: none; border: none; color: #999; font-size: 18px; margin-left: 10px; cursor: pointer;}
+
     </style>
 </head>
 <body>
 
+    <!-- CABEÇALHO FIXO -->
     <header>
-        <img src="img/logo.png" onerror="this.src='https://placehold.co/535x167/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="header-logo">
-    </header>
-
-    <nav>
-        <div class="nav-tabs">
-            <button class="nav-btn ativo" id="btn-cestas" onclick="navegarPara('cestas')">Cestas</button>
-            <button class="nav-btn" id="btn-sorteio" onclick="navegarPara('sorteio')">Sorteio</button>
-            <button class="nav-btn" id="btn-ajuda" onclick="navegarPara('ajuda')">Ajuda</button>
+        <div class="header-left">
+            <!-- Logo Horizontal -->
+            <img src="img/logo.png" onerror="this.src='https://placehold.co/180x60/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="logo-pequena">
         </div>
-    </nav>
+        <div class="header-icons">
+            <!-- Salvar Contato (VCard) - Agora ícone de Telefone -->
+            <a href="#" onclick="salvarContatoVCard(); return false;" class="icon-btn ic-vcard" title="Salvar Contatos">
+                <i class="fas fa-phone"></i>
+            </a>
+            <!-- Redes Sociais -->
+            <a href="https://wa.me/5565998150975" class="icon-btn ic-zap"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://facebook.com/SEU_FACEBOOK" target="_blank" class="icon-btn ic-face"><i class="fab fa-facebook"></i></a>
+            <a href="https://instagram.com/SEU_INSTA" target="_blank" class="icon-btn ic-insta"><i class="fab fa-instagram"></i></a>
+        </div>
+    </header>
 
     <!-- PÁGINA 1: CESTAS -->
     <div id="pag-cestas" class="pagina visivel">
-        <div class="card" style="background-color: #fff8e1; border-color: #ffe082;">
-            <p style="margin: 0; text-align: center; font-weight: bold;">
-                👋 Bem-vindo! As melhores Cestas Básicas de Cuiabá e Várzea Grande.
+        <div class="card" style="text-align: center; background-color: #fff3e0;">
+            <p style="margin: 0; font-weight: bold; color: #E65100;">
+                <i class="fas fa-truck"></i> Entregas em Cuiabá e Várzea Grande
             </p>
         </div>
 
+        <!-- Cesta 1 -->
         <div class="card">
-            <h3>1. Cesta Grande (R$ 390,00)</h3>
+            <h3>Cesta Grande (R$ 390,00)</h3>
             <div class="galeria-fotos">
-                <img src="img/cesta-grande.jpg" alt="Cesta Grande" onerror="this.src='https://placehold.co/400x400/ffebee/d32f2f?text=Cesta+Grande'" onclick="abrirImagem(this.src)">
-                <img src="img/cesta-grande-2.jpg" alt="Itens Cesta Grande" onerror="this.src='https://placehold.co/400x400/ffebee/d32f2f?text=Itens+Grande'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-grande.jpg" alt="Cesta básica grande completa entrega Cuiabá" onerror="this.src='https://placehold.co/300x300?text=Foto1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-grande-2.jpg" alt="Itens da cesta grande" onerror="this.src='https://placehold.co/300x300?text=Foto2'" onclick="abrirImagem(this.src)">
             </div>
-            <p>A mais completa para famílias grandes. Alimentos reforçados e itens variados.</p>
-            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Grande')">
-                <i class="fab fa-whatsapp"></i> Pedir Agora
-            </button>
-            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Grande')">
-                <i class="fas fa-share-alt"></i> Compartilhar Cesta
-            </button>
+            <p>Família Grande. Alimentos reforçados e itens variados.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Grande')">Pedir no Zap</button>
         </div>
 
+        <!-- Cesta 2 -->
         <div class="card">
-            <h3>2. Cesta Média (R$ 325,00)</h3>
+            <h3>Cesta Média (R$ 325,00)</h3>
             <div class="galeria-fotos">
-                <img src="img/cesta-media.jpg" alt="Cesta Média" onerror="this.src='https://placehold.co/400x400/e3f2fd/1565c0?text=Cesta+Media'" onclick="abrirImagem(this.src)">
-                <img src="img/cesta-media-2.jpg" alt="Itens Cesta Média" onerror="this.src='https://placehold.co/400x400/e3f2fd/1565c0?text=Itens+Media'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-media.jpg" alt="Cesta básica média" onerror="this.src='https://placehold.co/300x300?text=Foto1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-media-2.jpg" alt="Itens cesta média" onerror="this.src='https://placehold.co/300x300?text=Foto2'" onclick="abrirImagem(this.src)">
             </div>
-            <p>O equilíbrio perfeito para sua casa. Quantidade ideal de alimentos.</p>
-            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Média')">
-                <i class="fab fa-whatsapp"></i> Pedir Agora
-            </button>
-            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Média')">
-                <i class="fas fa-share-alt"></i> Compartilhar Cesta
-            </button>
+            <p>Ideal para o dia a dia. Alimentos e limpeza.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Média')">Pedir no Zap</button>
         </div>
 
+        <!-- Cesta 3 -->
         <div class="card">
-            <h3>3. Cesta Pequena (R$ 220,00)</h3>
+            <h3>Cesta Pequena (R$ 220,00)</h3>
             <div class="galeria-fotos">
-                <img src="img/cesta-pequena.jpg" alt="Cesta Pequena" onerror="this.src='https://placehold.co/400x400/fff3e0/e65100?text=Cesta+Pequena'" onclick="abrirImagem(this.src)">
-                <img src="img/cesta-pequena-2.jpg" alt="Itens Cesta Pequena" onerror="this.src='https://placehold.co/400x400/fff3e0/e65100?text=Itens+Pequena'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-pequena.jpg" alt="Cesta básica pequena barata" onerror="this.src='https://placehold.co/300x300?text=Foto1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-pequena-2.jpg" alt="Itens cesta pequena" onerror="this.src='https://placehold.co/300x300?text=Foto2'" onclick="abrirImagem(this.src)">
             </div>
-            <p>Compacta e econômica. Tudo o que você precisa sem desperdício.</p>
-            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Pequena')">
-                <i class="fab fa-whatsapp"></i> Pedir Agora
-            </button>
-            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Pequena')">
-                <i class="fas fa-share-alt"></i> Compartilhar Cesta
-            </button>
+            <p>Compacta e econômica.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Pequena')">Pedir no Zap</button>
         </div>
 
+        <!-- Cesta 4 -->
         <div class="card">
-            <h3>4. Cesta Mini (R$ 170,00)</h3>
+            <h3>Cesta Mini (R$ 170,00)</h3>
             <div class="galeria-fotos">
-                <img src="img/cesta-mini.jpg" alt="Cesta Mini" onerror="this.src='https://placehold.co/400x400/f3e5f5/7b1fa2?text=Cesta+Mini'" onclick="abrirImagem(this.src)">
-                <img src="img/cesta-mini-2.jpg" alt="Itens Cesta Mini" onerror="this.src='https://placehold.co/400x400/f3e5f5/7b1fa2?text=Itens+Mini'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-mini.jpg" alt="Cesta mini rápida" onerror="this.src='https://placehold.co/300x300?text=Foto1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-mini-2.jpg" alt="Itens cesta mini" onerror="this.src='https://placehold.co/300x300?text=Foto2'" onclick="abrirImagem(this.src)">
             </div>
-            <p>Para quem mora sozinho ou precisa de uma reposição rápida.</p>
-            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Mini')">
-                <i class="fab fa-whatsapp"></i> Pedir Agora
-            </button>
-            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Mini')">
-                <i class="fas fa-share-alt"></i> Compartilhar Cesta
-            </button>
+            <p>Para reposição rápida.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Mini')">Pedir no Zap</button>
         </div>
 
+        <!-- Cesta 5 -->
         <div class="card">
-            <h3>5. Cesta Econômica (R$ 85,00)</h3>
+            <h3>Cesta Econômica (R$ 85,00)</h3>
             <div class="galeria-fotos">
-                <img src="img/cesta-economica.jpg" alt="Cesta Econômica" onerror="this.src='https://placehold.co/400x400/e0e0e0/333333?text=Cesta+Eco'" onclick="abrirImagem(this.src)">
-                <img src="img/cesta-economica-2.jpg" alt="Itens Cesta Econômica" onerror="this.src='https://placehold.co/400x400/e0e0e0/333333?text=Itens+Eco'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-economica.jpg" alt="Cesta básica mais barata de Cuiabá" onerror="this.src='https://placehold.co/300x300?text=Foto1'" onclick="abrirImagem(this.src)">
+                <img src="img/cesta-economica-2.jpg" alt="Itens cesta econômica" onerror="this.src='https://placehold.co/300x300?text=Foto2'" onclick="abrirImagem(this.src)">
             </div>
-            <p>O menor preço da cidade. Arroz, feijão, óleo e sal.</p>
-            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">
-                <i class="fab fa-whatsapp"></i> Pedir Agora
-            </button>
-            <button class="btn btn-compartilhar" onclick="compartilhar('Cesta Econômica')">
-                <i class="fas fa-share-alt"></i> Compartilhar Cesta
-            </button>
-        </div>
-
-        <div class="card" style="border-left: 5px solid var(--cor-whatsapp);">
-            <h3>💳 Formas de Pagamento</h3>
-            <ul style="list-style: none; padding: 0;">
-                <li><i class="fas fa-money-bill-wave" style="color: green;"></i> Dinheiro, Pix e Débito</li>
-                <li><i class="fas fa-credit-card" style="color: blue;"></i> Cartão de crédito em até <strong>3x sem juros</strong></li>
-                <li><i class="fas fa-utensils" style="color: orange;"></i> Alimentação/Refeição: Alelo, Sodexo, Pluxee e Ifood</li>
-                <li style="color: red; margin-top: 5px;"><strong>⚠️ Não vendemos pra 30 dias (boleto/carnê)</strong></li>
-            </ul>
-        </div>
-
-        <div class="card" style="margin-top: 20px; background-color: #f5f5f5;">
-            <h3>📞 Nossos Contatos</h3>
-            <a href="tel:5565998150975" class="btn btn-agenda"><i class="fas fa-phone"></i> (65) 99815-0975 (Principal)</a>
-            <a href="tel:5565999999999" class="btn btn-agenda"><i class="fas fa-phone"></i> (65) 99999-9999 (Entregas)</a>
-            <a href="tel:5565888888888" class="btn btn-agenda"><i class="fas fa-phone"></i> (65) 98888-8888 (Loja)</a>
-        </div>
-
-        <div class="card-instalacao-fixo">
-            <h3>📱 Baixe o Aplicativo!</h3>
-            <p>Para promoções e facilidade, instale nosso App.</p>
-            <button class="btn-instalacao-grande" onclick="instalarApp()">
-                <i class="fas fa-download"></i> INSTALAR AGORA
-            </button>
+            <p>Arroz, feijão, óleo e sal. O básico.</p>
+            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">Pedir no Zap</button>
         </div>
     </div>
 
-    <!-- PÁGINA 2: SORTEIO -->
+    <!-- PÁGINA 2: PAGAMENTO (NOVA) -->
+    <div id="pag-pagamento" class="pagina">
+        <div class="card">
+            <h2>💳 Formas de Pagamento</h2>
+            <p>Aceitamos as principais formas para facilitar sua vida:</p>
+            
+            <ul class="lista-pagamento">
+                <li><i class="fas fa-money-bill-wave"></i> Dinheiro</li>
+                <li><i class="fas fa-qrcode"></i> Pix (Transferência Instantânea)</li>
+                <li><i class="fas fa-credit-card"></i> Cartão de Débito</li>
+                <li><i class="fas fa-credit-card"></i> Cartão de Crédito (até 3x sem juros)</li>
+                <li><i class="fas fa-utensils"></i> Alelo Alimentação/Refeição</li>
+                <li><i class="fas fa-utensils"></i> Sodexo</li>
+                <li><i class="fas fa-utensils"></i> Pluxee</li>
+                <li><i class="fas fa-mobile-alt"></i> Ifood Benefícios</li>
+            </ul>
+            
+            <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;">
+                <strong>⚠️ Atenção:</strong> Não vendemos no boleto ou carnê (fiado).
+            </p>
+        </div>
+    </div>
+
+    <!-- PÁGINA 3: SORTEIO -->
     <div id="pag-sorteio" class="pagina">
         <div class="card">
             <h2>🍀 Sorteio Semanal</h2>
-            <p style="background-color: #ffebee; padding: 10px; border-radius: 8px; color: #d32f2f;">
-                <strong>Atenção:</strong> Sorteio válido para moradores de Cuiabá e VG.
-            </p>
+            <p>Preencha para concorrer a uma cesta grátis toda sexta-feira!</p>
 
-            <div class="escolha-cadastro">
-                <button class="btn-opcao selecionado" id="btn-primeira-vez" onclick="mudarModoCadastro('novo')">Minha 1ª vez</button>
-                <button class="btn-opcao" id="btn-ja-tenho" onclick="mudarModoCadastro('antigo')">Já tenho cadastro</button>
-            </div>
-
-            <div id="form-novo">
-                <label>Seu Nome: <span style="color:red">*</span></label>
-                <input type="text" id="novo-nome" placeholder="Nome Completo" required>
+            <form onsubmit="event.preventDefault(); enviarNovoCadastro();">
+                <label>Nome Completo:</label>
+                <input type="text" id="novo-nome" placeholder="Seu nome" required>
                 
-                <label>Telefone: <span style="color:red">*</span></label>
+                <label>Telefone (Zap):</label>
                 <input type="tel" id="novo-telefone" placeholder="(65) 9..." required>
                 
-                <label>Cidade: <span style="color:red">*</span></label>
+                <label>Cidade:</label>
                 <select id="novo-cidade" required>
                     <option value="">Selecione...</option>
                     <option value="Cuiabá">Cuiabá</option>
                     <option value="Várzea Grande">Várzea Grande</option>
                 </select>
 
-                <label>Bairro: <span style="color:red">*</span></label>
-                <input type="text" id="novo-bairro" placeholder="Ex: Centro" required>
+                <label>Bairro:</label>
+                <input type="text" id="novo-bairro" placeholder="Seu bairro" required>
                 
-                <button class="btn btn-whatsapp" onclick="enviarNovoCadastro()"><i class="fab fa-whatsapp"></i> Confirmar</button>
-            </div>
-
-            <div id="form-antigo" style="display: none;">
-                <label>Digite seu nome:</label>
-                <div class="container-input">
-                    <input type="text" id="busca-nome" placeholder="Ex: Maria..." autocomplete="off">
-                    <div id="lista-sugestoes" class="lista-sugestoes"></div>
-                </div>
-                <button class="btn btn-whatsapp" onclick="buscarEEnviar()"><i class="fas fa-search"></i> Participar</button>
-            </div>
-        </div>
-
-        <div class="card-instalacao-fixo">
-            <h3>📱 Obrigatório o App!</h3>
-            <p>Garanta sua vaga no sorteio instalando o aplicativo.</p>
-            <button class="btn-instalacao-grande" onclick="instalarApp()">
-                <i class="fas fa-download"></i> INSTALAR AGORA
-            </button>
+                <button type="submit" class="btn btn-whatsapp">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- PÁGINA 3: AJUDA -->
-    <div id="pag-ajuda" class="pagina">
-        <div class="card">
-            <h2>ℹ️ Informações Importantes</h2>
-            <p>Olá! Sejam todos bem-vindos! 👋<br>Confira nossas opções e condições abaixo:</p>
-            
-            <h3>📦 Temos 5 tamanhos</h3>
-            <table class="tabela-precos">
-                <tr><td>Cesta Grande</td><td class="preco-destaque">R$ 390,00</td></tr>
-                <tr><td>Cesta Média</td><td class="preco-destaque">R$ 325,00</td></tr>
-                <tr><td>Cesta Pequena</td><td class="preco-destaque">R$ 220,00</td></tr>
-                <tr><td>Cesta Mini</td><td class="preco-destaque">R$ 170,00</td></tr>
-                <tr><td>Cesta Econômica</td><td class="preco-destaque">R$ 85,00</td></tr>
-            </table>
-
-            <h3>🚚 Entrega</h3>
-            <p><i class="fas fa-map-marker-alt" style="color: #D32F2F;"></i> Entregamos em <strong>Cuiabá</strong> e <strong>Várzea Grande</strong>.</p>
-
-            <h3>💳 Formas de Pagamento</h3>
-            <ul style="list-style: none; padding: 0;">
-                <li><i class="fas fa-money-bill-wave" style="color: green;"></i> Dinheiro, Pix e Débito</li>
-                <li><i class="fas fa-credit-card" style="color: blue;"></i> Cartão de crédito em até <strong>3x sem juros</strong></li>
-                <li><i class="fas fa-utensils" style="color: orange;"></i> Alimentação/Refeição: Alelo, Sodexo, Pluxee e Ifood</li>
-                <li style="color: red; margin-top: 5px;"><strong>⚠️ Não vendemos pra 30 dias (boleto/carnê)</strong></li>
-            </ul>
-        </div>
-
-        <div class="card" style="background-color: #f9f9f9;">
-            <h3>❓ Dúvidas Comuns</h3>
-            <div class="faq-item">
-                <h4>Como peço a cesta?</h4>
-                <p>Basta clicar no botão "Pedir Agora" na aba Cestas ou chamar no WhatsApp.</p>
-            </div>
-            <div class="faq-item">
-                <h4>Qual a taxa de entrega?</h4>
-                <p>A taxa varia conforme o bairro. Consulte no WhatsApp.</p>
-            </div>
-        </div>
-
-        <div class="card" style="text-align: center; border: 2px solid #4285F4; background-color: #e3f2fd;">
-            <h3 style="color: #4285F4; margin-top: 0;">⭐ Ajude-nos!</h3>
-            <p>Se você gosta do nosso atendimento, nos avalie com 5 estrelas.</p>
-            <a href="#" class="btn-google-review" onclick="avaliarNoGoogle(); return false;">
-                <i class="fab fa-google" style="margin-right: 10px;"></i> AVALIAR AGORA
-            </a>
-        </div>
-    </div>
-
-    <!-- BANNER FLUTUANTE (PWA) -->
+    <!-- BANNER PWA FLUTUANTE (Restaurado) -->
     <div id="aviso-instalar" class="aviso-instalar">
-        <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
-        <div class="texto-instalar-banner">
-            <strong>Baixe nosso App!</strong>
-            Para participar do sorteio.
+        <div style="display:flex; align-items:center;">
+            <i class="fas fa-download" style="margin-right: 10px; color: #FFC107;"></i>
+            <span style="font-size: 14px;">Baixe o App para Sorteios!</span>
         </div>
-        <button class="btn-acao-banner" onclick="instalarApp()">
-            <i class="fas fa-download"></i> INSTALAR
+        <div style="display: flex; align-items: center;">
+            <button class="btn-acao-instalar" onclick="instalarApp()">BAIXAR</button>
+            <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <button class="nav-item ativo" id="btn-cestas" onclick="navegarPara('cestas')">
+            <i class="fas fa-shopping-basket"></i>
+            CESTAS
         </button>
-    </div>
-
-    <!-- NOVA BARRA FIXA (4 BOTOES COM MODAIS) -->
-    <div class="barra-app">
-        <div class="item-barra" onclick="abrirModalSalvar()">
-            <div class="icone-container"><i class="fas fa-address-book"></i></div>
-            SALVAR ZAP
-        </div>
-        <div class="item-barra" onclick="abrirModalCompartilhar()">
-            <div class="icone-container"><i class="fas fa-share-alt"></i></div>
-            COMPARTILHAR
-        </div>
-        <div class="item-barra" onclick="abrirModalAvaliar()">
-            <div class="icone-container" style="background-color: #FFC107;"><i class="fas fa-star"></i></div>
-            AVALIAR
-        </div>
-        <div class="item-barra" onclick="mostrarBrinde()">
-            <div class="icone-container"><i class="fas fa-gift"></i></div>
-            BRINDE
-        </div>
-    </div>
-
-    <!-- MODAL SALVAR ZAP -->
-    <div id="modalSalvarZap" class="modal-geral" onclick="fecharModalAoClicarFora(event, 'modalSalvarZap')">
-        <div class="modal-card">
-            <button class="btn-fechar-modal-x" onclick="fecharModal('modalSalvarZap')">&times;</button>
-            <h3 style="color:#D32F2F"><i class="fas fa-save"></i> Salvar Contato</h3>
-            <p>Clique em um dos números abaixo para salvar na sua agenda como <strong>"Cesta Básica Dona Antônia"</strong>:</p>
-            
-            <a href="tel:5565998150975" class="btn-modal-acao bg-zap">
-                <i class="fas fa-phone-alt" style="margin-right:10px;"></i> (65) 99815-0975
-            </a>
-            <a href="tel:5565999999999" class="btn-modal-acao bg-zap">
-                <i class="fas fa-phone-alt" style="margin-right:10px;"></i> (65) 99999-9999
-            </a>
-            <a href="tel:5565988888888" class="btn-modal-acao bg-zap">
-                <i class="fas fa-phone-alt" style="margin-right:10px;"></i> (65) 98888-8888
-            </a>
-        </div>
-    </div>
-
-    <!-- MODAL COMPARTILHAR -->
-    <div id="modalCompartilhar" class="modal-geral" onclick="fecharModalAoClicarFora(event, 'modalCompartilhar')">
-        <div class="modal-card">
-            <button class="btn-fechar-modal-x" onclick="fecharModal('modalCompartilhar')">&times;</button>
-            <h3 style="color:#0288D1"><i class="fas fa-share-alt"></i> Compartilhar Site</h3>
-            <p>Ajude a divulgar! Escolha onde quer enviar para seus amigos:</p>
-            
-            <a href="#" onclick="compartilharZap(); return false;" class="btn-modal-acao bg-zap">
-                <i class="fab fa-whatsapp" style="margin-right:10px;"></i> Enviar no WhatsApp
-            </a>
-            <!-- Botão Grupo VIP -->
-            <a href="https://chat.whatsapp.com/SEU_LINK_DO_GRUPO" target="_blank" class="btn-modal-acao bg-grupo">
-                <i class="fas fa-users" style="margin-right:10px;"></i> Grupo de Sorteio
-            </a>
-            <a href="#" onclick="compartilharFace(); return false;" class="btn-modal-acao bg-face">
-                <i class="fab fa-facebook-f" style="margin-right:10px;"></i> Compartilhar Facebook
-            </a>
-            <a href="https://instagram.com/donaantoniacestas" target="_blank" class="btn-modal-acao bg-insta">
-                <i class="fab fa-instagram" style="margin-right:10px;"></i> Ir para Instagram
-            </a>
-        </div>
-    </div>
-
-    <!-- MODAL AVALIAR -->
-    <div id="modalAvaliar" class="modal-geral" onclick="fecharModalAoClicarFora(event, 'modalAvaliar')">
-        <div class="modal-card">
-            <button class="btn-fechar-modal-x" onclick="fecharModal('modalAvaliar')">&times;</button>
-            <h3 style="color:#FFC107"><i class="fas fa-star"></i> Avaliação 5 Estrelas</h3>
-            <p>Sua avaliação é muito importante para nós! Ajuda a Dona Antônia a crescer e atender mais famílias.</p>
-            <p style="font-size:14px;">(Ao clicar, você vai para o Google. Selecione 5 estrelas! ⭐⭐⭐⭐⭐)</p>
-            
-            <a href="#" onclick="avaliarNoGoogle(); return false;" class="btn-modal-acao" style="background-color: #4285F4;">
-                <i class="fab fa-google" style="margin-right:10px;"></i> AVALIAR AGORA
-            </a>
-        </div>
-    </div>
-
-    <!-- MODAL BRINDE -->
-    <div id="modalBrinde" class="modal-brinde">
-        <div class="conteudo-brinde">
-            <span class="icone-brinde">🎉</span>
-            <h2 class="titulo-brinde">Atenção:<br>Brinde do Mês!</h2>
-            <p class="texto-brinde">Todas as cestas vão com 1 amaciante de 2 litros de brinde!</p>
-            <p class="marca-brinde">Marca: Ypê 🌸</p>
-            <button class="btn-fechar-brinde" onclick="fecharBrinde()">QUE MARAVILHA!</button>
-        </div>
-    </div>
+        <button class="nav-item" id="btn-pagamento" onclick="navegarPara('pagamento')">
+            <i class="fas fa-credit-card"></i>
+            PAGAMENTO
+        </button>
+        <button class="nav-item" id="btn-sorteio" onclick="navegarPara('sorteio')">
+            <i class="fas fa-gift"></i>
+            SORTEIO
+        </button>
+    </nav>
 
     <!-- MODAL IMAGEM -->
     <div id="modalVisualizador" class="modal-imagem" onclick="this.style.display='none'">
         <img id="imgAmpliada" src="" class="modal-conteudo">
     </div>
 
+    <!-- MODAL BRINDE -->
+    <div id="modalBrinde" class="modal-brinde">
+        <div class="conteudo-brinde">
+            <h1>🎉 SURPRESA!</h1>
+            <p>Na compra de qualquer cesta, você ganha <strong>1 Amaciante Ypê 2L</strong> de brinde!</p>
+            <button class="btn-fechar-brinde" onclick="document.getElementById('modalBrinde').style.display='none'">EU QUERO!</button>
+        </div>
+    </div>
+
     <script>
         const TELEFONE = "5565998150975";
-        const LINK_SITE = "donaantonia.com.br/oferta";
-        const bancoDadosClientes = [{ nome: "Maria", bairro: "CPA" }];
 
         // --- NAVEGAÇÃO ---
         function navegarPara(idPagina) {
-            atualizarVisualPagina(idPagina);
-            const novoCaminho = idPagina === 'cestas' ? '/' : '/' + idPagina;
-            history.pushState({ pagina: idPagina }, "", novoCaminho);
-        }
-
-        function atualizarVisualPagina(idPagina) {
-            document.querySelectorAll('.pagina').forEach(div => div.classList.remove('visivel'));
-            const paginaAlvo = document.getElementById('pag-' + idPagina);
-            if (paginaAlvo) paginaAlvo.classList.add('visivel');
-
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('ativo'));
-            const botaoAlvo = document.getElementById('btn-' + idPagina);
-            if (botaoAlvo) botaoAlvo.classList.add('ativo');
-
+            document.querySelectorAll('.pagina').forEach(p => p.classList.remove('visivel'));
+            document.getElementById('pag-' + idPagina).classList.add('visivel');
+            
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('ativo'));
+            document.getElementById('btn-' + idPagina).classList.add('ativo');
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        window.onpopstate = function(event) {
-            if (event.state && event.state.pagina) {
-                atualizarVisualPagina(event.state.pagina);
-            } else {
-                atualizarVisualPagina('cestas');
+        // --- SALVAR CONTATOS (VCARD) ---
+        function salvarContatoVCard() {
+            const vcardContent = `BEGIN:VCARD
+VERSION:3.0
+FN:Dona Antônia Cestas
+ORG:Dona Antônia
+TEL;TYPE=WORK,VOICE:(65) 99815-0975
+TEL;TYPE=WORK,VOICE:(65) 99999-9999
+TEL;TYPE=WORK,VOICE:(65) 98888-8888
+EMAIL:contato@donaantonia.com.br
+URL:https://donaantonia.com.br
+END:VCARD`;
+
+            const blob = new Blob([vcardContent], { type: 'text/vcard' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Contatos_Dona_Antonia.vcf');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- NEGÓCIO ---
+        function encomendar(produto) { 
+            window.open(`https://wa.me/${TELEFONE}?text=Olá, quero encomendar a ${produto}`, '_blank'); 
+        }
+
+        function enviarNovoCadastro() {
+            const nome = document.getElementById('novo-nome').value;
+            const tel = document.getElementById('novo-telefone').value;
+            const cid = document.getElementById('novo-cidade').value;
+            const bai = document.getElementById('novo-bairro').value;
+            const msg = `CADASTRO SORTEIO:\nNome: ${nome}\nTel: ${tel}\nCidade: ${cid}\nBairro: ${bai}`;
+            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function abrirImagem(src) {
+            document.getElementById('imgAmpliada').src = src;
+            document.getElementById('modalVisualizador').style.display = 'flex';
+        }
+
+        // --- BRINDE ---
+        let brindeVisto = false;
+        window.onscroll = function() {
+            if (brindeVisto) return;
+            const pagCestas = document.getElementById('pag-cestas');
+            if (pagCestas.classList.contains('visivel')) {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+                    mostrarBrinde();
+                }
             }
         };
 
-        window.onload = function() {
-            const caminho = window.location.pathname;
-            if (caminho.includes('/sorteio')) atualizarVisualPagina('sorteio');
-            else if (caminho.includes('/ajuda')) atualizarVisualPagina('ajuda');
-            else atualizarVisualPagina('cestas');
-        };
-
-        // --- MODAIS ---
-        function abrirModalSalvar() { document.getElementById('modalSalvarZap').style.display = 'flex'; }
-        function abrirModalCompartilhar() { document.getElementById('modalCompartilhar').style.display = 'flex'; }
-        function abrirModalAvaliar() { document.getElementById('modalAvaliar').style.display = 'flex'; }
-        function fecharModal(idModal) { document.getElementById(idModal).style.display = 'none'; }
-        
-        function fecharModalAoClicarFora(event, idModal) {
-            if (event.target.id === idModal) {
-                fecharModal(idModal);
-            }
+        function mostrarBrinde() {
+            brindeVisto = true;
+            document.getElementById('modalBrinde').style.display = 'flex';
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
         }
 
-        // --- AÇÕES ---
-        function compartilharZap() {
-            const texto = `Olha que legal essa oferta da Dona Antônia: ${LINK_SITE}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
-        }
-        function compartilharFace() {
-            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent("https://" + LINK_SITE)}`, '_blank');
-        }
-
-        function enviarNovoCadastro() { 
-            const nome = document.getElementById('novo-nome').value.trim();
-            const tel = document.getElementById('novo-telefone').value.trim();
-            const cidade = document.getElementById('novo-cidade').value; 
-            const bairro = document.getElementById('novo-bairro').value.trim();
-            
-            if (!nome || !tel || !cidade || !bairro) {
-                alert("Por favor, preencha TODOS os campos obrigatórios (*) para participar do sorteio!");
-                return;
-            }
-
-            const msg = `Cadastro Sorteio:\nNome: ${nome}\nTel: ${tel}\nCidade: ${cidade}\nBairro: ${bairro}`;
-            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-        
-        function buscarEEnviar() { 
-            const nome = document.getElementById('busca-nome').value;
-            const msg = `Já tenho cadastro:\nNome: ${nome}\nQuero participar do sorteio!`;
-            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
-        }
-        function encomendar(produto) { window.open(`https://wa.me/${TELEFONE}?text=Quero encomendar a ${produto}`, '_blank'); }
-        
-        function compartilhar(produto) {
-            const texto = `Dá uma olhada nessa ${produto} da Dona Antônia!`;
-            if (navigator.share) {
-                navigator.share({ title: 'Dona Antônia', text: texto, url: window.location.href });
-            } else { 
-                window.open(`https://wa.me/?text=${encodeURIComponent(texto + ' ' + window.location.href)}`, '_blank');
-            }
-        }
-        
-        function avaliarNoGoogle() { 
-            const nomeEmpresa = "Cestas Dona Antônia Cuiabá";
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(nomeEmpresa)}`, '_blank'); 
-        }
-
-        // --- PWA ---
-        const avisoInstalar = document.getElementById('aviso-instalar');
+        // --- PWA INSTALL ---
         let deferredPrompt;
-
-        if (!localStorage.getItem('appInstalado') && !sessionStorage.getItem('bannerFechado')) {
-            setTimeout(() => { avisoInstalar.style.display = 'flex'; }, 2000);
-        }
-
+        const avisoPwa = document.getElementById('aviso-instalar');
+        
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            if (!localStorage.getItem('appInstalado') && !sessionStorage.getItem('bannerFechado')) {
-                avisoInstalar.style.display = 'flex';
-            }
+            if(!localStorage.getItem('appInstalado')) avisoPwa.style.display = 'flex';
         });
 
         function instalarApp() {
@@ -868,85 +578,17 @@
                 deferredPrompt.userChoice.then((result) => {
                     if (result.outcome === 'accepted') {
                         localStorage.setItem('appInstalado', 'true');
-                        avisoInstalar.style.display = 'none';
+                        avisoPwa.style.display = 'none';
                     }
                     deferredPrompt = null;
                 });
             } else {
-                alert("Para instalar:\n1. Toque nos '3 pontinhos' do navegador.\n2. Escolha 'Adicionar à Tela Inicial'.");
+                alert("Toque nos 3 pontinhos do navegador e escolha 'Adicionar à Tela Inicial'");
             }
         }
-
         function fecharInstalacao() {
-            avisoInstalar.style.display = 'none';
-            sessionStorage.setItem('bannerFechado', 'true');
+            avisoPwa.style.display = 'none';
         }
-
-        // --- BRINDE ---
-        let brindeMostrado = false;
-        
-        // Mantém a rolagem automática
-        window.onscroll = function() {
-            const paginaCestas = document.getElementById('pag-cestas');
-            if (!paginaCestas.classList.contains('visivel')) return;
-            if (brindeMostrado || sessionStorage.getItem('brindeVisto')) return;
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 250) {
-                mostrarBrinde(true); // True indica que foi automático via scroll
-            }
-        };
-
-        function mostrarBrinde(isAutomatic) {
-            // Se for automático (scroll) e já tiver sido visto, não mostra.
-            // Se for manual (clique no botão), mostra sempre!
-            if (isAutomatic && (brindeMostrado || sessionStorage.getItem('brindeVisto'))) {
-                return;
-            }
-
-            // Marca como visto
-            brindeMostrado = true;
-            sessionStorage.setItem('brindeVisto', 'true');
-            
-            document.getElementById('modalBrinde').style.display = 'flex';
-            
-            // Dispara Confetes!
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 3000 };
-            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-                if (timeLeft <= 0) { return clearInterval(interval); }
-                var particleCount = 50 * (timeLeft / duration);
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-        }
-        function fecharBrinde() { document.getElementById('modalBrinde').style.display = 'none'; }
-
-        function mudarModoCadastro(modo) {
-            if(modo === 'novo') {
-                document.getElementById('form-novo').style.display = 'block';
-                document.getElementById('form-antigo').style.display = 'none';
-                document.getElementById('btn-primeira-vez').classList.add('selecionado');
-                document.getElementById('btn-ja-tenho').classList.remove('selecionado');
-            } else {
-                document.getElementById('form-novo').style.display = 'none';
-                document.getElementById('form-antigo').style.display = 'block';
-                document.getElementById('btn-primeira-vez').classList.remove('selecionado');
-                document.getElementById('btn-ja-tenho').classList.add('selecionado');
-            }
-        }
-        function abrirImagem(src) {
-            document.getElementById('imgAmpliada').src = src;
-            document.getElementById('modalVisualizador').style.display = 'flex';
-        }
-        
-        const inputBusca = document.getElementById('busca-nome');
-        const listaSugestoes = document.getElementById('lista-sugestoes');
-        inputBusca.addEventListener('input', function() {
-            if(this.value.length > 1) listaSugestoes.style.display = 'block';
-            else listaSugestoes.style.display = 'none';
-        });
     </script>
 </body>
 </html>
