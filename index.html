@@ -978,7 +978,31 @@
             }
         }
 
+        // --- NOVO: SISTEMA DE NAVEGAÇÃO POR LINK (HASHTAG) ---
+        function verificarHash() {
+            // Pega o que vem depois do # (ex: #sorteio -> sorteio)
+            const hash = window.location.hash.replace('#', '');
+            const secoes = ['cestas', 'pagamento', 'sorteio'];
+            
+            if (secoes.includes(hash)) {
+                // Se o link tiver um hash válido, rola para ele
+                revelarSecao(hash, true);
+            } else {
+                // Se não, mostra o padrão (cestas) sem rolar
+                revelarSecao('cestas', false);
+            }
+        }
+
+        // Ouve quando o usuário clica em "Voltar" no navegador
+        window.addEventListener('popstate', verificarHash);
+
         function rolarPara(id) {
+            // Atualiza a URL (adiciona o #) sem recarregar a página
+            if(history.pushState) {
+                history.pushState(null, null, '#' + id);
+            } else {
+                window.location.hash = id;
+            }
             revelarSecao(id, true);
         }
 
@@ -1165,7 +1189,8 @@
             if (localStorage.getItem('appInstalado')) {
                  document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'none');
             }
-            revelarSecao('cestas', false);
+            // NOVO: Verifica o link ao carregar a página
+            verificarHash();
         };
     </script>
 </body>
