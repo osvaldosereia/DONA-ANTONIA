@@ -345,6 +345,135 @@
         .texto-brinde { font-size: 18px; color: #333; margin: 15px 0; font-weight: 500; }
         .btn-fechar-brinde { background: #D32F2F; color: white; border: none; padding: 12px 30px; font-size: 18px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 15px; box-shadow: 0 4px 0 #b71c1c; }
         
+        /* --- NOVO: ESTILO MODAL VARIAÇÃO (MINI MODAL) --- */
+        .modal-variacao {
+            display: none;
+            position: fixed;
+            z-index: 4000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-variacao-content {
+            background-color: white;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: zoomIn 0.2s ease-out;
+            text-align: center;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .titulo-modal-var {
+            color: var(--cor-primaria);
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+        
+        .subtitulo-modal-var {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn-fechar-modal-var {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .opcao-select {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .opcao-select:active {
+            transform: scale(0.98);
+        }
+
+        .opcao-select.selected {
+            border-color: var(--cor-primaria);
+            background-color: #ffebee;
+        }
+        
+        .opcao-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .opcao-nome { font-weight: bold; color: #333; }
+        .opcao-preco { color: var(--cor-primaria); font-weight: 900; }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .selected .radio-custom {
+            border-color: var(--cor-primaria);
+        }
+        
+        .selected .radio-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px;
+            background-color: var(--cor-primaria);
+            border-radius: 50%;
+        }
+
+        .btn-confirmar-pedido {
+            width: 100%;
+            padding: 15px;
+            background-color: #25D366; /* WhatsApp green */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-confirmar-pedido:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
         /* --- AVISO FLUTUANTE (PWA - ESTILO BOTTOM SHEET PROFISSIONAL) --- */
         .aviso-instalar {
             position: fixed; 
@@ -548,7 +677,8 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <button class="btn btn-whatsapp" onclick="encomendar('Cesta Grande')">Encomendar</button>
+                    <!-- BOTÃO ALTERADO PARA ABRIR O MODAL -->
+                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00')">Encomendar</button>
                     <button class="btn btn-compartilhar-produto" onclick="compartilhar('Cesta Grande')">Compartilhar</button>
                 </div>
             </div>
@@ -572,7 +702,8 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <button class="btn btn-whatsapp" onclick="encomendar('Cesta Média')">Encomendar</button>
+                    <!-- BOTÃO ALTERADO PARA ABRIR O MODAL -->
+                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00')">Encomendar</button>
                     <button class="btn btn-compartilhar-produto" onclick="compartilhar('Cesta Média')">Compartilhar</button>
                 </div>
             </div>
@@ -596,7 +727,8 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <button class="btn btn-whatsapp" onclick="encomendar('Cesta Pequena')">Encomendar</button>
+                    <!-- BOTÃO ALTERADO PARA ABRIR O MODAL -->
+                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00')">Encomendar</button>
                     <button class="btn btn-compartilhar-produto" onclick="compartilhar('Cesta Pequena')">Compartilhar</button>
                 </div>
             </div>
@@ -620,7 +752,8 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <button class="btn btn-whatsapp" onclick="encomendar('Cesta Mini')">Encomendar</button>
+                    <!-- BOTÃO ALTERADO PARA ABRIR O MODAL -->
+                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00')">Encomendar</button>
                     <button class="btn btn-compartilhar-produto" onclick="compartilhar('Cesta Mini')">Compartilhar</button>
                 </div>
             </div>
@@ -643,6 +776,7 @@
                     <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
+                    <!-- CESTA ECONÔMICA MANTÉM O BOTÃO DIRETO (SEM MODAL) -->
                     <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">Encomendar</button>
                     <button class="btn btn-compartilhar-produto" onclick="compartilhar('Cesta Econômica')">Compartilhar</button>
                 </div>
@@ -742,6 +876,36 @@
 
     <!-- BANNERS E MODAIS -->
     
+    <!-- NOVO: MODAL DE VARIAÇÃO (MINI MODAL) -->
+    <div id="modalVariacao" class="modal-variacao" onclick="if(event.target === this) fecharModalVariacao()">
+        <div class="modal-variacao-content">
+            <button class="btn-fechar-modal-var" onclick="fecharModalVariacao()">&times;</button>
+            
+            <h3 class="titulo-modal-var" id="tituloCestaModal">Cesta X</h3>
+            <p class="subtitulo-modal-var">Escolha a marca do arroz para continuar:</p>
+            
+            <div class="opcao-select" id="optAlvino" onclick="selecionarOpcao('alvino')">
+                <div class="opcao-info">
+                    <span class="opcao-nome">Arroz Tio Alvino</span>
+                    <span class="opcao-preco" id="precoAlvinoDisplay">R$ 0,00</span>
+                </div>
+                <div class="radio-custom"></div>
+            </div>
+
+            <div class="opcao-select" id="optKoblenz" onclick="selecionarOpcao('koblenz')">
+                <div class="opcao-info">
+                    <span class="opcao-nome">Arroz Koblenz</span>
+                    <span class="opcao-preco" id="precoKoblenzDisplay">R$ 0,00</span>
+                </div>
+                <div class="radio-custom"></div>
+            </div>
+
+            <button class="btn-confirmar-pedido" id="btnConfirmarPedido" onclick="confirmarEncomenda()" disabled>
+                <i class="fab fa-whatsapp"></i> Confirmar Encomenda
+            </button>
+        </div>
+    </div>
+
     <!-- BANNER FLUTUANTE (BOTTOM SHEET) -->
     <div id="aviso-instalar" class="aviso-instalar pwa-install-promo">
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
@@ -860,8 +1024,64 @@
             window.open(url, '_blank');
         }
 
+        // --- LÓGICA ANTIGA DO ENCOMENDAR (Mantida para Cesta Econômica) ---
         function encomendar(produto) { 
             window.open(`https://wa.me/${TELEFONE}?text=Olá, quero encomendar a ${produto}`, '_blank'); 
+        }
+
+        // --- NOVA LÓGICA DO MODAL DE VARIAÇÃO ---
+        let dadosCestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '' };
+        let opcaoEscolhida = ''; // 'alvino' ou 'koblenz'
+
+        function abrirModalVariacao(nome, pAlvino, pKoblenz) {
+            dadosCestaAtual = { nome, precoAlvino: pAlvino, precoKoblenz: pKoblenz };
+            opcaoEscolhida = ''; // Reseta escolha
+            
+            // Popula o modal
+            document.getElementById('tituloCestaModal').innerText = nome;
+            document.getElementById('precoAlvinoDisplay').innerText = 'R$ ' + pAlvino;
+            document.getElementById('precoKoblenzDisplay').innerText = 'R$ ' + pKoblenz;
+            
+            // Reseta estilos
+            document.getElementById('optAlvino').classList.remove('selected');
+            document.getElementById('optKoblenz').classList.remove('selected');
+            document.getElementById('btnConfirmarPedido').disabled = true;
+
+            document.getElementById('modalVariacao').style.display = 'flex';
+        }
+
+        function selecionarOpcao(tipo) {
+            opcaoEscolhida = tipo;
+            
+            // Atualiza visual
+            document.getElementById('optAlvino').classList.remove('selected');
+            document.getElementById('optKoblenz').classList.remove('selected');
+            
+            if(tipo === 'alvino') {
+                document.getElementById('optAlvino').classList.add('selected');
+            } else {
+                document.getElementById('optKoblenz').classList.add('selected');
+            }
+            
+            // Habilita botão
+            document.getElementById('btnConfirmarPedido').disabled = false;
+        }
+
+        function confirmarEncomenda() {
+            if(!opcaoEscolhida) return;
+
+            let marca = opcaoEscolhida === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
+            let preco = opcaoEscolhida === 'alvino' ? dadosCestaAtual.precoAlvino : dadosCestaAtual.precoKoblenz;
+            let nomeCesta = dadosCestaAtual.nome;
+
+            let textoZap = `Olá, quero encomendar a *${nomeCesta}* com *${marca}* (Valor: R$ ${preco}).`;
+            
+            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(textoZap)}`, '_blank');
+            fecharModalVariacao();
+        }
+
+        function fecharModalVariacao() {
+            document.getElementById('modalVariacao').style.display = 'none';
         }
 
         function compartilhar(produto) {
