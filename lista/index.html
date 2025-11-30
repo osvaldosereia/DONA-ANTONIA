@@ -29,6 +29,13 @@
             <div>
                 <h1 class="text-2xl font-bold">Gerenciador de Clientes</h1>
                 <p class="text-blue-100 text-sm">Clique nos títulos da tabela para ordenar a lista.</p>
+                
+                <!-- NOVO: Área do Contador -->
+                <div class="mt-2 bg-blue-700 bg-opacity-50 inline-block px-3 py-1 rounded-lg">
+                    <p id="info-contagem" class="text-sm font-semibold text-white">
+                        Carregando contagem...
+                    </p>
+                </div>
             </div>
             <i data-lucide="users" class="w-8 h-8"></i>
         </div>
@@ -102,6 +109,17 @@
                 alert("Erro: O arquivo 'clientes.js' não foi encontrado ou não carregou corretamente. Verifique se ele está na mesma pasta que este arquivo.");
                 return;
             }
+
+            // --- NOVO: ATUALIZAÇÃO DOS CONTADORES ---
+            const totalCadastros = clientes.length;
+            // Conta quantos têm a propriedade selecionado = true
+            const totalSelecionados = clientes.filter(c => c.selecionado).length;
+            
+            const elementoContador = document.getElementById('info-contagem');
+            if (elementoContador) {
+                elementoContador.innerHTML = `Total: <strong>${totalCadastros}</strong> | Selecionados: <strong>${totalSelecionados}</strong>`;
+            }
+            // ----------------------------------------
 
             const tbody = document.getElementById('tabela-clientes');
             tbody.innerHTML = ''; // Limpa a tabela antes de renderizar
@@ -248,11 +266,6 @@
                 alert("Por favor, selecione pelo menos um cliente para participar.");
                 return;
             }
-
-            // Ordena alfabeticamente para o arquivo (opcional, já que a tabela pode estar ordenada de outro jeito)
-            // Vou manter a ordem visual da tabela (como o usuário ordenou) para o arquivo também?
-            // Se quiser forçar ordem alfabética no TXT, descomente a linha abaixo:
-            // selecionados.sort((a, b) => a.nome.toLowerCase().localeCompare(b.nome.toLowerCase()));
 
             let conteudoTexto = "";
             // Cabeçalho opcional no arquivo
