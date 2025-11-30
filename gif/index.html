@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Criador de Figurinhas Personalizadas</title>
+    <title>Criador de Figurinhas Preciso</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
     <style>
@@ -16,7 +16,11 @@
             background-color: white;
         }
         canvas {
-            image-rendering: high-quality; /* Melhor qualidade ao redimensionar */
+            image-rendering: high-quality;
+        }
+        .anim-border:focus-within {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.2);
         }
     </style>
 </head>
@@ -25,11 +29,60 @@
     <div class="max-w-7xl mx-auto">
         <header class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-slate-800 mb-2">Fábrica de Figurinhas</h1>
-            <p class="text-slate-600">Com margem de segurança e animações centralizadas!</p>
+            <p class="text-slate-600">Recorte de precisão: Preserva o fundo cinza da figurinha!</p>
         </header>
 
-        <div class="bg-white p-8 rounded-xl shadow-lg mb-10 text-center max-w-2xl mx-auto border border-slate-200">
-            <label class="block mb-4 font-bold text-lg text-slate-700">1. Escolha sua imagem (3x3)</label>
+        <!-- SEÇÃO 1: GERADOR DE PROMPT -->
+        <div class="bg-white p-8 rounded-xl shadow-lg mb-8 border border-slate-200 anim-border">
+            <div class="flex items-center mb-4">
+                <span class="bg-indigo-600 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-3">1</span>
+                <h2 class="text-xl font-bold text-slate-800">Gerador de Prompt para IA</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Tema da Figurinha</label>
+                    <input type="text" id="promptTheme" placeholder="Ex: Gatos Astronautas, Oferta Relâmpago" 
+                        class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 transition" />
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Estilo Visual</label>
+                    <select id="promptStyle" class="w-full p-3 border border-slate-300 rounded-lg focus:outline-none focus:border-indigo-500 transition bg-white">
+                        <option value="modern die-cut sticker designs">Padrão (Moderno)</option>
+                        <option value="3D Pixar-style cartoon sticker designs">Cartoon 3D (Estilo Pixar)</option>
+                        <option value="cute Kawaii sticker designs">Kawaii (Fofo Japonês)</option>
+                        <option value="modern flat vector sticker designs">Flat Design (Vetorial)</option>
+                        <option value="8-bit pixel art sticker designs">Pixel Art (Retrô Game)</option>
+                        <option value="vibrant Pop Art sticker designs">Pop Art (Quadrinhos)</option>
+                        <option value="glowing neon Cyberpunk sticker designs">Cyberpunk (Neon)</option>
+                        <option value="hand-drawn doodle sticker designs">Doodle (Feito à Mão)</option>
+                        <option value="vintage badge and label sticker designs">Vintage (Selo Antigo)</option>
+                        <option value="urban graffiti sticker designs">Graffiti (Arte de Rua)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="gerarPrompt()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-4 rounded-lg transition mb-4">
+                ✨ Gerar Prompt Mágico
+            </button>
+
+            <div class="relative">
+                <textarea id="promptOutput" readonly rows="6" 
+                    class="w-full p-4 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-600 font-mono resize-none focus:outline-none"
+                    placeholder="O prompt gerado aparecerá aqui..."></textarea>
+                <button onclick="copiarPrompt()" class="absolute top-2 right-2 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 text-xs font-bold py-1 px-3 rounded transition">
+                    Copiar
+                </button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO 2: UPLOAD -->
+        <div class="bg-white p-8 rounded-xl shadow-lg mb-10 text-center max-w-2xl mx-auto border border-slate-200 anim-border">
+            <div class="flex items-center justify-center mb-4">
+                <span class="bg-indigo-600 text-white font-bold rounded-full w-8 h-8 flex items-center justify-center mr-3">2</span>
+                <h2 class="text-xl font-bold text-slate-800">Escolha sua imagem (3x3)</h2>
+            </div>
+            
             <input type="file" id="uploadInput" accept="image/*" class="block w-full text-sm text-slate-500
               file:mr-4 file:py-3 file:px-6
               file:rounded-full file:border-0
@@ -38,7 +91,7 @@
               hover:file:bg-indigo-200
               cursor-pointer
             "/>
-            <p class="text-xs text-gray-400 mt-2">O sistema centralizará a figurinha automaticamente.</p>
+            <p class="text-xs text-gray-400 mt-2">O fundo branco será removido, mantendo o corpo cinza da figurinha.</p>
         </div>
 
         <div id="gridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
@@ -47,34 +100,72 @@
     </div>
 
     <script>
-        // --- CONFIGURAÇÕES ---
-        const TOLERANCIA_BRANCO = 220; 
-        const TAMANHO_FINAL = 200; // Tamanho do Canvas/GIF
-        const ESCALA_FIGURINHA = 0.65; // A figurinha ocupará 65% do espaço (muita margem)
+        // --- GERADOR DE PROMPT ---
+        function gerarPrompt() {
+            const theme = document.getElementById('promptTheme').value || "[SEU TEMA AQUI]";
+            const style = document.getElementById('promptStyle').value;
+
+            const promptText = `A square image displaying a collection of 9 distinct, ${style} arranged neatly in a precise 3x3 grid. The stickers feature vibrant text and catchy icons specifically related to **${theme}**.
+
+Crucial details for the finish:
+1.  **Background:** The entire global background is pure, solid white.
+2.  **Grid:** Simple layout, ensure stickers are centered in their grid cells.
+3.  **Sticker Background:** The die-cut shape of the sticker itself must be filled with a **light grey color**, distinct from the global white background.
+4.  **Flat Appearance:** No shadows or depth effects outside the sticker shape. The white background should be clean for easy extraction.`;
+
+            document.getElementById('promptOutput').value = promptText;
+        }
+
+        function copiarPrompt() {
+            const textArea = document.getElementById('promptOutput');
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // Para mobile
+
+            try {
+                // Tenta o método robusto compatível
+                const successful = document.execCommand('copy');
+                const msg = successful ? 'Copiado!' : 'Erro ao copiar';
+                alert(msg);
+            } catch (err) {
+                alert('Erro ao copiar, tente manualmente.');
+            }
+        }
+
+        // --- CONFIGURAÇÕES CALIBRADAS ---
+        // Ajustado para 245: Isso garante que apenas o branco quase puro seja removido.
+        // O cinza claro (ex: RGB 220, 220, 220) será PRESERVADO.
+        const TOLERANCIA_BRANCO = 245; 
+        
+        const TAMANHO_FINAL = 180; 
+        const ESCALA_FIGURINHA = 0.65;
+        const MARGEM_CORTE_LINHAS = 0.04; 
 
         function pseudoRandom(seed) {
             var x = Math.sin(seed++) * 10000;
             return x - Math.floor(x);
         }
 
-        // --- BIBLIOTECA DE ANIMAÇÕES AJUSTADA (Explosões contidas) ---
+        // --- BIBLIOTECA DE 30 ANIMAÇÕES ---
         const ANIMATIONS = {
             'none': { type: 'Básico', name: 'Sem Animação', render: (ctx, w, h, t) => {} },
             
-            // --- MOVIMENTO ---
-            'pulse': { type: 'Movimento', name: 'Pulso (Cresce/Diminui)', render: (ctx, w, h, t) => {
-                const scale = 1 + Math.sin(t * 6) * 0.10; // Reduzi um pouco para não estourar a margem
+            // --- 1. MOVIMENTO (10 VARIAÇÕES) ---
+            'bounce': { type: 'Movimento', name: 'Pulo (Bounce)', render: (ctx, w, h, t) => {
+                const dy = Math.abs(Math.sin(t * 8)) * -20;
+                const squeeze = Math.abs(Math.sin(t * 8)) * 0.1;
+                ctx.translate(w/2, h + dy + 10);
+                ctx.scale(1 + squeeze, 1 - squeeze);
+                ctx.translate(-w/2, -h);
+            }},
+            'pulse': { type: 'Movimento', name: 'Pulsação (Pulse)', render: (ctx, w, h, t) => {
+                const scale = 1 + Math.sin(t * 6) * 0.10;
                 ctx.translate(w/2, h/2);
                 ctx.scale(scale, scale);
                 ctx.translate(-w/2, -h/2);
             }},
-            'bounce': { type: 'Movimento', name: 'Pulo', render: (ctx, w, h, t) => {
-                // Com a margem, podemos pular sem medo
-                const dy = Math.abs(Math.sin(t * 8)) * -20;
-                const squeeze = Math.abs(Math.sin(t * 8)) * 0.1;
-                ctx.translate(w/2, h + dy + 10); // +10 para centralizar melhor o pulo
-                ctx.scale(1 + squeeze, 1 - squeeze);
-                ctx.translate(-w/2, -h);
+            'shake': { type: 'Movimento', name: 'Tremor (Shake)', render: (ctx, w, h, t) => {
+                const dx = Math.sin(t * 20) * 5;
+                ctx.translate(dx, 0);
             }},
             'pendulum': { type: 'Movimento', name: 'Pêndulo', render: (ctx, w, h, t) => {
                 const angle = Math.sin(t * 4) * 0.3;
@@ -82,11 +173,39 @@
                 ctx.rotate(angle);
                 ctx.translate(-w/2, 0);
             }},
+            'spin': { type: 'Movimento', name: 'Giro 360º', render: (ctx, w, h, t) => {
+                ctx.translate(w/2, h/2);
+                ctx.rotate(t * 6);
+                ctx.translate(-w/2, -h/2);
+            }},
+            'wobble': { type: 'Movimento', name: 'Gelatina (Wobble)', render: (ctx, w, h, t) => {
+                const skewX = Math.sin(t * 5) * 0.2;
+                ctx.translate(w/2, h/2);
+                ctx.transform(1, 0, skewX, 1, 0, 0);
+                ctx.translate(-w/2, -h/2);
+            }},
+            'tada': { type: 'Movimento', name: 'Ta-da! (Atenção)', render: (ctx, w, h, t) => {
+                const scale = 1 + Math.sin(t * 10) * 0.1;
+                const rotate = Math.sin(t * 15) * 0.1;
+                ctx.translate(w/2, h/2);
+                ctx.scale(scale, scale);
+                ctx.rotate(rotate);
+                ctx.translate(-w/2, -h/2);
+            }},
+            'float': { type: 'Movimento', name: 'Flutuar', render: (ctx, w, h, t) => {
+                const dy = Math.sin(t * 3) * 10;
+                ctx.translate(0, dy);
+            }},
+            'panic': { type: 'Movimento', name: 'Pânico (Rápido)', render: (ctx, w, h, t) => {
+                const dx = (Math.random() - 0.5) * 10;
+                const dy = (Math.random() - 0.5) * 10;
+                ctx.translate(dx, dy);
+            }},
             'blink_move': { type: 'Movimento', name: 'Piscando', render: (ctx, w, h, t) => {
                  ctx.globalAlpha = 0.5 + Math.sin(t * 15) * 0.5;
             }},
 
-            // --- CORES ---
+            // --- 2. CORES E EFEITOS (10 VARIAÇÕES) ---
             'disco': { type: 'Cores', name: 'Discoteca', render: (ctx, w, h, t) => {
                 const colors = ['red', 'blue', 'green', 'magenta', 'cyan'];
                 const colorIndex = Math.floor(t * 8) % colors.length;
@@ -97,35 +216,59 @@
                 const angle = (t * 100) % 360;
                 ctx.filter = `hue-rotate(${angle}deg)`;
             }},
-            'retro_var': { type: 'Cores', name: 'Variando Retrô', render: (ctx, w, h, t) => {
+            'retro_var': { type: 'Cores', name: 'Flash Retrô', render: (ctx, w, h, t) => {
                  const amount = 50 + Math.sin(t * 4) * 50; 
                  ctx.filter = `sepia(${amount}%)`;
             }},
-            'bw_var': { type: 'Cores', name: 'Variando PB', render: (ctx, w, h, t) => {
-                 const amount = 50 + Math.sin(t * 3) * 50;
-                 ctx.filter = `grayscale(${amount}%)`;
+            'bw_strobe': { type: 'Cores', name: 'Estrobo P&B', render: (ctx, w, h, t) => {
+                 const gray = Math.sin(t * 10) > 0 ? 100 : 0;
+                 ctx.filter = `grayscale(${gray}%) contrast(1.2)`;
+            }},
+            'invert': { type: 'Cores', name: 'Negativo (X-Ray)', render: (ctx, w, h, t) => {
+                 const amount = Math.abs(Math.sin(t * 3)) * 100;
+                 ctx.filter = `invert(${amount}%)`;
+            }},
+            'glitch': { type: 'Cores', name: 'Glitch / Falha', render: (ctx, w, h, t) => {
+                if (Math.random() > 0.85) {
+                    const shiftX = (Math.random() - 0.5) * 10;
+                    ctx.translate(shiftX, 0);
+                    ctx.filter = `hue-rotate(${Math.random()*90}deg)`;
+                }
+            }},
+            'ghost': { type: 'Cores', name: 'Fantasma', render: (ctx, w, h, t) => {
+                const alpha = 0.5 + Math.sin(t * 3) * 0.4;
+                ctx.globalAlpha = alpha;
+                const dy = Math.sin(t * 2) * 5;
+                ctx.translate(0, dy);
+                ctx.filter = 'grayscale(100%) brightness(1.2)';
+            }},
+            'gold': { type: 'Cores', name: 'Ouro / Épico', render: (ctx, w, h, t) => {
+                const shine = Math.abs(Math.sin(t * 3)) * 50;
+                ctx.filter = `sepia(100%) saturate(200%) brightness(${100 + shine}%)`;
+            }},
+            'cyber': { type: 'Cores', name: 'Cyberpunk', render: (ctx, w, h, t) => {
+                const hue = Math.sin(t) > 0 ? 180 : 300; // Alterna ciano e magenta
+                ctx.filter = `hue-rotate(${hue}deg) contrast(150%) saturate(150%)`;
+            }},
+            'fade': { type: 'Cores', name: 'Desaparecer', render: (ctx, w, h, t) => {
+                ctx.globalAlpha = (Math.sin(t * 5) + 1) / 2;
             }},
 
-            // --- EXPLOSÃO / FUNDO (Contidas na borda) ---
+            // --- 3. EXPLOSÃO / FUNDO (10 VARIAÇÕES) ---
             'fireworks': { type: 'Explosão', name: 'Fogos de Artifício', render: (ctx, w, h, t) => {
                 const numParticles = 20;
                 const loops = [0, 1.0];
-                
                 loops.forEach((offset, idx) => {
                     const localT = t + offset;
                     const progress = (localT % 1.5) / 1.5;
                     if(progress > 1) return;
-
-                    // RAIO LIMITADO: max 45% da largura (não toca a borda 50%)
                     const maxRadius = (w * 0.45); 
                     const r = progress * maxRadius;
                     const alpha = 1 - progress; 
-                    
                     ctx.save();
                     const centerX = w/2 + (idx === 0 ? -10 : 10);
                     const centerY = h/2 + (idx === 0 ? -10 : 5);
                     ctx.translate(centerX, centerY);
-                    
                     for(let i=0; i<numParticles; i++) {
                         const angle = (Math.PI * 2 * i) / numParticles;
                         ctx.fillStyle = `hsla(${i * 40}, 100%, 50%, ${alpha})`;
@@ -138,52 +281,40 @@
                     ctx.restore();
                 });
             }},
-            'toon_rays': { type: 'Explosão', name: 'Raios Cartoon', render: (ctx, w, h, t) => {
+            'toon_rays': { type: 'Explosão', name: 'Raios de Sol (Toon)', render: (ctx, w, h, t) => {
                 ctx.save();
                 ctx.translate(w/2, h/2);
                 ctx.rotate(t * 0.5); 
-                
                 const alpha = 0.6 + Math.sin(t * 5) * 0.2;
                 ctx.fillStyle = `rgba(255, 200, 0, ${alpha})`;
-                
-                // COMPRIMENTO LIMITADO: 45% do width
                 const rayLength = w * 0.48; 
-                
                 const numRays = 12;
                 for(let i=0; i<numRays; i++) {
                     ctx.rotate((Math.PI * 2) / numRays);
                     ctx.beginPath();
                     ctx.moveTo(0,0);
-                    ctx.lineTo(rayLength, -10); // Mais fino na ponta
+                    ctx.lineTo(rayLength, -10);
                     ctx.lineTo(rayLength, 10);
                     ctx.fill();
                 }
                 ctx.restore();
             }},
-            'flowers': { type: 'Explosão', name: 'Flores Saindo', render: (ctx, w, h, t) => {
-                for(let i=0; i<8; i++) { // Menos flores para não poluir
-                    const speed = 30; // Mais lento
-                    // Posição X restrita ao centro (20% a 80%)
+            'flowers': { type: 'Explosão', name: 'Flores (Primavera)', render: (ctx, w, h, t) => {
+                for(let i=0; i<6; i++) { 
+                    const speed = 25; 
                     const x = (w * 0.2) + (pseudoRandom(i) * (w * 0.6));
-                    
-                    // Y sobe mas desaparece antes do topo
                     const progress = (t * speed + pseudoRandom(i+50) * h) % h;
                     const y = h - progress;
-                    
-                    // Alpha fade out nas bordas superior e inferior
                     let alpha = 1;
-                    if(y < h * 0.2) alpha = y / (h * 0.2); // Fade top
-                    if(y > h * 0.8) alpha = (h - y) / (h * 0.2); // Fade bottom
-
+                    if(y < h * 0.2) alpha = y / (h * 0.2);
+                    if(y > h * 0.8) alpha = (h - y) / (h * 0.2);
                     const scale = 0.3 + pseudoRandom(i+20) * 0.3;
                     const rotation = t * 2 + i;
-
                     ctx.save();
                     ctx.globalAlpha = alpha;
                     ctx.translate(x, y);
                     ctx.scale(scale, scale);
                     ctx.rotate(rotation);
-
                     ctx.fillStyle = i % 2 == 0 ? '#ff69b4' : '#ff4500';
                     for (let j = 0; j < 5; j++) {
                         ctx.beginPath();
@@ -195,44 +326,137 @@
                     ctx.beginPath();
                     ctx.arc(0, 0, 8, 0, Math.PI * 2);
                     ctx.fill();
-
                     ctx.restore();
                 }
             }},
-            'bg_lights': { type: 'Explosão', name: 'Luzes Piscando', render: (ctx, w, h, t) => {
+            'bg_lights': { type: 'Explosão', name: 'Luzes de Natal', render: (ctx, w, h, t) => {
                 const gridSize = 4;
                 const stepX = w / gridSize;
                 const stepY = h / gridSize;
-
-                // Margem interna para as luzes (começa em 10, termina em w-10)
                 const margin = 15;
-
                 for(let x=0; x<gridSize; x++) {
                     for(let y=0; y<gridSize; y++) {
                         const seed = x * gridSize + y;
                         const blinkSpeed = 5 + pseudoRandom(seed) * 10;
                         const alpha = 0.5 + 0.5 * Math.sin(t * blinkSpeed);
-                        
-                        // Calcula posição centralizada no grid
                         let posX = stepX * x + stepX/2;
                         let posY = stepY * y + stepY/2;
-                        
-                        // "Empurra" luzes da borda para dentro
                         if(posX < margin) posX = margin;
                         if(posX > w - margin) posX = w - margin;
                         if(posY < margin) posY = margin;
                         if(posY > h - margin) posY = h - margin;
-                        
                         const colors = ['#f00', '#0f0', '#00f', '#ff0'];
                         ctx.fillStyle = colors[Math.floor(pseudoRandom(seed)*colors.length)];
-                        
                         ctx.globalAlpha = alpha;
                         ctx.beginPath();
-                        ctx.arc(posX, posY, 8, 0, Math.PI*2); // Bolinhas menores
+                        ctx.arc(posX, posY, 6, 0, Math.PI*2);
                         ctx.fill();
                     }
                 }
                 ctx.globalAlpha = 1.0;
+            }},
+            'hearts': { type: 'Explosão', name: 'Corações (Love)', render: (ctx, w, h, t) => {
+                for(let i=0; i<8; i++) {
+                    const speed = 40;
+                    const x = (w * 0.2) + (pseudoRandom(i*2) * (w * 0.6));
+                    const y = h - ((t * speed + pseudoRandom(i+10) * h) % h);
+                    const scale = 0.4 + pseudoRandom(i) * 0.3;
+                    const sway = Math.sin(t * 3 + i) * 5;
+                    
+                    let alpha = 1;
+                    if(y < h * 0.2) alpha = y / (h * 0.2);
+
+                    ctx.fillStyle = `rgba(255, 50, 80, ${alpha})`;
+                    ctx.save();
+                    ctx.translate(x + sway, y);
+                    ctx.scale(scale, scale);
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    ctx.bezierCurveTo(-5, -5, -10, 0, 0, 10);
+                    ctx.bezierCurveTo(10, 0, 5, -5, 0, 0);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }},
+            'money': { type: 'Explosão', name: 'Chuva de Dinheiro', render: (ctx, w, h, t) => {
+                for(let i=0; i<8; i++) {
+                    const speed = 50;
+                    const x = (w * 0.1) + (pseudoRandom(i*5) * (w * 0.8));
+                    const y = (t * speed + pseudoRandom(i+30) * h) % h; // Cai (topo p/ baixo)
+                    
+                    ctx.fillStyle = '#16a34a'; // Verde Dinheiro
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(Math.sin(t*5+i));
+                    // Desenha nota
+                    ctx.fillRect(-8, -4, 16, 8);
+                    ctx.fillStyle = '#bbf7d0';
+                    ctx.beginPath();
+                    ctx.arc(0,0, 2, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }},
+            'confetti': { type: 'Explosão', name: 'Confetes (Festa)', render: (ctx, w, h, t) => {
+                const colors = ['#f00', '#0f0', '#00f', '#ff0', '#0ff'];
+                for(let i=0; i<25; i++) {
+                    const speed = 80;
+                    const x = (pseudoRandom(i) * w);
+                    const y = (t * speed + pseudoRandom(i+100) * h) % h;
+                    
+                    ctx.fillStyle = colors[i % colors.length];
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(t * 10 + i);
+                    ctx.fillRect(-2, -2, 4, 4);
+                    ctx.restore();
+                }
+            }},
+            'lightning': { type: 'Explosão', name: 'Raios / Trovão', render: (ctx, w, h, t) => {
+                if(Math.random() > 0.92) {
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                    ctx.fillRect(0,0,w,h);
+                }
+                if(Math.random() > 0.95) {
+                    ctx.strokeStyle = "#fbbf24";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(w/2, 0);
+                    let cx = w/2;
+                    let cy = 0;
+                    while(cy < h) {
+                        cy += Math.random() * 15;
+                        cx += (Math.random() - 0.5) * 20;
+                        ctx.lineTo(cx, cy);
+                    }
+                    ctx.stroke();
+                }
+            }},
+            'rain': { type: 'Explosão', name: 'Chuva (Sad)', render: (ctx, w, h, t) => {
+                ctx.strokeStyle = "rgba(100, 149, 237, 0.6)";
+                ctx.lineWidth = 1;
+                for(let i=0; i<30; i++) {
+                    const speed = 200;
+                    const x = (pseudoRandom(i) * w);
+                    const y = (t * speed + pseudoRandom(i+20) * h) % h;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.lineTo(x, y + 10);
+                    ctx.stroke();
+                }
+            }},
+            'fire': { type: 'Explosão', name: 'Fogo', render: (ctx, w, h, t) => {
+                for(let i=0; i<20; i++) {
+                    const x = (w * 0.3) + (pseudoRandom(i) * (w * 0.4));
+                    const progress = (t * (2 + pseudoRandom(i)) + pseudoRandom(i*2)) % 1; 
+                    const y = h - (progress * h * 0.5);
+                    const size = (1 - progress) * 10;
+
+                    ctx.fillStyle = `rgba(255, ${Math.floor(progress * 200)}, 0, ${1-progress})`;
+                    ctx.beginPath();
+                    ctx.arc(x, y, size, 0, Math.PI*2);
+                    ctx.fill();
+                }
             }}
         };
 
@@ -316,37 +540,45 @@
         function createStickerCard(sourceImg, x, y, w, h) {
             const id = `sticker-${y*3+x}`;
             
-            // 1. EXTRAÇÃO E LIMPEZA NA RESOLUÇÃO ORIGINAL DA CÉLULA
-            // Isso garante qualidade máxima antes de reduzir
+            // 1. EXTRAÇÃO COM CROP PARA ELIMINAR LINHAS
+            // Calculamos uma margem (padding) para ignorar as bordas onde ficam as linhas
+            const cropMarginW = Math.floor(w * MARGEM_CORTE_LINHAS);
+            const cropMarginH = Math.floor(h * MARGEM_CORTE_LINHAS);
+            
+            // Largura e altura efetivas (sem as bordas)
+            const effectiveW = w - (cropMarginW * 2);
+            const effectiveH = h - (cropMarginH * 2);
+
             const cellCanvas = document.createElement('canvas');
-            cellCanvas.width = w;
-            cellCanvas.height = h;
+            // Mantemos o canvas do tamanho do corte para processar a limpeza
+            cellCanvas.width = effectiveW;
+            cellCanvas.height = effectiveH;
             const cellCtx = cellCanvas.getContext('2d', {willReadFrequently: true});
             
-            // Desenha a fatia original
-            cellCtx.drawImage(sourceImg, x*w, y*h, w, h, 0, 0, w, h);
+            // Desenha apenas o "miolo" da célula, ignorando as bordas
+            cellCtx.drawImage(sourceImg, 
+                x*w + cropMarginW, y*h + cropMarginH, // Source X, Y (com deslocamento)
+                effectiveW, effectiveH,               // Source W, H
+                0, 0, effectiveW, effectiveH          // Dest X, Y, W, H
+            );
             
-            // Remove o fundo da fatia original
-            removeBackgroundFloodFill(cellCtx, w, h);
+            // Remove o fundo (agora sem linhas de grade atrapalhando)
+            removeBackgroundFloodFill(cellCtx, effectiveW, effectiveH);
 
-            // 2. CRIAÇÃO DO CANVAS FINAL COM "RESPIRO" (PADDING)
+            // 2. CRIAÇÃO DO CANVAS FINAL
             const tempCanvas = document.createElement('canvas');
             tempCanvas.width = TAMANHO_FINAL;
             tempCanvas.height = TAMANHO_FINAL;
             const tCtx = tempCanvas.getContext('2d');
             
-            // Calcula dimensões centralizadas
-            // Ex: Se TAMANHO_FINAL é 200 e ESCALA é 0.65, a imagem terá 130px
-            // Sobram 70px (35px de margem cada lado)
+            // Redimensiona para o tamanho final (180px) centralizado
             const drawW = TAMANHO_FINAL * ESCALA_FIGURINHA;
             const drawH = TAMANHO_FINAL * ESCALA_FIGURINHA;
             const drawX = (TAMANHO_FINAL - drawW) / 2;
             const drawY = (TAMANHO_FINAL - drawH) / 2;
 
-            // Desenha a imagem limpa redimensionada no centro
-            tCtx.drawImage(cellCanvas, 0, 0, w, h, drawX, drawY, drawW, drawH);
+            tCtx.drawImage(cellCanvas, 0, 0, effectiveW, effectiveH, drawX, drawY, drawW, drawH);
 
-            // Esta é a imagem "limpa e centralizada" usada para as animações
             const cleanImg = new Image();
             cleanImg.src = tempCanvas.toDataURL();
 
@@ -379,9 +611,9 @@
                 'Básico': document.createElement('optgroup')
             };
             groups['Básico'].label = "--- Básico ---";
-            groups['Movimento'].label = "--- Movimento ---";
-            groups['Cores'].label = "--- Cores ---";
-            groups['Explosão'].label = "--- Fundo/Explosão ---";
+            groups['Movimento'].label = "--- Movimento (10) ---";
+            groups['Cores'].label = "--- Cores (10) ---";
+            groups['Explosão'].label = "--- Fundo/Explosão (10) ---";
 
             Object.keys(ANIMATIONS).forEach(key => {
                 const anim = ANIMATIONS[key];
@@ -445,13 +677,13 @@
             if(!sticker) return;
 
             const originalText = btn.innerHTML;
-            btn.innerText = "Processando...";
+            btn.innerText = "Compactando..."; // Feedback de otimização
             btn.disabled = true;
             btn.className = "w-full bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-wait";
 
             const gif = new GIF({
                 workers: 2,
-                quality: 10,
+                quality: 20, // Qualidade 20 é mais leve para processar e suficiente para stickers
                 width: TAMANHO_FINAL,
                 height: TAMANHO_FINAL,
                 workerScript: workerUrl,
@@ -464,9 +696,9 @@
             const ctx = canvas.getContext('2d');
 
             const anim = ANIMATIONS[sticker.currentAnim];
-            const FPS = 15;
+            const FPS = 12; // Reduzido de 15 para 12 (Economia de dados)
             const DURATION = 2; 
-            const FRAMES = FPS * DURATION;
+            const FRAMES = FPS * DURATION; // Total 24 frames (antes era 30)
 
             for (let i = 0; i < FRAMES; i++) {
                 const time = i / FPS;
@@ -484,7 +716,7 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `figurinha_${sticker.currentAnim}.gif`;
+                a.download = `figurinha_otimizada_${sticker.currentAnim}.gif`;
                 document.body.appendChild(a);
                 a.click();
                 
