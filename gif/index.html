@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criador de Figurinhas Personalizadas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
+    <style>
+        .fundo-transparente {
+            background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), 
+                              linear-gradient(-45deg, #ccc 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #ccc 75%), 
+                              linear-gradient(-45deg, transparent 75%, #ccc 75%);
+            background-size: 20px 20px;
+            background-color: white;
+        }
+        canvas {
+            image-rendering: high-quality; /* Melhor qualidade ao redimensionar */
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen p-8 font-sans">
+
+    <div class="max-w-7xl mx-auto">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-slate-800 mb-2">Fábrica de Figurinhas</h1>
+            <p class="text-slate-600">Com margem de segurança e animações centralizadas!</p>
+        </header>
+
+        <div class="bg-white p-8 rounded-xl shadow-lg mb-10 text-center max-w-2xl mx-auto border border-slate-200">
+            <label class="block mb-4 font-bold text-lg text-slate-700">1. Escolha sua imagem (3x3)</label>
+            <input type="file" id="uploadInput" accept="image/*" class="block w-full text-sm text-slate-500
+              file:mr-4 file:py-3 file:px-6
+              file:rounded-full file:border-0
+              file:text-sm file:font-bold
+              file:bg-indigo-100 file:text-indigo-700
+              hover:file:bg-indigo-200
+              cursor-pointer
+            "/>
+            <p class="text-xs text-gray-400 mt-2">O sistema centralizará a figurinha automaticamente.</p>
+        </div>
+
+        <div id="gridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 hidden">
+            <!-- Cards gerados via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURAÇÕES ---
+        const TOLERANCIA_BRANCO = 220; 
+        const TAMANHO_FINAL = 200; // Tamanho do Canvas/GIF
+        const ESCALA_FIGURINHA = 0.65; // A figurinha ocupará 65% do espaço (muita margem)
+
+        function pseudoRandom(seed) {
+            var x = Math.sin(seed++) * 10000;
+            return x - Math.floor(x);
+        }
+
+        // --- BIBLIOTECA DE ANIMAÇÕES AJUSTADA (Explosões contidas) ---
+        const ANIMATIONS = {
+            'none': { type: 'Básico', name: 'Sem Animação', render: (ctx, w, h, t) => {} },
+            
+            // --- MOVIMENTO ---
+            'pulse': { type: 'Movimento', name: 'Pulso (Cresce/Diminui)', render: (ctx, w, h, t) => {
+                const scale = 1 + Math.sin(t * 6) * 0.10; // Reduzi um pouco para não estourar a margem
+                ctx.translate(w/2, h/2);
+                ctx.scale(scale, scale);
+                ctx.translate(-w/2, -h/2);
+            }},
+            'bounce': { type: 'Movimento', name: 'Pulo', render: (ctx, w, h, t) => {
+                // Com a margem, podemos pular sem medo
+                const dy = Math.abs(Math.sin(t * 8)) * -20;
+                const squeeze = Math.abs(Math.sin(t * 8)) * 0.1;
+                ctx.translate(w/2, h + dy + 10); // +10 para centralizar melhor o pulo
+                ctx.scale(1 + squeeze, 1 - squeeze);
+                ctx.translate(-w/2, -h);
+            }},
+            'pendulum': { type: 'Movimento', name: 'Pêndulo', render: (ctx, w, h, t) => {
+                const angle = Math.sin(t * 4) * 0.3;
+                ctx.translate(w/2, 0); 
+                ctx.rotate(angle);
+                ctx.translate(-w/2, 0);
+            }},
+            'blink_move': { type: 'Movimento', name: 'Piscando', render: (ctx, w, h, t) => {
+                 ctx.globalAlpha = 0.5 + Math.sin(t * 15) * 0.5;
+            }},
+
+            // --- CORES ---
+            'disco': { type: 'Cores', name: 'Discoteca', render: (ctx, w, h, t) => {
+                const colors = ['red', 'blue', 'green', 'magenta', 'cyan'];
+                const colorIndex = Math.floor(t * 8) % colors.length;
+                const angle = colorIndex * 70; 
+                ctx.filter = `hue-rotate(${angle}deg) contrast(1.2)`;
+            }},
+            'hue': { type: 'Cores', name: 'Psicodélico Suave', render: (ctx, w, h, t) => {
+                const angle = (t * 100) % 360;
+                ctx.filter = `hue-rotate(${angle}deg)`;
+            }},
+            'retro_var': { type: 'Cores', name: 'Variando Retrô', render: (ctx, w, h, t) => {
+                 const amount = 50 + Math.sin(t * 4) * 50; 
+                 ctx.filter = `sepia(${amount}%)`;
+            }},
+            'bw_var': { type: 'Cores', name: 'Variando PB', render: (ctx, w, h, t) => {
+                 const amount = 50 + Math.sin(t * 3) * 50;
+                 ctx.filter = `grayscale(${amount}%)`;
+            }},
+
+            // --- EXPLOSÃO / FUNDO (Contidas na borda) ---
+            'fireworks': { type: 'Explosão', name: 'Fogos de Artifício', render: (ctx, w, h, t) => {
+                const numParticles = 20;
+                const loops = [0, 1.0];
+                
+                loops.forEach((offset, idx) => {
+                    const localT = t + offset;
+                    const progress = (localT % 1.5) / 1.5;
+                    if(progress > 1) return;
+
+                    // RAIO LIMITADO: max 45% da largura (não toca a borda 50%)
+                    const maxRadius = (w * 0.45); 
+                    const r = progress * maxRadius;
+                    const alpha = 1 - progress; 
+                    
+                    ctx.save();
+                    const centerX = w/2 + (idx === 0 ? -10 : 10);
+                    const centerY = h/2 + (idx === 0 ? -10 : 5);
+                    ctx.translate(centerX, centerY);
+                    
+                    for(let i=0; i<numParticles; i++) {
+                        const angle = (Math.PI * 2 * i) / numParticles;
+                        ctx.fillStyle = `hsla(${i * 40}, 100%, 50%, ${alpha})`;
+                        ctx.beginPath();
+                        const px = Math.cos(angle) * r;
+                        const py = Math.sin(angle) * r;
+                        ctx.arc(px, py, 3, 0, Math.PI*2);
+                        ctx.fill();
+                    }
+                    ctx.restore();
+                });
+            }},
+            'toon_rays': { type: 'Explosão', name: 'Raios Cartoon', render: (ctx, w, h, t) => {
+                ctx.save();
+                ctx.translate(w/2, h/2);
+                ctx.rotate(t * 0.5); 
+                
+                const alpha = 0.6 + Math.sin(t * 5) * 0.2;
+                ctx.fillStyle = `rgba(255, 200, 0, ${alpha})`;
+                
+                // COMPRIMENTO LIMITADO: 45% do width
+                const rayLength = w * 0.48; 
+                
+                const numRays = 12;
+                for(let i=0; i<numRays; i++) {
+                    ctx.rotate((Math.PI * 2) / numRays);
+                    ctx.beginPath();
+                    ctx.moveTo(0,0);
+                    ctx.lineTo(rayLength, -10); // Mais fino na ponta
+                    ctx.lineTo(rayLength, 10);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }},
+            'flowers': { type: 'Explosão', name: 'Flores Saindo', render: (ctx, w, h, t) => {
+                for(let i=0; i<8; i++) { // Menos flores para não poluir
+                    const speed = 30; // Mais lento
+                    // Posição X restrita ao centro (20% a 80%)
+                    const x = (w * 0.2) + (pseudoRandom(i) * (w * 0.6));
+                    
+                    // Y sobe mas desaparece antes do topo
+                    const progress = (t * speed + pseudoRandom(i+50) * h) % h;
+                    const y = h - progress;
+                    
+                    // Alpha fade out nas bordas superior e inferior
+                    let alpha = 1;
+                    if(y < h * 0.2) alpha = y / (h * 0.2); // Fade top
+                    if(y > h * 0.8) alpha = (h - y) / (h * 0.2); // Fade bottom
+
+                    const scale = 0.3 + pseudoRandom(i+20) * 0.3;
+                    const rotation = t * 2 + i;
+
+                    ctx.save();
+                    ctx.globalAlpha = alpha;
+                    ctx.translate(x, y);
+                    ctx.scale(scale, scale);
+                    ctx.rotate(rotation);
+
+                    ctx.fillStyle = i % 2 == 0 ? '#ff69b4' : '#ff4500';
+                    for (let j = 0; j < 5; j++) {
+                        ctx.beginPath();
+                        ctx.rotate((Math.PI * 2) / 5);
+                        ctx.arc(15, 0, 10, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.fillStyle = 'yellow';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.restore();
+                }
+            }},
+            'bg_lights': { type: 'Explosão', name: 'Luzes Piscando', render: (ctx, w, h, t) => {
+                const gridSize = 4;
+                const stepX = w / gridSize;
+                const stepY = h / gridSize;
+
+                // Margem interna para as luzes (começa em 10, termina em w-10)
+                const margin = 15;
+
+                for(let x=0; x<gridSize; x++) {
+                    for(let y=0; y<gridSize; y++) {
+                        const seed = x * gridSize + y;
+                        const blinkSpeed = 5 + pseudoRandom(seed) * 10;
+                        const alpha = 0.5 + 0.5 * Math.sin(t * blinkSpeed);
+                        
+                        // Calcula posição centralizada no grid
+                        let posX = stepX * x + stepX/2;
+                        let posY = stepY * y + stepY/2;
+                        
+                        // "Empurra" luzes da borda para dentro
+                        if(posX < margin) posX = margin;
+                        if(posX > w - margin) posX = w - margin;
+                        if(posY < margin) posY = margin;
+                        if(posY > h - margin) posY = h - margin;
+                        
+                        const colors = ['#f00', '#0f0', '#00f', '#ff0'];
+                        ctx.fillStyle = colors[Math.floor(pseudoRandom(seed)*colors.length)];
+                        
+                        ctx.globalAlpha = alpha;
+                        ctx.beginPath();
+                        ctx.arc(posX, posY, 8, 0, Math.PI*2); // Bolinhas menores
+                        ctx.fill();
+                    }
+                }
+                ctx.globalAlpha = 1.0;
+            }}
+        };
+
+        // --- LÓGICA DO APP ---
+        let stickers = [];
+        const uploadInput = document.getElementById('uploadInput');
+        const gridContainer = document.getElementById('gridContainer');
+
+        uploadInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = new Image();
+                img.onload = () => initStickers(img);
+                img.src = ev.target.result;
+            }
+            reader.readAsDataURL(file);
+        });
+
+        const workerBlob = new Blob(["importScripts('https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js');"], {type: 'application/javascript'});
+        const workerUrl = URL.createObjectURL(workerBlob);
+
+        function initStickers(img) {
+            gridContainer.innerHTML = '';
+            gridContainer.classList.remove('hidden');
+            stickers = [];
+
+            const w = Math.floor(img.width / 3);
+            const h = Math.floor(img.height / 3);
+
+            for(let y=0; y<3; y++) {
+                for(let x=0; x<3; x++) {
+                    createStickerCard(img, x, y, w, h);
+                }
+            }
+            requestAnimationFrame(animationLoop);
+        }
+
+        function removeBackgroundFloodFill(ctx, width, height) {
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+            const visited = new Uint8Array(width * height); 
+            const stack = []; 
+            const getIdx = (x, y) => (y * width + x) * 4;
+
+            function isWhite(idx) {
+                const r = data[idx];
+                const g = data[idx + 1];
+                const b = data[idx + 2];
+                return r > TOLERANCIA_BRANCO && g > TOLERANCIA_BRANCO && b > TOLERANCIA_BRANCO;
+            }
+
+            for (let x = 0; x < width; x++) {
+                stack.push({x: x, y: 0});
+                stack.push({x: x, y: height - 1});
+            }
+            for (let y = 0; y < height; y++) {
+                stack.push({x: 0, y: y});
+                stack.push({x: width - 1, y: y});
+            }
+
+            while (stack.length > 0) {
+                const {x, y} = stack.pop();
+                if (x < 0 || x >= width || y < 0 || y >= height) continue;
+                if (visited[y * width + x]) continue;
+
+                const idx = getIdx(x, y);
+                if (isWhite(idx)) {
+                    data[idx + 3] = 0;
+                    visited[y * width + x] = 1;
+                    stack.push({x: x + 1, y: y});
+                    stack.push({x: x - 1, y: y});
+                    stack.push({x: x, y: y + 1});
+                    stack.push({x: x, y: y - 1});
+                }
+            }
+            ctx.putImageData(imageData, 0, 0);
+        }
+
+        function createStickerCard(sourceImg, x, y, w, h) {
+            const id = `sticker-${y*3+x}`;
+            
+            // 1. EXTRAÇÃO E LIMPEZA NA RESOLUÇÃO ORIGINAL DA CÉLULA
+            // Isso garante qualidade máxima antes de reduzir
+            const cellCanvas = document.createElement('canvas');
+            cellCanvas.width = w;
+            cellCanvas.height = h;
+            const cellCtx = cellCanvas.getContext('2d', {willReadFrequently: true});
+            
+            // Desenha a fatia original
+            cellCtx.drawImage(sourceImg, x*w, y*h, w, h, 0, 0, w, h);
+            
+            // Remove o fundo da fatia original
+            removeBackgroundFloodFill(cellCtx, w, h);
+
+            // 2. CRIAÇÃO DO CANVAS FINAL COM "RESPIRO" (PADDING)
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = TAMANHO_FINAL;
+            tempCanvas.height = TAMANHO_FINAL;
+            const tCtx = tempCanvas.getContext('2d');
+            
+            // Calcula dimensões centralizadas
+            // Ex: Se TAMANHO_FINAL é 200 e ESCALA é 0.65, a imagem terá 130px
+            // Sobram 70px (35px de margem cada lado)
+            const drawW = TAMANHO_FINAL * ESCALA_FIGURINHA;
+            const drawH = TAMANHO_FINAL * ESCALA_FIGURINHA;
+            const drawX = (TAMANHO_FINAL - drawW) / 2;
+            const drawY = (TAMANHO_FINAL - drawH) / 2;
+
+            // Desenha a imagem limpa redimensionada no centro
+            tCtx.drawImage(cellCanvas, 0, 0, w, h, drawX, drawY, drawW, drawH);
+
+            // Esta é a imagem "limpa e centralizada" usada para as animações
+            const cleanImg = new Image();
+            cleanImg.src = tempCanvas.toDataURL();
+
+            // Elementos UI
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-xl shadow-md border border-slate-200 flex flex-col items-center transition hover:shadow-lg";
+
+            const title = document.createElement('h3');
+            title.innerText = `Figurinha ${y*3+x+1}`;
+            title.className = "font-bold text-slate-700 mb-3";
+
+            const canvas = document.createElement('canvas');
+            canvas.width = TAMANHO_FINAL;
+            canvas.height = TAMANHO_FINAL;
+            canvas.className = "fundo-transparente rounded-lg border border-slate-200 mb-4 shadow-inner cursor-pointer";
+            
+            canvas.onclick = () => {
+                const opts = select.options;
+                select.selectedIndex = Math.floor(Math.random() * opts.length);
+                select.dispatchEvent(new Event('change'));
+            };
+
+            const select = document.createElement('select');
+            select.className = "w-full p-2 mb-3 border border-slate-300 rounded text-sm bg-slate-50 focus:ring-2 focus:ring-indigo-500 focus:outline-none";
+            
+            const groups = {
+                'Movimento': document.createElement('optgroup'),
+                'Cores': document.createElement('optgroup'),
+                'Explosão': document.createElement('optgroup'),
+                'Básico': document.createElement('optgroup')
+            };
+            groups['Básico'].label = "--- Básico ---";
+            groups['Movimento'].label = "--- Movimento ---";
+            groups['Cores'].label = "--- Cores ---";
+            groups['Explosão'].label = "--- Fundo/Explosão ---";
+
+            Object.keys(ANIMATIONS).forEach(key => {
+                const anim = ANIMATIONS[key];
+                const opt = document.createElement('option');
+                opt.value = key;
+                opt.innerText = anim.name;
+                if (groups[anim.type]) groups[anim.type].appendChild(opt);
+                else select.appendChild(opt);
+            });
+
+            select.appendChild(groups['Básico']);
+            select.appendChild(groups['Movimento']);
+            select.appendChild(groups['Cores']);
+            select.appendChild(groups['Explosão']);
+
+            select.onchange = (e) => {
+                const s = stickers.find(s => s.id === id);
+                if(s) s.currentAnim = e.target.value;
+            };
+
+            const btnDownload = document.createElement('button');
+            btnDownload.innerHTML = `<span class="mr-2">⬇️</span> Baixar GIF`;
+            btnDownload.className = "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition flex justify-center items-center";
+            btnDownload.onclick = () => gerarGif(id, btnDownload);
+
+            card.appendChild(title);
+            card.appendChild(canvas);
+            card.appendChild(select);
+            card.appendChild(btnDownload);
+            gridContainer.appendChild(card);
+
+            stickers.push({
+                id: id,
+                ctx: canvas.getContext('2d'),
+                cleanImg: cleanImg,
+                currentAnim: 'none'
+            });
+        }
+
+        function animationLoop(timestamp) {
+            const time = timestamp / 1000;
+
+            stickers.forEach(sticker => {
+                if(!sticker.cleanImg.complete) return;
+                const ctx = sticker.ctx;
+                const anim = ANIMATIONS[sticker.currentAnim];
+                
+                ctx.clearRect(0, 0, TAMANHO_FINAL, TAMANHO_FINAL);
+                ctx.save();
+                
+                if(anim) anim.render(ctx, TAMANHO_FINAL, TAMANHO_FINAL, time);
+                
+                ctx.drawImage(sticker.cleanImg, 0, 0);
+                ctx.restore();
+            });
+            requestAnimationFrame(animationLoop);
+        }
+
+        function gerarGif(id, btn) {
+            const sticker = stickers.find(s => s.id === id);
+            if(!sticker) return;
+
+            const originalText = btn.innerHTML;
+            btn.innerText = "Processando...";
+            btn.disabled = true;
+            btn.className = "w-full bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-wait";
+
+            const gif = new GIF({
+                workers: 2,
+                quality: 10,
+                width: TAMANHO_FINAL,
+                height: TAMANHO_FINAL,
+                workerScript: workerUrl,
+                transparent: 0x000000
+            });
+
+            const canvas = document.createElement('canvas');
+            canvas.width = TAMANHO_FINAL;
+            canvas.height = TAMANHO_FINAL;
+            const ctx = canvas.getContext('2d');
+
+            const anim = ANIMATIONS[sticker.currentAnim];
+            const FPS = 15;
+            const DURATION = 2; 
+            const FRAMES = FPS * DURATION;
+
+            for (let i = 0; i < FRAMES; i++) {
+                const time = i / FPS;
+                
+                ctx.clearRect(0, 0, TAMANHO_FINAL, TAMANHO_FINAL);
+                ctx.save();
+                anim.render(ctx, TAMANHO_FINAL, TAMANHO_FINAL, time);
+                ctx.drawImage(sticker.cleanImg, 0, 0);
+                ctx.restore();
+
+                gif.addFrame(ctx, {copy: true, delay: 1000 / FPS});
+            }
+
+            gif.on('finished', function(blob) {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `figurinha_${sticker.currentAnim}.gif`;
+                document.body.appendChild(a);
+                a.click();
+                
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.className = "w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition flex justify-center items-center";
+            });
+
+            gif.render();
+        }
+    </script>
+</body>
+</html>
