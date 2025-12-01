@@ -3,608 +3,502 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caderno Digital Pessoal</title>
-    <!-- Carrega o Tailwind CSS para estilização rápida e moderna -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Bloco de Notas Minimalista</title>
     
     <style>
-        /* Estilos globais para layout iOS/Apple (desktop-like) */
+        /* Reset Básico e Fontes */
         body {
-            /* Prioriza a fonte do sistema iOS/macOS e fallback para Inter */
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Inter', sans-serif;
-            background-color: #f0f2f5; 
-            color: #1c1c1e; 
-        }
-        
-        /* Estilo base para painéis/cartões no estilo iOS */
-        .ios-panel {
-            background-color: #ffffff; 
-            border-radius: 16px; 
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); 
-            border: 1px solid rgba(220, 220, 220, 0.5); 
-            transition: all 0.2s;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            /* Limita a largura total para desktop */
+            display: flex;
+            justify-content: center;
         }
 
-        /* Inputs e Botões */
-        .ios-input { border-radius: 10px; background-color: #f7f7f7; border: 1px solid #d1d1d6; padding: 8px 12px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); }
-        .ios-input:focus { border-color: #007aff; outline: none; }
-        .ios-button-primary { background-color: #007aff; color: white; border-radius: 12px; font-weight: 600; padding: 10px 16px; transition: background-color 0.15s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
-        .ios-button-primary:hover { background-color: #005fcc; }
-        .ios-button-secondary { background-color: #e5e5ea; color: #1c1c1e; border-radius: 12px; font-weight: 500; padding: 10px 16px; transition: background-color 0.15s; }
-        .ios-button-secondary:hover { background-color: #d1d1d6; }
-        .note-card-ios { background-color: #ffffff; border-radius: 10px; border: 1px solid #e0e0e0; }
-        .note-card-ios:hover { background-color: #f0f0f5; }
-
-        /* Scrollbars (Ocultar) */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Layout do Editor */
-        .editor-scroll-container { height: 100%; overflow-y: auto; }
-
-        /* Barra de Ferramentas Fixa (STICKY) */
-        #fixedToolbar {
-            position: sticky;
-            top: 0; 
-            z-index: 20;
-            background-color: #ffffff; 
-            padding: 10px 24px; 
-            margin: -24px -24px 0 -24px;
-            border-bottom: 1px solid #f0f0f5;
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px; /* Limite máximo da largura do site */
+            height: 100vh;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
         }
-        
-        /* Placeholder para contenteditable */
-        #noteContent {
+
+        /* --- Layout de Duas Colunas --- */
+
+        /* Coluna 1: Sidebar (Estreita) */
+        .sidebar {
+            width: 250px; /* Largura estreita */
+            padding: 20px;
+            border-right: 1px solid #eee;
+            background-color: #fafafa;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Coluna 2: Conteúdo Principal */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            display: flex;
+            position: relative; /* Para posicionar o toolbar e o botão de IA */
+        }
+
+        /* --- Editor de Notas --- */
+
+        #note-editor {
+            flex-grow: 1;
+            padding: 0 20px 0 0;
+            font-size: 16px;
             line-height: 1.6;
-            min-height: 400px;
-            padding: 12px 0;
-            border: none;
-            background-color: transparent;
+            outline: none; /* Remove a borda de foco */
+            overflow-y: auto;
+            max-width: calc(100% - 70px); /* Garante espaço para a barra de ferramentas fixa */
         }
-        #noteContent:empty:before {
+
+        /* Estilo para o placeholder */
+        [contenteditable]:empty:before {
             content: attr(placeholder);
-            color: #9ca3af; 
-        }
-        
-        /* Botão IA Inativo */
-        .ia-button-inactive {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none; 
+            color: #aaa;
+            pointer-events: none;
+            display: block; /* Para que o placeholder seja visível */
         }
 
-        /* --- ESTILOS DE IMPRESSÃO (CORRIGIDO) --- */
-        @media print {
-            /* Oculta colunas de navegação/lista */
-            .w-1\/5 { display: none !important; }
+        /* --- Barra de Ferramentas Fixa à Direita --- */
+        .fixed-toolbar {
+            position: absolute;
+            top: 30px; /* Alinha com o topo do editor */
+            right: 30px; /* Fixa à direita dentro do main-content */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-            /* Faz a coluna do editor ocupar 100% da página */
-            .w-3\/5 { 
-                width: 100% !important;
-                min-height: 100vh;
-                padding: 0 !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-                /* Impede o corte do conteúdo longo */
-                overflow: visible !important;
-                height: auto !important;
-            }
-            
-            /* Oculta barras de ferramentas e placeholders */
-            #fixedToolbar, #editorPlaceholder { display: none !important; }
+        .fixed-toolbar button {
+            background-color: #e0e0e0;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            width: 50px; /* Largura uniforme */
+        }
 
-            /* Garante que o conteúdo e o título da nota sejam impressos */
-            #noteContent, #noteTitle, .note-header-info, .editor-scroll-container {
-                background: none !important;
-                color: #000 !important;
-                box-shadow: none !important;
-                border: none !important;
-                /* Essencial: forçar a renderização do conteúdo completo */
-                overflow: visible !important;
-                height: auto !important;
-                min-height: auto !important;
-                padding: 0 10px; /* Padding para margens de impressão */
-            }
+        .fixed-toolbar button:hover {
+            background-color: #ccc;
+        }
 
-            /* Reseta o layout principal para que o conteúdo preencha a página */
-            body > div.flex {
-                display: block !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                height: auto !important;
-            }
+        /* --- Botão de IA Flutuante (Aparece ao lado da seleção) --- */
+        .floating-ai-btn {
+            position: absolute; /* Será ajustado via JS */
+            z-index: 10;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 14px;
+            /* Garante que o botão não é selecionado quando aparece */
+            user-select: none; 
+        }
+
+        /* --- Dropdown Não Nativo Personalizado --- */
+        .custom-dropdown {
+            margin-bottom: 20px;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .dropdown-header {
+            padding: 10px;
+            background-color: #fff;
+            font-weight: 500;
+        }
+
+        .dropdown-header .arrow {
+            float: right;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-top: none;
+            z-index: 100;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .custom-dropdown.open .dropdown-list {
+            max-height: 200px; /* Altura suficiente para mostrar a lista */
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            transition: background-color 0.1s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* --- Lista de Notas --- */
+        #notes-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            overflow-y: auto;
+            flex-grow: 1; /* Ocupa o espaço restante */
+        }
+
+        .note-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+
+        .note-item:hover, .note-item.active {
+            background-color: #e6f7ff;
+        }
+
+        .note-title {
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .note-tag {
+            font-size: 12px;
+            color: #007bff;
+        }
+
+        /* Botão de Nova Nota */
+        #add-note-btn {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        #add-note-btn:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <!-- Layout Principal: 3 Colunas (Estilo iOS) -->
-    <div class="flex h-screen p-4 space-x-4 overflow-hidden">
+    <div class="app-container">
         
-        <!-- Coluna de Navegação/Filtros (Sidebar) - LARGURA 20% -->
-        <div class="w-1/5 ios-panel p-4 overflow-y-auto no-scrollbar">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Filtros & Categorias</h2>
+        <div class="sidebar">
+            <h2>Notas</h2>
             
-            <button id="newNoteBtn" class="w-full ios-button-primary mb-4">
-                + Nova Nota
-            </button>
-            
-            <div class="mb-6">
-                <label for="categoryFilter" class="block text-sm font-medium text-gray-700 mb-1">Filtrar por Categoria</label>
-                <select id="categoryFilter" class="w-full ios-input text-sm">
-                    <option value="">Todas as Categorias</option>
-                    <!-- Opções de categorias serão preenchidas via JS -->
-                </select>
-            </div>
-            
-            <div class="mb-6">
-                <label for="dateSearch" class="block text-sm font-medium text-gray-700 mb-1">Buscar por Data (Início)</label>
-                <input type="date" id="dateSearch" class="w-full ios-input text-sm">
-                <p class="text-xs text-gray-500 mt-1">Busca notas criadas a partir desta data.</p>
-            </div>
-            
-            <!-- Gestão de Dados -->
-            <div class="mt-8 pt-4 border-t border-gray-200">
-                <h3 class="text-lg font-semibold mb-2 text-gray-700">Gestão de Dados</h3>
-                <button id="exportBtn" class="w-full ios-button-secondary text-sm mb-2">
-                    Exportar Notas (JSON)
-                </button>
-                <label for="importFile" class="w-full block text-center ios-button-secondary cursor-pointer text-sm">
-                    Importar Notas (JSON)
-                </label>
-                <!-- Campo de input de ficheiro escondido -->
-                <input type="file" id="importFile" accept=".json" class="hidden">
-            </div>
-            
-            <div class="mt-8 pt-4 border-t border-gray-200">
-                <p class="text-xs text-gray-500">
-                    <span class="font-semibold text-gray-700">Armazenamento Local.</span>
-                </p>
-                <p class="text-xs text-gray-500 mt-2">
-                    As suas notas são salvas no seu navegador.
-                </p>
-            </div>
-        </div>
-
-        <!-- Coluna da Lista de Notas - LARGURA 20% -->
-        <div class="w-1/5 ios-panel p-4 overflow-y-auto no-scrollbar">
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">Minhas Notas</h2>
-            <div id="notesList" class="space-y-3">
-                <!-- Notas serão carregadas aqui -->
-                <p class="text-center text-gray-500" id="listPlaceholder">Nenhuma nota ainda. Crie uma!</p>
-            </div>
-        </div>
-
-        <!-- Coluna do Editor/Visualizador de Notas - LARGURA 60% -->
-        <div class="w-3/5 ios-panel p-6 relative">
-            <div id="editorPlaceholder" class="flex items-center justify-center h-full text-gray-400 text-lg">
-                Selecione uma nota ou crie uma nova para começar a escrever.
-            </div>
-
-            <div id="noteEditor" class="h-full flex flex-col hidden">
-                
-                <!-- Barra de Ferramentas Fixa (STICKY) -->
-                <div id="fixedToolbar" class="flex flex-wrap items-center justify-between">
-                    
-                    <!-- 1. Controles de Edição e Categoria (Esquerda) -->
-                    <div class="flex space-x-3 items-center">
-                        
-                        <!-- Seletor de Categoria -->
-                        <select id="noteCategory" class="ios-input text-sm p-1 max-w-[120px]">
-                            <option value="Geral">Geral</option>
-                            <option value="Ideias">Ideias</option>
-                            <option value="Trabalho">Trabalho</option>
-                            <option value="Pessoal">Pessoal</option>
-                            <!-- Categorias do JS serão adicionadas aqui -->
-                        </select>
-
-                        <!-- Botão IA (Foguete) -->
-                         <button id="iaFloatingButton" 
-                            class="bg-indigo-600 hover:bg-indigo-700 text-white text-base font-semibold py-1 px-2 rounded-full shadow-lg transition duration-150 transform hover:scale-105 ia-button-inactive"
-                            title="Enviar texto selecionado para o Google IA (udm=50)">
-                            🚀
-                        </button>
-                    </div>
-
-                    <!-- 2. Botões de Ação (Direita) -->
-                    <div class="flex space-x-2 items-center">
-                        <!-- Botão Imprimir -->
-                        <button id="printBtn" class="ios-button-secondary font-normal py-1 px-3 rounded-lg text-sm" title="Imprimir Nota">
-                            &#x2399; <!-- Ícone de impressora ou similar -->
-                        </button>
-
-                        <button id="cancelEditBtn" class="ios-button-secondary font-normal py-1 px-3 rounded-lg text-sm">
-                            Cancelar
-                        </button>
-                        <button id="deleteNoteBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm hidden">
-                            Excluir
-                        </button>
-                        <button id="saveNoteBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-lg text-sm">
-                            Guardar
-                        </button>
-                    </div>
-                </div> <!-- Fim #fixedToolbar -->
-                
-                <!-- Container de Rolagem (com o conteúdo que rola) -->
-                <div class="editor-scroll-container">
-                    
-                    <!-- Título e Data (AGORA DENTRO DO SCROLL CONTAINER) -->
-                    <div class="note-header-info">
-                        <input type="text" id="noteTitle" placeholder="Título da Nota" class="w-full text-2xl font-bold mb-2 ios-input border-none bg-transparent shadow-none p-0 focus:border-none focus:ring-0">
-                        <p id="noteDate" class="text-sm text-gray-500 mb-4"></p>
-                    </div>
-                    
-                    <!-- CONTEÚDO DA NOTA - Contenteditable Simples (Aceita HTML/formatação de cola) -->
-                    <div id="noteContent" 
-                        contenteditable="true" 
-                        placeholder="Comece a escrever a sua nota aqui... (Cole texto formatado ou selecione texto para usar a funcionalidade de IA!)" 
-                        class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent">
-                    </div>
+            <div id="tag-dropdown" class="custom-dropdown">
+                <div class="dropdown-header">Filtrar por Tags <span class="arrow">▼</span></div>
+                <div class="dropdown-list">
+                    <div class="dropdown-item" data-tag="all">Todas</div>
+                    <div class="dropdown-item" data-tag="trabalho">Trabalho</div>
+                    <div class="dropdown-item" data-tag="pessoal">Pessoal</div>
+                    <div class="dropdown-item" data-tag="urgente">Urgente</div>
                 </div>
             </div>
+            
+            <ul id="notes-list">
+                </ul>
+
+            <button id="add-note-btn">➕ Nova Nota</button>
         </div>
+
+        <div class="main-content">
+            
+            <div id="note-editor" contenteditable="true" placeholder="Comece a escrever aqui..." onpaste="handlePaste(event)"></div>
+
+            <button id="ai-prompt-btn" class="floating-ai-btn" style="display: none;">🤖 Pedir à IA</button>
+
+            <div id="toolbar" class="fixed-toolbar">
+                <button onclick="formatText('bold')" title="Negrito">**B**</button>
+                <button onclick="formatText('insertHorizontalRule')" title="Linha Separadora">---</button>
+                <button onclick="formatText('insertUnorderedList')" title="Lista">UL</button>
+                <button onclick="createLink()" title="Criar Link">🔗</button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Scripts da Lógica da Aplicação -->
-    <script type="module">
-        
-        // --- Constantes e Variáveis de Configuração ---
-        
-        const LOCAL_STORAGE_KEY = 'notebook_personal_notes';
-        const IA_PROMPT = "Analise e explique este conceito: "; 
-        const DEFAULT_CATEGORIES = ["Geral", "Ideias", "Trabalho", "Pessoal", "Estudo", "Rascunho"];
+    <script>
+        // Elementos principais do DOM
+        const editor = document.getElementById('note-editor');
+        const aiBtn = document.getElementById('ai-prompt-btn');
+        const notesList = document.getElementById('notes-list');
+        const addNoteBtn = document.getElementById('add-note-btn');
 
-        let allNotes = [];
         let currentNoteId = null;
 
-        // --- Funções de Persistência e UI Básica ---
+        // --- 1. Gestão de Notas e LocalStorage ---
 
-        const loadNotesFromLocalStorage = () => {
-            try {
-                const storedNotes = localStorage.getItem(LOCAL_STORAGE_KEY);
-                allNotes = storedNotes ? JSON.parse(storedNotes) : [];
-            } catch (error) {
-                console.error("Erro ao carregar notas do LocalStorage:", error);
-                allNotes = [];
+        // Carrega as notas do LocalStorage ou retorna um array de exemplo
+        function loadNotes() {
+            const notes = localStorage.getItem('webNotebookNotes');
+            return notes ? JSON.parse(notes) : [
+                { id: Date.now() + 1, title: 'Bem-vindo!', content: 'Este é o seu novo **Bloco de Notas Minimalista**.<hr>Tente <span style="color: blue;">colar</span> um texto formatado aqui.', tags: ['pessoal'] },
+                { id: Date.now(), title: 'Ideia de Projeto', content: 'Lembrar de implementar a funcionalidade de drag-and-drop no futuro.', tags: ['trabalho', 'urgente'] }
+            ];
+        }
+
+        // Guarda as notas no LocalStorage
+        function saveNotes(notes) {
+            localStorage.setItem('webNotebookNotes', JSON.stringify(notes));
+        }
+
+        // Renderiza a lista de notas na sidebar
+        function renderNotes(filterTag = 'all') {
+            const allNotes = loadNotes();
+            notesList.innerHTML = ''; // Limpa a lista existente
+
+            const filteredNotes = filterTag === 'all' 
+                ? allNotes 
+                : allNotes.filter(note => note.tags.includes(filterTag));
+
+            filteredNotes.forEach(note => {
+                const li = document.createElement('li');
+                li.className = `note-item ${note.id === currentNoteId ? 'active' : ''}`;
+                li.dataset.id = note.id;
+                li.innerHTML = `<div class="note-title">${note.title}</div><div class="note-tag">[${note.tags.join(', ')}]</div>`;
+                
+                li.addEventListener('click', () => openNote(note.id));
+                notesList.appendChild(li);
+            });
+
+            // Abre a primeira nota se nenhuma estiver ativa
+            if (!currentNoteId && filteredNotes.length > 0) {
+                openNote(filteredNotes[0].id);
+            } else if (filteredNotes.length > 0 && !document.querySelector(`.note-item[data-id="${currentNoteId}"]`)) {
+                // Se a nota ativa foi filtrada, abre a primeira nota filtrada
+                openNote(filteredNotes[0].id);
+            } else if (filteredNotes.length === 0) {
+                editor.innerHTML = 'Selecione uma tag no menu acima. Nenhuma nota encontrada.';
+                editor.contentEditable = false;
+                currentNoteId = null;
             }
-        };
+        }
 
-        const saveNotesToLocalStorage = () => {
-            try {
-                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(allNotes));
-            } catch (error) {
-                console.error("Erro ao salvar notas no LocalStorage:", error);
-            }
-        };
+        // Abre uma nota no editor
+        function openNote(id) {
+            const notes = loadNotes();
+            const note = notes.find(n => n.id === id);
 
-        const alertMessage = (message, color) => {
-             console.log(`[Mensagem ${color.toUpperCase()}]: ${message}`);
-             // Função simplificada de feedback no console
-        };
+            if (note) {
+                // Primeiro, guarda a nota atual antes de trocar
+                if (currentNoteId) {
+                    saveCurrentNote();
+                }
 
-        const confirmAction = (message) => window.confirm(message); 
-
-        const formatDate = (timestamp) => {
-            if (timestamp) {
-                const date = new Date(timestamp);
-                return date.toLocaleDateString('pt-PT', { 
-                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                currentNoteId = id;
+                editor.innerHTML = note.content;
+                editor.contentEditable = true;
+                
+                // Atualiza o estado 'active' na lista
+                document.querySelectorAll('.note-item').forEach(item => {
+                    item.classList.remove('active');
+                    if (parseInt(item.dataset.id) === id) {
+                        item.classList.add('active');
+                    }
                 });
             }
-            return new Date().toLocaleDateString('pt-PT');
-        };
-        
-        const populateCategories = () => {
-            const filterEl = document.getElementById('categoryFilter');
-            const editorEl = document.getElementById('noteCategory');
-            
-            filterEl.innerHTML = '<option value="">Todas as Categorias</option>';
-            editorEl.innerHTML = ''; 
+        }
 
-            DEFAULT_CATEGORIES.forEach(cat => {
-                const optFilter = document.createElement('option');
-                optFilter.value = optFilter.textContent = cat;
-                filterEl.appendChild(optFilter);
-
-                const optEditor = document.createElement('option');
-                optEditor.value = optEditor.textContent = cat;
-                editorEl.appendChild(optEditor);
-            });
-        };
-
-        // --- Lógica do Editor ---
-
-        const resetEditor = () => {
-            currentNoteId = null;
-            document.getElementById('noteTitle').value = '';
-            document.getElementById('noteContent').innerHTML = ''; 
-            document.getElementById('noteCategory').value = 'Geral';
-            document.getElementById('noteDate').textContent = 'Nova Nota (não gravada)';
-            document.getElementById('deleteNoteBtn').classList.add('hidden');
-            document.getElementById('editorPlaceholder').classList.add('hidden');
-            document.getElementById('noteEditor').classList.remove('hidden');
-            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            renderNotes();
-        };
-
-        const loadNoteToEditor = (note) => {
-            currentNoteId = note.id;
-            document.getElementById('noteTitle').value = note.title;
-            document.getElementById('noteContent').innerHTML = note.content;
-            document.getElementById('noteCategory').value = note.category || 'Geral';
-            document.getElementById('noteDate').textContent = `Criada em: ${formatDate(note.createdAt)}`;
-            document.getElementById('deleteNoteBtn').classList.remove('hidden');
-            document.getElementById('editorPlaceholder').classList.add('hidden');
-            document.getElementById('noteEditor').classList.remove('hidden');
-            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-        };
-
-        const saveNote = () => {
-            const title = document.getElementById('noteTitle').value.trim() || 'Nota Sem Título';
-            const content = document.getElementById('noteContent').innerHTML.trim(); 
-            const category = document.getElementById('noteCategory').value;
-            const textContent = content.replace(/<[^>]*>/g, '').trim();
-
-            if (!textContent) {
-                alertMessage("O conteúdo da nota não pode estar vazio!", 'red');
-                return;
-            }
-
-            const now = Date.now();
-            
-            if (currentNoteId) {
-                const index = allNotes.findIndex(n => n.id === currentNoteId);
-                if (index !== -1) {
-                    allNotes[index] = {
-                        ...allNotes[index],
-                        title: title,
-                        content: content,
-                        category: category,
-                        updatedAt: now,
-                    };
-                }
-                alertMessage("Nota atualizada com sucesso!", 'green');
-            } else {
-                const newNote = {
-                    id: crypto.randomUUID(),
-                    title: title,
-                    content: content,
-                    category: category,
-                    createdAt: now,
-                    updatedAt: now,
-                };
-                allNotes.push(newNote);
-                currentNoteId = newNote.id;
-                alertMessage("Nota criada com sucesso!", 'green');
-            }
-
-            saveNotesToLocalStorage();
-            renderNotes();
-        };
-
-        const deleteNote = () => {
+        // Função para guardar o conteúdo do editor na nota atual
+        function saveCurrentNote() {
             if (!currentNoteId) return;
 
-            if (!confirmAction("Tem certeza que deseja excluir esta nota? Esta ação é irreversível.")) {
-                return;
-            }
+            const notes = loadNotes();
+            const noteIndex = notes.findIndex(n => n.id === currentNoteId);
 
-            allNotes = allNotes.filter(n => n.id !== currentNoteId);
-            saveNotesToLocalStorage();
+            if (noteIndex > -1) {
+                const newContent = editor.innerHTML;
+                // Cria um título limpo, removendo tags HTML
+                const newTitle = newContent.substring(0, 100).replace(/<[^>]*>?/gm, '').trim() || "Nova Nota";
+                
+                notes[noteIndex].content = newContent;
+                notes[noteIndex].title = newTitle;
+                saveNotes(notes);
+                
+                // Atualiza o título na lista sem recarregar tudo
+                const listItem = document.querySelector(`.note-item[data-id="${currentNoteId}"]`);
+                if (listItem) {
+                    listItem.querySelector('.note-title').textContent = newTitle;
+                }
+            }
+        }
+
+        // Adiciona uma nova nota
+        addNoteBtn.addEventListener('click', () => {
+            // Guarda a nota atual primeiro
+            if (currentNoteId) saveCurrentNote(); 
+
+            const newNote = {
+                id: Date.now(),
+                title: 'Nova Nota...',
+                content: '',
+                tags: ['pessoal'] // Tag inicial padrão
+            };
             
-            resetEditor();
-            document.getElementById('noteEditor').classList.add('hidden');
-            document.getElementById('editorPlaceholder').classList.remove('hidden');
+            const notes = loadNotes();
+            notes.unshift(newNote); // Adiciona no topo
+            saveNotes(notes);
             
-            alertMessage("Nota excluída com sucesso!", 'yellow');
-            renderNotes();
-        };
-        
-        // --- Funções IA e Impressão (CRITICAMENTE CORRIGIDAS) ---
+            openNote(newNote.id);
+            // Renderiza com o filtro ativo para garantir que a nova nota aparece
+            renderNotes(document.querySelector('.dropdown-header').dataset.activeTag); 
+            editor.focus();
+        });
+
+        // Guardar automaticamente a cada 2 segundos que o utilizador para de digitar
+        let saveTimeout;
+        editor.addEventListener('input', () => {
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveCurrentNote, 2000);
+        });
+
+        // --- 2. Funcionalidades do Editor e Formatação ---
 
         /**
-         * Verifica a seleção de texto dentro do editor e ativa/desativa o botão IA.
-         * Esta função é robusta para contenteditable.
+         * Função principal para formatação de texto usando execCommand.
+         * @param {string} command - O comando de formatação (ex: 'bold', 'insertUnorderedList').
          */
-        const checkSelection = () => {
-            const iaButton = document.getElementById('iaFloatingButton');
+        function formatText(command) {
+            // execCommand é o método mais fácil para formatar em contenteditable
+            document.execCommand(command, false, null);
+            editor.focus();
+        }
+
+        // Função para criar link
+        function createLink() {
+            const url = prompt('Insira o URL para o link:');
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+            editor.focus();
+        }
+
+        // Função para lidar com a colagem de texto formatado (retém o HTML)
+        function handlePaste(event) {
+            // O editor contenteditable="true" no navegador já lida com a colagem
+            // de HTML de forma robusta, mantendo a formatação.
+            // Esta função pode ser usada para lógica de filtragem, se necessário,
+            // mas por agora, apenas permite o comportamento nativo (que funciona).
+            // Para garantir que o HTML seja colado, não precisamos chamar event.preventDefault();
+            console.log("Colagem de texto formatado detetada. O editor irá manter a formatação HTML.");
+        }
+
+
+        // --- 3. Integração com IA (Botão de Seleção) ---
+
+        // Mostra o botão de IA ao selecionar texto
+        document.addEventListener('selectionchange', () => {
             const selection = window.getSelection();
-            const selectedTextLength = selection.toString().trim().length;
-            const editor = document.getElementById('noteContent');
-
-            // 1. Deve haver texto selecionado.
-            // 2. O nó âncora (início da seleção) deve estar dentro do div do editor.
-            const isSelectionInEditor = selectedTextLength > 0 && editor.contains(selection.anchorNode);
             
-            if (isSelectionInEditor) {
-                iaButton.classList.remove('ia-button-inactive');
-            } else {
-                iaButton.classList.add('ia-button-inactive');
-            }
-        };
+            // Verifica se a seleção existe, tem conteúdo e está dentro do editor
+            if (selection.toString().length > 0 && editor.contains(selection.focusNode)) {
+                const range = selection.getRangeAt(0);
+                const rect = range.getBoundingClientRect();
+                const editorRect = editor.getBoundingClientRect();
 
-        /**
-         * Executa a pesquisa de IA no Google.
-         */
-        const handleIaSearch = () => {
+                // Calcula a posição relativa ao editor
+                aiBtn.style.top = `${rect.top - editorRect.top - 40}px`; // 40px acima da seleção
+                
+                // Centraliza o botão acima do centro da seleção
+                const leftPos = rect.left - editorRect.left + (rect.width / 2) - (aiBtn.offsetWidth / 2);
+                aiBtn.style.left = `${leftPos}px`;
+                
+                aiBtn.style.display = 'block';
+            } else {
+                // Esconde o botão se não houver seleção ou se a seleção estiver fora
+                aiBtn.style.display = 'none';
+            }
+        });
+
+        // Ação do botão de IA
+        aiBtn.addEventListener('click', () => {
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
             
-            if (!selectedText) {
-                alertMessage("Selecione um texto antes de usar a IA.", 'yellow');
-                return;
-            }
-            
-            const query = IA_PROMPT + selectedText;
-            const encodedQuery = encodeURIComponent(query);
-            
-            const googleUrl = `https://www.google.com/search?udm=50&q=${encodedQuery}`;
-            
-            window.open(googleUrl, '_blank');
-            
-            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            selection.removeAllRanges(); // Limpa a seleção
-        };
-
-        /**
-         * Inicia o processo de impressão da nota atual.
-         */
-        const handlePrint = () => {
-            // O CSS de impressão (@media print) garante que apenas o editor seja visível e
-            // que o conteúdo longo não seja cortado.
-            window.print();
-        };
-        
-        // --- Funções de Renderização e Export/Import (Inalteradas) ---
-        
-        const renderNotes = () => {
-            const listEl = document.getElementById('notesList');
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const dateSearch = document.getElementById('dateSearch').value;
-            
-            listEl.innerHTML = '';
-
-            let filteredNotes = allNotes;
-
-            if (categoryFilter) {
-                filteredNotes = filteredNotes.filter(note => note.category === categoryFilter);
-            }
-
-            if (dateSearch) {
-                const searchDate = new Date(dateSearch);
-                searchDate.setHours(0, 0, 0, 0);
-                const searchTimestamp = searchDate.getTime();
-
-                filteredNotes = filteredNotes.filter(note => {
-                    return note.createdAt && note.createdAt >= searchTimestamp;
-                });
-            }
-            
-            if (filteredNotes.length === 0) {
-                listEl.innerHTML = `<p class="text-center text-gray-500">Nenhuma nota encontrada.</p>`;
-                if (allNotes.length === 0) {
-                    document.getElementById('listPlaceholder').textContent = 'Nenhuma nota ainda. Crie uma!';
-                }
-                return;
-            }
-
-            filteredNotes.sort((a, b) => b.createdAt - a.createdAt);
-
-            filteredNotes.forEach(note => {
-                const noteCard = document.createElement('div');
-                noteCard.className = `p-3 note-card-ios cursor-pointer transition duration-150 shadow-md ${note.id === currentNoteId ? 'ring-2 ring-indigo-500' : ''}`;
+            if (selectedText) {
+                const prompt = `Analisa o seguinte texto e fornece um resumo ou expansão:\n\n"${selectedText}"`;
                 
-                const previewText = note.content.replace(/<[^>]*>/g, '').substring(0, 100).trim();
-
-                noteCard.innerHTML = `
-                    <h3 class="text-base font-semibold truncate text-gray-800">${note.title || 'Nota Sem Título'}</h3>
-                    <p class="text-xs text-gray-500 mt-1">
-                        ${note.category} • ${formatDate(note.createdAt)}
-                    </p>
-                    <p class="text-sm text-gray-600 mt-2 line-clamp-2">${previewText}...</p>
-                `;
-                noteCard.onclick = () => {
-                    loadNoteToEditor(note);
-                    renderNotes(); 
-                };
-                listEl.appendChild(noteCard);
-            });
-
-            document.getElementById('listPlaceholder').textContent = allNotes.length === 0 ? 'Nenhuma nota ainda. Crie uma!' : '';
-        };
-
-        const handleExport = () => {
-            if (allNotes.length === 0) { alertMessage("Não há notas para exportar.", 'yellow'); return; }
-            const dataStr = JSON.stringify(allNotes, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const date = new Date().toISOString().slice(0, 10);
-            a.download = `caderno_notas_export_${date}.json`;
-            a.href = url;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            alertMessage(`Exportação de ${allNotes.length} notas concluída!`, 'green');
-        };
-
-        const handleImport = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            if (!confirmAction("Importar substituirá todas as notas existentes. Tem certeza que deseja continuar?")) {
-                event.target.value = null; 
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedNotes = JSON.parse(e.target.result);
-                    if (!Array.isArray(importedNotes) || importedNotes.some(n => !n.id || !n.content)) {
-                        throw new Error("Formato de ficheiro JSON inválido para notas.");
-                    }
-                    allNotes = importedNotes; 
-                    saveNotesToLocalStorage();
-                    renderNotes();
-                    alertMessage(`Importação de ${importedNotes.length} notas concluída com sucesso!`, 'green');
-                } catch (error) {
-                    console.error("Erro ao processar ficheiro de importação:", error);
-                    alertMessage("Erro na importação. Ficheiro corrompido ou formato inválido.", 'red');
-                } finally {
-                    event.target.value = null; 
-                }
-            };
-            reader.readAsText(file);
-        };
-
-        // --- Inicialização e Event Listeners ---
-
-        const initializeApp = () => {
-            loadNotesFromLocalStorage();
-            populateCategories();
-            renderNotes();
-
-            // FIX CRÍTICO: Atacha os listeners de seleção de forma robusta ao elemento
-            const noteContentEl = document.getElementById('noteContent');
-            if (noteContentEl) {
-                noteContentEl.addEventListener('mouseup', checkSelection);
-                noteContentEl.addEventListener('keyup', checkSelection);
-                // Garante que o estado seja verificado mesmo ao perder o foco (ex: clique fora)
-                noteContentEl.addEventListener('blur', () => setTimeout(checkSelection, 100));
+                // **SIMULAÇÃO DE INTEGRAÇÃO COM IA**
+                console.log("--- Envio para IA Simulada ---");
+                console.log("Texto Selecionado:", selectedText);
+                console.log("Prompt a Enviar:", prompt);
+                alert("A funcionalidade de IA está simulada. O prompt seria enviado à API do Google. Verifique a consola (F12) para ver o texto completo que seria enviado.");
             }
             
-            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            
-            // Adiciona Listeners de Ação
-            document.getElementById('newNoteBtn').addEventListener('click', resetEditor);
-            document.getElementById('saveNoteBtn').addEventListener('click', saveNote);
-            document.getElementById('deleteNoteBtn').addEventListener('click', deleteNote);
-            document.getElementById('cancelEditBtn').addEventListener('click', () => {
-                currentNoteId = null;
-                document.getElementById('noteEditor').classList.add('hidden');
-                document.getElementById('editorPlaceholder').classList.remove('hidden');
-                renderNotes();
+            // Esconde o botão após o clique e limpa a seleção
+            aiBtn.style.display = 'none';
+            selection.empty(); 
+        });
+
+
+        // --- 4. Dropdown de Tags Personalizado ---
+        const dropdown = document.getElementById('tag-dropdown');
+        const dropdownHeader = dropdown.querySelector('.dropdown-header');
+        const dropdownList = dropdown.querySelector('.dropdown-list');
+
+        dropdownHeader.dataset.activeTag = 'all'; 
+
+        // Abre/Fecha o dropdown
+        dropdownHeader.addEventListener('click', (e) => {
+            e.stopPropagation(); // Evita que o evento de fechar seja acionado
+            dropdown.classList.toggle('open');
+        });
+
+        // Lógica de seleção
+        dropdownList.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                const selectedTag = e.target.dataset.tag;
+                dropdownHeader.dataset.activeTag = selectedTag;
+                
+                let headerText = selectedTag.charAt(0).toUpperCase() + selectedTag.slice(1);
+                if (selectedTag === 'all') headerText = 'Todas';
+                dropdownHeader.innerHTML = `Filtrar por Tags: ${headerText} <span class="arrow">▼</span>`;
+                
+                dropdown.classList.remove('open');
+                
+                // Filtra e renderiza as notas
+                renderNotes(selectedTag);
             });
+        });
 
-            // Listeners de Filtro
-            document.getElementById('categoryFilter').addEventListener('change', renderNotes);
-            document.getElementById('dateSearch').addEventListener('change', renderNotes);
-            
-            // Listeners de Ações
-            document.getElementById('iaFloatingButton').addEventListener('click', handleIaSearch);
-            document.getElementById('printBtn').addEventListener('click', (e) => { e.preventDefault(); handlePrint(); });
-            document.getElementById('exportBtn').addEventListener('click', handleExport);
-            document.getElementById('importFile').addEventListener('change', handleImport);
-        };
+        // Fechar o dropdown ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!dropdown.contains(e.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
 
-        document.addEventListener('DOMContentLoaded', initializeApp);
 
+        // --- Inicialização ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializa a renderização da lista de notas
+            renderNotes('all');
+        });
     </script>
 </body>
 </html>
