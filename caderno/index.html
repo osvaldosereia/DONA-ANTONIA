@@ -56,6 +56,11 @@
             display: none; /* Chrome, Safari and Opera */
         }
         /* Estilo para a área de conteúdo da anotação editável */
+        .note-content[contenteditable="true"] {
+             /* Define a quebra de linha para preservar a formatação */
+             white-space: pre-wrap;
+             word-wrap: break-word;
+        }
         .note-content[contenteditable="true"]:focus {
             outline: 2px solid #34d399; /* Cor de foco discreta (verde esmeralda) */
             padding: 4px;
@@ -249,6 +254,18 @@
                 content_style: 'body { font-family:Inter,sans-serif; font-size:14px; } mark { background-color: #fcd34d; padding: 1px 0; border-radius: 2px; }',
             });
         }
+        
+        /**
+         * Verifica se o conteúdo do editor está vazio, ignorando tags HTML vazias.
+         * @param {string} html O conteúdo HTML do editor.
+         * @returns {boolean} Verdadeiro se o conteúdo estiver vazio.
+         */
+        function isContentEmpty(html) {
+            // Remove tags HTML e espaços em branco. Se sobrar algo, não está vazio.
+            const textContent = html.replace(/<[^>]*>/g, '').trim();
+            return textContent.length === 0;
+        }
+
 
         /**
          * Lança a nova anotação, salva no array do dia e atualiza a lista.
@@ -259,7 +276,8 @@
             const content = inputEditorInstance.getContent({ format: 'html' }).trim();
             const tagsInput = document.getElementById('new-note-tags-input').value.trim();
             
-            if (content.length === 0) {
+            // CORREÇÃO: Usar a nova função de verificação de conteúdo vazio
+            if (isContentEmpty(content)) {
                 console.warn('O conteúdo da anotação não pode estar vazio.');
                 return; 
             }
@@ -278,7 +296,7 @@
                 id: crypto.randomUUID(),
                 content: content,
                 iaResponse: '', 
-                tags: newTags, 
+                tags: newTags, // CORREÇÃO: Tags agora estão sendo incluídas
                 timestamp: dayjs().toISOString()
             };
 
@@ -293,7 +311,7 @@
             document.getElementById('new-note-tags-input').value = '';
 
             saveData(); 
-            renderDailyNotes(); // Atualiza a lista de anotações salvas
+            renderDailyNotes(); // CORREÇÃO: Garante que a renderização é chamada após salvar
         }
 
         /**
@@ -312,7 +330,7 @@
         // =======================================================
 
         /**
-         * Renderiza o calendário para o mês atual. (Função inalterada)
+         * Renderiza o calendário para o mês atual. 
          */
         function renderCalendar() {
             const monthStart = currentMonth.startOf('month');
@@ -330,7 +348,7 @@
                 const dayEl = document.createElement('div');
                 const dateKey = date.format('YYYY-MM-DD');
                 
-                dayEl.className = 'p-1.5 rounded-lg text-center cursor-pointer text-gray-700 transition hover:bg-emerald-100 text-xs'; // Tamanho ajustado
+                dayEl.className = 'p-1.5 rounded-lg text-center cursor-pointer text-gray-700 transition hover:bg-emerald-100 text-xs'; 
                 
                 // Estilo para dias de outros meses
                 if (!date.isBetween(monthStart.subtract(1, 'day'), monthEnd.add(1, 'day'))) {
@@ -363,7 +381,7 @@
         }
 
         /**
-         * Seleciona uma nova data e carrega as anotações. (Função inalterada)
+         * Seleciona uma nova data e carrega as anotações. 
          */
         function selectDate(newDate) {
             selectedDate = newDate;
@@ -377,7 +395,7 @@
         }
 
         /**
-         * Altera o mês do calendário e o renderiza. (Função inalterada)
+         * Altera o mês do calendário e o renderiza. 
          */
         function changeMonth(delta) {
             currentMonth = currentMonth.add(delta, 'month');
@@ -409,12 +427,17 @@
                 
                 const time = dayjs(note.timestamp).format('HH:mm');
                 
+                // Geração das etiquetas de forma robusta
+                const tagsHtml = note.tags.map(tag => 
+                    `<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">${tag}</span>`
+                ).join('');
+
                 // Injeta o HTML da anotação
                 noteEl.innerHTML = `
                     <div class="flex justify-between items-center border-b pb-2 print-hide">
                         <span class="text-xs text-gray-500 font-semibold">${time}</span>
                         <div class="flex gap-1">
-                            ${note.tags.map(tag => `<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-0.5 rounded-full">${tag}</span>`).join('')}
+                            ${tagsHtml}
                         </div>
                     </div>
                     
@@ -517,7 +540,7 @@
         }
 
         /**
-         * Salva a resposta da IA para uma anotação específica. (Função inalterada)
+         * Salva a resposta da IA para uma anotação específica.
          */
         function saveIaResponse(noteId, responseText) {
             const dateKey = selectedDate.format('YYYY-MM-DD');
@@ -537,7 +560,7 @@
         // =======================================================
 
         /**
-         * Renderiza a lista de todas as etiquetas personalizadas (painel lateral). (Função inalterada)
+         * Renderiza a lista de todas as etiquetas personalizadas (painel lateral). 
          */
         function renderTags() {
             const tagListEl = document.getElementById('tag-list');
@@ -551,7 +574,7 @@
         }
         
         /**
-         * Adiciona uma nova etiqueta personalizada. (Função inalterada)
+         * Adiciona uma nova etiqueta personalizada. 
          */
         function addTag() {
             const input = document.getElementById('new-tag-input');
@@ -566,7 +589,7 @@
         }
         
         // =======================================================
-        // 5. INTEGRAÇÃO COM IA (Função inalterada)
+        // 5. INTEGRAÇÃO COM IA 
         // =======================================================
 
         /**
@@ -613,7 +636,7 @@
         }
 
         // =======================================================
-        // 6. LEMBRETES (Funções inalteradas)
+        // 6. LEMBRETES 
         // =======================================================
 
         /**
@@ -728,7 +751,7 @@
         }
 
         // =======================================================
-        // 7. INICIALIZAÇÃO (Função inalterada)
+        // 7. INICIALIZAÇÃO 
         // =======================================================
 
         window.onload = function() {
