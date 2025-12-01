@@ -20,7 +20,8 @@
         .ios-panel {
             background-color: #ffffff; 
             border-radius: 16px; /* Cantos generosamente arredondados */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.03); /* Sombra sutil para efeito flutuante */
+            /* Sombra mais minimalista */
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); 
             border: 1px solid rgba(220, 220, 220, 0.5); /* Borda muito suave */
             transition: all 0.2s;
         }
@@ -67,25 +68,7 @@
             background-color: #d1d1d6;
         }
         
-        /* Corrigir o botão de IA flutuante para o estilo iOS */
-        #iaFloatingButton {
-            background-color: #1c1c1e; /* Cor escura para destaque */
-            color: #ffffff;
-            border-radius: 16px; 
-            padding: 6px 12px; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-            font-size: 11px;
-            font-weight: 500;
-        }
-
-        /* Estilo para a área de edição (contenteditable div) */
-        #noteContent {
-            line-height: 1.6;
-            min-height: 400px;
-            padding: 12px; /* Aumenta o padding interno */
-        }
-
-        /* Estilo da lista de notas */
+        /* Estilo para o cartão de nota na lista */
         .note-card-ios {
             background-color: #ffffff;
             border-radius: 10px;
@@ -104,6 +87,51 @@
             -ms-overflow-style: none; /* IE and Edge */
             scrollbar-width: none; /* Firefox */
         }
+        
+        /* NOVO: Estilos para a Barra de Ferramentas Fixa e Editor */
+        
+        /* Container principal do editor deve permitir rolagem e ter espaço para a barra fixa */
+        .editor-scroll-container {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Barra de Ferramentas Fixa/Sticky */
+        #fixedToolbar {
+            position: sticky;
+            top: 0; /* Cola no topo do contêiner de rolagem */
+            z-index: 20;
+            background-color: #ffffff; 
+            padding: 10px 24px; /* O mesmo padding horizontal do ios-panel */
+            /* Ajuste para esticar a largura e ter bordas arredondadas no topo */
+            margin: -24px -24px 0 -24px;
+            border-bottom: 1px solid #f0f0f5;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            /* Garante que o painel de edição tenha padding-top para não ser coberto pela barra */
+        }
+        
+        /* Estilo da barra de título e data logo abaixo da barra fixa */
+        .note-header-info {
+            padding-top: 16px; /* Espaço entre a barra fixa e o título */
+        }
+
+        /* Estilo para a área de edição (contenteditable div) */
+        #noteContent {
+            line-height: 1.6;
+            min-height: 400px;
+            padding: 12px 0; /* Aumenta o padding interno verticalmente */
+            border: none;
+            background-color: transparent;
+        }
+        
+        /* Estilo para o botão de IA Inativo (sempre visível, mas desativado) */
+        .ia-button-inactive {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none; /* Impede cliques */
+            transform: none !important; /* Remove o hover effect quando inativo */
+        }
     </style>
 </head>
 <body>
@@ -117,8 +145,8 @@
     <!-- Layout Principal: 3 Colunas (Estilo iOS) -->
     <div class="flex h-screen p-4 space-x-4 overflow-hidden">
         
-        <!-- Coluna de Navegação/Filtros (Sidebar) -->
-        <div class="w-1/4 ios-panel p-4 overflow-y-auto no-scrollbar">
+        <!-- Coluna de Navegação/Filtros (Sidebar) - LARGURA 20% -->
+        <div class="w-1/5 ios-panel p-4 overflow-y-auto no-scrollbar">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">Filtros & Categorias</h2>
             
             <button id="newNoteBtn" class="w-full ios-button-primary mb-4">
@@ -162,8 +190,8 @@
             </div>
         </div>
 
-        <!-- Coluna da Lista de Notas -->
-        <div class="w-1/4 ios-panel p-4 overflow-y-auto no-scrollbar">
+        <!-- Coluna da Lista de Notas - LARGURA 20% -->
+        <div class="w-1/5 ios-panel p-4 overflow-y-auto no-scrollbar">
             <h2 class="text-2xl font-bold mb-4 text-gray-800">Minhas Notas</h2>
             <div id="notesList" class="space-y-3">
                 <!-- Notas serão carregadas aqui -->
@@ -171,52 +199,75 @@
             </div>
         </div>
 
-        <!-- Coluna do Editor/Visualizador de Notas -->
-        <div class="flex-1 ios-panel p-6 overflow-y-auto relative">
+        <!-- Coluna do Editor/Visualizador de Notas - LARGURA 60% -->
+        <div class="w-3/5 ios-panel p-6 relative">
             <div id="editorPlaceholder" class="flex items-center justify-center h-full text-gray-400 text-lg">
                 Selecione uma nota ou crie uma nova para começar a escrever.
             </div>
 
-            <div id="noteEditor" class="hidden">
-                <input type="text" id="noteTitle" placeholder="Título da Nota" class="w-full text-2xl font-bold mb-4 ios-input border-none bg-transparent shadow-none p-0 focus:border-none focus:ring-0">
+            <div id="noteEditor" class="h-full flex flex-col hidden">
                 
-                <div class="flex space-x-4 mb-4">
-                    <select id="noteCategory" class="ios-input text-sm">
-                        <option value="Geral">Geral</option>
-                        <option value="Ideias">Ideias</option>
-                        <option value="Trabalho">Trabalho</option>
-                        <option value="Pessoal">Pessoal</option>
-                    </select>
-                    <p id="noteDate" class="text-sm text-gray-500 self-center"></p>
-                </div>
+                <!-- NOVO: Barra de Ferramentas Fixa (STICKY) -->
+                <div id="fixedToolbar" class="flex flex-wrap items-center justify-between">
+                    
+                    <!-- 1. Controles de Edição e Categoria (Esquerda) -->
+                    <div class="flex space-x-3 items-center">
+                        <h3 class="text-lg font-semibold text-gray-800 hidden sm:block">Editor:</h3>
 
-                <!-- CAMPO DE NOTA ATUALIZADO PARA EDITOR DE TEXTO RICO (CONTENTEDITABLE DIV) -->
-                <div id="noteContent" 
-                    contenteditable="true" 
-                    placeholder="Comece a escrever a sua nota aqui... (Cole texto formatado ou selecione texto para usar a funcionalidade de IA!)" 
-                    class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent">
-                </div>
-
-                <div class="flex justify-between mt-4">
-                    <div>
-                        <button id="saveNoteBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200">
-                            Guardar Nota
+                        <button id="boldBtn" class="ios-button-secondary text-sm py-1 px-3">
+                            <span class="font-bold">B</span>
                         </button>
-                        <button id="cancelEditBtn" class="ml-3 ios-button-secondary font-normal py-2 px-4 rounded-lg shadow-md transition duration-200">
+                        
+                        <select id="noteCategory" class="ios-input text-sm p-1 max-w-[120px]">
+                            <option value="Geral">Geral</option>
+                            <option value="Ideias">Ideias</option>
+                            <option value="Trabalho">Trabalho</option>
+                            <option value="Pessoal">Pessoal</option>
+                            <!-- Categorias do JS são adicionadas aqui -->
+                        </select>
+                    </div>
+
+                    <!-- 2. Botão IA (Centro/Esquerda) - Sempre visível, estado inativo por padrão -->
+                    <button id="iaFloatingButton" 
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition duration-150 transform hover:scale-105"
+                        title="Enviar texto selecionado para o Google IA (udm=50)">
+                        🚀 Perguntar à IA
+                    </button>
+
+                    <!-- 3. Botões de Ação (Direita) -->
+                    <div class="flex space-x-2 items-center">
+                        <button id="cancelEditBtn" class="ios-button-secondary font-normal py-1 px-3 rounded-lg text-sm">
                             Cancelar
                         </button>
+                        <button id="deleteNoteBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 rounded-lg text-sm hidden">
+                            Excluir
+                        </button>
+                        <button id="saveNoteBtn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-3 rounded-lg text-sm">
+                            Guardar
+                        </button>
                     </div>
-                    <button id="deleteNoteBtn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-200 hidden">
-                        Excluir Nota
-                    </button>
+                </div> <!-- Fim #fixedToolbar -->
+                
+                <!-- Container de Rolagem (com o conteúdo que rola) -->
+                <div class="editor-scroll-container">
+                    
+                    <!-- Título e Data (AGORA DENTRO DO SCROLL CONTAINER) -->
+                    <div class="note-header-info">
+                        <input type="text" id="noteTitle" placeholder="Título da Nota" class="w-full text-2xl font-bold mb-2 ios-input border-none bg-transparent shadow-none p-0 focus:border-none focus:ring-0">
+                        <p id="noteDate" class="text-sm text-gray-500 mb-4"></p>
+                    </div>
+                    
+                    <!-- CONTEÚDO DA NOTA (Contenteditable) -->
+                    <div id="noteContent" 
+                        contenteditable="true" 
+                        placeholder="Comece a escrever a sua nota aqui... (Cole texto formatado ou selecione texto para usar a funcionalidade de IA!)" 
+                        class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent">
+                    </div>
                 </div>
 
-                <!-- Botão flutuante para a funcionalidade IA -->
-                <button id="iaFloatingButton" 
-                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold py-1 px-2 rounded-full shadow-lg transition duration-150 transform hover:scale-105"
-                    title="Enviar texto selecionado para o Google IA (udm=50)">
-                    🚀 Perguntar à IA...
-                </button>
+                <!-- O botão de salvar/deletar foi movido para o fixedToolbar, esta div está vazia, mas mantemos para referência futura se precisar de rodapé -->
+                <div class="hidden"></div>
+                
             </div>
         </div>
     </div>
@@ -369,6 +420,10 @@
             
             document.getElementById('editorPlaceholder').classList.add('hidden');
             document.getElementById('noteEditor').classList.remove('hidden');
+            
+            // Garante que o botão IA esteja inativo ao criar nova nota
+            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
+            
             renderNotes(); // Limpa qualquer destaque na lista
         };
 
@@ -385,6 +440,9 @@
 
             document.getElementById('editorPlaceholder').classList.add('hidden');
             document.getElementById('noteEditor').classList.remove('hidden');
+            
+            // Garante que o botão IA esteja inativo ao carregar nota (apenas ativa ao selecionar)
+            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
         };
 
         // Formata o timestamp (milisegundos) para uma string legível
@@ -562,15 +620,24 @@
         const confirmAction = (message) => {
             return window.confirm(message); 
         }
+        
+        // --- Funções de Formatação de Texto (Editor Básico) ---
+        const handleBold = () => {
+            // Usa o comando execCommand para aplicar negrito no texto selecionado
+            document.execCommand('bold', false, null);
+            // Re-foca o editor para que o usuário possa continuar a escrever
+            document.getElementById('noteContent').focus();
+        };
 
-        // CORRIGIDO: Usa window.getSelection() para o div contenteditable
+
         // Trata o texto selecionado e abre a pesquisa do Google AI
         const handleIaSearch = (event) => {
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
             
-            if (!selectedText) {
-                alertMessage("Nenhum texto selecionado para enviar à IA.", 'yellow');
+            if (!selectedText || document.getElementById('iaFloatingButton').classList.contains('ia-button-inactive')) {
+                // Previne a execução se o botão estiver inativo/não houver seleção válida
+                alertMessage("Selecione um texto antes de usar a IA.", 'yellow');
                 return;
             }
             
@@ -584,10 +651,9 @@
             window.open(googleUrl, '_blank');
             
             // Oculta o botão flutuante após a ação
-            document.getElementById('iaFloatingButton').style.display = 'none';
+            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
         };
 
-        // CORRIGIDO: Usa window.getSelection() para verificar a seleção no div
         // Exibe ou move o botão flutuante com base na seleção de texto
         const checkSelection = () => {
             const editor = document.getElementById('noteContent');
@@ -599,30 +665,14 @@
                 const selectedText = selection.toString().trim();
 
                 if (selectedText.length > 0) {
-                    iaButton.style.display = 'block';
-
-                    // 2. Posicionamento simplificado e robusto: Canto superior direito da área de edição
-                    
-                    // Obtém a posição do elemento `#noteContent` no ecrã
-                    const editorRect = editor.getBoundingClientRect();
-                    
-                    // Obtém a posição do contêiner da coluna (pai da notaEditor) no ecrã
-                    // .flex-1.bg-white é o contêiner de coluna com position: relative
-                    const containerRect = document.querySelector('.flex-1.ios-panel').getBoundingClientRect(); 
-
-                    // Calcula a posição (top/right) do botão *relativo* ao contêiner da coluna.
-                    const topPositionRelativeToContainer = editorRect.top - containerRect.top;
-
-                    // O botão aparece 40px acima da borda superior da área de edição
-                    iaButton.style.top = `${topPositionRelativeToContainer - 40}px`; 
-                    iaButton.style.right = '10px'; 
-                    iaButton.style.left = 'auto'; 
-                    
+                    // Texto selecionado: Ativa o botão
+                    iaButton.classList.remove('ia-button-inactive');
                     return;
                 }
             }
 
-            iaButton.style.display = 'none';
+            // Sem seleção válida: Desativa o botão
+            iaButton.classList.add('ia-button-inactive');
         };
 
         // --- Inicialização e Event Listeners ---
@@ -631,6 +681,8 @@
             loadNotesFromLocalStorage();
             populateCategories();
             renderNotes();
+            // Garante que o botão IA comece inativo
+            document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
             // Remove o indicador de loading, pois o carregamento é instantâneo
             document.getElementById('loading').classList.add('hidden');
         };
@@ -652,11 +704,20 @@
         document.getElementById('categoryFilter').addEventListener('change', renderNotes);
         document.getElementById('dateSearch').addEventListener('change', renderNotes);
         
+        // Listener para o botão de Negrito
+        document.getElementById('boldBtn').addEventListener('click', (e) => {
+            e.preventDefault(); // Impede o foco de sair completamente do editor
+            handleBold();
+        });
+
         // Listeners para a funcionalidade IA:
-        // mouseup e keyup são usados para detetar a seleção de texto.
+        // mouseup e keyup são usados para detetar a seleção de texto e alternar o estado do botão
         document.getElementById('noteContent').addEventListener('mouseup', checkSelection);
         document.getElementById('noteContent').addEventListener('keyup', checkSelection);
+        // Também verifica quando o foco sai do editor, mas com um pequeno atraso
         document.getElementById('noteContent').addEventListener('blur', () => { setTimeout(checkSelection, 100); });
+        
+        // O botão IA agora está sempre visível na barra de ferramentas
         document.getElementById('iaFloatingButton').addEventListener('click', handleIaSearch);
         
         // Listeners para Exportar/Importar
