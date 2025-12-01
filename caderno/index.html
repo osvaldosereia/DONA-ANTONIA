@@ -7,184 +7,120 @@
     <!-- Carrega o Tailwind CSS para estilização rápida e moderna -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- TinyMCE e todo o código de edição complexo foram REMOVIDOS -->
+    
     <style>
         /* Estilos globais para layout iOS/Apple (desktop-like) */
         body {
             /* Prioriza a fonte do sistema iOS/macOS e fallback para Inter */
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Inter', sans-serif;
-            background-color: #f0f2f5; /* Fundo muito leve, típico do iOS/macOS */
-            color: #1c1c1e; /* Texto quase preto para contraste */
+            background-color: #f0f2f5; 
+            color: #1c1c1e; 
         }
         
         /* Estilo base para painéis/cartões no estilo iOS */
         .ios-panel {
             background-color: #ffffff; 
-            border-radius: 16px; /* Cantos generosamente arredondados */
-            /* Sombra mais minimalista */
+            border-radius: 16px; 
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04); 
-            border: 1px solid rgba(220, 220, 220, 0.5); /* Borda muito suave */
+            border: 1px solid rgba(220, 220, 220, 0.5); 
             transition: all 0.2s;
         }
 
-        /* Estilo para inputs e selects (iOS look) */
-        .ios-input {
-            border-radius: 10px;
-            background-color: #f7f7f7; /* Fundo levemente cinza */
-            border: 1px solid #d1d1d6; /* Cinza claro */
-            color: #1c1c1e;
-            padding: 8px 12px;
-            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); /* Sombra interna sutil */
-        }
-        .ios-input:focus {
-            border-color: #007aff; /* Azul iOS ao focar */
-            ring: none;
-            outline: none;
-        }
+        /* Inputs e Botões */
+        .ios-input { border-radius: 10px; background-color: #f7f7f7; border: 1px solid #d1d1d6; padding: 8px 12px; box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05); }
+        .ios-input:focus { border-color: #007aff; outline: none; }
+        .ios-button-primary { background-color: #007aff; color: white; border-radius: 12px; font-weight: 600; padding: 10px 16px; transition: background-color 0.15s; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+        .ios-button-primary:hover { background-color: #005fcc; }
+        .ios-button-secondary { background-color: #e5e5ea; color: #1c1c1e; border-radius: 12px; font-weight: 500; padding: 10px 16px; transition: background-color 0.15s; }
+        .ios-button-secondary:hover { background-color: #d1d1d6; }
+        .note-card-ios { background-color: #ffffff; border-radius: 10px; border: 1px solid #e0e0e0; }
+        .note-card-ios:hover { background-color: #f0f0f5; }
 
-        /* Botões de Ação Principal (iOS Blue) */
-        .ios-button-primary {
-            background-color: #007aff; 
-            color: white;
-            border-radius: 12px;
-            font-weight: 600;
-            padding: 10px 16px;
-            transition: background-color 0.15s ease-in-out;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        .ios-button-primary:hover {
-            background-color: #005fcc; 
-        }
+        /* Scrollbars (Ocultar) */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Botões Secundários/Neutros */
-        .ios-button-secondary {
-            background-color: #e5e5ea; /* Cinza suave */
-            color: #1c1c1e;
-            border-radius: 12px;
-            font-weight: 500;
-            padding: 10px 16px;
-            transition: background-color 0.15s ease-in-out;
-        }
-        .ios-button-secondary:hover {
-            background-color: #d1d1d6;
-        }
-        
-        /* Estilo para o cartão de nota na lista */
-        .note-card-ios {
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: none;
-            border: 1px solid #e0e0e0;
-        }
-        .note-card-ios:hover {
-            background-color: #f0f0f5;
-        }
+        /* Layout do Editor */
+        .editor-scroll-container { height: 100%; overflow-y: auto; }
 
-        /* Esconder a barra de rolagem horizontal em telas largas, se necessário */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-        
-        /* Estilos para a Barra de Ferramentas Fixa e Editor */
-        
-        /* Container principal do editor deve permitir rolagem e ter espaço para a barra fixa */
-        .editor-scroll-container {
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        /* Barra de Ferramentas Fixa/Sticky */
+        /* Barra de Ferramentas Fixa (STICKY) */
         #fixedToolbar {
             position: sticky;
-            top: 0; /* Cola no topo do contêiner de rolagem */
+            top: 0; 
             z-index: 20;
             background-color: #ffffff; 
-            padding: 10px 24px; /* O mesmo padding horizontal do ios-panel */
-            /* Ajuste para esticar a largura e ter bordas arredondadas no topo */
+            padding: 10px 24px; 
             margin: -24px -24px 0 -24px;
             border-bottom: 1px solid #f0f0f5;
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
         }
         
-        /* Estilo da barra de título e data logo abaixo da barra fixa */
-        .note-header-info {
-            padding-top: 16px; /* Espaço entre a barra fixa e o título */
-        }
-
-        /* Editor de Conteúdo - Agora um div contenteditable simples */
+        /* Placeholder para contenteditable */
         #noteContent {
             line-height: 1.6;
             min-height: 400px;
-            padding: 12px 0; /* Aumenta o padding interno verticalmente */
+            padding: 12px 0;
             border: none;
             background-color: transparent;
-            /* Estilo para placeholder em contenteditable */
-            content: attr(placeholder);
-            color: gray;
         }
         #noteContent:empty:before {
             content: attr(placeholder);
-            color: #9ca3af; /* gray-400 */
+            color: #9ca3af; 
         }
         
-        /* Estilo para o botão de IA Inativo (apenas ícone) */
+        /* Botão IA Inativo */
         .ia-button-inactive {
             opacity: 0.5;
             cursor: not-allowed;
-            pointer-events: none; /* Impede cliques */
-            transform: none !important;
+            pointer-events: none; 
         }
 
-        /* Estilos de impressão - Oculta tudo, exceto o painel de notas, ao imprimir */
+        /* --- ESTILOS DE IMPRESSÃO (CORRIGIDO) --- */
         @media print {
-            /* Fix 2: Regras de impressão mais explícitas */
+            /* Oculta colunas de navegação/lista */
+            .w-1\/5 { display: none !important; }
+
+            /* Faz a coluna do editor ocupar 100% da página */
+            .w-3\/5 { 
+                width: 100% !important;
+                min-height: 100vh;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                border: none !important;
+                /* Impede o corte do conteúdo longo */
+                overflow: visible !important;
+                height: auto !important;
+            }
+            
+            /* Oculta barras de ferramentas e placeholders */
+            #fixedToolbar, #editorPlaceholder { display: none !important; }
+
+            /* Garante que o conteúdo e o título da nota sejam impressos */
+            #noteContent, #noteTitle, .note-header-info, .editor-scroll-container {
+                background: none !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                border: none !important;
+                /* Essencial: forçar a renderização do conteúdo completo */
+                overflow: visible !important;
+                height: auto !important;
+                min-height: auto !important;
+                padding: 0 10px; /* Padding para margens de impressão */
+            }
+
+            /* Reseta o layout principal para que o conteúdo preencha a página */
             body > div.flex {
                 display: block !important;
                 padding: 0 !important;
                 margin: 0 !important;
                 height: auto !important;
             }
-            .w-1\/5 { 
-                display: none !important;
-            }
-            .w-3\/5 { 
-                width: 100% !important;
-                min-height: 100vh;
-                padding: 20px !important;
-                margin: 0 !important;
-                box-shadow: none !important;
-                border: none !important;
-            }
-            #fixedToolbar, #editorPlaceholder { 
-                display: none !important;
-            }
-            /* Garante que o conteúdo de texto e o input do título sejam visíveis */
-            #noteContent, #noteTitle, .note-header-info {
-                background: none !important;
-                color: #000 !important;
-                box-shadow: none !important;
-                border: none !important;
-                /* Crucial para contenteditable divs: garante que o conteúdo longo seja renderizado */
-                overflow: visible !important;
-                height: auto !important;
-                min-height: auto !important;
-            }
         }
-        
     </style>
 </head>
 <body>
-
-    <div id="loading" class="fixed inset-0 bg-gray-100 bg-opacity-90 flex items-center justify-center z-50 hidden">
-        <div class="text-xl font-semibold text-indigo-600">
-            A carregar o caderno...
-        </div>
-    </div>
 
     <!-- Layout Principal: 3 Colunas (Estilo iOS) -->
     <div class="flex h-screen p-4 space-x-4 overflow-hidden">
@@ -251,7 +187,7 @@
 
             <div id="noteEditor" class="h-full flex flex-col hidden">
                 
-                <!-- Barra de Ferramentas Fixa (STICKY) - SOMENTE ESSENCIAIS -->
+                <!-- Barra de Ferramentas Fixa (STICKY) -->
                 <div id="fixedToolbar" class="flex flex-wrap items-center justify-between">
                     
                     <!-- 1. Controles de Edição e Categoria (Esquerda) -->
@@ -307,7 +243,6 @@
                         contenteditable="true" 
                         placeholder="Comece a escrever a sua nota aqui... (Cole texto formatado ou selecione texto para usar a funcionalidade de IA!)" 
                         class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent">
-                        <!-- REMOVIDOS os atributos onmouseup/onkeyup/onblur inline para evitar conflitos de escopo -->
                     </div>
                 </div>
             </div>
@@ -326,7 +261,7 @@
         let allNotes = [];
         let currentNoteId = null;
 
-        // --- Funções de Manipulação do LocalStorage (Inalteradas) ---
+        // --- Funções de Persistência e UI Básica ---
 
         const loadNotesFromLocalStorage = () => {
             try {
@@ -343,70 +278,26 @@
                 localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(allNotes));
             } catch (error) {
                 console.error("Erro ao salvar notas no LocalStorage:", error);
-                alertMessage("Erro ao salvar dados localmente. O navegador pode estar cheio.", 'red');
             }
         };
 
-        const handleExport = () => {
-            if (allNotes.length === 0) {
-                alertMessage("Não há notas para exportar.", 'yellow');
-                return;
-            }
-
-            const dataStr = JSON.stringify(allNotes, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            
-            const date = new Date().toISOString().slice(0, 10);
-            a.download = `caderno_notas_export_${date}.json`;
-            a.href = url;
-            
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            alertMessage(`Exportação de ${allNotes.length} notas concluída!`, 'green');
+        const alertMessage = (message, color) => {
+             console.log(`[Mensagem ${color.toUpperCase()}]: ${message}`);
+             // Função simplificada de feedback no console
         };
 
-        const handleImport = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+        const confirmAction = (message) => window.confirm(message); 
 
-            if (!confirmAction("Importar substituirá todas as notas existentes. Tem certeza que deseja continuar?")) {
-                event.target.value = null; 
-                return;
+        const formatDate = (timestamp) => {
+            if (timestamp) {
+                const date = new Date(timestamp);
+                return date.toLocaleDateString('pt-PT', { 
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
+                });
             }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedNotes = JSON.parse(e.target.result);
-                    
-                    if (!Array.isArray(importedNotes) || importedNotes.some(n => !n.id || !n.content)) {
-                        throw new Error("Formato de ficheiro JSON inválido para notas.");
-                    }
-
-                    allNotes = importedNotes; 
-                    saveNotesToLocalStorage();
-                    renderNotes();
-                    
-                    alertMessage(`Importação de ${importedNotes.length} notas concluída com sucesso!`, 'green');
-                } catch (error) {
-                    console.error("Erro ao processar ficheiro de importação:", error);
-                    alertMessage("Erro na importação. Ficheiro corrompido ou formato inválido.", 'red');
-                } finally {
-                    event.target.value = null; 
-                }
-            };
-            reader.readAsText(file);
+            return new Date().toLocaleDateString('pt-PT');
         };
-
-
-        // --- Funções Auxiliares de UI ---
-
+        
         const populateCategories = () => {
             const filterEl = document.getElementById('categoryFilter');
             const editorEl = document.getElementById('noteCategory');
@@ -425,120 +316,37 @@
             });
         };
 
+        // --- Lógica do Editor ---
+
         const resetEditor = () => {
             currentNoteId = null;
             document.getElementById('noteTitle').value = '';
-            
-            // Revertido para manipulação direta do innerHTML
             document.getElementById('noteContent').innerHTML = ''; 
-            
             document.getElementById('noteCategory').value = 'Geral';
             document.getElementById('noteDate').textContent = 'Nova Nota (não gravada)';
             document.getElementById('deleteNoteBtn').classList.add('hidden');
-            
             document.getElementById('editorPlaceholder').classList.add('hidden');
             document.getElementById('noteEditor').classList.remove('hidden');
-            
             document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            
             renderNotes();
         };
 
         const loadNoteToEditor = (note) => {
             currentNoteId = note.id;
             document.getElementById('noteTitle').value = note.title;
-            
-            // Revertido para manipulação direta do innerHTML
             document.getElementById('noteContent').innerHTML = note.content;
-            
             document.getElementById('noteCategory').value = note.category || 'Geral';
             document.getElementById('noteDate').textContent = `Criada em: ${formatDate(note.createdAt)}`;
             document.getElementById('deleteNoteBtn').classList.remove('hidden');
-
             document.getElementById('editorPlaceholder').classList.add('hidden');
             document.getElementById('noteEditor').classList.remove('hidden');
-            
             document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-        };
-
-        const formatDate = (timestamp) => {
-            if (timestamp) {
-                const date = new Date(timestamp);
-                return date.toLocaleDateString('pt-PT', { 
-                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' 
-                });
-            }
-            return new Date().toLocaleDateString('pt-PT');
-        };
-        
-        // --- Funções de Renderização e Lógica da Aplicação (Inalteradas) ---
-        
-        const renderNotes = () => {
-            const listEl = document.getElementById('notesList');
-            const categoryFilter = document.getElementById('categoryFilter').value;
-            const dateSearch = document.getElementById('dateSearch').value;
-            
-            listEl.innerHTML = '';
-
-            let filteredNotes = allNotes;
-
-            if (categoryFilter) {
-                filteredNotes = filteredNotes.filter(note => note.category === categoryFilter);
-            }
-
-            if (dateSearch) {
-                const searchDate = new Date(dateSearch);
-                searchDate.setHours(0, 0, 0, 0);
-                const searchTimestamp = searchDate.getTime();
-
-                filteredNotes = filteredNotes.filter(note => {
-                    return note.createdAt && note.createdAt >= searchTimestamp;
-                });
-            }
-            
-            if (filteredNotes.length === 0) {
-                listEl.innerHTML = `<p class="text-center text-gray-500">Nenhuma nota encontrada.</p>`;
-                if (allNotes.length > 0) {
-                     document.getElementById('listPlaceholder').textContent = 'Nenhuma nota correspondente aos filtros.';
-                } else {
-                     document.getElementById('listPlaceholder').textContent = 'Nenhuma nota ainda. Crie uma!';
-                }
-                return;
-            }
-
-            filteredNotes.sort((a, b) => b.createdAt - a.createdAt);
-
-            filteredNotes.forEach(note => {
-                const noteCard = document.createElement('div');
-                noteCard.className = `p-3 note-card-ios cursor-pointer transition duration-150 shadow-md ${note.id === currentNoteId ? 'ring-2 ring-indigo-500' : ''}`;
-                
-                const previewText = note.content.replace(/<[^>]*>/g, '').substring(0, 100).trim();
-
-                noteCard.innerHTML = `
-                    <h3 class="text-base font-semibold truncate text-gray-800">${note.title || 'Nota Sem Título'}</h3>
-                    <p class="text-xs text-gray-500 mt-1">
-                        ${note.category} • ${formatDate(note.createdAt)}
-                    </p>
-                    <p class="text-sm text-gray-600 mt-2 line-clamp-2">${previewText}...</p>
-                `;
-                noteCard.onclick = () => {
-                    loadNoteToEditor(note);
-                    renderNotes(); 
-                };
-                listEl.appendChild(noteCard);
-            });
-
-            document.getElementById('listPlaceholder').textContent = allNotes.length === 0 ? 'Nenhuma nota ainda. Crie uma!' : '';
         };
 
         const saveNote = () => {
             const title = document.getElementById('noteTitle').value.trim() || 'Nota Sem Título';
-            
-            // Revertido para manipulação direta do innerHTML
             const content = document.getElementById('noteContent').innerHTML.trim(); 
-
             const category = document.getElementById('noteCategory').value;
-            
             const textContent = content.replace(/<[^>]*>/g, '').trim();
 
             if (!textContent) {
@@ -595,40 +403,38 @@
             alertMessage("Nota excluída com sucesso!", 'yellow');
             renderNotes();
         };
+        
+        // --- Funções IA e Impressão (CRITICAMENTE CORRIGIDAS) ---
 
+        /**
+         * Verifica a seleção de texto dentro do editor e ativa/desativa o botão IA.
+         * Esta função é robusta para contenteditable.
+         */
+        const checkSelection = () => {
+            const iaButton = document.getElementById('iaFloatingButton');
+            const selection = window.getSelection();
+            const selectedTextLength = selection.toString().trim().length;
+            const editor = document.getElementById('noteContent');
 
-        // --- Funcionalidade de IA e Mensagens Personalizadas (CORRIGIDA) ---
-
-        const alertMessage = (message, color) => {
-             console.log(`[Mensagem ${color.toUpperCase()}]: ${message}`);
-             const statusEl = document.getElementById('noteDate');
-             const originalText = statusEl.textContent;
-             
-             statusEl.classList.remove('text-gray-500', 'text-green-600', 'text-red-600', 'text-yellow-600', 'text-indigo-600'); 
-             
-             statusEl.textContent = message;
-             
-             const colorMap = { 'green': 'text-green-600', 'red': 'text-red-600', 'yellow': 'text-yellow-600' };
-             statusEl.classList.add(colorMap[color] || 'text-indigo-600');
-             
-             setTimeout(() => {
-                statusEl.textContent = originalText;
-                statusEl.classList.remove(...Object.values(colorMap));
-                statusEl.classList.add('text-gray-500');
-             }, 3000);
+            // 1. Deve haver texto selecionado.
+            // 2. O nó âncora (início da seleção) deve estar dentro do div do editor.
+            const isSelectionInEditor = selectedTextLength > 0 && editor.contains(selection.anchorNode);
+            
+            if (isSelectionInEditor) {
+                iaButton.classList.remove('ia-button-inactive');
+            } else {
+                iaButton.classList.add('ia-button-inactive');
+            }
         };
 
-        const confirmAction = (message) => {
-            return window.confirm(message); 
-        }
-        
-        // Trata o texto selecionado e abre a pesquisa do Google AI
-        const handleIaSearch = (event) => {
-            // Usa a API de seleção de texto nativa (corrigida)
+        /**
+         * Executa a pesquisa de IA no Google.
+         */
+        const handleIaSearch = () => {
             const selection = window.getSelection();
             const selectedText = selection.toString().trim();
             
-            if (!selectedText || document.getElementById('iaFloatingButton').classList.contains('ia-button-inactive')) {
+            if (!selectedText) {
                 alertMessage("Selecione um texto antes de usar a IA.", 'yellow');
                 return;
             }
@@ -640,32 +446,121 @@
             
             window.open(googleUrl, '_blank');
             
-            // Oculta o botão IA após o uso
             document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            selection.removeAllRanges(); // Desmarca a seleção após o clique
+            selection.removeAllRanges(); // Limpa a seleção
         };
 
-        // Exibe ou desativa o botão IA com base na seleção de texto
-        const checkSelection = () => {
-            const iaButton = document.getElementById('iaFloatingButton');
-            const selection = window.getSelection();
-            const selectedTextLength = selection.toString().trim().length;
-            const editor = document.getElementById('noteContent');
-
-            // Verifica se a seleção ocorreu dentro do editor de notas
-            // Esta é a parte crítica para garantir que o botão só ative dentro do editor
-            const isSelectionInEditor = editor && selection.anchorNode && editor.contains(selection.anchorNode);
-            
-            if (selectedTextLength > 0 && isSelectionInEditor) {
-                iaButton.classList.remove('ia-button-inactive');
-            } else {
-                iaButton.classList.add('ia-button-inactive');
-            }
-        };
-
-        // Função de Impressão (Inalterada)
+        /**
+         * Inicia o processo de impressão da nota atual.
+         */
         const handlePrint = () => {
+            // O CSS de impressão (@media print) garante que apenas o editor seja visível e
+            // que o conteúdo longo não seja cortado.
             window.print();
+        };
+        
+        // --- Funções de Renderização e Export/Import (Inalteradas) ---
+        
+        const renderNotes = () => {
+            const listEl = document.getElementById('notesList');
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const dateSearch = document.getElementById('dateSearch').value;
+            
+            listEl.innerHTML = '';
+
+            let filteredNotes = allNotes;
+
+            if (categoryFilter) {
+                filteredNotes = filteredNotes.filter(note => note.category === categoryFilter);
+            }
+
+            if (dateSearch) {
+                const searchDate = new Date(dateSearch);
+                searchDate.setHours(0, 0, 0, 0);
+                const searchTimestamp = searchDate.getTime();
+
+                filteredNotes = filteredNotes.filter(note => {
+                    return note.createdAt && note.createdAt >= searchTimestamp;
+                });
+            }
+            
+            if (filteredNotes.length === 0) {
+                listEl.innerHTML = `<p class="text-center text-gray-500">Nenhuma nota encontrada.</p>`;
+                if (allNotes.length === 0) {
+                    document.getElementById('listPlaceholder').textContent = 'Nenhuma nota ainda. Crie uma!';
+                }
+                return;
+            }
+
+            filteredNotes.sort((a, b) => b.createdAt - a.createdAt);
+
+            filteredNotes.forEach(note => {
+                const noteCard = document.createElement('div');
+                noteCard.className = `p-3 note-card-ios cursor-pointer transition duration-150 shadow-md ${note.id === currentNoteId ? 'ring-2 ring-indigo-500' : ''}`;
+                
+                const previewText = note.content.replace(/<[^>]*>/g, '').substring(0, 100).trim();
+
+                noteCard.innerHTML = `
+                    <h3 class="text-base font-semibold truncate text-gray-800">${note.title || 'Nota Sem Título'}</h3>
+                    <p class="text-xs text-gray-500 mt-1">
+                        ${note.category} • ${formatDate(note.createdAt)}
+                    </p>
+                    <p class="text-sm text-gray-600 mt-2 line-clamp-2">${previewText}...</p>
+                `;
+                noteCard.onclick = () => {
+                    loadNoteToEditor(note);
+                    renderNotes(); 
+                };
+                listEl.appendChild(noteCard);
+            });
+
+            document.getElementById('listPlaceholder').textContent = allNotes.length === 0 ? 'Nenhuma nota ainda. Crie uma!' : '';
+        };
+
+        const handleExport = () => {
+            if (allNotes.length === 0) { alertMessage("Não há notas para exportar.", 'yellow'); return; }
+            const dataStr = JSON.stringify(allNotes, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            const date = new Date().toISOString().slice(0, 10);
+            a.download = `caderno_notas_export_${date}.json`;
+            a.href = url;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alertMessage(`Exportação de ${allNotes.length} notas concluída!`, 'green');
+        };
+
+        const handleImport = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!confirmAction("Importar substituirá todas as notas existentes. Tem certeza que deseja continuar?")) {
+                event.target.value = null; 
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const importedNotes = JSON.parse(e.target.result);
+                    if (!Array.isArray(importedNotes) || importedNotes.some(n => !n.id || !n.content)) {
+                        throw new Error("Formato de ficheiro JSON inválido para notas.");
+                    }
+                    allNotes = importedNotes; 
+                    saveNotesToLocalStorage();
+                    renderNotes();
+                    alertMessage(`Importação de ${importedNotes.length} notas concluída com sucesso!`, 'green');
+                } catch (error) {
+                    console.error("Erro ao processar ficheiro de importação:", error);
+                    alertMessage("Erro na importação. Ficheiro corrompido ou formato inválido.", 'red');
+                } finally {
+                    event.target.value = null; 
+                }
+            };
+            reader.readAsText(file);
         };
 
         // --- Inicialização e Event Listeners ---
@@ -675,47 +570,40 @@
             populateCategories();
             renderNotes();
 
-            // Adiciona listeners de seleção ao editor de conteúdo (FIX 1: Confia apenas nos listeners JS)
+            // FIX CRÍTICO: Atacha os listeners de seleção de forma robusta ao elemento
             const noteContentEl = document.getElementById('noteContent');
             if (noteContentEl) {
-                // Evento primário para detetar seleção com o mouse
                 noteContentEl.addEventListener('mouseup', checkSelection);
-                // Evento para detetar seleção com o teclado
                 noteContentEl.addEventListener('keyup', checkSelection);
-                // Adiciona um pequeno atraso para reverter o estado após o blur/desfocar
+                // Garante que o estado seja verificado mesmo ao perder o foco (ex: clique fora)
                 noteContentEl.addEventListener('blur', () => setTimeout(checkSelection, 100));
             }
             
             document.getElementById('iaFloatingButton').classList.add('ia-button-inactive');
-            document.getElementById('loading').classList.add('hidden');
+            
+            // Adiciona Listeners de Ação
+            document.getElementById('newNoteBtn').addEventListener('click', resetEditor);
+            document.getElementById('saveNoteBtn').addEventListener('click', saveNote);
+            document.getElementById('deleteNoteBtn').addEventListener('click', deleteNote);
+            document.getElementById('cancelEditBtn').addEventListener('click', () => {
+                currentNoteId = null;
+                document.getElementById('noteEditor').classList.add('hidden');
+                document.getElementById('editorPlaceholder').classList.remove('hidden');
+                renderNotes();
+            });
+
+            // Listeners de Filtro
+            document.getElementById('categoryFilter').addEventListener('change', renderNotes);
+            document.getElementById('dateSearch').addEventListener('change', renderNotes);
+            
+            // Listeners de Ações
+            document.getElementById('iaFloatingButton').addEventListener('click', handleIaSearch);
+            document.getElementById('printBtn').addEventListener('click', (e) => { e.preventDefault(); handlePrint(); });
+            document.getElementById('exportBtn').addEventListener('click', handleExport);
+            document.getElementById('importFile').addEventListener('change', handleImport);
         };
 
         document.addEventListener('DOMContentLoaded', initializeApp);
-        
-        // Listeners existentes
-        document.getElementById('newNoteBtn').addEventListener('click', resetEditor);
-        document.getElementById('saveNoteBtn').addEventListener('click', saveNote);
-        document.getElementById('deleteNoteBtn').addEventListener('click', deleteNote);
-        document.getElementById('cancelEditBtn').addEventListener('click', () => {
-            currentNoteId = null;
-            document.getElementById('noteEditor').classList.add('hidden');
-            document.getElementById('editorPlaceholder').classList.remove('hidden');
-            renderNotes();
-        });
-
-        // Listeners para filtrar a lista
-        document.getElementById('categoryFilter').addEventListener('change', renderNotes);
-        document.getElementById('dateSearch').addEventListener('change', renderNotes);
-        
-        // Listener único para o botão IA (que está na barra fixa)
-        document.getElementById('iaFloatingButton').addEventListener('click', handleIaSearch);
-        
-        // Listeners para Ações
-        document.getElementById('printBtn').addEventListener('click', (e) => { e.preventDefault(); handlePrint(); });
-        
-        // Listeners para Exportar/Importar
-        document.getElementById('exportBtn').addEventListener('click', handleExport);
-        document.getElementById('importFile').addEventListener('change', handleImport);
 
     </script>
 </body>
