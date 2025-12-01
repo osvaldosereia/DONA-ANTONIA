@@ -142,26 +142,37 @@
 
         /* Estilos de impressão - Oculta tudo, exceto o painel de notas, ao imprimir */
         @media print {
+            /* Fix 2: Regras de impressão mais explícitas */
             body > div.flex {
                 display: block !important;
                 padding: 0 !important;
+                margin: 0 !important;
                 height: auto !important;
             }
-            .w-1/5 {
+            .w-1\/5 { 
                 display: none !important;
             }
-            .w-3/5 {
+            .w-3\/5 { 
                 width: 100% !important;
+                min-height: 100vh;
                 padding: 20px !important;
                 margin: 0 !important;
                 box-shadow: none !important;
                 border: none !important;
             }
-            #fixedToolbar, #editorPlaceholder {
+            #fixedToolbar, #editorPlaceholder { 
                 display: none !important;
             }
-            .note-header-info, #noteContent {
+            /* Garante que o conteúdo de texto e o input do título sejam visíveis */
+            #noteContent, #noteTitle, .note-header-info {
                 background: none !important;
+                color: #000 !important;
+                box-shadow: none !important;
+                border: none !important;
+                /* Crucial para contenteditable divs: garante que o conteúdo longo seja renderizado */
+                overflow: visible !important;
+                height: auto !important;
+                min-height: auto !important;
             }
         }
         
@@ -295,8 +306,8 @@
                     <div id="noteContent" 
                         contenteditable="true" 
                         placeholder="Comece a escrever a sua nota aqui... (Cole texto formatado ou selecione texto para usar a funcionalidade de IA!)" 
-                        class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent"
-                        onmouseup="checkSelection()" onkeyup="checkSelection()" onblur="setTimeout(checkSelection, 100)">
+                        class="w-full ios-input overflow-y-auto border-none shadow-none bg-transparent">
+                        <!-- REMOVIDOS os atributos onmouseup/onkeyup/onblur inline para evitar conflitos de escopo -->
                     </div>
                 </div>
             </div>
@@ -642,6 +653,7 @@
             const editor = document.getElementById('noteContent');
 
             // Verifica se a seleção ocorreu dentro do editor de notas
+            // Esta é a parte crítica para garantir que o botão só ative dentro do editor
             const isSelectionInEditor = editor && selection.anchorNode && editor.contains(selection.anchorNode);
             
             if (selectedTextLength > 0 && isSelectionInEditor) {
@@ -663,10 +675,12 @@
             populateCategories();
             renderNotes();
 
-            // Adiciona listeners de seleção ao editor de conteúdo
+            // Adiciona listeners de seleção ao editor de conteúdo (FIX 1: Confia apenas nos listeners JS)
             const noteContentEl = document.getElementById('noteContent');
             if (noteContentEl) {
+                // Evento primário para detetar seleção com o mouse
                 noteContentEl.addEventListener('mouseup', checkSelection);
+                // Evento para detetar seleção com o teclado
                 noteContentEl.addEventListener('keyup', checkSelection);
                 // Adiciona um pequeno atraso para reverter o estado após o blur/desfocar
                 noteContentEl.addEventListener('blur', () => setTimeout(checkSelection, 100));
