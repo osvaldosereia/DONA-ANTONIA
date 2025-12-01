@@ -135,7 +135,21 @@
                 <h1 class="text-xl font-extrabold text-gray-800">Dia: <span id="current-date-display" class="text-emerald-600"></span></h1>
             </div>
             
-            <!-- NOVO CAMPO DE ENTRADA (TinyMCE) -->
+            <!-- NOVO: Botões de Importação/Exportação para Backup -->
+            <div class="bg-white p-3 rounded-xl shadow-lg flex-shrink-0 flex justify-between items-center">
+                <h2 class="text-lg font-semibold text-gray-700">Gestão de Backup</h2>
+                <div class="flex gap-2">
+                    <input type="file" id="import-file-input" accept=".json" class="hidden" onchange="handleImport(event)">
+                    <button onclick="document.getElementById('import-file-input').click()" class="bg-gray-400 text-white px-3 py-1 rounded-lg hover:bg-gray-500 transition font-medium text-xs">
+                        Importar Dados
+                    </button>
+                    <button onclick="exportData()" class="bg-gray-600 text-white px-3 py-1 rounded-lg hover:bg-gray-700 transition font-medium text-xs">
+                        Exportar Dados
+                    </button>
+                </div>
+            </div>
+            
+            <!-- CAMPO DE ENTRADA (TinyMCE) -->
             <div class="bg-white p-3 rounded-xl shadow-lg flex-shrink-0">
                 <textarea id="new-note-input" class="w-full"></textarea>
                 <div class="flex justify-between items-center mt-3">
@@ -276,7 +290,7 @@
             const content = inputEditorInstance.getContent({ format: 'html' }).trim();
             const tagsInput = document.getElementById('new-note-tags-input').value.trim();
             
-            // CORREÇÃO: Usar a nova função de verificação de conteúdo vazio
+            // Verifica se o conteúdo é realmente vazio
             if (isContentEmpty(content)) {
                 console.warn('O conteúdo da anotação não pode estar vazio.');
                 return; 
@@ -296,7 +310,7 @@
                 id: crypto.randomUUID(),
                 content: content,
                 iaResponse: '', 
-                tags: newTags, // CORREÇÃO: Tags agora estão sendo incluídas
+                tags: newTags, 
                 timestamp: dayjs().toISOString()
             };
 
@@ -311,7 +325,7 @@
             document.getElementById('new-note-tags-input').value = '';
 
             saveData(); 
-            renderDailyNotes(); // CORREÇÃO: Garante que a renderização é chamada após salvar
+            renderDailyNotes(); 
         }
 
         /**
@@ -751,7 +765,77 @@
         }
 
         // =======================================================
-        // 7. INICIALIZAÇÃO 
+        // 7. GESTÃO DE BACKUP (IMPORTAÇÃO/EXPORTAÇÃO)
+        // =======================================================
+
+        /**
+         * Exporta todos os dados da aplicação como um arquivo JSON.
+         */
+        function exportData() {
+            try {
+                const dataStr = JSON.stringify(appData, null, 2); // Formatação para leitura fácil
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                
+                // Cria um link temporário para download
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `caderno_backup_${dayjs().format('YYYY-MM-DD')}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                console.log('Dados exportados com sucesso.');
+            } catch (error) {
+                console.error('Erro ao exportar dados:', error);
+            }
+        }
+
+        /**
+         * Lida com a seleção e importação do arquivo JSON de backup.
+         * @param {Event} event - O evento de mudança do input de arquivo.
+         */
+        function handleImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // Validação básica da estrutura
+                    if (importedData && importedData.notes && importedData.reminders) {
+                        console.warn('Importação iniciada. O backup sobrescreverá os dados atuais.');
+                        
+                        // Sobrescreve appData, usando fallback para tags
+                        appData.notes = importedData.notes;
+                        appData.reminders = importedData.reminders;
+                        appData.customTags = importedData.customTags || ['Matemática', 'História', 'Português', 'Ciências'];
+                        
+                        saveData(); // Salva os novos dados no localStorage
+                        
+                        // Recarrega a UI
+                        loadNoteForSelectedDate(); 
+                        renderReminders();
+                        renderTags();
+                        renderCalendar();
+                        
+                        console.log('Dados importados com sucesso. UI recarregada.');
+                    } else {
+                        console.error('Falha na importação: O arquivo JSON não parece ser um backup válido do caderno.');
+                    }
+                } catch (error) {
+                    console.error('Erro ao processar o arquivo de importação:', error);
+                }
+            };
+            reader.readAsText(file);
+            // Limpa o valor do input para permitir importações subsequentes
+            event.target.value = ''; 
+        }
+
+        // =======================================================
+        // 8. INICIALIZAÇÃO 
         // =======================================================
 
         window.onload = function() {
