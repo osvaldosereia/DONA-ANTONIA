@@ -681,28 +681,28 @@
         };
 
         const handleBold = () => {
+            focusEditor(); // CRÍTICO: Foca antes de executar
             document.execCommand('bold', false, null);
-            focusEditor();
         };
 
         const handleList = () => {
+            focusEditor(); // CRÍTICO: Foca antes de executar
             document.execCommand('insertUnorderedList', false, null);
-            focusEditor();
         };
 
         const handleHeading = () => {
+            focusEditor(); // CRÍTICO: Foca antes de executar
             // Usa formatBlock para aplicar H2
             document.execCommand('formatBlock', false, 'H2');
-            focusEditor();
         };
 
-        // NOVO: Aplica linha separadora
+        // Aplica linha separadora
         const handleSeparator = () => {
+            focusEditor(); // CRÍTICO: Foca antes de executar
             document.execCommand('insertHorizontalRule', false, null);
-            focusEditor();
         };
 
-        // NOVO: Aplica link (hyperlink)
+        // Aplica link (hyperlink)
         const handleLink = () => {
             const url = window.prompt("Insira o URL para o link:");
             
@@ -710,18 +710,19 @@
                 // Adiciona 'http://' se não houver protocolo
                 const fullUrl = url.startsWith('http') ? url : `http://${url}`;
                 
+                // CRÍTICO: Re-foca DEPOIS do prompt, mas ANTES de execCommand
+                focusEditor(); 
+                
                 // Cria o link
                 document.execCommand('createLink', false, fullUrl);
                 
-                // Como document.execCommand não define target="_blank" nativamente,
-                // vamos tentar selecionar o link recém-criado e adicionar o atributo.
-                // Isso é complexo e não 100% garantido, mas é a melhor tentativa em contenteditable.
+                // Lógica para adicionar target="_blank"
                 const selection = window.getSelection();
                 if (selection.rangeCount > 0) {
                     const range = selection.getRangeAt(0);
-                    // Procura o elemento <a> pai da seleção/range
                     let linkElement = range.commonAncestorContainer;
-                    while (linkElement && linkElement.tagName !== 'A') {
+                    // Move para cima até encontrar um <a> dentro de #noteContent
+                    while (linkElement && linkElement.tagName !== 'A' && linkElement !== document.getElementById('noteContent')) {
                         linkElement = linkElement.parentNode;
                     }
                     if (linkElement && linkElement.tagName === 'A') {
@@ -729,10 +730,10 @@
                     }
                 }
             }
-            focusEditor();
+            focusEditor(); // Garante que o cursor esteja ativo no editor no final.
         };
 
-        // NOVO: Função de Impressão
+        // Função de Impressão
         const handlePrint = () => {
             // Usa a função nativa de impressão do navegador
             window.print();
@@ -813,12 +814,12 @@
         document.getElementById('categoryFilter').addEventListener('change', renderNotes);
         document.getElementById('dateSearch').addEventListener('change', renderNotes);
         
-        // Listeners para os botões de formatação (agora no JS)
+        // Listeners para os botões de formatação (agora com focus garantido)
         document.getElementById('boldBtn').addEventListener('click', (e) => { e.preventDefault(); handleBold(); });
         document.getElementById('listBtn').addEventListener('click', (e) => { e.preventDefault(); handleList(); });
         document.getElementById('headingBtn').addEventListener('click', (e) => { e.preventDefault(); handleHeading(); });
         
-        // NOVO: Listeners para as novas funções
+        // Listeners para as novas funções
         document.getElementById('separatorBtn').addEventListener('click', (e) => { e.preventDefault(); handleSeparator(); });
         document.getElementById('linkBtn').addEventListener('click', (e) => { e.preventDefault(); handleLink(); });
         document.getElementById('printBtn').addEventListener('click', (e) => { e.preventDefault(); handlePrint(); });
