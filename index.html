@@ -629,6 +629,279 @@
             padding: 5px;
             line-height: 1;
         }
+
+        /* --- ESTILOS ABAS DE CADASTRO (NOVO) --- */
+        .tabs-cadastro {
+            display: flex;
+            background-color: #eee;
+            border-radius: 8px;
+            padding: 4px;
+            margin-bottom: 20px;
+            /* CORREÇÃO APLICADA AQUI */
+            min-height: 50px; 
+            align-items: center; 
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-weight: 700; /* Mais negrito */
+            color: #444; /* Mais escuro para melhor contraste */
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase; /* Mais legível */
+            line-height: 1.2; 
+        }
+        .tab-btn.ativo {
+            background-color: white;
+            color: var(--cor-primaria);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .area-resultado-busca {
+            background-color: #f0f9f0;
+            border: 1px solid #c8e6c9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+        .nome-encontrado {
+            display: block;
+            font-size: 18px;
+            color: #2e7d32;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- MODAIS --- */
+        /* REMOVIDO: ESTILO MODAL IMAGEM E CONTROLES */
+
+        .lista-pagamento { list-style: none; padding: 0; }
+        .lista-pagamento li { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 16px; display: flex; align-items: center; }
+        .lista-pagamento i { color: var(--cor-primaria); width: 30px; font-size: 18px; }
+
+        /* REMOVIDO: ESTILO MODAL BRINDE */
+        
+        /* --- NOVO: ESTILO MODAL VARIAÇÃO (MINI MODAL) --- */
+        .modal-variacao {
+            display: none;
+            position: fixed;
+            z-index: 4000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-variacao-content {
+            background-color: white;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            animation: zoomIn 0.2s ease-out;
+            text-align: center;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .titulo-modal-var {
+            color: var(--cor-primaria);
+            margin: 0 0 15px 0;
+            font-size: 20px;
+            text-transform: uppercase;
+        }
+        
+        .subtitulo-modal-var {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .btn-fechar-modal-var {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .opcao-select {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+        
+        .opcao-select:active {
+            transform: scale(0.98);
+        }
+
+        .opcao-select.selected {
+            border-color: var(--cor-primaria);
+            background-color: #ffebee;
+        }
+        
+        .opcao-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+.opcao-nome { font-weight: bold; color: #333; }
+        .opcao-preco { color: var(--cor-primaria); font-weight: 900; }
+
+        .radio-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            position: relative;
+        }
+        
+        .selected .radio-custom {
+            border-color: var(--cor-primaria);
+        }
+        
+        .selected .radio-custom::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 10px; height: 10px;
+            background-color: var(--cor-primaria);
+            border-radius: 50%;
+        }
+
+        .btn-confirmar-pedido {
+            width: 100%;
+            padding: 15px;
+            background-color: #25D366; /* WhatsApp green */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-confirmar-pedido:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* --- AVISO FLUTUANTE (PWA - ESTILO BOTTOM SHEET PROFISSIONAL) --- */
+        .aviso-instalar {
+            position: fixed; 
+            bottom: 0; 
+            left: 0;
+            width: 100%;
+            background-color: white; 
+            color: #333;
+            padding: 15px;
+            z-index: 2900;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.15); /* Sombra suave para cima */
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            display: none; 
+            flex-direction: row; 
+            align-items: center; 
+            justify-content: space-between; 
+            gap: 15px;
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Logo do App no Banner */
+        .app-icon-banner {
+            /* AJUSTE: Usar a imagem logo1.png */
+            content: url('img/logo1.png');
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .texto-instalar-banner { 
+            flex: 1; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            /* Container para o texto FIXO */
+            min-height: 40px; 
+            overflow: hidden;
+            position: relative;
+            padding-top: 5px; 
+        } 
+        .texto-instalar-banner strong { 
+            font-size: 15px; 
+            color: #222;
+            margin-bottom: 2px;
+        }
+        /* REMOVIDO: Estilos para .carousel-text e seus modificadores */
+        
+        .btn-acao-banner { 
+            background-color: var(--cor-primaria); /* Vermelho Marca */
+            color: white; 
+            font-weight: bold; 
+            padding: 10px 20px; 
+            border-radius: 30px; 
+            border: none; 
+            font-size: 14px; 
+            cursor: pointer; 
+            white-space: nowrap; 
+            box-shadow: 0 2px 8px rgba(211, 47, 47, 0.3);
+            transition: transform 0.2s;
+        }
+        .btn-acao-banner:active { transform: scale(0.95); }
+
+        .btn-fechar-aviso { 
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: transparent; 
+            color: #999; 
+            border: none; 
+            font-size: 20px; 
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+        }
 </style>
 </head>
 <body>
