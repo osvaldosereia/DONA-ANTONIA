@@ -159,12 +159,12 @@
         
         /* NOVO ESTILO PARA A LOGO FIXA */
         .logo-pequena { 
-            height: 110px;
-            width: 110px; 
-            max-width: 110px; 
+            height: 120px; /* AUMENTADO para 120px */
+            width: 120px; /* AUMENTADO para 120px */
+            max-width: 120px; 
             object-fit: cover; 
             border-radius: 50%; 
-            border: 3px solid var(--cor-primaria); 
+            /* REMOVIDO: border: 3px solid var(--cor-primaria); */ 
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             
             /* PROPRIEDADES DE FIXAÇÃO E POSICIONAMENTO */
@@ -174,15 +174,10 @@
             z-index: 2000; /* Fica acima do cabeçalho fixo (z-index: 1000) */
             
             /* CORREÇÃO PARA CENTRALIZAR O ELEMENTO FIXED DENTRO DO MAX-WIDTH */
-            /* Calcula a posição horizontal: (max-width - logo-width) / 2 */
-            /* 480px (max-width) - 110px (logo) = 370px. 370/2 = 185. 
-               O body está centralizado. A logo deve estar 8px da borda do body.
-               Posição Left = 50% (centro) - (max-width / 2) + 8px
-               Como o header é fixed com translateX, vamos usar uma regra similar para a logo: */
-            transform: translateX(-50%); /* Centraliza relativo à tela */
-            left: calc(50% - 240px + 8px); /* 50% - (480/2) + 8px. Coloca 8px à esquerda do container */
+            /* Se a largura for 480px e a logo 120px, o left é calculado para 8px da borda do container centralizado */
+            transform: translateX(-50%); 
+            left: calc(50% - 240px + 8px); 
             
-            /* Ajuste para telas menores: Volta ao padrão se o cálculo der errado */
             max-width: calc(100% - 16px);
         }
         
@@ -221,8 +216,8 @@
             background-color: #222;
             display: flex; 
             justify-content: space-between;
-            /* AJUSTE CRÍTICO: Desloca a barra de botões. Agora, com a logo fora, precisamos de 110px da logo + 8px da margem + 8px de respiro = 126px */
-            padding-left: 126px; 
+            /* AJUSTE CRÍTICO: 120px (logo) + 8px (respiro) + 8px (padding) = 136px */
+            padding-left: 136px; 
         }
         
         .nav-item {
@@ -372,9 +367,9 @@
             flex: 1; 
         }
         .btn-whatsapp { background-color: #25D366; }
-        /* NOVO: Estilo para o botão Agendar (verde igual ao WhatsApp para manter familiaridade) */
-        .btn-agendar { background-color: #25D366; opacity: 0.85; }
-        .btn-agendar:hover { opacity: 1; }
+        /* NOVO: Estilo para o botão Reservar (verde igual ao WhatsApp para manter familiaridade) */
+        .btn-Reservar { background-color: #25D366; opacity: 0.85; }
+        .btn-Reservar:hover { opacity: 1; }
         
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
 
@@ -598,19 +593,7 @@
         }
 
         /* --- BANNERS EMBUTIDOS (CORREÇÃO DE TEXTO ENCAVALADO) --- */
-        .card-instalacao-fixo { 
-            background-color: white; 
-            border: 1px solid #eee; 
-            border-radius: 12px; 
-            padding: 15px; 
-            margin-bottom: 20px; 
-            display: flex; 
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            flex-wrap: wrap; /* PERMITE QUEBRA DE LINHA NO MOBILE */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+        /* REMOVIDOS OS ESTILOS PARA .card-instalacao-fixo */
         
         .banner-content-wrapper {
             display: flex;
@@ -778,9 +761,9 @@
                     <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA AGENDAR -->
+                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA Reservar -->
                     <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="agendar('Cesta Econômica')">Agendar</button>
+                    <button class="btn btn-Reservar" onclick="Reservar('Cesta Econômica')">Reservar</button>
                 </div>
                 <!-- NOVO AVISO DE BRINDE -->
                 <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
@@ -809,13 +792,13 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA AGENDAR -->
+                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA Reservar -->
                     <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'agendar')">Agendar</button>
+                    <button class="btn btn-Reservar" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'Reservar')">Reservar</button>
                 </div>
                 <!-- NOVO AVISO DE BRINDE -->
                 <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                    Encomende ou Reserve sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
                 </p>
             </div>
         </div>
@@ -840,9 +823,9 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA AGENDAR -->
+                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA Reservar -->
                     <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'agendar')">Agendar</button>
+                    <button class="btn btn-Reservar" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'Reservar')">Reservar</button>
                 </div>
                 <!-- NOVO AVISO DE BRINDE -->
                 <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
@@ -871,9 +854,9 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA AGENDAR -->
+                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA Reservar -->
                     <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'agendar')">Agendar</button>
+                    <button class="btn btn-Reservar" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'Reservar')">Reservar</button>
                 </div>
                 <!-- NOVO AVISO DE BRINDE -->
                 <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
@@ -902,9 +885,9 @@
                     <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
                 </div>
                 <div class="botoes-wrapper">
-                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA AGENDAR -->
+                    <!-- BOTÕES: MUDAR CLASSE/TEXTO COMPARTILHAR PARA Reservar -->
                     <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'agendar')">Agendar</button>
+                    <button class="btn btn-Reservar" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'Reservar')">Reservar</button>
                 </div>
                 <!-- NOVO AVISO DE BRINDE -->
                 <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
@@ -913,20 +896,7 @@
             </div>
         </div>
 
-        <!-- BANNER INTERNO ORGANIZADO E RESPONSIVO (PWA) -->
-        <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="banner-content-wrapper">
-                <img src="img/icon-192.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner">
-                <div class="conteudo-banner-interno">
-                    <strong>App Dona Antônia</strong>
-                    <!-- NOVO TEXTO FIXO -->
-                    <span>Baixe agora e ganhe Amaciante Ypê 2L.</span>
-                </div>
-            </div>
-            <button class="btn-instalacao-inline" onclick="instalarApp()">
-                <i class="fas fa-download"></i> BAIXAR
-            </button>
-        </div>
+        <!-- REMOVIDO: BANNER INTERNO ORGANIZADO E RESPONSIVO (PWA) -->
     </div>
 
     <!-- SEÇÃO 2: PAGAMENTO (Inicialmente Oculta) -->
@@ -947,20 +917,7 @@
             <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo para 30 dias.</p>
         </div>
 
-        <!-- BANNER INTERNO ORGANIZADO (PWA) -->
-        <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="banner-content-wrapper">
-                <img src="img/icon-192.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner">
-                <div class="conteudo-banner-interno">
-                    <strong>App Dona Antônia</strong>
-                    <!-- NOVO TEXTO FIXO -->
-                    <span>Baixe agora e ganhe Amaciante Ypê 2L.</span>
-                </div>
-            </div>
-            <button class="btn-instalacao-inline" onclick="instalarApp()">
-                <i class="fas fa-download"></i> BAIXAR
-            </button>
-        </div>
+        <!-- REMOVIDO: BANNER INTERNO ORGANIZADO (PWA) -->
     </div>
 
     <!-- SEÇÃO 3: SORTEIO (ALTERADA) -->
@@ -1013,20 +970,7 @@
 
         </div>
         
-        <!-- BANNER INTERNO ORGANIZADO (PWA) -->
-        <div class="card-instalacao-fixo pwa-install-promo">
-            <div class="banner-content-wrapper">
-                <img src="img/icon-192.png" onerror="this.src='https://placehold.co/50x50/D32F2F/ffffff?text=DA'" class="app-icon-banner">
-                <div class="conteudo-banner-interno">
-                    <strong>App Dona Antônia</strong>
-                    <!-- NOVO TEXTO FIXO -->
-                    <span>Baixe agora e ganhe Amaciante Ypê 2L.</span>
-                </div>
-            </div>
-            <button class="btn-instalacao-inline" onclick="instalarApp()">
-                <i class="fas fa-download"></i> BAIXAR
-            </button>
-        </div>
+        <!-- REMOVIDO: BANNER INTERNO ORGANIZADO (PWA) -->
 
         <!-- TEXTO SEO RESTAURADO E POSICIONADO NO FIM -->
         <div class="seo-text-block">
@@ -1067,7 +1011,7 @@
         </div>
     </div>
 
-    <!-- BANNER FLUTUANTE (BOTTOM SHEET) -->
+    <!-- BANNER FLUTUANTE (BOTTOM SHEET) - O ÚNICO MANTIDO -->
     <div id="aviso-instalar" class="aviso-instalar pwa-install-promo">
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
         
@@ -1092,9 +1036,6 @@
     <script>
         const TELEFONE = "5565998150975";
         const LINK_SITE = "donaantonia.com.br/oferta";
-
-        // --- CARROSSEL DE TEXTO PWA (REMOVIDO E SIMPLIFICADO) ---
-        // Variáveis e funções de carrossel foram removidas.
 
         // --- NAVEGAÇÃO DE IMAGENS NOS CARDS (NOVO) ---
         // Dados de Imagens (Cesta Econômica agora tem 2 fotos)
@@ -1243,15 +1184,15 @@
             window.open(`https://wa.me/${TELEFONE}?text=Olá, quero encomendar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
         }
 
-        function agendar(produto) {
-            window.open(`https://wa.me/${TELEFONE}?text=Olá, gostaria de agendar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
+        function Reservar(produto) {
+            window.open(`https://wa.me/${TELEFONE}?text=Olá, gostaria de Reservar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
         }
 
         // --- LÓGICA DO MODAL DE VARIAÇÃO ---
         let dadosCestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '', acao: '' }; // Adicionado 'acao'
         let opcaoEscolhida = ''; 
 
-        function abrirModalVariacao(nome, pAlvino, pKoblenz, acao) { // acao: 'encomendar' ou 'agendar'
+        function abrirModalVariacao(nome, pAlvino, pKoblenz, acao) { // acao: 'encomendar' ou 'Reservar'
             dadosCestaAtual = { nome, precoAlvino: pAlvino, precoKoblenz: pKoblenz, acao };
             opcaoEscolhida = '';
             
@@ -1264,7 +1205,7 @@
             document.getElementById('btnConfirmarPedido').disabled = true;
 
             // Define o texto do botão de confirmação
-            document.getElementById('textoConfirmarPedido').innerText = acao === 'agendar' ? 'Agendar' : 'Encomendar';
+            document.getElementById('textoConfirmarPedido').innerText = acao === 'Reservar' ? 'Reservar' : 'Encomendar';
 
             document.getElementById('modalVariacao').style.display = 'flex';
         }
@@ -1284,7 +1225,7 @@
             document.getElementById('btnConfirmarPedido').disabled = false;
         }
 
-        function confirmarAcao() { // Função unificada para Encomendar ou Agendar do modal
+        function confirmarAcao() { // Função unificada para Encomendar ou Reservar do modal
             if(!opcaoEscolhida || !dadosCestaAtual.acao) return;
 
             let marca = opcaoEscolhida === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
@@ -1292,7 +1233,7 @@
             let nomeCesta = dadosCestaAtual.nome;
             let acao = dadosCestaAtual.acao;
 
-            let acaoTexto = acao === 'agendar' ? 'agendar' : 'encomendar';
+            let acaoTexto = acao === 'Reservar' ? 'Reservar' : 'encomendar';
             
             let textoZap = `Olá, gostaria de ${acaoTexto} a *${nomeCesta}* com *${marca}* (Valor: R$ ${preco}). Com Amaciante Ypê de 2L de brinde.`;
             
@@ -1304,7 +1245,7 @@
             document.getElementById('modalVariacao').style.display = 'none';
         }
         
-        // REMOVIDA: function compartilhar (substituída por agendar)
+        // REMOVIDA: function compartilhar (substituída por Reservar)
         
         // --- LÓGICA DE SORTEIO ---
         function alternarAbaSorteio(aba) {
@@ -1398,7 +1339,6 @@
             
             if (deferredPrompt) {
                 avisoPwa.style.display = 'flex'; 
-                document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'flex');
             }
         });
         function instalarApp() {
@@ -1407,8 +1347,7 @@
                 deferredPrompt.userChoice.then((res) => {
                     if(res.outcome === 'accepted') {
                         localStorage.setItem('appInstalado', 'true');
-                        document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'none');
-                        avisoPwa.style.display = 'none';
+                        document.getElementById('aviso-instalar').style.display = 'none';
                         alert("🎉 PARABÉNS! Você baixou o App e ganhou 1 Amaciante Ypê 2L de brinde na sua próxima cesta!");
                     }
                     deferredPrompt = null;
@@ -1421,14 +1360,13 @@
         }
 
         window.onload = function() {
+            // Se estiver instalado, esconde o aviso flutuante
             if (localStorage.getItem('appInstalado')) {
-                 document.querySelectorAll('.pwa-install-promo').forEach(el => el.style.display = 'none');
+                 document.getElementById('aviso-instalar').style.display = 'none';
             } else {
-                // REMOVIDO: iniciarCarouselPWA();
-                document.querySelectorAll('.card-instalacao-fixo').forEach(el => el.style.display = 'flex');
-
+                // Se não estiver instalado E não tiver sido fechado, mostra o aviso flutuante.
                 if (!localStorage.getItem('bannerFlutuanteFechado')) {
-                     avisoPwa.style.display = 'flex';
+                     document.getElementById('aviso-instalar').style.display = 'flex';
                 }
             }
             // NOVO: Verifica o link ao carregar a página
