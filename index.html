@@ -93,7 +93,7 @@
         /* --- CORREÇÃO GLOBAL --- */
         * { box-sizing: border-box; }
 
-        /* --- ESTILOS GERAIS --- */
+        /* --- ESTILOS GERAIS (PADRÃO MOBILE/BASE) --- */
         :root {
             --cor-primaria: #D32F2F; 
             --cor-ativa: #ffffff;
@@ -107,24 +107,28 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--cor-fundo);
+            background-color: #e0e0e0; /* Fundo cinza para as laterais do desktop */
             color: var(--cor-texto);
-            margin: 0 auto; 
+            margin: 0; 
             padding: 0;
-            /* AJUSTE: Altura do cabeçalho fixo (130px) + 10px de margem = 140px */
-            /* MANTER O PADDING INICIALIZADO PARA O CONTEÚDO NÃO FICAR ESCONDIDO */
             padding-top: 140px; 
             padding-bottom: 20px;
-            max-width: 480px; 
             min-height: 10vh;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
             position: relative; 
+            width: 100%;
+        }
+
+        /* NOVO CONTAINER DE CONTEÚDO PRINCIPAL */
+        .main-content-wrapper {
+            max-width: 480px; /* Padrão mobile */
+            margin: 0 auto; /* Centraliza */
+            background-color: var(--cor-fundo); /* Fundo branco dentro do limite */
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
         /* --- CABEÇALHO --- */
         header {
             background-color: white;
-            /* ALTURA TOTAL: 70px (topo) + 60px (nav) = 130px */
             height: 130px; 
             padding: 0;
             display: flex;
@@ -132,10 +136,10 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             position: fixed;
             top: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            left: 50%; /* Centraliza o elemento fixed */
+            transform: translateX(-50%); /* Centraliza o elemento fixed */
             width: 100%;
-            max-width: 480px;
+            max-width: 480px; /* Limita ao wrapper para alinhamento */
             z-index: 1000;
         }
 
@@ -144,7 +148,6 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            /* Barra superior com 70px de altura */
             height: 70px;
             padding: 5px 15px;
             border-bottom: 1px solid #f0f0f0;
@@ -153,46 +156,84 @@
         .header-left { 
             display: flex; 
             align-items: center; 
-            /* AJUSTE: Remove flex 2, não precisamos mais de espaço extra */
             flex: 1; 
         }
         
-        /* NOVO ESTILO PARA A LOGO FIXA */
+        /* NOVO ESTILO PARA A LOGO FIXA (120px) */
         .logo-pequena { 
-            height: 120px; /* Mantido em 120px */
-            width: 120px; /* Mantido em 120px */
+            height: 120px; 
+            width: 120px; 
             max-width: 120px; 
             object-fit: cover; 
             border-radius: 50%; 
-            /* REMOVIDO: border: 3px solid var(--cor-primaria); */ 
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             
-            /* PROPRIEDADES DE FIXAÇÃO E POSICIONAMENTO */
+            /* PROPRIEDADES DE FIXAÇÃO E POSICIONAMENTO BASE (MOBILE) */
             position: fixed;
-            top: 8px; /* Respiro no topo */
-            left: 8px; /* Respiro na esquerda */
-            z-index: 2000; /* Fica acima do cabeçalho fixo (z-index: 1000) */
+            top: 8px; 
+            z-index: 2000; 
             
-            /* CORREÇÃO PARA CENTRALIZAR O ELEMENTO FIXED DENTRO DO MAX-WIDTH */
-            /* Se a largura for 480px e a logo 120px, o left é calculado para 8px da borda do container centralizado */
-            transform: translateX(-50%); 
-            left: calc(50% - 240px + 8px); 
-            
-            max-width: calc(100% - 16px);
+            /* POSICIONAMENTO MOBILE (relativo à borda da tela) */
+            left: 8px; 
+            transform: none; 
         }
         
-        /* --- CORREÇÃO DE RESPONSIVIDADE PARA A LOGO --- */
-        @media (max-width: 480px) {
-             .logo-pequena {
-                /* Se a tela for menor que 480px, o left é relativo à tela, com 8px de margem */
-                left: 8px; 
-                transform: none; 
+        /* --- RESPONSIVIDADE DESKTOP --- */
+        @media (min-width: 481px) {
+            .main-content-wrapper {
+                max-width: 1000px; /* NOVO LIMITE DE LARGURA PARA DESKTOP */
+                box-shadow: 0 0 25px rgba(0,0,0,0.15); /* Sombra mais destacada */
+            }
+            header {
+                max-width: 1000px; /* Header acompanha o limite de largura do conteúdo */
+                box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            }
+            /* A logo deve ser alinhada com o canto do main-content-wrapper */
+            .logo-pequena {
+                left: 50%;
+                /* 50% (centro) - 500px (metade do wrapper de 1000px) + 8px (margem) */
+                transform: translateX(calc(-500px + 8px)); 
+            }
+            .header-top {
+                padding: 5px 30px; 
+            }
+            .top-nav {
+                padding-left: 150px; 
+                padding-right: 30px; 
+            }
+            .secao-conteudo {
+                padding: 20px 30px; 
+            }
+             /* O aviso PWA deve acompanhar o limite do conteúdo */
+            #aviso-instalar {
+                max-width: 1000px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+        
+        /* Media Query para layout de 2 colunas MAX (768px+) */
+        @media (min-width: 768px) {
+            /* O banner superior (8 anos de tradição) deve permanecer full-width dentro do wrapper */
+            #pag-cestas .card:first-child {
+                grid-column: 1 / -1; /* Ocupa todas as colunas */
+            }
+            
+            /* O resto dos cards de cesta usa Grid */
+            .cesta-cards-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
+                gap: 20px; 
+            }
+            .card-cesta {
+                width: 100%;
+                margin-bottom: 0 !important; /* Remove a margem inferior para o grid controlar o espaçamento */
             }
         }
 
         .header-icons { 
             display: flex; 
-            gap: 8px; /* Reduzido o gap para os botões de texto */
+            gap: 8px; 
             align-items: center; 
             flex: 1; 
             justify-content: flex-end; 
@@ -200,16 +241,16 @@
 
         /* NOVO ESTILO: BOTÃO DE TEXTO NO CABEÇALHO */
         .header-btn {
-            padding: 6px 10px; /* Preenchimento menor para botões de texto */
+            padding: 6px 10px; 
             border-radius: 6px;
-            font-size: 13px; /* Fonte menor */
+            font-size: 13px; 
             font-weight: bold;
             text-decoration: none;
-            display: inline-flex; /* Usa flex para alinhamento interno */
+            display: inline-flex; 
             align-items: center;
             justify-content: center;
             transition: background-color 0.2s, transform 0.2s;
-            white-space: nowrap; /* Impede quebra de linha do texto */
+            white-space: nowrap; 
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
             color: white; 
         }
@@ -241,18 +282,18 @@
             background-color: #222;
             display: flex; 
             justify-content: space-between;
-            /* AJUSTE CRÍTICO: 120px (logo) + 8px (respiro) + 8px (padding) = 136px */
             padding-left: 136px; 
         }
         
         .nav-item {
+            /* AJUSTE: Reduzido o tamanho da fonte para 4 botões */
             flex: 1; 
             text-align: center; 
             background: transparent; 
             border: none;
             cursor: pointer; 
             color: #999;
-            font-size: 14px; 
+            font-size: 13px; /* Ajustado de 14px */
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -267,7 +308,7 @@
         .nav-item.ativo { 
             color: #ffffff; 
             background-color: var(--cor-primaria);
-            font-size: 16px;
+            font-size: 15px; /* Ajustado de 16px */
             font-weight: 900;
             text-shadow: 0 1px 3px rgba(0,0,0,0.3);
             box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
@@ -275,20 +316,19 @@
         
         /* --- SEÇÕES (PÁGINAS) --- */
         .secao-conteudo { 
-            display: none; 
             padding: 15px; 
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
-        
-        .secao-conteudo.visivel { 
-            display: block; 
         }
 
-        .secao-conteudo.animar {
-            opacity: 1;
-            transform: translateY(0);
+        /* NOVO: Estilo para diferenciar as seções de Pagamento, Sorteio e Aniversário */
+        #pag-pagamento, #pag-sorteio, #pag-aniversario {
+            background-color: #f7f7f7; /* Fundo levemente cinza para separação */
+            /* Ajusta o padding para melhor separação visual */
+            padding-top: 20px; 
+            padding-bottom: 20px; 
+        }
+        /* Garantir que o card dentro dessas seções não tenha margem inferior */
+        #pag-pagamento .card, #pag-sorteio .card, #pag-aniversario .card {
+            margin-bottom: 0;
         }
 
         /* --- CARTÕES --- */
@@ -322,7 +362,7 @@
             padding: 0 10px;
         }
 
-        /* --- GALERIA - NOVO ESTILO (FOTO ÚNICA COM BOTÃO) --- */
+        /* --- GALERIA - FOTO ÚNICA COM BOTÃO --- */
         .galeria-fotos { 
             position: relative; 
             margin-bottom: 15px; 
@@ -331,7 +371,6 @@
             width: 100%; 
             aspect-ratio: 1 / 1; 
             background: #eee;
-            /* CURSOR PADRÃO, POIS O CLIQUE É NO BOTÃO DISCRETO */
             cursor: default; 
         }
         .img-wrapper {
@@ -355,7 +394,6 @@
             display: block;
         }
         
-        /* NOVO ESTILO: BOTÃO VER PRODUTOS/FOTO */
         .swipe-indicator {
             position: absolute;
             bottom: 15px;
@@ -375,14 +413,12 @@
             width: auto;
             min-width: 120px;
             transition: opacity 0.3s ease, background 0.2s;
-            /* REMOVENDO TODAS AS ANIMAÇÕES RELACIONADAS AO SWIPE */
             animation: none; 
         }
 
         .swipe-indicator:active {
             background: rgba(0, 0, 0, 0.9);
         }
-        /* REMOVIDO: .swipe-indicator.hidden e @keyframes swipeMove */
 
         /* --- BOTÕES --- */
         .botoes-wrapper { display: flex; gap: 10px; margin-top: 15px; }
@@ -395,7 +431,6 @@
             flex: 1; 
         }
         .btn-whatsapp { background-color: #25D366; }
-        /* NOVO: Estilo para o botão Agendar (verde igual ao WhatsApp para manter familiaridade) */
         .btn-agendar { background-color: #25D366; opacity: 0.85; }
         .btn-agendar:hover { opacity: 1; }
         
@@ -406,7 +441,6 @@
         .lista-pagamento li { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 16px; display: flex; align-items: center; }
         .lista-pagamento i { color: var(--cor-primaria); width: 30px; font-size: 18px; }
         
-        /* --- NOVO: ESTILO MODAL VARIAÇÃO (MINI MODAL) --- */
         .modal-variacao {
             display: none;
             position: fixed;
@@ -488,7 +522,7 @@
             flex-direction: column;
         }
         
-.opcao-nome { font-weight: bold; color: #333; }
+        .opcao-nome { font-weight: bold; color: #333; }
         .opcao-preco { color: var(--cor-primaria); font-weight: 900; }
 
         .radio-custom {
@@ -588,7 +622,6 @@
             color: #222;
             margin-bottom: 2px;
         }
-        /* REMOVIDO: Estilos para .carousel-text e seus modificadores */
         
         .btn-acao-banner { 
             background-color: var(--cor-primaria); /* Vermelho Marca */
@@ -617,9 +650,6 @@
             padding: 5px;
             line-height: 1;
         }
-
-        /* --- ESTILOS ABAS DE CADASTRO (NOVO) --- */
-        /* REMOVIDO: .tabs-cadastro e .tab-btn, já que as abas foram removidas */
 
         /* Novo estilo para os resultados da busca no Sorteio */
         .area-resultado-busca {
@@ -652,7 +682,7 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-</style>
+    </style>
 </head>
 <body>
 
@@ -680,259 +710,276 @@
             <button class="nav-item ativo" id="btn-cestas" onclick="rolarPara('cestas')">CESTAS</button>
             <button class="nav-item" id="btn-pagamento" onclick="rolarPara('pagamento')">PAGAMENTO</button>
             <button class="nav-item" id="btn-sorteio" onclick="rolarPara('sorteio')">SORTEIO</button>
+            <button class="nav-item" id="btn-aniversario" onclick="rolarPara('aniversario')">ANIVERSÁRIO</button>
         </nav>
     </header>
 
-    <!-- CONTAINER DE SEÇÕES EM ROLAGEM ÚNICA -->
-    
-    <!-- SEÇÃO 1: CESTAS (Sempre visível inicialmente) -->
-    <div id="pag-cestas" class="secao-conteudo visivel animar">
-        <!-- ALTERAÇÃO 1: NOVA FRASE DE TRADIÇÃO -->
-        <div class="card" style="text-align: center; background-color: #fff3e0;">
-            <h1 style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #E65100;">
-                <i class="fas fa-crown"></i> 8 anos de tradição em Cuiabá e VG
-            </h1>
-            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Cestas básicas com preço justo e qualidade garantida.</p>
-        </div>
-
-        <!-- Cestas (REORDENADAS para: economica, mini, pequena, media, grande) -->
+    <!-- CONTAINER DE CONTEÚDO PRINCIPAL (COM LIMITE DE LARGURA NO DESKTOP) -->
+    <div class="main-content-wrapper">
         
-        <!-- CESTA ECONÔMICA (PRIMEIRA) -->
-        <div class="card card-cesta">
-            <div class="cesta-header"><h3>CESTA ECONÔMICA</h3></div>
-            <div class="cesta-body">
-                <div class="galeria-fotos" id="galeria-economica">
-                    <!-- Imagem 1 (ativa) -->
-                    <div class="img-wrapper active" data-img-index="0">
-                        <img src="img/cesta-economica1.jpg" alt="Cesta Econômica" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+1'">
-                    </div>
-                    <!-- Imagem 2 -->
-                    <div class="img-wrapper" data-img-index="1">
-                        <img src="img/cesta-economica2.jpg" alt="Cesta Econômica Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+2'">
-                    </div>
-                    <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
-                    <div class="swipe-indicator" onclick="event.stopPropagation();">
-                        <span id="btn-foto-economica">VER PRODUTOS</span>
-                    </div>
-                </div>
-                <div class="lista-precos-cesta">
-                    <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
-                </div>
-                <div class="botoes-wrapper">
-                    <!-- BOTÕES DE AÇÃO -->
-                    <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="agendar('Cesta Econômica')">Agendar</button>
-                </div>
-                <!-- NOVO AVISO DE BRINDE -->
-                <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
-                </p>
-            </div>
-        </div>
-
-        <!-- CESTA MINI (SEGUNDA) -->
-        <div class="card card-cesta">
-            <div class="cesta-header"><h3>CESTA MINI</h3></div>
-            <div class="cesta-body">
-                <div class="galeria-fotos" id="galeria-mini">
-                    <div class="img-wrapper active" data-img-index="0">
-                        <img src="img/cesta-mini1.jpg" alt="Cesta Mini" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+1'">
-                    </div>
-                    <div class="img-wrapper" data-img-index="1">
-                        <img src="img/cesta-mini2.jpg" alt="Cesta Mini Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+2'">
-                    </div>
-                    <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
-                    <div class="swipe-indicator" onclick="event.stopPropagation();">
-                        <span id="btn-foto-mini">VER PRODUTOS</span>
-                    </div>
-                </div>
-                <div class="lista-precos-cesta">
-                    <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 165,00</strong></div>
-                    <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
-                </div>
-                <div class="botoes-wrapper">
-                    <!-- BOTÕES DE AÇÃO COM MODAL -->
-                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'agendar')">Agendar</button>
-                </div>
-                <!-- NOVO AVISO DE BRINDE -->
-                <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
-                </p>
-            </div>
-        </div>
-
-        <!-- CESTA PEQUENA (TERCEIRA) -->
-        <div class="card card-cesta">
-            <div class="cesta-header"><h3>CESTA PEQUENA</h3></div>
-            <div class="cesta-body">
-                <div class="galeria-fotos" id="galeria-pequena">
-                    <div class="img-wrapper active" data-img-index="0">
-                        <img src="img/cesta-pequena1.jpg" alt="Cesta Pequena" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+1'">
-                    </div>
-                    <div class="img-wrapper" data-img-index="1">
-                        <img src="img/cesta-pequena2.jpg" alt="Cesta Pequena Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+2'">
-                    </div>
-                    <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
-                    <div class="swipe-indicator" onclick="event.stopPropagation();">
-                        <span id="btn-foto-pequena">VER PRODUTOS</span>
-                    </div>
-                </div>
-                <div class="lista-precos-cesta">
-                    <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 215,00</strong></div>
-                    <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
-                </div>
-                <div class="botoes-wrapper">
-                    <!-- BOTÕES DE AÇÃO COM MODAL -->
-                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'agendar')">Agendar</button>
-                </div>
-                <!-- NOVO AVISO DE BRINDE -->
-                <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
-                </p>
-            </div>
-        </div>
-
-        <!-- CESTA MÉDIA (QUARTA) -->
-        <div class="card card-cesta">
-            <div class="cesta-header"><h3>CESTA MÉDIA</h3></div>
-            <div class="cesta-body">
-                <div class="galeria-fotos" id="galeria-media">
-                    <div class="img-wrapper active" data-img-index="0">
-                        <img src="img/cesta-media1.jpg" alt="Cesta Média" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+1'">
-                    </div>
-                    <div class="img-wrapper" data-img-index="1">
-                        <img src="img/cesta-media2.jpg" alt="Cesta Média Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+2'">
-                    </div>
-                    <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
-                    <div class="swipe-indicator" onclick="event.stopPropagation();">
-                        <span id="btn-foto-media">VER PRODUTOS</span>
-                    </div>
-                </div>
-                <div class="lista-precos-cesta">
-                    <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 320,00</strong></div>
-                    <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
-                </div>
-                <div class="botoes-wrapper">
-                    <!-- BOTÕES DE AÇÃO COM MODAL -->
-                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'agendar')">Agendar</button>
-                </div>
-                <!-- NOVO AVISO DE BRINDE -->
-                <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
-                </p>
-            </div>
-        </div>
-
-        <!-- CESTA GRANDE (ÚLTIMA) -->
-        <div class="card card-cesta">
-            <div class="cesta-header"><h3>CESTA GRANDE</h3></div>
-            <div class="cesta-body">
-                <div class="galeria-fotos" id="galeria-grande">
-                    <div class="img-wrapper active" data-img-index="0">
-                        <img src="img/cesta-grande1.jpg" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE+1'">
-                    </div>
-                    <div class="img-wrapper" data-img-index="1">
-                        <img src="img/cesta-grande2.jpg" alt="Cesta Básica Grande Detalhe" onerror="this.src='https://placehold.co/400x400?text=GRANDE+2'">
-                    </div>
-                    <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
-                    <div class="swipe-indicator" onclick="event.stopPropagation();">
-                        <span id="btn-foto-grande">VER PRODUTOS</span>
-                    </div>
-                </div>
-                <div class="lista-precos-cesta">
-                    <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 380,00</strong></div>
-                    <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
-                </div>
-                <div class="botoes-wrapper">
-                    <!-- BOTÕES DE AÇÃO COM MODAL -->
-                    <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'encomendar')">Encomendar</button>
-                    <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'agendar')">Agendar</button>
-                </div>
-                <!-- NOVO AVISO DE BRINDE -->
-                <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
-                    Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 2: PAGAMENTO (Inicialmente Oculta) -->
-    <div id="pag-pagamento" class="secao-conteudo">
-        <div class="card">
-            <h2>💳 Formas de Pagamento</h2>
-            <p>Aceitamos as principais formas para facilitar sua vida:</p>
-            <ul class="lista-pagamento">
-                <li><i class="fas fa-money-bill-wave"></i> Dinheiro</li>
-                <li><i class="fas fa-qrcode"></i> Pix</li>
-                <li><i class="fas fa-credit-card"></i> Cartão de Débito</li>
-                <li><i class="fas fa-credit-card"></i> Cartão de Crédito (até 3x sem juros)</li>
-                <li><i class="fas fa-utensils"></i> Alelo Alimentação/Refeição</li>
-                <li><i class="fas fa-utensils"></i> Sodexo Alimentação/Refeição</li>
-                <li><i class="fas fa-utensils"></i> Pluxee</li>
-                <li><i class="fas fa-mobile-alt"></i> Ifood Benefícios</li>
-            </ul>
-            <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo para 30 dias.</p>
-        </div>
-    </div>
-
-    <!-- SEÇÃO 3: SORTEIO (ALTERADA COM LÓGICA DE BUSCA ÚNICA) -->
-    <div id="pag-sorteio" class="secao-conteudo">
-        <div class="card">
-            <h2>🍀 Sorteio todo Domingo.</h2>
-            <p>Serão 5 ganhadores de Kits de Limpeza e Higiêne! Próximo Sorteio dia 7 de Dezembro as 18h. Válido para moradores de Cuiabá e VG</p>
-            
-            <!-- ETAPA 1: BUSCA POR TELEFONE (VISÍVEL SEMPRE) -->
-            <div id="area-busca-telefone" class="card" style="margin-bottom: 15px;">
-                <h2>📞 Participar</h2>
-                <p>Digite seu telefone para verificar sua participação:</p>
-                <label>Telefone (Whatsapp): <span style="color:red">*</span></label>
-                <input type="tel" id="busca-telefone" placeholder="Digite seu telefone..." required>
-                <button onclick="buscarCadastro()" class="btn" style="background-color: var(--cor-primaria); margin-top: 5px;">
-                    <i class="fas fa-search" style="margin-right: 8px;"></i> Buscar
-                </button>
+        <!-- SEÇÃO 1: CESTAS (Com Banner H1) -->
+        <div id="pag-cestas" class="secao-conteudo">
+            <!-- BANNER H1 (Sempre full width dentro do Grid) -->
+            <div class="card" style="text-align: center; background-color: #fff3e0;">
+                <h1 style="margin: 0; font-size: 1.1rem; font-weight: bold; color: #E65100;">
+                    <i class="fas fa-crown"></i> 8 anos de tradição em Cuiabá e VG
+                </h1>
+                <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #666;">Cestas básicas com preço justo e qualidade garantida.</p>
             </div>
 
-            <!-- ETAPA 2A: CADASTRO ENCONTRADO (Escondido inicialmente) -->
-            <div id="cadastro-encontrado" class="area-resultado-busca" style="display: none;">
-                <h2>🥳 Cadastro Encontrado!</h2>
-                <p style="margin-bottom: 10px;">Confira seus dados:</p>
+            <!-- GRID PARA OS CARDS DE CESTA (NOVO) -->
+            <div class="cesta-cards-grid">
                 
-                <div style="text-align: left;">
-                    <p><strong>Nome:</strong> <span id="nome-cliente-encontrado"></span></p>
-                    <p><strong>Cidade:</strong> <span id="cidade-cliente-encontrado"></span></p>
-                    <p><strong>Bairro:</strong> <span id="bairro-cliente-encontrado"></span></p>
+                <!-- CESTA ECONÔMICA (PRIMEIRA) -->
+                <div class="card card-cesta">
+                    <div class="cesta-header"><h3>CESTA ECONÔMICA</h3></div>
+                    <div class="cesta-body">
+                        <div class="galeria-fotos" id="galeria-economica">
+                            <!-- Imagem 1 (ativa) -->
+                            <div class="img-wrapper active" data-img-index="0">
+                                <img src="img/cesta-economica1.jpg" alt="Cesta Econômica" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+1'">
+                            </div>
+                            <!-- Imagem 2 -->
+                            <div class="img-wrapper" data-img-index="1">
+                                <img src="img/cesta-economica2.jpg" alt="Cesta Econômica Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+2'">
+                            </div>
+                            <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
+                            <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('economica', 1)">
+                                <span id="btn-foto-economica">VER PRODUTOS</span>
+                            </div>
+                        </div>
+                        <div class="lista-precos-cesta">
+                            <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
+                        </div>
+                        <div class="botoes-wrapper">
+                            <!-- BOTÕES DE AÇÃO -->
+                            <button class="btn btn-whatsapp" onclick="encomendar('Cesta Econômica')">Encomendar</button>
+                            <button class="btn btn-agendar" onclick="agendar('Cesta Econômica')">Agendar</button>
+                        </div>
+                        <!-- NOVO AVISO DE BRINDE -->
+                        <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
+                            Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                        </p>
+                    </div>
                 </div>
-                
-                <button onclick="confirmarJaCadastrado()" class="btn btn-whatsapp" style="margin-top: 15px;">
-                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar e Participar
-                </button>
+
+                <!-- CESTA MINI (SEGUNDA) -->
+                <div class="card card-cesta">
+                    <div class="cesta-header"><h3>CESTA MINI</h3></div>
+                    <div class="cesta-body">
+                        <div class="galeria-fotos" id="galeria-mini">
+                            <div class="img-wrapper active" data-img-index="0">
+                                <img src="img/cesta-mini1.jpg" alt="Cesta Mini" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+1'">
+                            </div>
+                            <div class="img-wrapper" data-img-index="1">
+                                <img src="img/cesta-mini2.jpg" alt="Cesta Mini Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+2'">
+                            </div>
+                            <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
+                            <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('mini', 1)">
+                                <span id="btn-foto-mini">VER PRODUTOS</span>
+                            </div>
+                        </div>
+                        <div class="lista-precos-cesta">
+                            <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 165,00</strong></div>
+                            <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
+                        </div>
+                        <div class="botoes-wrapper">
+                            <!-- BOTÕES DE AÇÃO COM MODAL -->
+                            <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'encomendar')">Encomendar</button>
+                            <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00', 'agendar')">Agendar</button>
+                        </div>
+                        <!-- NOVO AVISO DE BRINDE -->
+                        <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
+                            Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CESTA PEQUENA (TERCEIRA) -->
+                <div class="card card-cesta">
+                    <div class="cesta-header"><h3>CESTA PEQUENA</h3></div>
+                    <div class="cesta-body">
+                        <div class="galeria-fotos" id="galeria-pequena">
+                            <div class="img-wrapper active" data-img-index="0">
+                                <img src="img/cesta-pequena1.jpg" alt="Cesta Pequena" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+1'">
+                            </div>
+                            <div class="img-wrapper" data-img-index="1">
+                                <img src="img/cesta-pequena2.jpg" alt="Cesta Pequena Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+2'">
+                            </div>
+                            <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
+                            <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('pequena', 1)">
+                                <span id="btn-foto-pequena">VER PRODUTOS</span>
+                            </div>
+                        </div>
+                        <div class="lista-precos-cesta">
+                            <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 215,00</strong></div>
+                            <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
+                        </div>
+                        <div class="botoes-wrapper">
+                            <!-- BOTÕES DE AÇÃO COM MODAL -->
+                            <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'encomendar')">Encomendar</button>
+                            <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00', 'agendar')">Agendar</button>
+                        </div>
+                        <!-- NOVO AVISO DE BRINDE -->
+                        <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
+                            Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CESTA MÉDIA (QUARTA) -->
+                <div class="card card-cesta">
+                    <div class="cesta-header"><h3>CESTA MÉDIA</h3></div>
+                    <div class="cesta-body">
+                        <div class="galeria-fotos" id="galeria-media">
+                            <div class="img-wrapper active" data-img-index="0">
+                                <img src="img/cesta-media1.jpg" alt="Cesta Média" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+1'">
+                            </div>
+                            <div class="img-wrapper" data-img-index="1">
+                                <img src="img/cesta-media2.jpg" alt="Cesta Média Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+2'">
+                            </div>
+                            <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
+                            <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('media', 1)">
+                                <span id="btn-foto-media">VER PRODUTOS</span>
+                            </div>
+                        </div>
+                        <div class="lista-precos-cesta">
+                            <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 320,00</strong></div>
+                            <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
+                        </div>
+                        <div class="botoes-wrapper">
+                            <!-- BOTÕES DE AÇÃO COM MODAL -->
+                            <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'encomendar')">Encomendar</button>
+                            <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00', 'agendar')">Agendar</button>
+                        </div>
+                        <!-- NOVO AVISO DE BRINDE -->
+                        <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
+                            Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CESTA GRANDE (QUINTA) -->
+                <div class="card card-cesta">
+                    <div class="cesta-header"><h3>CESTA GRANDE</h3></div>
+                    <div class="cesta-body">
+                        <div class="galeria-fotos" id="galeria-grande">
+                            <div class="img-wrapper active" data-img-index="0">
+                                <img src="img/cesta-grande1.jpg" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE+1'">
+                            </div>
+                            <div class="img-wrapper" data-img-index="1">
+                                <img src="img/cesta-grande2.jpg" alt="Cesta Básica Grande Detalhe" onerror="this.src='https://placehold.co/400x400?text=GRANDE+2'">
+                            </div>
+                            <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
+                            <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('grande', 1)">
+                                <span id="btn-foto-grande">VER PRODUTOS</span>
+                            </div>
+                        </div>
+                        <div class="lista-precos-cesta">
+                            <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 380,00</strong></div>
+                            <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
+                        </div>
+                        <div class="botoes-wrapper">
+                            <!-- BOTÕES DE AÇÃO COM MODAL -->
+                            <button class="btn btn-whatsapp" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'encomendar')">Encomendar</button>
+                            <button class="btn btn-agendar" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00', 'agendar')">Agendar</button>
+                        </div>
+                        <!-- NOVO AVISO DE BRINDE -->
+                        <p style="text-align: center; font-size: 13px; color: #555; margin-top: 10px;">
+                            Encomende ou Agende sua cesta e garanta o Amaciante Ype de 2 Litros de Brinde.
+                        </p>
+                    </div>
+                </div>
+            </div><!-- FIM GRID -->
+        </div><!-- FIM SEÇÃO CESTAS -->
+
+        <!-- SEÇÃO 2: PAGAMENTO (FLUXO CONTÍNUO) -->
+        <div id="pag-pagamento" class="secao-conteudo">
+            <div class="card">
+                <h2>💳 Formas de Pagamento</h2>
+                <p>Aceitamos as principais formas para facilitar sua vida:</p>
+                <ul class="lista-pagamento">
+                    <li><i class="fas fa-money-bill-wave"></i> Dinheiro</li>
+                    <li><i class="fas fa-qrcode"></i> Pix</li>
+                    <li><i class="fas fa-credit-card"></i> Cartão de Débito</li>
+                    <li><i class="fas fa-credit-card"></i> Cartão de Crédito (até 3x sem juros)</li>
+                    <li><i class="fas fa-utensils"></i> Alelo Alimentação/Refeição</li>
+                    <li><i class="fas fa-utensils"></i> Sodexo Alimentação/Refeição</li>
+                    <li><i class="fas fa-utensils"></i> Pluxee</li>
+                    <li><i class="fas fa-mobile-alt"></i> Ifood Benefícios</li>
+                </ul>
+                <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo para 30 dias.</p>
             </div>
-            
-            <!-- ETAPA 2B: NOVO CADASTRO (Escondido inicialmente) -->
-            <div id="cadastro-novo" class="card" style="display: none; background-color: #fff3e0; border: 1px solid #ffcc80;">
-                <h2>✍️ Novo Cadastro</h2>
-                <p style="margin-bottom: 15px; color: #D32F2F;">Não encontramos seu número. Preencha seus dados para participar:</p>
+        </div>
+
+        <!-- SEÇÃO 3: SORTEIO (FLUXO CONTÍNUO) -->
+        <div id="pag-sorteio" class="secao-conteudo">
+            <div class="card">
+                <h2>🍀 Sorteio todo Domingo. Válido para moradores de Cuiabá e VG</h2>
+                <p>Preencha para concorrer. Serão 5 ganhadores de Kits de Limpeza e Higiêne! Próximo Sorteio dia 7 de Dezembro as 18h.</p>
                 
-                <form onsubmit="event.preventDefault(); enviarNovoCadastro();">
-                    <label>Nome Completo: <span style="color:red">*</span></label>
-                    <input type="text" id="novo-nome" placeholder="Seu nome" required>
+                <!-- ETAPA 1: BUSCA POR TELEFONE (VISÍVEL SEMPRE) -->
+                <div id="area-busca-telefone" class="card" style="margin-bottom: 15px;">
+                    <h2>📞 Busque seu Cadastro</h2>
+                    <p>Digite seu telefone para verificar sua participação:</p>
                     <label>Telefone (Whatsapp): <span style="color:red">*</span></label>
-                    <input type="tel" id="novo-telefone" placeholder="(65) 9..." required disabled> 
-                    <label>Cidade: <span style="color:red">*</span></label>
-                    <select id="novo-cidade" required>
-                        <option value="">Selecione...</option>
-                        <option value="Cuiabá">Cuiabá</option>
-                        <option value="Várzea Grande">Várzea Grande</option>
-                    </select>
-                    <label>Bairro: <span style="color:red">*</span></label>
-                    <input type="text" id="novo-bairro" placeholder="Seu bairro" required>
-                    <button type="submit" class="btn btn-whatsapp"><i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Cadastrar e Participar</button>
-                </form>
-            </div>
+                    <input type="tel" id="busca-telefone" placeholder="Digite seu telefone..." required>
+                    <button onclick="buscarCadastro()" class="btn" style="background-color: var(--cor-primaria); margin-top: 5px;">
+                        <i class="fas fa-search" style="margin-right: 8px;"></i> Buscar
+                    </button>
+                </div>
 
+                <!-- ETAPA 2A: CADASTRO ENCONTRADO (Escondido inicialmente) -->
+                <div id="cadastro-encontrado" class="area-resultado-busca" style="display: none;">
+                    <h2>🥳 Cadastro Encontrado!</h2>
+                    <p style="margin-bottom: 10px;">Confira seus dados:</p>
+                    
+                    <div style="text-align: left;">
+                        <p><strong>Nome:</strong> <span id="nome-cliente-encontrado"></span></p>
+                        <p><strong>Cidade:</strong> <span id="cidade-cliente-encontrado"></span></p>
+                        <p><strong>Bairro:</strong> <span id="bairro-cliente-encontrado"></span></p>
+                    </div>
+                    
+                    <button onclick="confirmarJaCadastrado()" class="btn btn-whatsapp" style="margin-top: 15px;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar e Participar
+                    </button>
+                </div>
+                
+                <!-- ETAPA 2B: NOVO CADASTRO (Escondido inicialmente) -->
+                <div id="cadastro-novo" class="card" style="display: none; background-color: #fff3e0; border: 1px solid #ffcc80;">
+                    <h2>✍️ Novo Cadastro</h2>
+                    <p style="margin-bottom: 15px; color: #D32F2F;">Não encontramos seu número. Preencha seus dados para participar:</p>
+                    
+                    <form onsubmit="event.preventDefault(); enviarNovoCadastro();">
+                        <label>Nome Completo: <span style="color:red">*</span></label>
+                        <input type="text" id="novo-nome" placeholder="Seu nome" required>
+                        <label>Telefone (Whatsapp): <span style="color:red">*</span></label>
+                        <input type="tel" id="novo-telefone" placeholder="(65) 9..." required disabled> 
+                        <label>Cidade: <span style="color:red">*</span></label>
+                        <select id="novo-cidade" required>
+                            <option value="">Selecione...</option>
+                            <option value="Cuiabá">Cuiabá</option>
+                            <option value="Várzea Grande">Várzea Grande</option>
+                        </select>
+                        <label>Bairro: <span style="color:red">*</span></label>
+                        <input type="text" id="novo-bairro" placeholder="Seu bairro" required>
+                        <button type="submit" class="btn btn-whatsapp"><i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Cadastrar e Participar</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- NOVO CARD: ANIVERSÁRIO SOLIDÁRIO -->
+        <div id="pag-aniversario" class="secao-conteudo card" style="background-color: #e3f2fd;">
+            <h2>🎁 Aniversário Solidário (Em Breve)</h2>
+            <p>Prepare-se para fazer a diferença! Em breve, lançaremos a campanha "Aniversário Solidário". Cada cesta comprada ajudará a montar kits para famílias carentes.</p>
+            <p style="text-align: center; margin-top: 20px; font-weight: bold; color: #1e88e5;">Acompanhe nossas redes sociais para mais detalhes!</p>
+            <div class="botoes-wrapper">
+                <a href="https://instagram.com/super.cestas.dona.antonia/" class="btn btn-agendar" style="background-color: #1e88e5;">
+                    <i class="fab fa-instagram" style="margin-right: 8px;"></i> Acompanhar no Instagram
+                </a>
+            </div>
         </div>
 
         <!-- TEXTO SEO RESTAURADO E POSICIONADO NO FIM -->
@@ -940,11 +987,12 @@
             <p><strong>Cesta Básica Dona Antônia</strong> - A melhor opção em alimentos para sua família. Atendemos com rapidez e qualidade os bairros: CPA 1, 2, 3 e 4, Tijucal, Pedra 90, Osmar Cabral, Parque Cuiabá, Cristo Rei, Mapim e toda a Grande Cuiabá e Várzea Grande.</p>
             <p>Aceitamos Pix, Cartão de Crédito e Alimentação (Alelo, Sodexo, Pluxee). Garanta sua cesta básica hoje mesmo!</p>
         </div>
-    </div>
+        
+    </div><!-- FIM MAIN-CONTENT-WRAPPER -->
 
     <!-- BANNERS E MODAIS -->
     
-    <!-- NOVO: MODAL DE VARIAÇÃO (MINI MODAL) -->
+    <!-- MODAL DE VARIAÇÃO -->
     <div id="modalVariacao" class="modal-variacao" onclick="if(event.target === this) fecharModalVariacao()">
         <div class="modal-variacao-content">
             <button class="btn-fechar-modal-var" onclick="fecharModalVariacao()">&times;</button>
@@ -978,12 +1026,10 @@
     <div id="aviso-instalar" class="aviso-instalar pwa-install-promo">
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
         
-        <!-- REMOVIDO o `onerror` e `src` duplicados no HTML, confiando no CSS `content: url()` -->
         <img src="img/logo1.png" alt="Icone do App" class="app-icon-banner">
         
         <div class="texto-instalar-banner">
             <strong>Instalar App Dona Antônia</strong>
-            <!-- NOVO TEXTO FIXO -->
             <span>Ganhe Amaciante Ypê 2L de brinde!</span>
         </div>
         
@@ -992,8 +1038,6 @@
         </button>
     </div>
 
-    <!-- REMOVIDO: Modal de Visualização de Imagem (#modalVisualizador) -->
-
     <!-- SCRIPT DE DADOS EXTERNO (Inserido antes do script principal) -->
     <script src="data/clientes.js"></script>
 
@@ -1001,8 +1045,7 @@
         const TELEFONE = "5565998150975";
         const LINK_SITE = "donaantonia.com.br/oferta";
 
-        // --- NAVEGAÇÃO DE IMAGENS NOS CARDS (NOVO) ---
-        // Dados de Imagens (Cesta Econômica agora tem 2 fotos)
+        // --- NAVEGAÇÃO DE IMAGENS NOS CARDS ---
         const CestaImages = {
             'economica': 2, 
             'mini': 2,
@@ -1010,7 +1053,6 @@
             'media': 2,
             'grande': 2,
         };
-        // Armazena o índice da foto atual para cada cesta
         let currentPhotoIndex = {
             'economica': 0, 
             'mini': 0,
@@ -1019,7 +1061,6 @@
             'grande': 0
         };
         
-        // Função auxiliar para esconder o indicador de swipe (removida a lógica de timeout e swipe)
         function updatePhotoIndicator(cestaTipo, newIndex) {
             const indicatorSpan = document.querySelector(`#galeria-${cestaTipo} .swipe-indicator span`);
             if (indicatorSpan) {
@@ -1036,36 +1077,28 @@
             if (!galeria || !CestaImages[cestaTipo] || CestaImages[cestaTipo] < 2) return;
 
             const totalImages = CestaImages[cestaTipo];
-            // Direção fixada para 1 (sempre próxima foto/alternância)
             let newIndex = (currentPhotoIndex[cestaTipo] + 1) % totalImages;
             
-            // Esconder foto atual
             const currentWrapper = galeria.querySelector(`.img-wrapper.active`);
             if (currentWrapper) {
                 currentWrapper.classList.remove('active');
             }
 
-            // Mostrar nova foto
             const newWrapper = galeria.querySelector(`.img-wrapper[data-img-index="${newIndex}"]`);
             if (newWrapper) {
                 newWrapper.classList.add('active');
             }
 
-            // Atualizar o índice armazenado
             currentPhotoIndex[cestaTipo] = newIndex;
             
-            // Atualiza o texto do botão
             updatePhotoIndicator(cestaTipo, newIndex);
         }
         
-        // Adiciona listeners de clique APENAS no botão indicador
         function addPhotoClickListeners() {
             const cestas = ['economica', 'mini', 'pequena', 'media', 'grande'];
             cestas.forEach(cesta => {
                 const indicator = document.querySelector(`#galeria-${cesta} .swipe-indicator`);
-                
                 if (indicator) {
-                    // Adiciona o listener de clique no botão indicador
                     indicator.addEventListener('click', (event) => {
                         event.stopPropagation();
                         mudarFotoNoCard(cesta, 1); 
@@ -1075,85 +1108,66 @@
         }
 
 
-        // --- SISTEMA DE ROLAGEM INFINITA (RESTANTE) ---
-        let paginasReveladas = {
-            'cestas': true,
-            'pagamento': false,
-            'sorteio': false
-        };
-
-        function revelarSecao(id, rolar = false) {
-            const el = document.getElementById('pag-' + id);
-            if (!el) return;
-            
-            paginasReveladas[id] = true;
-            el.classList.add('visivel');
-            setTimeout(() => {
-                el.classList.add('animar');
-            }, 50);
-
-            if (id === 'sorteio' && !paginasReveladas['pagamento']) {
-                revelarSecao('pagamento', false); 
-            }
-
-            if (rolar) {
-                const headerOffset = 130; /* Altura do header fixo */
-                const elementPosition = el.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                window.scrollTo({
-                     top: offsetPosition,
-                     behavior: "smooth"
-                });
-            }
-        }
+        // --- SISTEMA DE ROLAGEM ÚNICA (REVISADO) ---
+        
+        // Remove a necessidade do array 'paginasReveladas' e de reveal por scroll.
+        // As seções estão sempre visíveis no fluxo.
 
         function verificarHash() {
             const hash = window.location.hash.replace('#', '');
-            const secoes = ['cestas', 'pagamento', 'sorteio'];
+            const secoes = ['cestas', 'pagamento', 'sorteio', 'aniversario'];
             
             if (secoes.includes(hash)) {
-                revelarSecao(hash, true);
+                rolarPara(hash, true); // Usa rolarPara para forçar o scroll
             } else {
-                revelarSecao('cestas', false);
+                rolarPara('cestas', false);
             }
         }
-
-        window.addEventListener('popstate', verificarHash);
-
-        function rolarPara(id) {
+        
+        // Função rolarPara modificada para scrollar para a âncora
+        function rolarPara(id, animar = true) {
+            const el = document.getElementById('pag-' + id);
+            if (!el) return;
+            
+            // 1. Atualiza a URL
             if(history.pushState) {
                 history.pushState(null, null, '#' + id);
             } else {
                 window.location.hash = id;
             }
-            revelarSecao(id, true);
+            
+            // 2. Calcula a posição e rola
+            const headerOffset = 130; 
+            const elementPosition = el.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+            
+            window.scrollTo({
+                 top: offsetPosition,
+                 behavior: animar ? "smooth" : "auto"
+            });
+            
+            // 3. Força a atualização do menu após a rolagem (útil para clique)
+            setTimeout(atualizarMenuAtivo, 500); 
         }
 
-        window.onscroll = function() {
-            const scrollTotal = document.documentElement.scrollHeight;
-            const scrollAtual = window.scrollY + window.innerHeight;
-            
-            if (scrollAtual >= scrollTotal - 150) {
-                if (!paginasReveladas['pagamento']) {
-                    revelarSecao('pagamento', false);
-                } else if (!paginasReveladas['sorteio']) {
-                    revelarSecao('sorteio', false);
-                }
-            }
+        window.addEventListener('popstate', verificarHash);
 
+        window.onscroll = function() {
+            // Apenas atualiza o menu ativo no scroll, a lógica de reveal foi removida.
             atualizarMenuAtivo();
         };
 
         function atualizarMenuAtivo() {
-            const ids = ['cestas', 'pagamento', 'sorteio'];
+            const ids = ['cestas', 'pagamento', 'sorteio', 'aniversario'];
             let atual = 'cestas';
+            const headerHeight = 130; // Altura do cabeçalho fixo
 
             ids.forEach(id => {
                 const el = document.getElementById('pag-' + id);
-                if (el && el.classList.contains('visivel')) {
+                if (el) {
                     const rect = el.getBoundingClientRect();
-                    // Usa a altura do header fixo (130px)
-                    if (rect.top < 130 && rect.bottom > 130) { 
+                    // Se o topo da seção estiver acima do header, mas ainda na tela
+                    if (rect.top <= headerHeight && rect.bottom > headerHeight) { 
                         atual = id;
                     }
                 }
@@ -1180,11 +1194,11 @@
             window.open(`https://wa.me/${TELEFONE}?text=Olá, gostaria de agendar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
         }
 
-        // --- LÓGICA DO MODAL DE VARIAÇÃO ---
-        let dadosCestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '', acao: '' }; // Adicionado 'acao'
+        // --- LÓGICA DO MODAL DE VARIAÇÃO (MANTIDA) ---
+        let dadosCestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '', acao: '' };
         let opcaoEscolhida = ''; 
 
-        function abrirModalVariacao(nome, pAlvino, pKoblenz, acao) { // acao: 'encomendar' ou 'agendar'
+        function abrirModalVariacao(nome, pAlvino, pKoblenz, acao) { 
             dadosCestaAtual = { nome, precoAlvino: pAlvino, precoKoblenz: pKoblenz, acao };
             opcaoEscolhida = '';
             
@@ -1196,7 +1210,6 @@
             document.getElementById('optKoblenz').classList.remove('selected');
             document.getElementById('btnConfirmarPedido').disabled = true;
 
-            // Define o texto do botão de confirmação
             document.getElementById('textoConfirmarPedido').innerText = acao === 'agendar' ? 'Agendar' : 'Encomendar';
 
             document.getElementById('modalVariacao').style.display = 'flex';
@@ -1217,7 +1230,7 @@
             document.getElementById('btnConfirmarPedido').disabled = false;
         }
 
-        function confirmarAcao() { // Função unificada para Encomendar ou Agendar do modal
+        function confirmarAcao() {
             if(!opcaoEscolhida || !dadosCestaAtual.acao) return;
 
             let marca = opcaoEscolhida === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
@@ -1237,22 +1250,17 @@
             document.getElementById('modalVariacao').style.display = 'none';
         }
         
-        // --- LÓGICA DE SORTEIO (REESCRITA) ---
+        // --- LÓGICA DE SORTEIO (MANTIDA) ---
         
-        // Variáveis globais para rastrear o estado do sorteio
         const cadastroEncontradoDiv = document.getElementById('cadastro-encontrado');
         const cadastroNovoDiv = document.getElementById('cadastro-novo');
         const buscaTelefoneInput = document.getElementById('busca-telefone');
         const areaBuscaTelefoneDiv = document.getElementById('area-busca-telefone');
         
-        // FUNÇÕES ANTIGAS REMOVIDAS: alternarAbaSorteio, enviarNovoCadastro, buscarCadastro, confirmarJaCadastrado
-        
         function buscarCadastro() {
-            // Esconde todos os resultados anteriores
             cadastroEncontradoDiv.style.display = 'none';
             cadastroNovoDiv.style.display = 'none';
 
-            // Pega e limpa o telefone
             const inputTel = buscaTelefoneInput.value;
             const telLimpo = inputTel.replace(/\D/g, ''); 
             
@@ -1261,13 +1269,11 @@
                 return;
             }
 
-            // Atualiza o estado visual do botão
             const btnBuscar = areaBuscaTelefoneDiv.querySelector('.btn');
             const textoOriginal = btnBuscar.innerHTML;
             btnBuscar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
             btnBuscar.disabled = true;
 
-            // Simulação de busca no array de clientes (SUPONDO QUE clientes.js ESTEJA CARREGADO)
             setTimeout(() => {
                 btnBuscar.innerHTML = textoOriginal;
                 btnBuscar.disabled = false;
@@ -1287,7 +1293,6 @@
                 }
 
                 if (clienteEncontrado) {
-                    // CENÁRIO 1: CADASTRO ENCONTRADO
                     document.getElementById('nome-cliente-encontrado').innerText = clienteEncontrado.nome;
                     document.getElementById('cidade-cliente-encontrado').innerText = clienteEncontrado.cidade;
                     document.getElementById('bairro-cliente-encontrado').innerText = clienteEncontrado.bairro;
@@ -1299,10 +1304,8 @@
                     cadastroEncontradoDiv.style.display = 'block';
                     
                 } else {
-                    // CENÁRIO 2: NOVO CADASTRO
                     const novoTelefoneInput = document.getElementById('novo-telefone');
-                    novoTelefoneInput.value = inputTel; // Preenche o campo de telefone buscado
-                    // novoTelefoneInput.disabled = true; // Mantém desabilitado para edição, já está no HTML
+                    novoTelefoneInput.value = inputTel; 
                     
                     cadastroNovoDiv.style.display = 'block';
                 }
@@ -1310,10 +1313,8 @@
             }, 600); 
         }
 
-        // Função de envio de novo cadastro (Cenário 2)
         function enviarNovoCadastro() {
             const nome = document.getElementById('novo-nome').value.trim();
-            // O telefone é pego do campo desabilitado
             const tel = document.getElementById('novo-telefone').value.trim(); 
             const cid = document.getElementById('novo-cidade').value;
             const bai = document.getElementById('novo-bairro').value.trim();
@@ -1325,7 +1326,6 @@
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // Função de confirmação (Cenário 1)
         function confirmarJaCadastrado() {
             const tel = buscaTelefoneInput.value;
             const nome = buscaTelefoneInput.getAttribute('data-nome-encontrado') || "Cliente";
@@ -1337,7 +1337,7 @@
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // --- LÓGICA PWA ---
+        // --- LÓGICA PWA (MANTIDA) ---
         let deferredPrompt;
         const avisoPwa = document.getElementById('aviso-instalar');
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1376,9 +1376,7 @@
                      document.getElementById('aviso-instalar').style.display = 'flex';
                 }
             }
-            // Inicializa listeners de clique para as fotos
             addPhotoClickListeners(); 
-            // Verifica o link ao carregar a página
             verificarHash();
         };
     </script>
