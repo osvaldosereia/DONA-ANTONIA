@@ -404,10 +404,9 @@
         #modalPWAContainer {
             /* Use a classe base, display: none está no HTML */
             z-index: 5005; /* Z-Index alto para o backdrop */
-            /* removemos a animação daqui */
         }
         
-        /* MODOS TOP e BOTTOM */
+        /* MODOS TOP: SEMPRE FIXADO NO TOPO AGORA */
         #modalPWA {
             position: absolute; 
             left: 50%;
@@ -415,22 +414,12 @@
             width: 100%;
             max-width: 480px;
             z-index: 5006; 
-        }
-
-        /* Estilo para quando estiver no modo BOTTOM (Padrão) */
-        #modalPWA.bottom-mode {
-            top: auto; 
-            bottom: 0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.1); /* Sombra para cima */
-            animation: slideUp 0.3s ease-out;
-        }
-
-        /* Estilo para quando estiver no modo TOP (In-App Browser) */
-        #modalPWA.top-mode {
+            
+            /* FORÇANDO AS PROPRIEDADES DO MODO TOP PARA TODOS */
             bottom: auto; 
             top: 70px; /* Colado abaixo do header */
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para baixo */
-            animation: slideDown 0.3s ease-out;
+            animation: slideDown 0.3s ease-out; /* Animação de topo para todos */
         }
 
         .modal-pwa-content {
@@ -442,22 +431,13 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-        
-        /* Ajuste de bordas arredondadas para os dois modos */
-        #modalPWA.bottom-mode .modal-pwa-content {
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        #modalPWA.top-mode .modal-pwa-content {
+            
+            /* Ajuste de bordas arredondadas para o modo TOP fixo */
             border-bottom-left-radius: 12px;
             border-bottom-right-radius: 12px;
             border-top-left-radius: 0;
             border-top-right-radius: 0;
         }
-
 
         /* LOGO POPUP PWA (MANTIDA) */
         .modal-logo-pwa {
@@ -494,13 +474,13 @@
             padding: 5px;
         }
 
-        /* NOVA ANIMAÇÃO TOP: Desliza de Cima */
+        /* NOVA ANIMAÇÃO TOP: Desliza de Cima (MANTIDA) */
         @keyframes slideDown {
             from { top: -100px; opacity: 0; } /* Começa acima do cabeçalho */
             to { top: 70px; opacity: 1; }
         }
 
-        /* NOVA ANIMAÇÃO BOTTOM: Desliza de Baixo */
+        /* A animação slideUp não é mais usada neste modo, mas mantida por segurança */
         @keyframes slideUp {
             from { bottom: -100px; opacity: 0; } /* Começa abaixo do rodapé */
             to { bottom: 0; opacity: 1; }
@@ -1042,24 +1022,13 @@
         let isPwaPromptShown = false; 
         
         // ===============================
-        // === DETECÇÃO DE IN-APP BROWSER ===
+        // === DETECÇÃO DE IN-APP BROWSER (REMOVIDA ABAIXO) ===
         // ===============================
         
-        /**
-         * Verifica se a página está sendo carregada dentro do navegador nativo (in-app)
-         * do Facebook ou Instagram.
-         * @returns {boolean} True se for um In-App Browser do Facebook/Instagram.
+        /*
+         * A função isSocialInAppBrowser foi removida, pois o popup será
+         * fixado no topo para todos os navegadores por segurança.
          */
-        function isSocialInAppBrowser() {
-            const ua = navigator.userAgent || navigator.vendor || window.opera;
-            
-            // Verifica a presença de termos comuns em In-App Browsers
-            const isFb = ua.indexOf("FBAV") > -1 || ua.indexOf("FBRV") > -1;
-            const isInsta = ua.indexOf("Instagram") > -1;
-            
-            // Retorna true se for um In-App Browser de uma das plataformas sociais
-            return isFb || isInsta;
-        }
 
 
         // ===============================
@@ -1123,35 +1092,21 @@
         }
         
         /**
-         * Aplica os estilos de TOP ou BOTTOM e exibe o modal PWA.
+         * Aplica os estilos de TOP e exibe o modal PWA para todos os navegadores.
          */
         function mostrarModalPWA() {
             const container = document.getElementById('modalPWAContainer');
             const modal = document.getElementById('modalPWA');
             
-            // Verifica se está no In-App Browser para decidir a posição
-            const isTopMode = isSocialInAppBrowser();
+            // 1. Aplica o modo TOP para todos
+            modal.classList.add('top-mode');
+            modal.classList.remove('bottom-mode');
             
-            // 1. Aplica o modo de posição e as classes de animação/borda
-            if (isTopMode) {
-                // Modo TOP (Para In-App Browser)
-                modal.classList.add('top-mode');
-                modal.classList.remove('bottom-mode');
-                // IMPORTANTE: Para o modo TOP, o backdrop não deve ser alinhado ao centro
-                container.style.justifyContent = 'flex-start'; 
-                container.style.alignItems = 'flex-start';
-                // Adiciona o padding do header para que o backdrop comece abaixo dele
-                container.style.paddingTop = '70px'; 
-            } else {
-                // Modo BOTTOM (Padrão para navegadores normais)
-                modal.classList.add('bottom-mode');
-                modal.classList.remove('top-mode');
-                 // Para o modo BOTTOM, o backdrop ocupa toda a tela e o modal é alinhado abaixo
-                container.style.justifyContent = 'center'; 
-                container.style.alignItems = 'flex-end'; // Alinha o modal na parte inferior
-                container.style.paddingTop = '0'; 
-            }
-
+            // Alinhamento para modo TOP
+            container.style.justifyContent = 'flex-start'; 
+            container.style.alignItems = 'flex-start';
+            container.style.paddingTop = '70px'; 
+            
             // 2. Exibe o contêiner do backdrop
             if (container.style.display !== 'flex' && !isPwaPromptShown && deferredPrompt) {
                  container.style.display = 'flex'; 
@@ -1206,7 +1161,7 @@
 
 
         // ===============================
-        // === LÓGICA DE INSTALAÇÃO PWA (REMOVENDO O BANNER SUPERIOR) ===
+        // === LÓGICA DE INSTALAÇÃO PWA (MANTIDA) ===
         // ===============================
         
         /**
