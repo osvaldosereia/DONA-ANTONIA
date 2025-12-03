@@ -165,7 +165,7 @@
         .btn-whatsapp-save { background-color: var(--cor-whatsapp); }
         .btn-ligar { background-color: #008000; }
         .btn-insta-follow { background: linear-gradient(45deg, #f09433, #dc2743, #bc1888); }
-        .btn-app-header { background-color: #2196F3; } /* REATIVADO */
+        .btn-app-header { background-color: #2196F3; } 
         
         /* --- CARDS E SEÇÕES --- */
         .secao-conteudo { padding: 15px; }
@@ -363,6 +363,7 @@
             justify-content: center;
             align-items: center;
             backdrop-filter: blur(2px);
+            overflow-y: auto; /* Permite scroll no modal base */
         }
         
         .modal-content {
@@ -375,6 +376,7 @@
             text-align: left;
             box-shadow: 0 8px 30px rgba(0,0,0,0.4);
             animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: 20px 0; /* Adiciona margem vertical para o scroll */
         }
         .btn-fechar-modal-var { 
             position: absolute; 
@@ -435,6 +437,13 @@
             background-color: var(--cor-primaria);
             margin-top: 15px;
         }
+        
+        /* Estilo do Modal de Termos de Uso (NOVO) */
+        #modalTermosUso .modal-content { max-width: 600px; }
+        #modalTermosUso h3 { color: #555; text-align: center; }
+        #modalTermosUso .termos-content { max-height: 60vh; overflow-y: auto; padding: 0 10px; margin-bottom: 15px; border: 1px solid #eee; border-radius: 8px; background-color: #f9f9f9; }
+        #modalTermosUso p, #modalTermosUso li { font-size: 14px; line-height: 1.5; }
+        #modalTermosUso strong { color: var(--cor-primaria); }
 
 
         /* --- RESPONSIVIDADE DESKTOP --- */
@@ -491,9 +500,9 @@
     <!-- BARRA DE FUNDO CINZA CLARA -->
     <div class="header-background-bar"></div>
 
-    <!-- LOGO FIXA: Reuso da logo existente -->
+    <!-- LOGO FIXA: Referenciando a imagem carregada -->
     <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
-         onerror="this.src='img/logo1.png'" 
+         onerror="this.src='https://placehold.co/120x120/D32F2F/ffffff?text=DA'" 
          alt="Logo Dona Antônia" 
          class="logo-pequena">
 
@@ -540,9 +549,10 @@
                 <h2>🔑 Código de Convite</h2>
                 <label for="codigo-convite">Digite o código que você recebeu:</label>
                 <input type="text" id="codigo-convite" placeholder="Ex: COD123" required style="text-transform: uppercase;">
-                <button onclick="buscarAniversario()" class="btn" style="background-color: var(--cor-primaria); margin-top: 5px;">
+                <button onclick="buscarAniversario()" class="btn" id="btn-buscar-aniversario" style="background-color: var(--cor-primaria); margin-top: 5px;">
                     <i class="fas fa-search" style="margin-right: 8px;"></i> Buscar Aniversário
                 </button>
+                <!-- Mensagem temporária para feedback -->
                 <div id="msg-temporaria" class="area-resultado-busca" style="display:none; margin-bottom: 0;"></div>
             </div>
 
@@ -612,7 +622,8 @@
             </div><!-- FIM INFORMAÇÕES ANIVERSÁRIO -->
             
             <div class="seo-text-block" style="text-align: center; font-size: 12px; color: #888; padding: 15px 30px;">
-                <p style="margin-top: 15px;">Ao doar, você concorda com os <a href="#" onclick="mostrarMensagemBusca('Funcionalidade não implementada: Termos e Condições', true); return false;">Termos e Condições</a> do Aniversário Solidário Dona Antônia.</p>
+                <!-- Link alterado para abrir o novo modal de Termos de Uso -->
+                <p style="margin-top: 15px;">Ao doar, você concorda com os <a href="#" onclick="abrirModalTermosUso(); return false;" style="color: var(--cor-compartilhar); text-decoration: underline;">Termos e Condições</a> do Aniversário Solidário Dona Antônia.</p>
             </div>
 
         </div><!-- FIM SEÇÃO DOAÇÃO -->
@@ -628,7 +639,6 @@
                 Transforme a sua festa em um gesto de amor e ajude centenas de famílias.
             </p>
             
-            <!-- CORREÇÃO 2: Responsividade dos 4 Passos garantida no CSS -->
             <div class="passos-grid">
                 
                 <!-- PASSO 1 -->
@@ -751,6 +761,48 @@
         </div>
     </div>
     
+    <!-- NOVO MODAL DE TERMOS DE USO -->
+    <div id="modalTermosUso" onclick="if(event.target === this) fecharModalTermosUso()" class="modal-base">
+        <div class="modal-content">
+            <button class="btn-fechar-modal-var" onclick="fecharModalTermosUso()">&times;</button>
+            
+            <h3>Termos e Condições do Aniversário Solidário</h3>
+            <div class="termos-content">
+                <p><strong>1. Objetivo da Doação:</strong></p>
+                <p>O "Aniversário Solidário" da Dona Antônia é um programa onde os valores arrecadados são convertidos integralmente em Cestas Básicas Econômicas. Estas cestas são distribuídas a famílias carentes em nome do aniversariante e de seus convidados.</p>
+                
+                <p><strong>2. Valor e Conversão:</strong></p>
+                <ul>
+                    <li>O valor unitário da doação é equivalente ao preço atual de uma Cesta Básica Econômica (R$ 85,00).</li>
+                    <li>O doador pode selecionar a quantidade de cestas que deseja doar (1 a 5).</li>
+                    <li>100% do valor da doação será utilizado na compra dos itens da cesta. Não há cobrança de taxas ou lucros sobre o valor doado.</li>
+                </ul>
+                
+                <p><strong>3. Processamento de Pagamento (Stone):</strong></p>
+                <ul>
+                    <li>Os pagamentos são processados pela plataforma Stone, garantindo a segurança e o registro da transação.</li>
+                    <li>Após a confirmação do pagamento, você receberá o comprovante de doação.</li>
+                </ul>
+
+                <p><strong>4. Confirmação e Registro:</strong></p>
+                <ul>
+                    <li>Ao realizar a doação, você concorda que o valor é destinado exclusivamente à compra das cestas para fins sociais.</li>
+                    <li>Os dados do doador (nome, valor) serão compartilhados com o aniversariante para fins de agradecimento e registro do presente.</li>
+                </ul>
+
+                <p><strong>5. Cancelamento e Reembolso:</strong></p>
+                <p>Devido à natureza da campanha solidária, o cancelamento ou reembolso da doação só pode ser solicitado em até 24 horas após o pagamento, mediante contato direto com o WhatsApp da Dona Antônia, informando o número do comprovante de transação.</p>
+
+                <p>Agradecemos sua generosidade e parceria nesta causa nobre!</p>
+            </div>
+            
+            <button class="btn btn-modal-ok" onclick="fecharModalTermosUso()" style="background-color: var(--cor-primaria);">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Fechar e Continuar
+            </button>
+        </div>
+    </div>
+
+    
     <!-- MODAL LIGHTBOX (Para ampliação de Imagem) -->
     <div id="lightbox-modal" onclick="fecharLightbox()">
         <span class="lightbox-close">&times;</span>
@@ -841,6 +893,7 @@
             const codigoInput = document.getElementById('codigo-convite');
             const codigo = codigoInput.value.toUpperCase().trim();
             const infoDiv = document.getElementById('aniversario-encontrado');
+            const btnBuscar = document.getElementById('btn-buscar-aniversario');
             
             infoDiv.style.display = 'none';
             aniversarioAtual = null;
@@ -850,7 +903,7 @@
                 return;
             }
             
-            const btnBuscar = document.querySelector('#area-busca-codigo .btn');
+            // CORREÇÃO: Tratamento de estado do botão para não parecer carregando eternamente
             const textoOriginal = btnBuscar.innerHTML;
             btnBuscar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...';
             btnBuscar.disabled = true;
@@ -1008,6 +1061,24 @@
             
             // Redireciona para o WhatsApp
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        // ===============================
+        // === LÓGICA DO NOVO MODAL DE TERMOS DE USO ===
+        // ===============================
+
+        /**
+         * Abre o modal de Termos de Uso.
+         */
+        function abrirModalTermosUso() {
+            document.getElementById('modalTermosUso').style.display = 'flex';
+        }
+        
+        /**
+         * Fecha o modal de Termos de Uso.
+         */
+        function fecharModalTermosUso() {
+            document.getElementById('modalTermosUso').style.display = 'none';
         }
 
 
