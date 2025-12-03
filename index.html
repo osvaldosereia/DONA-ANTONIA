@@ -267,7 +267,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- ESTILOS DO MODAL VARIAÇÃO (MANTIDO) --- */
+        /* --- ESTILOS DO MODAL VARIAÇÃO (BACKDROP) --- */
         .modal-variacao {
             display: none;
             position: fixed;
@@ -279,6 +279,7 @@
             background-color: rgba(0,0,0,0.6);
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(2px); /* Adicionado blur para o PWA Container também */
         }
 
         /* --- ESTILO DO MODAL RECEPTIVO (POPUP 1) --- */
@@ -398,27 +399,44 @@
         .btn-confirmar-pedido:disabled { background-color: #ccc; cursor: not-allowed; }
 
         /* --- NOVO MODAL PWA DE RETENÇÃO (POPUP 2) --- */
+        
+        /* A classe .modal-variacao será o backdrop (modalPWAContainer). */
+        #modalPWAContainer {
+            /* Use a classe base, display: none está no HTML */
+            z-index: 5005; /* Z-Index alto para o backdrop */
+            /* removemos a animação daqui */
+        }
+        
+        /* MODOS TOP e BOTTOM */
         #modalPWA {
-            display: none; 
-            position: fixed;
-            /* ALTERADO DE BOTTOM: 0 para TOP: 70PX */
-            top: 70px;
+            position: absolute; 
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
-            z-index: 5002; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para baixo */
-            animation: slideDown 0.3s ease-out; /* NOVA ANIMAÇÃO */
+            z-index: 5006; 
         }
+
+        /* Estilo para quando estiver no modo BOTTOM (Padrão) */
+        #modalPWA.bottom-mode {
+            top: auto; 
+            bottom: 0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.1); /* Sombra para cima */
+            animation: slideUp 0.3s ease-out;
+        }
+
+        /* Estilo para quando estiver no modo TOP (In-App Browser) */
+        #modalPWA.top-mode {
+            bottom: auto; 
+            top: 70px; /* Colado abaixo do header */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para baixo */
+            animation: slideDown 0.3s ease-out;
+        }
+
         .modal-pwa-content {
             background-color: white;
             padding: 15px 20px;
             padding-top: 40px; 
-            border-bottom-left-radius: 12px; /* A borda redonda agora é na parte de baixo */
-            border-bottom-right-radius: 12px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
             text-align: center;
             position: relative; 
             display: flex;
@@ -426,7 +444,22 @@
             align-items: center;
         }
         
-        /* LOGO POPUP PWA (MANTIDA NO TOPO DO MODAL, AGORA EM RELAÇÃO AO NOVO TOPO) */
+        /* Ajuste de bordas arredondadas para os dois modos */
+        #modalPWA.bottom-mode .modal-pwa-content {
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        #modalPWA.top-mode .modal-pwa-content {
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
+        }
+
+
+        /* LOGO POPUP PWA (MANTIDA) */
         .modal-logo-pwa {
             position: absolute;
             top: -30px; /* Metade do tamanho da logo de 60px */
@@ -461,13 +494,17 @@
             padding: 5px;
         }
 
-        /* NOVA ANIMAÇÃO: Desliza de Cima */
+        /* NOVA ANIMAÇÃO TOP: Desliza de Cima */
         @keyframes slideDown {
-            from { transform: translate(-50%, -100%); opacity: 0; }
-            to { transform: translate(-50%, 0); opacity: 1; }
+            from { top: -100px; opacity: 0; } /* Começa acima do cabeçalho */
+            to { top: 70px; opacity: 1; }
         }
-        
-        /* A animação slideUp antiga foi removida */
+
+        /* NOVA ANIMAÇÃO BOTTOM: Desliza de Baixo */
+        @keyframes slideUp {
+            from { bottom: -100px; opacity: 0; } /* Começa abaixo do rodapé */
+            to { bottom: 0; opacity: 1; }
+        }
         
         /* Ajuste do texto para ficar mais harmonioso */
         .modal-pwa-content h3 {
@@ -945,33 +982,36 @@
     </div>
     
     <!-- NOVO POPUP 2: RETENÇÃO PWA (APAREECE NO SCROLL) -->
-    <div id="modalPWA" style="display: none;">
-        <div class="modal-pwa-content">
-            <!-- LOGO POPUP PWA (AUMENTADA E AJUSTADA NO TOPO) -->
-            <div class="modal-logo-pwa">
-                 <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
-                     alt="Logo Dona Antônia" 
-                     onerror="this.src='img/logo1.png'"
-                     >
-            </div>
-            
-            <!-- Botão de fechar (APENAS X, MUDADO PARA A DIREITA) -->
-            <button class="pwa-close-btn" onclick="fecharModalPWA()">
-                &times;
-            </button>
-            
-            <!-- CONTEÚDO ATUALIZADO -->
-            <h3>Salve nosso contato</h3>
-            <p>Comprar com a gente compensa muito.</p>
-            
-            <!-- BOTÕES DUPLOS -->
-            <div class="pwa-botoes-wrapper">
-                <button class="btn-pwa-install" onclick="instalarPWA()">
-                    <i class="fas fa-mobile-alt" style="margin-right: 8px;"></i> Aplicativo
+    <!-- Contêiner do Backdrop (usa .modal-variacao para o fundo escuro) -->
+    <div id="modalPWAContainer" class="modal-variacao" onclick="if(event.target === this) fecharModalPWA()">
+        <div id="modalPWA">
+            <div class="modal-pwa-content" onclick="event.stopPropagation()">
+                <!-- LOGO POPUP PWA (AUMENTADA E AJUSTADA NO TOPO) -->
+                <div class="modal-logo-pwa">
+                     <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
+                         alt="Logo Dona Antônia" 
+                         onerror="this.src='img/logo1.png'"
+                         >
+                </div>
+                
+                <!-- Botão de fechar (APENAS X, MUDADO PARA A DIREITA) -->
+                <button class="pwa-close-btn" onclick="fecharModalPWA()">
+                    &times;
                 </button>
-                <button class="btn-pwa-whatsapp" onclick="enviarOiWhatsApp()">
-                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> WhatsApp
-                </button>
+                
+                <!-- CONTEÚDO ATUALIZADO -->
+                <h3>Salve nosso contato</h3>
+                <p>Comprar com a gente compensa muito.</p>
+                
+                <!-- BOTÕES DUPLOS -->
+                <div class="pwa-botoes-wrapper">
+                    <button class="btn-pwa-install" onclick="instalarPWA()">
+                        <i class="fas fa-mobile-alt" style="margin-right: 8px;"></i> Aplicativo
+                    </button>
+                    <button class="btn-pwa-whatsapp" onclick="enviarOiWhatsApp()">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> WhatsApp
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -998,9 +1038,29 @@
         
         // Variável de controle para o novo popup de retenção
         const PWA_PROMPT_KEY = 'pwaPromptShown';
-        // Removido o localStorage.getItem('sim') aqui para fins de depuração
+        // MANTIDO isPwaPromptShown = false para facilitar o teste no preview
         let isPwaPromptShown = false; 
         
+        // ===============================
+        // === DETECÇÃO DE IN-APP BROWSER ===
+        // ===============================
+        
+        /**
+         * Verifica se a página está sendo carregada dentro do navegador nativo (in-app)
+         * do Facebook ou Instagram.
+         * @returns {boolean} True se for um In-App Browser do Facebook/Instagram.
+         */
+        function isSocialInAppBrowser() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera;
+            
+            // Verifica a presença de termos comuns em In-App Browsers
+            const isFb = ua.indexOf("FBAV") > -1 || ua.indexOf("FBRV") > -1;
+            const isInsta = ua.indexOf("Instagram") > -1;
+            
+            // Retorna true se for um In-App Browser de uma das plataformas sociais
+            return isFb || isInsta;
+        }
+
 
         // ===============================
         // === LÓGICA DO POPUP RECEPTIVO EM 2 ETAPAS (POPUP 1) ===
@@ -1063,14 +1123,38 @@
         }
         
         /**
-         * Exibe o modal PWA na parte inferior da tela.
+         * Aplica os estilos de TOP ou BOTTOM e exibe o modal PWA.
          */
         function mostrarModalPWA() {
+            const container = document.getElementById('modalPWAContainer');
             const modal = document.getElementById('modalPWA');
             
-            // Só exibe se a variável de controle local e o prompt estiver definido
-            if (modal.style.display !== 'block' && !isPwaPromptShown && deferredPrompt) {
-                 modal.style.display = 'block'; 
+            // Verifica se está no In-App Browser para decidir a posição
+            const isTopMode = isSocialInAppBrowser();
+            
+            // 1. Aplica o modo de posição e as classes de animação/borda
+            if (isTopMode) {
+                // Modo TOP (Para In-App Browser)
+                modal.classList.add('top-mode');
+                modal.classList.remove('bottom-mode');
+                // IMPORTANTE: Para o modo TOP, o backdrop não deve ser alinhado ao centro
+                container.style.justifyContent = 'flex-start'; 
+                container.style.alignItems = 'flex-start';
+                // Adiciona o padding do header para que o backdrop comece abaixo dele
+                container.style.paddingTop = '70px'; 
+            } else {
+                // Modo BOTTOM (Padrão para navegadores normais)
+                modal.classList.add('bottom-mode');
+                modal.classList.remove('top-mode');
+                 // Para o modo BOTTOM, o backdrop ocupa toda a tela e o modal é alinhado abaixo
+                container.style.justifyContent = 'center'; 
+                container.style.alignItems = 'flex-end'; // Alinha o modal na parte inferior
+                container.style.paddingTop = '0'; 
+            }
+
+            // 2. Exibe o contêiner do backdrop
+            if (container.style.display !== 'flex' && !isPwaPromptShown && deferredPrompt) {
+                 container.style.display = 'flex'; 
                  // MANTEMOS A CHAVE AQUI PARA MARCAR QUE O USUÁRIO VIU O POPUP (mesmo em modo de teste)
                  localStorage.setItem(PWA_PROMPT_KEY, 'sim'); 
                  isPwaPromptShown = true;
@@ -1086,7 +1170,7 @@
          * Fecha o modal PWA.
          */
         function fecharModalPWA() {
-             document.getElementById('modalPWA').style.display = 'none';
+             document.getElementById('modalPWAContainer').style.display = 'none';
         }
         
         /**
@@ -1158,8 +1242,8 @@
         function instalarPWA() {
             if (deferredPrompt) {
                 // Esconde o modal de retenção
-                const modal = document.getElementById('modalPWA');
-                modal.style.display = 'none';
+                const container = document.getElementById('modalPWAContainer');
+                container.style.display = 'none';
 
                 // Chama o prompt de instalação do navegador
                 deferredPrompt.prompt();
