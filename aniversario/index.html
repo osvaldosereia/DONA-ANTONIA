@@ -144,6 +144,7 @@
             transform: translateX(-50%);
             background-color: white; 
             padding: 2px; 
+            cursor: pointer; /* Indica que é clicável */
         }
 
         .header-btn {
@@ -285,6 +286,10 @@
             text-align: center;
         }
         .passo-card h3 { color: var(--cor-primaria); margin-top: 0; }
+        /* AJUSTE: Texto do passo a passo justificado */
+        .passo-card p {
+            text-align: justify;
+        }
         
         /* O lightbox e estilos de imagem foram removidos, pois não há mais imagens nos passos */
         
@@ -384,6 +389,41 @@
         #modalTermosUso p, #modalTermosUso li { font-size: 14px; line-height: 1.5; }
         #modalTermosUso strong { color: var(--cor-primaria); }
 
+        /* --- SEÇÃO QUEM SOMOS --- */
+        .quem-somos-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        /* AJUSTE: Texto do Quem Somos justificado */
+        #pag-quem-somos p {
+             text-align: justify;
+        }
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            color: #444;
+            margin-bottom: 8px;
+        }
+        .info-item i {
+            color: var(--cor-doar);
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .dados-legais {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 13px;
+            color: #777;
+            text-align: center;
+        }
+
 
         /* --- RESPONSIVIDADE DESKTOP --- */
         @media (min-width: 481px) {
@@ -444,10 +484,11 @@
     <div class="header-background-bar"></div>
 
     <!-- LOGO FIXA: Referenciando a imagem carregada -->
-    <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
-         onerror="this.src='https://placehold.co/120x120/D32F2F/ffffff?text=DA'" 
+    <img src="img/logo1.png" 
+         onerror="this.src='uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765'" 
          alt="Logo Dona Antônia" 
-         class="logo-pequena">
+         class="logo-pequena"
+         onclick="window.location.href='https://donaantonia.com.br/'">
 
     <!-- CABEÇALHO FIXO (RESTAURADO PARA VERSÃO COMPLETA DE INDEX(20).HTML) -->
     <header>
@@ -470,8 +511,8 @@
                 <a href="https://instagram.com/super.cestas.dona.antonia/" class="header-btn btn-insta-follow" target="_blank" aria-label="Seguir no Instagram">
                     <i class="fab fa-instagram" style="margin-right: 5px;"></i> Instagram
                 </a>
-                <!-- Botão Instalar App (PWA) - RESTAURADO -->
-                 <button class="header-btn btn-app-header" onclick="mostrarMensagemBusca('Funcionalidade PWA indisponível na página do Aniversário Solidário. Volte à página principal para instalar.', true)" aria-label="Instalar aplicativo (PWA)">
+                <!-- Botão Instalar App (PWA) - AGORA FUNCIONA -->
+                 <button class="header-btn btn-app-header" onclick="instalarPWA()" aria-label="Instalar aplicativo (PWA)">
                     <i class="fas fa-mobile-alt" style="margin-right: 5px;"></i> Instalar App
                 </button>
             </div>
@@ -812,6 +853,9 @@
         // Número de telefone para contato via WhatsApp
         const TELEFONE = "5565998150975"; 
         
+        // Variável para armazenar o prompt de instalação adiado do PWA
+        let deferredPrompt; 
+        
         // Simulação de Banco de Dados de Aniversários
         const aniversarios = {
             "COD123": {
@@ -860,6 +904,33 @@
 
         let aniversarioAtual = null;
         let quantidadeSelecionada = 1;
+        
+        // ===============================
+        // === LÓGICA DE INSTALAÇÃO PWA (NOVO) ===
+        // ===============================
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function instalarPWA() {
+            if (deferredPrompt) {
+                mostrarMensagemBusca("Iniciando instalação...", false);
+
+                deferredPrompt.prompt();
+                
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        deferredPrompt = null; 
+                        mostrarMensagemBusca("🎉 Aplicativo instalado com sucesso!", false);
+                    } else {
+                        mostrarMensagemBusca("Instalação cancelada. Você pode tentar novamente mais tarde.", true);
+                    }
+                });
+            } else {
+                 mostrarMensagemBusca("O aplicativo já está instalado ou o navegador não suporta a instalação PWA.", true);
+            }
+        }
         
         /**
          * Exibe uma mensagem de atenção/sucesso temporária no topo da área de busca.
