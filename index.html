@@ -928,7 +928,7 @@
                 </p>
                 <!-- O botão agora apenas fecha o modal, conforme solicitado -->
                 <button class="btn-receptivo btn-eu-quero" onclick="confirmarBrindeEFecar()">
-                    <i class="fas fa-arrow-down" style="margin-right: 8px;"></i> OK!
+                    <i class="fas fa-arrow-down" style="margin-right: 8px;"></i> EU QUERO o Brinde!
                 </button>
                 <button onclick="fecharModalReceptivo()" style="background: none; border: none; color: #999; margin-top: 10px; font-size: 14px; cursor: pointer;">
                     Voltar para o site
@@ -985,9 +985,8 @@
         
         // Variável de controle para o novo popup de retenção
         const PWA_PROMPT_KEY = 'pwaPromptShown';
-        // A lógica de exibição é baseada no deferredPrompt ser diferente de null,
-        // mas mantemos esta variável para controle de exibição única por sessão.
-        let isPwaPromptShown = localStorage.getItem(PWA_PROMPT_KEY) === 'sim';
+        // Removido o localStorage.getItem('sim') aqui para fins de depuração
+        let isPwaPromptShown = false; 
         
 
         // ===============================
@@ -1051,7 +1050,8 @@
             // (deferredPrompt != null significa que o PWA ainda não está instalado)
             if (modal.style.display !== 'block' && !isPwaPromptShown && deferredPrompt) {
                  modal.style.display = 'block'; 
-                 localStorage.setItem(PWA_PROMPT_KEY, 'sim'); // Marca como mostrado
+                 // MANTEMOS A CHAVE AQUI PARA MARCAR QUE O USUÁRIO VIU O POPUP (mesmo em modo de teste)
+                 localStorage.setItem(PWA_PROMPT_KEY, 'sim'); 
                  isPwaPromptShown = true;
                  
                  // Se o modal receptivo (o grande) ainda estiver aberto, feche-o
@@ -1072,9 +1072,9 @@
          * Lógica de detecção de rolagem.
          */
         function checarRolagemParaPWA() {
-            // Se o popup PWA já foi mostrado ou o app já estiver instalado, remove o listener
-            // A condição de parada agora é baseada em deferredPrompt ou isPwaPromptShown
-            if (isPwaPromptShown || !deferredPrompt) {
+            // A checagem isPwaPromptShown foi REMOVIDA AQUI para facilitar a visualização de teste
+            // A condição de parada AGORA é apenas baseada no deferredPrompt (se o app já está instalado)
+            if (!deferredPrompt) { 
                 window.removeEventListener('scroll', checarRolagemParaPWA);
                 return;
             }
@@ -1130,8 +1130,6 @@
             e.preventDefault();
             // Armazena o evento para que possa ser disparado mais tarde
             deferredPrompt = e;
-            
-            // O BANNER SUPERIOR PWA FOI REMOVIDO, ENTÃO NÃO HÁ NADA A EXIBIR AQUI.
         });
 
         /**
