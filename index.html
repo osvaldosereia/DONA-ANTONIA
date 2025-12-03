@@ -106,6 +106,7 @@
             --cor-pagamento: #2196F3; /* Azul */
             --cor-sorteio: #4CAF50; /* Verde */
             --cor-aniversario: #E91E63; /* Rosa/Solidariedade */
+            --cor-header-fundo: #f5f5f5; /* Cinza claro */
         }
 
         html { background-color: #e0e0e0; scroll-behavior: smooth; }
@@ -116,7 +117,8 @@
             color: var(--cor-texto);
             margin: 0; 
             padding: 0;
-            padding-top: 140px; 
+            /* NOVO: Ajusta o padding-top para a nova altura do header (70px + margem da logo) */
+            padding-top: 100px; 
             padding-bottom: 20px;
             min-height: 10vh;
             position: relative; 
@@ -131,10 +133,11 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        /* --- CABEÇALHO --- */
+        /* --- CABEÇALHO (SIMPLIFICADO) --- */
         header {
             background-color: white;
-            height: 130px; 
+            /* NOVA ALTURA: Apenas para a barra superior onde ficam os botões */
+            height: 70px; 
             padding: 0;
             display: flex;
             flex-direction: column;
@@ -153,15 +156,28 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            height: 70px;
+            height: 70px; /* Altura principal */
             padding: 5px 15px;
-            border-bottom: 1px solid #f0f0f0;
+            /* REMOVIDO: border-bottom: 1px solid #f0f0f0; */
         }
 
+        /* NOVO: Barra de fundo cinza clara para a logo */
+        .header-background-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 65px; /* Altura até o meio da logo (120/2 + ~5px margem) */
+            background-color: var(--cor-header-fundo);
+            z-index: 999;
+        }
+        
         .header-left { 
             display: flex; 
             align-items: center; 
             flex: 1; 
+            justify-content: flex-start; /* Alinha o WhatsApp à esquerda */
+            z-index: 1001; /* Garante que os botões fiquem acima da barra cinza */
         }
         
         /* NOVO ESTILO PARA A LOGO FIXA (120px) */
@@ -171,18 +187,22 @@
             max-width: 120px; 
             object-fit: cover; 
             border-radius: 50%; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            /* Adiciona sombra para sobrepor */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
             
             /* PROPRIEDADES DE FIXAÇÃO E POSICIONAMENTO BASE (MOBILE) */
             position: fixed;
-            top: 8px; 
+            top: 8px; /* Posição de topo */
             z-index: 2000; 
             
-            /* POSICIONAMENTO MOBILE (relativo à borda da tela) */
-            left: 8px; 
-            transform: none; 
+            /* POSICIONAMENTO MOBILE (Centraliza) */
+            left: 50%; 
+            transform: translateX(-50%); 
         }
         
+        /* REMOVIDO: .top-nav (menu) */
+        .top-nav { display: none; }
+
         /* --- RESPONSIVIDADE DESKTOP --- */
         @media (min-width: 481px) {
             .main-content-wrapper {
@@ -193,19 +213,21 @@
                 max-width: 1000px; /* Header acompanha o limite de largura do conteúdo */
                 box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             }
-            /* A logo deve ser alinhada com o canto do main-content-wrapper */
+            /* A logo deve ser alinhada com o centro do main-content-wrapper */
             .logo-pequena {
                 left: 50%;
-                /* 50% (centro) - 500px (metade do wrapper de 1000px) + 8px (margem) */
-                transform: translateX(calc(-500px + 8px)); 
+                transform: translateX(-50%); 
             }
             .header-top {
                 padding: 5px 30px; 
             }
-            .top-nav {
-                padding-left: 150px; 
-                padding-right: 30px; 
+            /* A barra de fundo acompanha o header */
+            .header-background-bar {
+                max-width: 1000px;
+                left: 50%;
+                transform: translateX(-50%);
             }
+            
             .secao-conteudo {
                 padding: 20px 30px; 
             }
@@ -256,7 +278,8 @@
             gap: 8px; 
             align-items: center; 
             flex: 1; 
-            justify-content: flex-end; 
+            justify-content: flex-end; /* Alinha o Instagram à direita */
+            z-index: 1001; /* Garante que os botões fiquem acima da barra cinza */
         }
 
         /* NOVO ESTILO: BOTÃO DE TEXTO NO CABEÇALHO */
@@ -295,90 +318,27 @@
         }
         /* FIM NOVOS ESTILOS */
 
-        /* --- NAVEGAÇÃO --- */
-        .top-nav {
-            width: 100%;
-            height: 60px;
-            background-color: #222;
-            display: flex; 
-            justify-content: space-between;
-            padding-left: 136px; 
-        }
-        
-        .nav-item {
-            /* AJUSTE: Reduzido o tamanho da fonte para 4 botões */
-            flex: 1; 
-            text-align: center; 
-            background: transparent; 
-            border: none;
-            cursor: pointer; 
-            color: #999;
-            font-size: 13px; /* Ajustado de 14px */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex; 
-            flex-direction: column; /* Para empilhar ícone e texto */
-            align-items: center; 
-            justify-content: center;
-            transition: all 0.3s ease;
-            border-right: 1px solid #333;
-            /* Adicionado padding para acomodar o ícone */
-            padding: 5px 2px; 
-        }
-        .nav-item:last-child { border-right: none; }
-
-        /* NOVO ESTILO: ÍCONES PNG NO MENU */
-        .nav-item img {
-            width: 28px; /* Tamanho do PNG */
-            height: 28px;
-            object-fit: contain;
-            margin-bottom: -2px; /* Ajusta o espaçamento com a barra inferior */
-            display: inline;
-        }
-
-        /* Oculta o Ícone Font Awesome e mostra o PNG/Texto */
-        .nav-item i {
-            display: none; 
-        }
-        .nav-item span {
-            display: none; 
-        }
-        
-        /* Cores Específicas dos Ícones (Removidas já que são PNGs) */
-        
-        .nav-item.ativo { 
-            color: #ffffff; 
-            background-color: var(--cor-primaria);
-            font-size: 15px; /* Ajustado de 16px */
-            font-weight: 900;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-        }
-        /* No estado ativo, os ícones ficam brancos */
-        .nav-item.ativo img {
-            /* Opção: Usar um filtro para dar um efeito de cor ativa, se o PNG for preto. 
-               Se o PNG já for colorido, pode-se remover este filtro, ou aplicar um filtro de brilho. */
-            filter: brightness(1.2); 
-        }
-        .nav-item.ativo span {
-            color: white; 
-        }
+        /* --- NAVEGAÇÃO (Removida, mas mantemos o básico para as âncoras) --- */
+        /* O menu foi removido, mas mantemos as cores de seção para referência */
         
         /* --- SEÇÕES (PÁGINAS) --- */
         .secao-conteudo { 
             padding: 15px; 
         }
 
-        /* NOVO: Estilo para diferenciar as seções de Pagamento, Sorteio e Aniversário */
-        #pag-pagamento, #pag-sorteio, #pag-aniversario {
+        /* Mantém o estilo para Pagamento e Sorteio */
+        #pag-pagamento, #pag-sorteio {
             background-color: #f7f7f7; /* Fundo levemente cinza para separação */
-            /* Ajusta o padding para melhor separação visual */
             padding-top: 20px; 
             padding-bottom: 20px; 
         }
+        /* Remove o estilo para Aniversário, pois será removido */
+        #pag-aniversario {
+            display: none; /* Apenas para garantir, embora o elemento será removido */
+        }
+        
         /* Garantir que o card dentro dessas seções não tenha margem inferior */
-        #pag-pagamento .card, #pag-sorteio .card, #pag-aniversario .card {
+        #pag-pagamento .card, #pag-sorteio .card {
             margin-bottom: 0;
         }
 
@@ -510,19 +470,8 @@
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
 
         /* NOVO ESTILO: BOTÕES ANIVERSÁRIO SOLIDÁRIO */
-        .botoes-solidario {
-            flex-direction: column; /* Padrão Mobile: 1 por linha */
-            display: flex; /* Garante o display flex para mobile */
-            gap: 10px;
-        }
+        /* Deixado inativo já que a seção será removida */
         
-        /* Layout Desktop/Tablet (2 por linha) */
-        @media (min-width: 600px) {
-            .botoes-solidario {
-                display: grid;
-                grid-template-columns: 1fr 1fr; /* 2 colunas iguais */
-            }
-        }
         /* --- MODAIS --- */
         .lista-pagamento { list-style: none; padding: 0; }
         /* NOVO: Estilo para emojis */
@@ -785,47 +734,41 @@
     </style>
 </head>
 <body>
+    
+    <!-- NOVO: BARRA DE FUNDO CINZA CLARA -->
+    <div class="header-background-bar"></div>
 
-    <!-- ELEMENTO LOGO FORA DO HEADER, FIXO E COM Z-INDEX ALTO -->
-    <img src="img/logo1.png" onerror="this.src='https://placehold.co/180x60/ffffff/D32F2F?text=DONA+ANTÔNIA'" alt="Logo Dona Antônia" class="logo-pequena">
+    <!-- ELEMENTO LOGO FORA DO HEADER, FIXO E CENTRALIZADO -->
+    <!-- Nota: As imagens neste ficheiro são referenciadas como "img/logo1.png", "img/cesta-economica1.jpg", etc. 
+         Como esses ficheiros locais não estão disponíveis no ambiente de pré-visualização, serão substituídos por placeholders de URL. -->
+    <img src="https://placehold.co/120x120/D32F2F/ffffff?text=Dona+Antônia" 
+         onerror="this.src='https://placehold.co/180x60/ffffff/D32F2F?text=DONA+ANTÔNIA'" 
+         alt="Logo Dona Antônia" 
+         class="logo-pequena">
 
-    <!-- CABEÇALHO FIXO DUPLO -->
+    <!-- CABEÇALHO FIXO SIMPLIFICADO -->
     <header>
         <div class="header-top">
+            <!-- WHATSAPP NA ESQUERDA -->
             <div class="header-left">
-                <!-- A logo foi movida para fora do header -->
-            </div>
-            <div class="header-icons">
-                <!-- BOTÕES DE TEXTO DE REDES SOCIAIS (AJUSTADO O TEXTO) -->
-                <a href="https://wa.me/5565998150975" class="header-btn btn-whatsapp-save" onclick="abrirLinkExterno(event, this)" aria-label="Salvar contato do WhatsApp">
-                    <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Whatsapp
+                 <a href="https://wa.me/5565998150975" class="header-btn btn-whatsapp-save" onclick="abrirLinkExterno(event, this)" aria-label="Fazer Pedido por WhatsApp">
+                    <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> WhatsApp
                 </a>
+            </div>
+            
+            <!-- A LOGO ESTÁ FORA E CENTRALIZADA -->
+            
+            <!-- INSTAGRAM NA DIREITA -->
+            <div class="header-icons">
                 <a href="https://instagram.com/super.cestas.dona.antonia/" class="header-btn btn-insta-follow" onclick="abrirLinkExterno(event, this)" aria-label="Seguir no Instagram">
                     <i class="fab fa-instagram" style="margin-right: 5px;"></i> Instagram
                 </a>
             </div>
         </div>
 
+        <!-- MENU (REMOVIDO) -->
         <nav class="top-nav">
-            <!-- MENU COM IMAGENS PNG NO MOBILE E TEXTO NO DESKTOP -->
-            <button class="nav-item ativo" id="btn-cestas" onclick="rolarPara('cestas')">
-                <!-- Ícone PNG para Mobile -->
-                <img src="img/cesta.png" alt="Cestas Icone" onerror="this.onerror=null;this.src='https://placehold.co/28x28/FF9800/ffffff?text=C'">
-                <!-- Texto para Desktop -->
-                <span>CESTAS</span>
-            </button>
-            <button class="nav-item" id="btn-pagamento" onclick="rolarPara('pagamento')">
-                <img src="img/pagamento.png" alt="Pagamento Icone" onerror="this.onerror=null;this.src='https://placehold.co/28x28/2196F3/ffffff?text=P'">
-                <span>PAGAMENTO</span>
-            </button>
-            <button class="nav-item" id="btn-sorteio" onclick="rolarPara('sorteio')">
-                <img src="img/sorteio.png" alt="Sorteio Icone" onerror="this.onerror=null;this.src='https://placehold.co/28x28/4CAF50/ffffff?text=S'">
-                <span>SORTEIO</span>
-            </button>
-            <button class="nav-item" id="btn-aniversario" onclick="rolarPara('aniversario')">
-                <img src="img/aniversario.png" alt="Aniversário Icone" onerror="this.onerror=null;this.src='https://placehold.co/28x28/E91E63/ffffff?text=A'">
-                <span>ANIVERSÁRIO</span>
-            </button>
+            <!-- Ítens removidos conforme a instrução -->
         </nav>
     </header>
 
@@ -852,11 +795,11 @@
                         <div class="galeria-fotos" id="galeria-economica">
                             <!-- Imagem 1 (ativa) -->
                             <div class="img-wrapper active" data-img-index="0">
-                                <img src="img/cesta-economica1.jpg" alt="Cesta Econômica" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+1'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+ECONÔMICA+1" alt="Cesta Econômica" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+1'">
                             </div>
                             <!-- Imagem 2 -->
                             <div class="img-wrapper" data-img-index="1">
-                                <img src="img/cesta-economica2.jpg" alt="Cesta Econômica Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+2'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+ECONÔMICA+2" alt="Cesta Econômica Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA+2'">
                             </div>
                             <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
                             <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('economica')">
@@ -884,10 +827,10 @@
                     <div class="cesta-body">
                         <div class="galeria-fotos" id="galeria-mini">
                             <div class="img-wrapper active" data-img-index="0">
-                                <img src="img/cesta-mini1.jpg" alt="Cesta Mini" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+1'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+MINI+1" alt="Cesta Mini" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+1'">
                             </div>
                             <div class="img-wrapper" data-img-index="1">
-                                <img src="img/cesta-mini2.jpg" alt="Cesta Mini Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+2'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+MINI+2" alt="Cesta Mini Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MINI+2'">
                             </div>
                             <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
                             <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('mini')">
@@ -916,10 +859,10 @@
                     <div class="cesta-body">
                         <div class="galeria-fotos" id="galeria-pequena">
                             <div class="img-wrapper active" data-img-index="0">
-                                <img src="img/cesta-pequena1.jpg" alt="Cesta Pequena" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+1'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+PEQUENA+1" alt="Cesta Pequena" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+1'">
                             </div>
                             <div class="img-wrapper" data-img-index="1">
-                                <img src="img/cesta-pequena2.jpg" alt="Cesta Pequena Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+2'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+PEQUENA+2" alt="Cesta Pequena Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=PEQUENA+2'">
                             </div>
                             <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
                             <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('pequena')">
@@ -948,10 +891,10 @@
                     <div class="cesta-body">
                         <div class="galeria-fotos" id="galeria-media">
                             <div class="img-wrapper active" data-img-index="0">
-                                <img src="img/cesta-media1.jpg" alt="Cesta Média" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+1'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+MÉDIA+1" alt="Cesta Média" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+1'">
                             </div>
                             <div class="img-wrapper" data-img-index="1">
-                                <img src="img/cesta-media2.jpg" alt="Cesta Média Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+2'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+MÉDIA+2" alt="Cesta Média Detalhe" loading="lazy" onerror="this.src='https://placehold.co/400x400?text=MÉDIA+2'">
                             </div>
                             <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
                             <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('media')">
@@ -980,10 +923,10 @@
                     <div class="cesta-body">
                         <div class="galeria-fotos" id="galeria-grande">
                             <div class="img-wrapper active" data-img-index="0">
-                                <img src="img/cesta-grande1.jpg" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE+1'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+GRANDE+1" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE+1'">
                             </div>
                             <div class="img-wrapper" data-img-index="1">
-                                <img src="img/cesta-grande2.jpg" alt="Cesta Básica Grande Detalhe" onerror="this.src='https://placehold.co/400x400?text=GRANDE+2'">
+                                <img src="https://placehold.co/400x400/D32F2F/ffffff?text=CESTA+GRANDE+2" alt="Cesta Básica Grande Detalhe" onerror="this.src='https://placehold.co/400x400?text=GRANDE+2'">
                             </div>
                             <!-- NOVO BOTÃO DE NAVEGAÇÃO -->
                             <div class="swipe-indicator" onclick="event.stopPropagation(); mudarFotoNoCard('grande')">
@@ -1011,7 +954,7 @@
         <!-- SEÇÃO 2: PAGAMENTO (FLUXO CONTÍNUO) -->
         <div id="pag-pagamento" class="secao-conteudo">
             <div class="section-icon-header">
-                <img src="img/pagamento.png" alt="Pagamento Icone" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
+                <img src="https://placehold.co/60x60/2196F3/ffffff?text=P" alt="Pagamento Icone" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
             </div>
             <div class="card">
                 <h2>💳 Formas de Pagamento</h2>
@@ -1033,7 +976,7 @@
         <!-- SEÇÃO 3: SORTEIO (FLUXO CONTÍNUO) -->
         <div id="pag-sorteio" class="secao-conteudo">
             <div class="section-icon-header">
-                <img src="img/sorteio.png" alt="Sorteio Icone" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
+                <img src="https://placehold.co/60x60/4CAF50/ffffff?text=S" alt="Sorteio Icone" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
             </div>
             <div class="card">
                 <h2>🎉 Sorteio todo Domingo.</h2>
@@ -1090,31 +1033,9 @@
             </div>
         </div>
 
-        <!-- SEÇÃO 4: ANIVERSÁRIO SOLIDÁRIO (FLUXO CONTÍNUO) -->
-        <div id="pag-aniversario" class="secao-conteudo">
-            <div class="section-icon-header">
-                <img src="img/aniversario.png" alt="Aniversário Icone" onerror="this.onerror=null;this.src='https://placehold.co/60x60/E91E63/ffffff?text=A'">
-            </div>
-            <div class="card" style="background-color: #e3f2fd;">
-                <h2 style="text-align: center;">❤️ Aniversário Solidário</h2>
-                <p>O Aniversário solidário é uma oportunidade que você tem de transformar a essa data em um evento ainda mais especial e marcante. Ao invés de presentes seus convidados poderão doar cestas básicas para quem precisa.</p>
-                <!-- CLASSE botoes-solidario adicionada para o novo layout responsivo -->
-                <div class="botoes-wrapper botoes-solidario"> 
-                    <a href="#" class="btn" style="background-color: #D32F2F;" onclick="console.log('Navegar para: Conhecer Aniversário Solidário'); return false;">
-                        Conhecer
-                    </a>
-                    <a href="#" class="btn" style="background-color: #1e88e5;" onclick="console.log('Navegar para: Encontrar Aniversariante'); return false;">
-                        Encontrar Aniversariante
-                    </a>
-                    <a href="#" class="btn" style="background-color: #4CAF50;" onclick="console.log('Navegar para: Cadastrar Aniversário'); return false;">
-                        Cadastrar Aniversário
-                    </a>
-                    <a href="#" class="btn" style="background-color: #FF9800;" onclick="console.log('Navegar para: Cadastrar Entidade'); return false;">
-                        Cadastrar Entidade
-                    </a>
-                </div>
-            </div>
-        </div>
+        <!-- SEÇÃO 4: ANIVERSÁRIO SOLIDÁRIO (CONTEÚDO REMOVIDO) -->
+        <!-- O id pag-aniversario é mantido como âncora, mas sem conteúdo para ser ignorado -->
+        <div id="pag-aniversario" style="display: none;"></div>
 
         <!-- TEXTO SEO RESTAURADO E POSICIONADO NO FIM -->
         <div class="seo-text-block">
@@ -1160,7 +1081,8 @@
     <div id="aviso-instalar" class="aviso-instalar pwa-install-promo">
         <button class="btn-fechar-aviso" onclick="fecharInstalacao()">&times;</button>
         
-        <img src="img/logo1.png" alt="Icone do App" class="app-icon-banner">
+        <!-- Uso de placeholder para a imagem local -->
+        <img src="https://placehold.co/48x48/D32F2F/ffffff?text=App" alt="Icone do App" class="app-icon-banner">
         
         <div class="texto-instalar-banner">
             <strong>Baixe Nosso Aplicativo</strong>
@@ -1172,9 +1094,14 @@
         </button>
     </div>
 
-    <!-- O arquivo 'data/clientes.js' não foi fornecido, o que pode causar um erro. 
-         Mantemos a referência, mas a funcionalidade de sorteio dependerá da sua existência. -->
-    <script src="data/clientes.js"></script>
+    <!-- Variável de simulação para evitar erro de referência se 'clientes.js' não existir -->
+    <script>
+        var clientes = [
+            // Simulação de dados: os últimos 6 dígitos do telefone devem corresponder
+            { nome: "Simulado A", cidade: "Cuiabá", bairro: "Simulados", telefone: "65998150975" }, // Sufixo: 150975
+            { nome: "Simulado B", cidade: "Várzea Grande", bairro: "Centro", telefone: "65991234567" }  // Sufixo: 234567
+        ];
+    </script>
 
     <script>
         // O código Javascript original foi mantido e adaptado.
@@ -1182,7 +1109,7 @@
         // --- FUNÇÕES DE NAVEGAÇÃO E AÇÃO ---
         const TELEFONE = "5565998150975";
         const LINK_SITE = "donaantonia.com.br/oferta";
-
+        
         // --- NAVEGAÇÃO DE IMAGENS NOS CARDS ---
         const CestaImages = {
             'economica': 2, 
@@ -1243,20 +1170,27 @@
         // --- SISTEMA DE ROLAGEM ÚNICA (REVISADO) ---
         
         function verificarHash() {
+            // As seções ativas são agora apenas cestas, pagamento e sorteio
+            const secoes = ['cestas', 'pagamento', 'sorteio']; 
             const hash = window.location.hash.replace('#', '');
-            const secoes = ['cestas', 'pagamento', 'sorteio', 'aniversario'];
             
             if (secoes.includes(hash)) {
                 rolarPara(hash, true); // Usa rolarPara para forçar o scroll
             } else {
-                rolarPara('cestas', false);
+                rolarPara('cestas', false); // Padrão: vai para cestas
             }
         }
         
         // Função rolarPara modificada para scrollar para a âncora
         function rolarPara(id, animar = true) {
             const el = document.getElementById('pag-' + id);
-            if (!el) return;
+            if (!el) {
+                // Se a âncora não existe (ex: 'aniversario' foi removida), redireciona para cestas
+                if (id !== 'cestas') {
+                    rolarPara('cestas', animar);
+                }
+                return;
+            }
             
             // 1. Atualiza a URL
             if(history.pushState) {
@@ -1266,7 +1200,7 @@
             }
             
             // 2. Calcula a posição e rola
-            const headerOffset = 130; 
+            const headerOffset = 100; // Nova altura ajustada do header + margem
             const elementPosition = el.getBoundingClientRect().top;
             const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
             
@@ -1275,37 +1209,21 @@
                  behavior: animar ? "smooth" : "auto"
             });
             
-            // 3. Força a atualização do menu após a rolagem (útil para clique)
-            setTimeout(atualizarMenuAtivo, 500); 
+            // 3. O menu ativo foi removido, então não precisamos atualizar.
         }
 
         window.addEventListener('popstate', verificarHash);
 
+        // A função onscroll e atualizarMenuAtivo é mantida, mas terá efeito zero já que o menu foi removido.
+        // Vou mantê-la como um placeholder caso decida reintroduzir um indicador de seção no futuro.
         window.onscroll = function() {
-            // Apenas atualiza o menu ativo no scroll
-            atualizarMenuAtivo();
+             // atualizarMenuAtivo(); // Com o menu removido, esta chamada é desnecessária
         };
 
         function atualizarMenuAtivo() {
-            const ids = ['cestas', 'pagamento', 'sorteio', 'aniversario'];
-            let atual = 'cestas';
-            const headerHeight = 130; // Altura do cabeçalho fixo
-
-            ids.forEach(id => {
-                const el = document.getElementById('pag-' + id);
-                if (el) {
-                    const rect = el.getBoundingClientRect();
-                    // Se o topo da seção estiver acima do header, mas ainda na tela
-                    if (rect.top <= headerHeight && rect.bottom > headerHeight) { 
-                        atual = id;
-                    }
-                }
-            });
-
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('ativo'));
-            const btnAtual = document.getElementById('btn-' + atual);
-            if(btnAtual) btnAtual.classList.add('ativo');
+            // Logica removida pois o menu foi removido
         }
+
 
         function abrirLinkExterno(event, element) {
             event.preventDefault();
@@ -1318,13 +1236,15 @@
         function encomendar(produto) { 
             // Substituído alert() por console.log ou UI customizada
             console.log(`Encomendar: ${produto}`);
-            window.open(`https://wa.me/${TELEFONE}?text=Olá, quero encomendar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
+            // Usa encodeURIComponent para garantir que a mensagem é formatada corretamente para o URL do WhatsApp
+            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(`Olá, quero encomendar a ${produto} (Com Amaciante Ypê de brinde).`)}`, '_blank'); 
         }
 
         function agendar(produto) {
             // Substituído alert() por console.log ou UI customizada
             console.log(`Agendar: ${produto}`);
-            window.open(`https://wa.me/${TELEFONE}?text=Olá, gostaria de agendar a ${produto} (Com Amaciante Ypê de brinde).`, '_blank'); 
+            // Usa encodeURIComponent para garantir que a mensagem é formatada corretamente para o URL do WhatsApp
+            window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(`Olá, gostaria de agendar a ${produto} (Com Amaciante Ypê de brinde).`)}`, '_blank'); 
         }
 
         // --- LÓGICA DO MODAL DE VARIAÇÃO (MANTIDA) ---
@@ -1390,14 +1310,31 @@
         const buscaTelefoneInput = document.getElementById('busca-telefone');
         const areaBuscaTelefoneDiv = document.getElementById('area-busca-telefone');
 
-        // Função para mostrar mensagens de erro no lugar de alert()
-        function mostrarMensagemErro(msg) {
+        // Função para mostrar mensagens de erro/sucesso no lugar de alert()
+        function mostrarMensagemBusca(msg, isError = true) {
             const resultadoDiv = document.getElementById('cadastro-encontrado');
-            resultadoDiv.innerHTML = `<h2>⚠️ Atenção!</h2><p>${msg}</p>`;
-            resultadoDiv.style.backgroundColor = '#ffebee';
-            resultadoDiv.style.borderColor = '#ffcdd2';
+            
+            // Reinicializa a div para o estado de mensagem temporária
+            resultadoDiv.innerHTML = `<h2>${isError ? '⚠️ Atenção!' : '🎉 Sucesso!'}</h2><p>${msg}</p>`;
+            resultadoDiv.style.backgroundColor = isError ? '#ffebee' : '#e8f5e9';
+            resultadoDiv.style.borderColor = isError ? '#ffcdd2' : '#a5d6a7';
             resultadoDiv.style.display = 'block';
-            setTimeout(() => { resultadoDiv.style.display = 'none'; }, 3000);
+            
+            // Esconde automaticamente após 3 segundos
+            setTimeout(() => { 
+                resultadoDiv.style.display = 'none'; 
+                // Limpa o conteúdo para não interferir na próxima busca
+                resultadoDiv.innerHTML = `<h2>✅ Cadastro Encontrado!</h2>
+                    <p style="margin-bottom: 10px;">Confira seus dados:</p>
+                    <div style="text-align: left;">
+                        <p><strong>Nome:</strong> <span id="nome-cliente-encontrado"></span></p>
+                        <p><strong>Cidade:</strong> <span id="cidade-cliente-encontrado"></span></p>
+                        <p><strong>Bairro:</strong> <span id="bairro-cliente-encontrado"></span></p>
+                    </div>
+                    <button onclick="confirmarJaCadastrado()" class="btn btn-whatsapp" style="margin-top: 15px;">
+                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar e Participar
+                    </button>`;
+            }, 3000);
         }
         
         function buscarCadastro() {
@@ -1408,10 +1345,11 @@
             cadastroEncontradoDiv.querySelector('h2').style.color = '#388e3c';
 
             const inputTel = buscaTelefoneInput.value;
+            // Corrigido para remover todos os não-dígitos
             const telLimpo = inputTel.replace(/\D/g, ''); 
             
             if (!telLimpo || telLimpo.length < 6) {
-                mostrarMensagemErro("Por favor, digite pelo menos os últimos 6 números do seu telefone.");
+                mostrarMensagemBusca("Por favor, digite o número completo ou os últimos 6 dígitos do seu telefone.");
                 return;
             }
 
@@ -1425,39 +1363,34 @@
                 btnBuscar.disabled = false;
                 
                 let clienteEncontrado = null;
-                // Como 'clientes' vem de um script externo que não foi fornecido (clientes.js),
-                // tratamos a variável como indefinida.
-                if(typeof clientes !== 'undefined') {
+                
+                // Verifica se a variável global 'clientes' está definida e é um array
+                if(typeof clientes !== 'undefined' && Array.isArray(clientes)) {
                      const inputSuffix = telLimpo.slice(-6);
                      clienteEncontrado = clientes.find(c => {
                         const cTelLimpo = c.telefone.replace(/\D/g, '');
                         if (cTelLimpo.length < 6) return false;
                         
                         const clientSuffix = cTelLimpo.slice(-6);
+                        // A busca agora verifica se os últimos 6 dígitos são iguais
                         return clientSuffix === inputSuffix;
                     });
                 } else {
                     // Simulação para testes, se o arquivo clientes.js não estiver disponível
-                    console.error("Arquivo clientes.js não carregado. Simulação de busca.");
-                    if (telLimpo.endsWith('981509')) {
-                         clienteEncontrado = { nome: "Exemplo Cliente", cidade: "Cuiabá", bairro: "Centro", telefone: "65998150975" };
+                    console.error("Variável 'clientes' não é um array ou não carregou. Usando simulação simples.");
+                    // Simulação: se o telefone digitado terminar em '150975', usa o cliente simulado
+                    if (telLimpo.slice(-6) === '150975') {
+                         clienteEncontrado = { nome: "Exemplo Cliente Simulado", cidade: "Cuiabá", bairro: "Centro", telefone: "65998150975" };
                     }
                 }
 
                 if (clienteEncontrado) {
-                    // Restaurar o conteúdo original do modal de cadastro encontrado
-                    cadastroEncontradoDiv.innerHTML = `
-                        <h2>✅ Cadastro Encontrado!</h2>
-                        <p style="margin-bottom: 10px;">Confira seus dados:</p>
-                        <div style="text-align: left;">
-                            <p><strong>Nome:</strong> <span id="nome-cliente-encontrado">${clienteEncontrado.nome}</span></p>
-                            <p><strong>Cidade:</strong> <span id="cidade-cliente-encontrado">${clienteEncontrado.cidade}</span></p>
-                            <p><strong>Bairro:</strong> <span id="bairro-cliente-encontrado">${clienteEncontrado.bairro}</span></p>
-                        </div>
-                        <button onclick="confirmarJaCadastrado()" class="btn btn-whatsapp" style="margin-top: 15px;">
-                            <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar e Participar
-                        </button>`;
-
+                    // Preenche os campos de dados do cliente encontrado
+                    document.getElementById('nome-cliente-encontrado').innerText = clienteEncontrado.nome;
+                    document.getElementById('cidade-cliente-encontrado').innerText = clienteEncontrado.cidade;
+                    document.getElementById('bairro-cliente-encontrado').innerText = clienteEncontrado.bairro;
+                    
+                    // Armazena os dados no input para a função de confirmação
                     buscaTelefoneInput.setAttribute('data-nome-encontrado', clienteEncontrado.nome);
                     buscaTelefoneInput.setAttribute('data-cidade-encontrada', clienteEncontrado.cidade);
                     buscaTelefoneInput.setAttribute('data-bairro-encontrado', clienteEncontrado.bairro);
@@ -1480,7 +1413,7 @@
             const cid = document.getElementById('novo-cidade').value;
             const bai = document.getElementById('novo-bairro').value.trim();
             
-            if (!nome || !tel || !cid || !bai) { mostrarMensagemErro("Preencha todos os campos do novo cadastro!"); return; }
+            if (!nome || !tel || !cid || !bai) { mostrarMensagemBusca("Preencha todos os campos do novo cadastro!", true); return; }
             
             const msg = `CADASTRO SORTEIO:\nNome: ${nome}\nTel: ${tel}\nCidade: ${cid}\nBairro: ${bai}\n\nSorteio do Dia 7 de Dezembro (Novo Cadastro)`;
             
@@ -1489,6 +1422,7 @@
 
         function confirmarJaCadastrado() {
             const tel = buscaTelefoneInput.value;
+            // Recupera os dados armazenados
             const nome = buscaTelefoneInput.getAttribute('data-nome-encontrado') || "Cliente";
             const cidade = buscaTelefoneInput.getAttribute('data-cidade-encontrada') || "N/A";
             const bairro = buscaTelefoneInput.getAttribute('data-bairro-encontrado') || "N/A";
@@ -1509,6 +1443,7 @@
              
              textoBanner.textContent = msg;
              setTimeout(() => { textoBanner.textContent = textoOriginal; }, 4000);
+             avisoPwa.style.display = 'flex'; // Garante que está visível para a mensagem
         }
 
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -1520,6 +1455,13 @@
                 avisoPwa.style.display = 'flex'; 
             }
         });
+        
+        // Verifica se já foi instalado
+        window.addEventListener('appinstalled', () => {
+             deferredPrompt = null;
+             localStorage.setItem('appInstalado', 'true');
+             document.getElementById('aviso-instalar').style.display = 'none';
+        });
 
         function instalarApp() {
             if(deferredPrompt) {
@@ -1528,7 +1470,9 @@
                     if(res.outcome === 'accepted') {
                         localStorage.setItem('appInstalado', 'true');
                         document.getElementById('aviso-instalar').style.display = 'none';
-                        mostrarAvisoPWA("🎉 PARABÉNS! Você baixou o App e ganhou 1 Amaciante Ypê 2L de brinde na sua próxima cesta!");
+                        // A mensagem de brinde foi movida para dentro da instalação bem-sucedida, caso o browser permita
+                        // caso contrário, a mensagem padrão é o aviso de instalação.
+                        console.log("🎉 PARABÉNS! Você baixou o App e ganhou 1 Amaciante Ypê 2L de brinde na sua próxima cesta!");
                     }
                     deferredPrompt = null;
                 });
@@ -1552,7 +1496,49 @@
             }
             // Chama a verificação de hash para posicionar a página corretamente
             verificarHash();
+            
+            // Corrige o posicionamento da logo no desktop, se necessário
+            ajustarPosicaoLogo();
         };
+        
+        function ajustarPosicaoLogo() {
+            const logo = document.querySelector('.logo-pequena');
+            const wrapper = document.querySelector('.main-content-wrapper');
+            const header = document.querySelector('header');
+
+            if (!logo || !wrapper || !header) return;
+
+            if (window.innerWidth > 480) {
+                 // Recalcula o max-width para desktop
+                 const wrapperWidth = 1000; 
+                 // Posição para centralizar no wrapper (50% - metade do wrapper) + margem
+                 const newTransform = `translateX(calc(-50% + 0px))`; 
+                 logo.style.left = '50%';
+                 logo.style.transform = newTransform;
+
+                 const bar = document.querySelector('.header-background-bar');
+                 if(bar) {
+                     bar.style.maxWidth = `${wrapperWidth}px`;
+                     bar.style.left = '50%';
+                     bar.style.transform = 'translateX(-50%)';
+                 }
+
+            } else {
+                // Reseta para o padrão mobile (centralizado)
+                 logo.style.left = '50%';
+                 logo.style.transform = 'translateX(-50%)';
+                 const bar = document.querySelector('.header-background-bar');
+                 if(bar) {
+                    bar.style.maxWidth = '480px';
+                    bar.style.left = '50%';
+                    bar.style.transform = 'translateX(-50%)';
+                 }
+            }
+        }
+
+        // Adiciona um listener de resize para corrigir o posicionamento da logo no desktop
+        window.addEventListener('resize', ajustarPosicaoLogo);
+
     </script>
 </body>
 </html>
