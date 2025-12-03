@@ -401,22 +401,24 @@
         #modalPWA {
             display: none; 
             position: fixed;
-            bottom: 0; 
+            /* ALTERADO DE BOTTOM: 0 para TOP: 70PX */
+            top: 70px;
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
             z-index: 5002; 
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.1);
-            animation: slideUp 0.3s ease-out;
-            /* REMOVIDO: border-top: 3px solid var(--cor-sorteio); */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para baixo */
+            animation: slideDown 0.3s ease-out; /* NOVA ANIMAÇÃO */
         }
         .modal-pwa-content {
             background-color: white;
             padding: 15px 20px;
-            padding-top: 40px; /* Mais espaço para a logo maior */
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            padding-top: 40px; 
+            border-bottom-left-radius: 12px; /* A borda redonda agora é na parte de baixo */
+            border-bottom-right-radius: 12px;
+            border-top-left-radius: 0;
+            border-top-right-radius: 0;
             text-align: center;
             position: relative; 
             display: flex;
@@ -424,13 +426,13 @@
             align-items: center;
         }
         
-        /* LOGO POPUP PWA (AUMENTADA) */
+        /* LOGO POPUP PWA (MANTIDA NO TOPO DO MODAL, AGORA EM RELAÇÃO AO NOVO TOPO) */
         .modal-logo-pwa {
             position: absolute;
             top: -30px; /* Metade do tamanho da logo de 60px */
             left: 50%;
             transform: translateX(-50%);
-            width: 60px; /* Aumentada de 40px para 60px */
+            width: 60px; 
             height: 60px; 
             border-radius: 50%; 
             background-color: white;
@@ -453,20 +455,24 @@
             background: none;
             border: none;
             color: #999;
-            font-size: 20px; /* Aumentado para ser um bom target de toque */
+            font-size: 20px; 
             cursor: pointer;
             line-height: 1;
             padding: 5px;
         }
 
-        @keyframes slideUp {
-            from { transform: translate(-50%, 100%); }
-            to { transform: translate(-50%, 0); }
+        /* NOVA ANIMAÇÃO: Desliza de Cima */
+        @keyframes slideDown {
+            from { transform: translate(-50%, -100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
         }
+        
+        /* A animação slideUp antiga foi removida */
+        
         /* Ajuste do texto para ficar mais harmonioso */
         .modal-pwa-content h3 {
-             color: var(--cor-primaria); /* Alterado para Primaria (Vermelho) */
-             font-size: 1.3rem; /* Aumentado para destaque */
+             color: var(--cor-primaria); 
+             font-size: 1.3rem; 
              margin-top: 10px;
              margin-bottom: 5px;
              font-weight: 700;
