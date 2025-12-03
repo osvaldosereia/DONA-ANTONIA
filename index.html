@@ -283,6 +283,7 @@
         }
 
         /* --- ESTILO DO MODAL RECEPTIVO (POPUP 1) --- */
+        /* NOTE: Este estilo define a aparência CENTRALIZADA */
         #modalReceptivo {
             display: none; 
             position: fixed;
@@ -402,55 +403,52 @@
         
         /* A classe .modal-variacao será o backdrop (modalPWAContainer). */
         #modalPWAContainer {
-            /* Use a classe base, display: none está no HTML */
             z-index: 5005; /* Z-Index alto para o backdrop */
+            /* FORÇAR ALINHAMENTO CENTRAL PARA TODOS */
+            justify-content: center !important; 
+            align-items: center !important;
         }
         
-        /* MODOS TOP: SEMPRE FIXADO NO TOPO AGORA */
+        /* MODOS TOP: AGORA É CENTRALIZADO PARA TODOS */
         #modalPWA {
-            position: absolute; 
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-            max-width: 480px;
+            /* Retira as propriedades fixed de posição que estavam forçando topo/fundo */
+            position: relative; 
+            left: auto;
+            top: auto;
+            transform: none;
+            width: 90%; /* Pega 90% da largura do contêiner */
+            max-width: 380px; /* Mantém o tamanho max. */
             z-index: 5006; 
             
-            /* FORÇANDO AS PROPRIEDADES DO MODO TOP PARA TODOS */
-            bottom: auto; 
-            top: 70px; /* Colado abaixo do header */
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Sombra para baixo */
-            animation: slideDown 0.3s ease-out; /* Animação de topo para todos */
+            /* Remove animações de slide, usa zoomIn como o popup inicial */
+            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
         }
 
         .modal-pwa-content {
             background-color: white;
-            padding: 15px 20px;
-            padding-top: 40px; 
+            padding: 25px; /* Padding ajustado para o modo centralizado */
+            padding-top: 60px; /* Espaço para a logo sobreposta */
             text-align: center;
             position: relative; 
             display: flex;
             flex-direction: column;
             align-items: center;
-            
-            /* Ajuste de bordas arredondadas para o modo TOP fixo */
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
+            border-radius: 16px; /* Bordas arredondadas do modal central */
         }
 
         /* LOGO POPUP PWA (MANTIDA) */
         .modal-logo-pwa {
             position: absolute;
-            top: -30px; /* Metade do tamanho da logo de 60px */
+            top: -40px; /* Metade do tamanho da logo de 80px */
             left: 50%;
             transform: translateX(-50%);
-            width: 60px; 
-            height: 60px; 
+            width: 80px; /* Aumentada para 80px para o visual central */
+            height: 80px; 
             border-radius: 50%; 
             background-color: white;
-            padding: 2px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3); 
+            padding: 3px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
             z-index: 5003; 
         }
         .modal-logo-pwa img {
@@ -460,7 +458,7 @@
              border-radius: 50%;
         }
         
-        /* BOTÃO FECHAR PWA (MUDADO PARA A DIREITA) */
+        /* BOTÃO FECHAR PWA (MANTIDO) */
         .pwa-close-btn {
             position: absolute;
             top: 5px;
@@ -474,67 +472,64 @@
             padding: 5px;
         }
 
-        /* NOVA ANIMAÇÃO TOP: Desliza de Cima (MANTIDA) */
+        /* Animações de Slide não são mais usadas neste modo */
         @keyframes slideDown {
-            from { top: -100px; opacity: 0; } /* Começa acima do cabeçalho */
-            to { top: 70px; opacity: 1; }
+            from { opacity: 0; } 
+            to { opacity: 1; }
         }
 
-        /* A animação slideUp não é mais usada neste modo, mas mantida por segurança */
         @keyframes slideUp {
-            from { bottom: -100px; opacity: 0; } /* Começa abaixo do rodapé */
-            to { bottom: 0; opacity: 1; }
+            from { opacity: 0; } 
+            to { opacity: 1; }
         }
         
         /* Ajuste do texto para ficar mais harmonioso */
         .modal-pwa-content h3 {
              color: var(--cor-primaria); 
-             font-size: 1.3rem; 
+             font-size: 1.5rem; /* Aumentado para igualar o popup inicial */
              margin-top: 10px;
              margin-bottom: 5px;
              font-weight: 700;
         }
         .modal-pwa-content p {
-            font-size: 15px;
-            margin: 0 0 15px 0;
+            font-size: 1.1rem; /* Aumentado para igualar o popup inicial */
+            margin: 0 0 25px 0;
             font-weight: 400;
-            color: #444;
+            color: #555;
         }
         
         /* Layout dos 2 botões */
         .pwa-botoes-wrapper {
             display: flex;
+            flex-direction: column; /* Deixa os botões em coluna para se parecer mais com o estilo dos botões iniciais */
             gap: 10px;
             width: 100%;
-            padding: 0 10px;
+            padding: 0;
             margin-bottom: 10px;
+            max-width: 300px; /* Para não ocupar 100% da largura em telas grandes, como o botão inicial */
         }
+        /* Estilo dos botões alterado para parecer com o botão principal do popup inicial */
         .btn-pwa-install, .btn-pwa-whatsapp {
-            flex: 1; /* Divide o espaço igualmente */
-            background-color: var(--cor-sorteio); /* Cor App */
-            color: white;
-            padding: 12px 10px;
-            border-radius: 8px;
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
             font-weight: bold;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); 
             border: none;
             text-decoration: none;
         }
-        .btn-pwa-install:active, .btn-pwa-whatsapp:active { transform: scale(0.98); }
 
         .btn-pwa-whatsapp {
             background-color: var(--cor-whatsapp);
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+            order: 1; /* Coloca o WhatsApp em cima (Prioridade de contato) */
         }
         .btn-pwa-install {
             background-color: var(--cor-primaria); /* Cor App mais forte */
             box-shadow: 0 4px 10px rgba(211, 47, 47, 0.4);
+            order: 2; /* Coloca o App em baixo */
+            
         }
 
         /* --- RESPONSIVIDADE DESKTOP (MANTIDA) --- */
@@ -568,7 +563,9 @@
                 gap: 20px; 
             }
             .pwa-botoes-wrapper {
-                padding: 0 30px; 
+                 /* Em desktop, volta para 2 colunas */
+                flex-direction: row; 
+                padding: 0 10px;
             }
         }
     </style>
@@ -932,27 +929,29 @@
             <div id="etapa1" class="etapa-modal ativa">
                 <h3 class="titulo-receptivo">BEM-VINDO! 👋</h3>
                 <p class="subtitulo-receptivo">
-                    Entregamos em Cuiabá e Várzea Grande!
+                    Entregamos em Cuiabá e Várzea Grande. Encomende pela manhã e receba sua cesta no mesmo dia!
                 </p>
                 <button class="btn-receptivo btn-ver-cestas" onclick="mudarEtapaPopup()">
                     <i class="fas fa-box" style="margin-right: 8px;"></i> Ver as Cestas
                 </button>
                 <button onclick="fecharModalReceptivo()" style="background: none; border: none; color: #999; margin-top: 10px; font-size: 14px; cursor: pointer;">
+                    Fechar e Continuar
                 </button>
             </div>
 
             <!-- ETAPA 2: BRINDE E CTA DIRETA -->
             <div id="etapa2" class="etapa-modal">
                 <i class="fas fa-gift" style="font-size: 50px; color: var(--cor-whatsapp); margin-bottom: 15px;"></i>
-                <h3 class="titulo-receptivo" style="color: var(--cor-whatsapp);">🎉 Brinde do Mês!</h3>
+                <h3 class="titulo-receptivo" style="color: var(--cor-whatsapp);">🎉 Ah, e tem mais!</h3>
                 <p class="subtitulo-receptivo">
-                    Compre uma cesta e ganhe 1 Amaciante de 2 litros da Ypê.!
+                    Na sua primeira compra, vamos te dar um Amaciante Ypê de 2 Litros de Brinde!
                 </p>
                 <!-- O botão agora apenas fecha o modal, conforme solicitado -->
                 <button class="btn-receptivo btn-eu-quero" onclick="confirmarBrindeEFecar()">
                     <i class="fas fa-arrow-down" style="margin-right: 8px;"></i> EU QUERO o Brinde!
                 </button>
                 <button onclick="fecharModalReceptivo()" style="background: none; border: none; color: #999; margin-top: 10px; font-size: 14px; cursor: pointer;">
+                    Voltar para o site
                 </button>
             </div>
 
@@ -962,35 +961,39 @@
     <!-- NOVO POPUP 2: RETENÇÃO PWA (APAREECE NO SCROLL) -->
     <!-- Contêiner do Backdrop (usa .modal-variacao para o fundo escuro) -->
     <div id="modalPWAContainer" class="modal-variacao" onclick="if(event.target === this) fecharModalPWA()">
-        <div id="modalPWA">
-            <div class="modal-pwa-content" onclick="event.stopPropagation()">
-                <!-- LOGO POPUP PWA (AUMENTADA E AJUSTADA NO TOPO) -->
-                <div class="modal-logo-pwa">
-                     <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
-                         alt="Logo Dona Antônia" 
-                         onerror="this.src='img/logo1.png'"
-                         >
-                </div>
-                
-                <!-- Botão de fechar (APENAS X, MUDADO PARA A DIREITA) -->
-                <button class="pwa-close-btn" onclick="fecharModalPWA()">
-                    &times;
-                </button>
-                
-                <!-- CONTEÚDO ATUALIZADO -->
-                <h3>Salve nosso contato</h3>
-                <p>Comprar com a gente compensa muito.</p>
-                
-                <!-- BOTÕES DUPLOS -->
-                <div class="pwa-botoes-wrapper">
-                    <button class="btn-pwa-install" onclick="instalarPWA()">
-                        <i class="fas fa-mobile-alt" style="margin-right: 8px;"></i> Aplicativo
-                    </button>
-                    <button class="btn-pwa-whatsapp" onclick="enviarOiWhatsApp()">
-                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> WhatsApp
-                    </button>
-                </div>
+        <!-- Usando modal-receptivo-content para centralização e estilo -->
+        <div id="modalPWA" class="modal-receptivo-content" onclick="event.stopPropagation()">
+             
+            <!-- LOGO POPUP PWA (AUMENTADA E AJUSTADA NO TOPO) -->
+            <div class="modal-logo-receptivo">
+                 <img src="uploaded:icon-512.jpg-e6b1d93e-bd40-4cbe-8eb9-1ce2d7412765" 
+                     alt="Logo Dona Antônia" 
+                     onerror="this.src='img/logo1.png'"
+                     >
             </div>
+            
+            <!-- Botão de fechar (APENAS X, MUDADO PARA A DIREITA) -->
+            <button class="pwa-close-btn" onclick="fecharModalPWA()">
+                &times;
+            </button>
+            
+            <!-- CONTEÚDO ATUALIZADO -->
+            <h3 class="titulo-receptivo">Salve nosso contato</h3>
+            <p class="subtitulo-receptivo" style="margin-bottom: 5px; margin-top: 5px;">Comprar com a gente compensa muito.</p>
+            
+            <!-- BOTÕES DUPLOS -->
+            <div class="pwa-botoes-wrapper">
+                 <button class="btn-pwa-whatsapp" onclick="enviarOiWhatsApp()">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> WhatsApp
+                </button>
+                <button class="btn-pwa-install" onclick="instalarPWA()">
+                    <i class="fas fa-mobile-alt" style="margin-right: 8px;"></i> Aplicativo
+                </button>
+               
+            </div>
+             <button onclick="fecharModalPWA()" style="background: none; border: none; color: #999; margin-top: 10px; font-size: 14px; cursor: pointer;">
+                Fechar e Continuar
+            </button>
         </div>
     </div>
     
@@ -1019,15 +1022,8 @@
         // MANTIDO isPwaPromptShown = false para facilitar o teste no preview
         let isPwaPromptShown = false; 
         
-        // ===============================
-        // === DETECÇÃO DE IN-APP BROWSER (REMOVIDA ABAIXO) ===
-        // ===============================
-        
-        /*
-         * A função isSocialInAppBrowser foi removida, pois o popup será
-         * fixado no topo para todos os navegadores por segurança.
-         */
-
+        // Timer global para o novo gatilho
+        let popupTimer;
 
         // ===============================
         // === LÓGICA DO POPUP RECEPTIVO EM 2 ETAPAS (POPUP 1) ===
@@ -1053,6 +1049,9 @@
             
             // Rola a página para a seção de cestas após fechar
             document.getElementById('pag-cestas').scrollIntoView({ behavior: 'smooth' });
+            
+            // NOVO: Inicia o timer para o popup de retenção PWA
+            iniciarPopupPWAComTimer();
         }
         
         /**
@@ -1081,41 +1080,41 @@
         // ===============================
         
         /**
+         * NOVO: Inicia o temporizador para exibir o popup PWA após um delay.
+         * @param {number} delaySeconds - Atraso em segundos.
+         */
+        function iniciarPopupPWAComTimer(delaySeconds = 15) {
+            // Só inicia o timer se o app puder ser instalado e o popup não tiver sido visto
+             if (deferredPrompt && !isPwaPromptShown) {
+                popupTimer = setTimeout(mostrarModalPWA, delaySeconds * 1000);
+            }
+        }
+        
+        /**
          * NOVO: Envia um "oi" simples para o WhatsApp
          */
         function enviarOiWhatsApp() {
-            const textoZap = `Olá, gostei das cestas e vou salvar seu contato!`;
+            const textoZap = `Olá, vim do site e quero saber mais sobre as cestas!`;
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(textoZap)}`, '_blank'); 
             fecharModalPWA();
         }
         
         /**
-         * Aplica os estilos de TOP e exibe o modal PWA para todos os navegadores.
+         * Aplica os estilos centralizados e exibe o modal PWA.
          */
         function mostrarModalPWA() {
             const container = document.getElementById('modalPWAContainer');
-            const modal = document.getElementById('modalPWA');
             
-            // 1. Aplica o modo TOP para todos
-            modal.classList.add('top-mode');
-            modal.classList.remove('bottom-mode');
-            
-            // Alinhamento para modo TOP
-            container.style.justifyContent = 'flex-start'; 
-            container.style.alignItems = 'flex-start';
-            container.style.paddingTop = '70px'; 
-            
-            // 2. Exibe o contêiner do backdrop
-            if (container.style.display !== 'flex' && !isPwaPromptShown && deferredPrompt) {
+            // 1. Exibe o contêiner do backdrop
+            if (container.style.display !== 'flex' && deferredPrompt) {
                  container.style.display = 'flex'; 
-                 // MANTEMOS A CHAVE AQUI PARA MARCAR QUE O USUÁRIO VIU O POPUP (mesmo em modo de teste)
+                 
+                 // Marca como visto após a exibição (apenas para manter o controle)
                  localStorage.setItem(PWA_PROMPT_KEY, 'sim'); 
                  isPwaPromptShown = true;
                  
-                 // Se o modal receptivo (o grande) ainda estiver aberto, feche-o
-                 if(document.getElementById('modalReceptivo').style.display === 'flex') {
-                     document.getElementById('modalReceptivo').style.display = 'none';
-                 }
+                 // Limpa o timer para evitar execução dupla
+                 clearTimeout(popupTimer);
             }
         }
         
@@ -1126,36 +1125,7 @@
              document.getElementById('modalPWAContainer').style.display = 'none';
         }
         
-        /**
-         * Lógica de detecção de rolagem.
-         */
-        function checarRolagemParaPWA() {
-            // A condição de parada AGORA é apenas baseada no deferredPrompt (se o app já está instalado)
-            if (!deferredPrompt) { 
-                window.removeEventListener('scroll', checarRolagemParaPWA);
-                return;
-            }
-            
-            // Altura total da página (incluindo a parte não visível)
-            const alturaTotal = document.body.scrollHeight;
-            // Posição atual do topo da tela
-            const posicaoAtual = window.scrollY;
-            // Altura da janela de visualização (viewport)
-            const alturaViewport = window.innerHeight;
-            
-            // Calcula o quanto da página o usuário rolou (em %)
-            const porcentagemRolada = (posicaoAtual + alturaViewport) / alturaTotal;
-            
-            // Se o usuário rolou 80% ou mais do site
-            if (porcentagemRolada >= 0.8) {
-                mostrarModalPWA();
-                // Remove o listener para não disparar novamente
-                window.removeEventListener('scroll', checarRolagemParaPWA);
-            }
-        }
-        
-        // Adiciona o listener de scroll.
-        window.addEventListener('scroll', checarRolagemParaPWA);
+        // O checarRolagemParaPWA e o listener de scroll foram removidos e substituídos pelo timer
 
 
         // ===============================
@@ -1187,6 +1157,13 @@
             e.preventDefault();
             // Armazena o evento para que possa ser disparado mais tarde
             deferredPrompt = e;
+            
+            // Se o timer de 15s já expirou e o popup não foi mostrado (o que só acontece se deferredPrompt era null/tarde),
+            // podemos tentar mostrar o popup agora
+             if (!isPwaPromptShown) {
+                 clearTimeout(popupTimer); // Cancela o timer, caso ainda esteja rodando
+                 iniciarPopupPWAComTimer(1); // Tenta mostrar em 1s, agora que o deferredPrompt está pronto
+             }
         });
 
         /**
