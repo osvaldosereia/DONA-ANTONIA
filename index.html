@@ -43,7 +43,7 @@
         html { 
             background-color: #e0e0e0; 
             scroll-behavior: smooth;
-            scroll-padding-top: 100px; /* Adicionado para a rolagem de atalho */
+            scroll-padding-top: 100px; /* A altura do header é 70px + margem */
         }
 
         body {
@@ -183,8 +183,8 @@
             padding: 0; 
             overflow: hidden; 
             border: 1px solid #eee; 
-            /* CORREÇÃO 1: Adiciona um top padding para compensar a rolagem da âncora */
-            padding-top: 15px; 
+            /* CORREÇÃO 2: Removemos o padding-top de 15px daqui */
+            /* padding-top: 15px; */ 
         }
         .cesta-header { 
             background-color: var(--cor-primaria); 
@@ -497,10 +497,10 @@
         /* LOGO POPUP PWA (MANTIDA) */
         .modal-logo-pwa {
             position: absolute;
-            top: -40px; /* Metade do tamanho da logo de 80px */
+            top: -40px; 
             left: 50%;
             transform: translateX(-50%);
-            width: 80px; /* Aumentada para 80px para o visual central */
+            width: 80px; 
             height: 80px; 
             border-radius: 50%; 
             background-color: white;
@@ -649,8 +649,8 @@
                     <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> WhatsApp
                 </a>
                 <!-- Botão Ligar -->
-                <a href="tel:+5565998150875" class="header-btn btn-ligar" onclick="ligarDireto(event)" aria-label="Ligar para o número (65) 99815-0875">
-                    <i class="fas fa-phone" style="margin-right: 5px;"></i> (65) 99815-0875
+                <a href="tel:+5565998150975" class="header-btn btn-ligar" aria-label="Ligar para o número (65) 99815-0975">
+                    <i class="fas fa-phone" style="margin-right: 5px;"></i> (65) 99815-0975
                 </a>
             </div>
             
@@ -1097,7 +1097,7 @@
         
         // Número de telefone para contato via WhatsApp (998150975)
         const TELEFONE = "5565998150975"; 
-        const TELEFONE_LIGAR = "5565998150875"; // Novo número para ligação/WhatsApp
+        const TELEFONE_LIGAR = "5565998150975"; // CORRIGIDO: Número para ligação
         
         // Variável para armazenar o prompt de instalação adiado do PWA
         let deferredPrompt; 
@@ -1127,9 +1127,7 @@
             const textoZap = `Olá, gostaria de falar com a Dona Antônia sobre as cestas.`;
             window.open(`https://wa.me/${TELEFONE_LIGAR}?text=${encodeURIComponent(textoZap)}`, '_blank'); 
             
-            // Fallback para chamada normal (adicionado para cumprir a função "ou normal")
-            // Nota: Em navegadores modernos, isso será bloqueado pelo popup do WhatsApp.
-            // A solução é deixar o atributo href="tel:..." no HTML para o fallback caso o JS falhe.
+            // Fallback para chamada normal - O link tel:... no HTML garante a chamada direta
         }
 
         // ===============================
@@ -1157,7 +1155,7 @@
             localStorage.setItem(MODAL_RECEPTIVO_KEY, 'sim');
             
             // Rola a página para a seção de cestas após fechar
-            // REMOVIDO: document.getElementById('pag-cestas').scrollIntoView({ behavior: 'smooth' });
+            // REMOVIDO SCROLL: A remoção dessa linha garante que o usuário permaneça no atalho (#)
             
             // NOVO: Inicia o timer de 40 segundos para o popup de retenção PWA
             iniciarPopupPWAComTimer(40);
@@ -1196,7 +1194,6 @@
             clearTimeout(popupTimer);
             
             // Só inicia o timer se o app puder ser instalado e o popup não tiver sido exibido na sessão.
-            // CORREÇÃO: Usar o valor de delaySeconds para iniciar o timer.
             if (deferredPrompt && !isPwaPromptShown) {
                 console.log(`Timer iniciado: Popup PWA aparecerá em ${delaySeconds} segundos.`);
                 popupTimer = setTimeout(mostrarModalPWA, delaySeconds * 1000);
