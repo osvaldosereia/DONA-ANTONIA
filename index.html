@@ -251,8 +251,9 @@
 
         .foto-cesta-unica { 
             width: 100%; 
-            aspect-ratio: 1 / 1; 
-            object-fit: cover; 
+            /* ALTURA AJUSTADA: 100% largura / 80% altura = ratio 1/0.8 */
+            aspect-ratio: 1 / 0.8; 
+            object-fit: cover; /* Garante que não achata */
             display: block;
             border-radius: 8px;
             margin-bottom: 15px;
