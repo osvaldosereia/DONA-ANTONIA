@@ -12,13 +12,13 @@
     <link rel="canonical" href="https://donaantonia.com.br/">
     <meta name="author" content="Dona Antônia Cestas">
     
-    <!-- Geo Tags (Crucial para Google Maps e Local Pack) -->
+    <!-- Geo Tags -->
     <meta name="geo.region" content="BR-MT">
     <meta name="geo.placename" content="Cuiabá">
     <meta name="geo.position" content="-15.6014;-56.0979">
     <meta name="ICBM" content="-15.6014, -56.0979">
     
-    <!-- Metatags Open Graph (Para WhatsApp e Redes Sociais ficarem bonitos) -->
+    <!-- Open Graph -->
     <meta property="og:locale" content="pt_BR">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Cestas Básicas Dona Antônia: Qualidade e Preço Justo">
@@ -28,103 +28,6 @@
     <meta property="og:url" content="https://donaantonia.com.br/">
     <meta property="og:site_name" content="Dona Antônia Cestas Básicas">
     
-    <!-- SCHEMA.ORG JSON-LD (Otimização Máxima para Google Shopping e Local) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "GroceryStore",
-      "name": "Dona Antônia Cestas Básicas",
-      "image": [
-        "https://placehold.co/512x512?text=Logo",
-        "img/cesta-economica1.jpg"
-      ],
-      "@id": "https://donaantonia.com.br/",
-      "url": "https://donaantonia.com.br/",
-      "telephone": "+5565998150975",
-      "priceRange": "$$",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "Atendimento Online e Entrega",
-        "addressLocality": "Cuiabá",
-        "addressRegion": "MT",
-        "postalCode": "78000-000",
-        "addressCountry": "BR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -15.6014,
-        "longitude": -56.0979
-      },
-      "areaServed": [
-        { "@type": "City", "name": "Cuiabá" },
-        { "@type": "City", "name": "Várzea Grande" }
-      ],
-      "sameAs": [
-        "https://instagram.com/super.cestas.dona.antonia/",
-        "https://wa.me/5565998150975"
-      ],
-      "openingHoursSpecification": {
-        "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-        "opens": "07:30",
-        "closes": "18:30"
-      },
-      "paymentAccepted": "Cash, Credit Card, Debit Card, Pix, Alelo, Sodexo",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Catálogo de Cestas Básicas",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Econômica",
-              "description": "Cesta básica econômica com Arroz Tio Alvino 5kg, Feijão, Óleo e itens essenciais para o dia a dia.",
-              "image": "img/cesta-economica1.jpg",
-              "sku": "CESTA-ECO-01",
-              "brand": { "@type": "Brand", "name": "Dona Antônia" }
-            },
-            "price": "85.00",
-            "priceCurrency": "BRL",
-            "availability": "https://schema.org/InStock",
-            "priceValidUntil": "2025-12-31"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Mini",
-              "description": "Cesta básica completa versão mini. Ideal para solteiros ou casais. Inclui produtos de limpeza.",
-              "image": "img/cesta-mini1.jpg",
-              "sku": "CESTA-MINI-01",
-              "brand": { "@type": "Brand", "name": "Dona Antônia" }
-            },
-            "price": "165.00",
-            "priceCurrency": "BRL",
-            "availability": "https://schema.org/InStock",
-            "priceValidUntil": "2025-12-31"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Grande Família",
-              "description": "Nossa maior cesta básica. 4 Pacotes de Arroz 5kg, 4 Óleos, Limpeza completa e muito mais.",
-              "image": "img/cesta-grande1.jpg",
-              "sku": "CESTA-GRANDE-01",
-              "brand": { "@type": "Brand", "name": "Dona Antônia" }
-            },
-            "price": "380.00",
-            "priceCurrency": "BRL",
-            "availability": "https://schema.org/InStock",
-            "priceValidUntil": "2025-12-31"
-          }
-        ]
-      }
-    }
-    </script>
-    <!-- === SEO LOCAL END === -->
-
     <!-- PWA & Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#D32F2F">
@@ -148,7 +51,7 @@
             --cor-fundo: #fafafa;
             --cor-pagamento: #2196F3; 
             --cor-sorteio: #4CAF50; 
-            --cor-entrega: #FF9800; /* Cor Laranja para Entrega */
+            --cor-entrega: #FF9800;
             --cor-header-fundo: #f5f5f5;
             --altura-header: 90px;
             --largura-logo: 115px; 
@@ -205,10 +108,7 @@
             transition: opacity 0.3s, transform 0.3s;
             pointer-events: auto;
         }
-        .toast-message.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .toast-message.show { opacity: 1; transform: translateY(0); }
         .toast-success { background-color: var(--cor-whatsapp); }
         .toast-error { background-color: var(--cor-primaria); }
         .toast-info { background-color: #333; }
@@ -251,7 +151,6 @@
             z-index: 1002;
         }
 
-        /* --- LOGO --- */
         .logo-pequ { 
             height: var(--largura-logo);
             width: var(--largura-logo); 
@@ -268,7 +167,6 @@
             transition: all 0.3s ease;
         }
 
-        /* --- BOTÃO CONTATO --- */
         .btn-contato-principal {
             display: flex;
             flex-direction: row;
@@ -300,6 +198,7 @@
             font-weight: 800;
             font-size: 14px;
             line-height: 1.2;
+            color: var(--cor-primaria); /* Cor Vermelha Adicionada */
         }
         .btn-contato-text-sub {
             display: block;
@@ -309,13 +208,10 @@
         }
 
         @media (max-width: 380px) {
-            :root {
-                --largura-logo: 90px; 
-                --altura-header: 85px;
-            }
+            :root { --largura-logo: 90px; --altura-header: 85px; }
             .logo-pequ { left: 10px; }
             .btn-contato-principal { padding: 8px 12px; }
-            .btn-contato-icon { font-size: 20px; margin-right: 8px; }
+            /* Icon style removed from media query since icon is gone */
             .btn-contato-text-main { font-size: 12px; }
             .btn-contato-text-sub { font-size: 10px; }
         }
@@ -383,11 +279,59 @@
             background-color: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 15px; margin-top: 15px; text-align: center;
         }
         .area-resultado-busca h2 { color: #388e3c; } 
-        .cadastro-novo-style { background-color: #fff3e0; border: 1px solid #ffcc80; }
-        .cadastro-novo-style h2 { color: #e65100; } 
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
         
-        /* --- ESTILOS BANNER ROTATIVO (NOVO) --- */
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+
+        /* --- ESTILO NOVO CADASTRO (ATUALIZADO) --- */
+        .cadastro-novo-style {
+            background-color: #fff; /* Fundo branco para ficar mais limpo */
+            border: 2px solid #ffcc80; /* Borda laranja suave */
+            border-radius: 12px;
+            text-align: left; /* Alinhamento a esquerda facilita leitura */
+        }
+
+        .titulo-novo-cadastro {
+            color: #E65100;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 5px;
+            font-weight: 800;
+        }
+
+        .subtitulo-novo-cadastro {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        /* Botão Inteligente */
+        .btn-validacao {
+            background-color: #ccc; /* Começa cinza */
+            color: #666;
+            cursor: not-allowed;
+            transition: all 0.3s ease;
+            transform: scale(0.98);
+            opacity: 0.7;
+        }
+
+        /* Quando estiver pronto (adicionado via JS) */
+        .btn-validacao.pronto {
+            background-color: var(--cor-whatsapp); /* Vira Verde Zap */
+            color: white;
+            cursor: pointer;
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); /* Brilho verde */
+            animation: pulsoBotao 1.5s infinite; /* Chama atenção */
+        }
+
+        @keyframes pulsoBotao {
+            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        
+        /* --- ESTILOS BANNER ROTATIVO --- */
         .banner-container {
             position: relative;
             overflow: hidden;
@@ -410,14 +354,9 @@
             animation: fadeEffect 1s;
         }
 
-        .banner-slide.active {
-            display: block;
-        }
+        .banner-slide.active { display: block; }
 
-        @keyframes fadeEffect {
-            from {opacity: 0.4}
-            to {opacity: 1}
-        }
+        @keyframes fadeEffect { from {opacity: 0.4} to {opacity: 1} }
 
         .btn-banner-action {
             background-color: var(--cor-sorteio);
@@ -574,10 +513,10 @@
     <header>
         <div class="header-top">
             <button class="btn-contato-principal" onclick="abrirModalContatos()">
-                <div class="btn-contato-icon"><i class="fas fa-address-book"></i></div>
+                <!-- Ícone removido conforme pedido -->
                 <div>
                     <span class="btn-contato-text-main">SALVE NOSSO CONTATO.</span>
-                    <span class="btn-contato-text-sub">Aqui compensa muito comprar!</span>
+                    <span class="btn-contato-text-sub">Somos de Cuiabá e Várzea Grande.</span>
                 </div>
             </button>
         </div>
@@ -586,39 +525,34 @@
     <div class="main-content-wrapper">
         <div id="pag-cestas" class="secao-conteudo">
             
-            <!-- NOVO BANNER ROTATIVO (CAROUSEL) -->
+            <!-- BANNER ROTATIVO -->
             <div class="banner-container">
-                <!-- Slide 1 -->
                 <div class="banner-slide active">
                     <h2 style="margin: 0; font-size: 1.1rem; color: #E65100;">🚚 Entrega Grátis</h2>
                     <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">Em Cuiabá e Várzea Grande</p>
                 </div>
-                <!-- Slide 2 -->
                 <div class="banner-slide">
                     <h2 style="margin: 0; font-size: 1.1rem; color: #2E7D32;">🍀 Participe dos Sorteios</h2>
                     <button onclick="document.getElementById('pag-sorteio').scrollIntoView({behavior: 'smooth'})" class="btn-banner-action">
                         Participar Agora <i class="fas fa-chevron-down"></i>
                     </button>
                 </div>
-                <!-- Slide 3 -->
                 <div class="banner-slide">
                     <h2 style="margin: 0; font-size: 1.1rem; color: #1565C0;">💳 Parcelamos em 3x</h2>
                     <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">Sem Juros no Cartão de Crédito</p>
                 </div>
-                <!-- Slide 4 -->
                 <div class="banner-slide">
                     <h2 style="margin: 0; font-size: 1.1rem; color: #6A1B9A;">🎁 Brinde do Mês</h2>
                     <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">1 Amaciante de 2 Litros da YPÊ</p>
                 </div>
             </div>
-            <!-- FIM BANNER ROTATIVO -->
 
             <div class="cesta-cards-grid">
                 <!-- CESTA ECONÔMICA -->
                 <div class="card card-cesta" id="cestaeconomica">
                     <div class="cesta-header"><h3>CESTA ECONÔMICA</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-economica1.jpg" class="foto-cesta-unica" alt="Cesta Básica Econômica - Entrega em Cuiabá e Várzea Grande" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
+                        <img src="img/cesta-economica1.jpg" class="foto-cesta-unica" alt="Cesta Básica Econômica" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
                         </div>
@@ -637,7 +571,7 @@
                 <div class="card card-cesta" id="cestamini">
                     <div class="cesta-header"><h3>CESTA MINI</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-mini1.jpg" class="foto-cesta-unica" alt="Cesta Básica Mini - Ideal para pequenas famílias em Cuiabá" onerror="this.src='https://placehold.co/400x400?text=MINI'">
+                        <img src="img/cesta-mini1.jpg" class="foto-cesta-unica" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 165,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
@@ -657,7 +591,7 @@
                 <div class="card card-cesta" id="cestapequena">
                     <div class="cesta-header"><h3>CESTA PEQUENA</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-pequena1.jpg" class="foto-cesta-unica" alt="Cesta Básica Pequena - Dona Antônia Cuiabá" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
+                        <img src="img/cesta-pequena1.jpg" class="foto-cesta-unica" alt="Cesta Básica Pequena" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 215,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
@@ -677,7 +611,7 @@
                 <div class="card card-cesta" id="cestamedia">
                     <div class="cesta-header"><h3>CESTA MÉDIA</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-media1.jpg" class="foto-cesta-unica" alt="Cesta Básica Média - Ótimo custo benefício em VG e Cuiabá" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
+                        <img src="img/cesta-media1.jpg" class="foto-cesta-unica" alt="Cesta Básica Média" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 320,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
@@ -697,7 +631,7 @@
                 <div class="card card-cesta" id="cestagrande">
                     <div class="cesta-header"><h3>CESTA GRANDE</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-grande1.jpg" class="foto-cesta-unica" alt="Cesta Básica Grande Completa - Entrega Grátis Cuiabá" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
+                        <img src="img/cesta-grande1.jpg" class="foto-cesta-unica" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 380,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
@@ -715,13 +649,13 @@
             </div>
         </div>
         
-        <!-- SEÇÕES EXTRAS (ORDEM: Sorteio, Pagamento, Entrega) -->
+        <!-- SEÇÕES EXTRAS -->
         <div class="secoes-extras-grid">
             
             <!-- 1. SORTEIO -->
             <div id="pag-sorteio" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/cesta.png" alt="Sorteio Cesta Básica Cuiabá" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
+                    <img src="img/cesta.png" alt="Sorteio Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
                 </div>
                 <div class="card">
                     <h2>🎉 Sorteio todo Domingo.</h2>
@@ -749,32 +683,44 @@
                         </button>
                     </div>
                     
+                    <!-- NOVO FORMULÁRIO OTIMIZADO -->
                     <div id="cadastro-novo" class="card cadastro-novo-style" style="display: none;">
-                    <h4>📝 Olá, é a primeira vez que participa dos sorteios?</h4>
-                    <p>Cadastre-se para participar.</p>                          
+                        <h3 class="titulo-novo-cadastro">📝 Fazer Cadastro</h3>
+                        <p class="subtitulo-novo-cadastro">Não achamos seu número. Preencha abaixo para participar:</p>
+                        
                         <form onsubmit="event.preventDefault(); enviarNovoCadastro('');">
-                            <label>Nome Completo: <span style="color:red">*</span></label>
-                            <input type="text" id="novo-nome" placeholder="Seu nome" required>
-                            <label>Whatsapp: <span style="color:red">*</span></label>
-                            <input type="tel" id="novo-telefone" placeholder="(65) 9..." required disabled> 
-                            <label>Cidade: <span style="color:red">*</span></label>
-                            <select id="novo-cidade" required>
-                                <option value="">Selecione...</option>
+                            
+                            <label style="font-weight:bold; font-size:13px; color:#444;">Nome Completo:</label>
+                            <input type="text" id="novo-nome" placeholder="Digite seu nome..." required 
+                                   onkeyup="verificarPreenchimento('')" onchange="verificarPreenchimento('')">
+                            
+                            <label style="font-weight:bold; font-size:13px; color:#444;">Telefone:</label>
+                            <input type="tel" id="novo-telefone" disabled style="background:#eee; color:#777;"> 
+                            
+                            <label style="font-weight:bold; font-size:13px; color:#444;">Cidade:</label>
+                            <select id="novo-cidade" required onchange="verificarPreenchimento('')">
+                                <option value="">Toque para escolher...</option>
                                 <option value="Cuiabá">Cuiabá</option>
                                 <option value="Várzea Grande">Várzea Grande</option>
                             </select>
-                            <label>Bairro: <span style="color:red">*</span></label>
-                            <input type="text" id="novo-bairro" placeholder="Seu bairro" required>
-                            <button type="submit" class="btn"><i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Cadastrar e Participar</button>
+                            
+                            <label style="font-weight:bold; font-size:13px; color:#444;">Bairro:</label>
+                            <input type="text" id="novo-bairro" placeholder="Digite seu bairro..." required
+                                   onkeyup="verificarPreenchimento('')" onchange="verificarPreenchimento('')">
+                            
+                            <button type="submit" id="btn-enviar-cadastro" class="btn btn-validacao">
+                                <i class="fas fa-edit" style="margin-right: 8px;"></i> Preencha tudo...
+                            </button>
                         </form>
                     </div>
+
                 </div>
             </div>
 
             <!-- 2. PAGAMENTO -->
             <div id="pag-pagamento" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/pagamento.png" alt="Formas de Pagamento Dona Antônia" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
+                    <img src="img/pagamento.png" alt="Formas de Pagamento" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
                 </div>
                 <div class="card">
                     <h2>💳 Formas de Pagamento</h2>
@@ -790,10 +736,10 @@
                 </div>
             </div>
 
-            <!-- 3. ENTREGA (NOVO NA PÁGINA PRINCIPAL) -->
+            <!-- 3. ENTREGA -->
             <div id="pag-entrega" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/caminhao.png" alt="Entrega de Cesta Básica em Cuiabá e VG" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
+                    <img src="img/caminhao.png" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
                 </div>
                 <div class="card">
                     <h2 style="color: #F57C00;">🚚 Entrega Grátis</h2>
@@ -837,7 +783,7 @@
         </div>
     </div>
 
-    <!-- MODAL: INFORMAÇÕES (COM NOVA ABA SORTEIO) -->
+    <!-- MODAL: INFORMAÇÕES -->
     <div id="modalInformacoes" class="modal-variacao" onclick="if(event.target === this) fecharModalInfo()">
         <div class="modal-info-content">
             <!-- Header Modal -->
@@ -862,18 +808,15 @@
             </div>
 
             <div id="aba-pagamento" class="tab-content-area tab-pane">
-                <div id="conteudoPagamentoModal">
-                    <!-- Será copiado do site principal -->
-                </div>
+                <div id="conteudoPagamentoModal"></div>
                 <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
             </div>
 
             <div id="aba-entrega" class="tab-content-area tab-pane">
-                 <!-- Será copiado do site principal -->
                  <div id="conteudoEntregaModal"></div>
             </div>
 
-            <!-- NOVA ABA SORTEIO NO MODAL -->
+            <!-- ABA SORTEIO NO MODAL -->
             <div id="aba-sorteio" class="tab-content-area tab-pane">
                 <h4 style="color: var(--cor-sorteio); margin-top:0; text-align: center;">🍀 Participe do Sorteio</h4>
                 <p style="text-align: center; font-size: 14px; margin-bottom: 15px;">Todos os Domingos as 18h.</p>
@@ -898,23 +841,33 @@
                     </button>
                 </div>
                 
+                <!-- NOVO FORMULÁRIO OTIMIZADO (MODAL) -->
                 <div id="cadastro-novo-modal" class="card cadastro-novo-style" style="display: none;">
-                <h3>📝 Olá, é a primeira vez que participa dos sorteios?</h3>
-                <p>Cadastre-se para participar.</p>                    
+                    <h3 class="titulo-novo-cadastro">📝 Fazer Cadastro</h3>
+                    <p class="subtitulo-novo-cadastro">Preencha rapidinho para participar:</p>                    
+                    
                     <form onsubmit="event.preventDefault(); enviarNovoCadastro('-modal');">
-                        <label>Nome:</label>
-                        <input type="text" id="novo-nome-modal" placeholder="Nome" required>
-                        <label>Whatsapp:</label>
-                        <input type="tel" id="novo-telefone-modal" disabled> 
-                        <label>Cidade:</label>
-                        <select id="novo-cidade-modal" required>
-                            <option value="">Selecione...</option>
+                        <label style="font-weight:bold; font-size:13px; color:#444;">Nome:</label>
+                        <input type="text" id="novo-nome-modal" placeholder="Seu nome" required
+                               onkeyup="verificarPreenchimento('-modal')" onchange="verificarPreenchimento('-modal')">
+                        
+                        <label style="font-weight:bold; font-size:13px; color:#444;">Whatsapp:</label>
+                        <input type="tel" id="novo-telefone-modal" disabled style="background:#eee; color:#777;"> 
+                        
+                        <label style="font-weight:bold; font-size:13px; color:#444;">Cidade:</label>
+                        <select id="novo-cidade-modal" required onchange="verificarPreenchimento('-modal')">
+                            <option value="">Escolher...</option>
                             <option value="Cuiabá">Cuiabá</option>
                             <option value="Várzea Grande">Várzea Grande</option>
                         </select>
-                        <label>Bairro:</label>
-                        <input type="text" id="novo-bairro-modal" placeholder="Bairro" required>
-                        <button type="submit" class="btn"><i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Cadastrar</button>
+                        
+                        <label style="font-weight:bold; font-size:13px; color:#444;">Bairro:</label>
+                        <input type="text" id="novo-bairro-modal" placeholder="Seu bairro" required
+                               onkeyup="verificarPreenchimento('-modal')" onchange="verificarPreenchimento('-modal')">
+                        
+                        <button type="submit" id="btn-enviar-cadastro-modal" class="btn btn-validacao">
+                            <i class="fas fa-edit" style="margin-right: 8px;"></i> Preencha tudo...
+                        </button>
                     </form>
                 </div>
             </div>
@@ -937,7 +890,6 @@
                 <a href="https://t.me/+5565998150975" class="btn-contato-modal bg-telegram" target="_blank" rel="noopener noreferrer"><i class="fab fa-telegram-plane"></i> Falar no Telegram</a>
                 <a href="https://instagram.com/super.cestas.dona.antonia/" class="btn-contato-modal bg-instagram" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Seguir no Instagram</a>
                 
-                <!-- BOTÃO GRUPO DE SORTEIO (SUBSTITUIU FACEBOOK) -->
                 <a href="https://chat.whatsapp.com/HH8eJ4lz5E04bZFW1fUf9t" class="btn-contato-modal bg-facebook" target="_blank" rel="noopener noreferrer">
                     <i class="fas fa-users"></i> Participar do Grupo de Sorteio
                 </a>
@@ -947,17 +899,14 @@
         </div>
     </div>
     
+    <!-- MOCK DE DADOS PARA PREVIEW -->
     <script>
-        // MOCK DE DADOS PARA PREVIEW FUNCIONAR
-        // Como o arquivo 'data/clientes.js' não existe neste ambiente, criei esta variável
-        // para que possas testar a busca do sorteio.
         var clientes = [
             { nome: "Cliente Teste", telefone: "65999991234", cidade: "Cuiabá", bairro: "Centro" },
             { nome: "Maria Silva", telefone: "65988885678", cidade: "Várzea Grande", bairro: "Cristo Rei" }
         ];
     </script>
-    
-    <script src="data/clientes.js" onerror="console.warn('Arquivo data/clientes.js não encontrado ou erro de sintaxe. Usando dados mockados para preview.')"></script>
+    <script src="data/clientes.js" onerror="console.warn('Usando dados mockados para preview.')"></script>
 
     <script>
         const LOGO_ESTATICA_SRC = 'img/logo1.png';
@@ -1035,35 +984,29 @@
             alternarLogo();
         }
 
-        // --- FUNÇÕES BANNER ROTATIVO (NOVO) ---
+        // --- BANNER ROTATIVO ---
         let slideIndex = 0;
-        function iniciarBannerRotativo() {
-            showSlides();
-        }
+        function iniciarBannerRotativo() { showSlides(); }
 
         function showSlides() {
             let i;
             let slides = document.getElementsByClassName("banner-slide");
             if(slides.length === 0) return;
-            
             for (i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";  
                 slides[i].classList.remove("active");
             }
             slideIndex++;
             if (slideIndex > slides.length) {slideIndex = 1}    
-            
             slides[slideIndex-1].style.display = "block";  
-            setTimeout(() => slides[slideIndex-1].classList.add("active"), 10); // Pequeno delay para animação CSS
-            setTimeout(showSlides, 4000); // Muda a cada 4 segundos
+            setTimeout(() => slides[slideIndex-1].classList.add("active"), 10);
+            setTimeout(showSlides, 4000); 
         }
 
-        // --- FUNÇÕES MODAL INFORMAÇÕES (ATUALIZADO) ---
+        // --- MODAL INFO ---
         function abrirModalInfo(cestaTipo) {
-            // 1. Popula Produtos
             const listaEl = document.getElementById('listaProdutosContent');
             listaEl.innerHTML = ''; 
-            
             const itens = listasCestas[cestaTipo] || ["Lista de produtos não disponível."];
             itens.forEach(item => {
                 const li = document.createElement('li');
@@ -1075,32 +1018,21 @@
                 }
                 listaEl.appendChild(li);
             });
-
-            // 2. Popula Pagamento (Clona da página principal)
             const pagOrigem = document.getElementById('lista-pagamento-original');
             const pagDestino = document.getElementById('conteudoPagamentoModal');
             if(pagOrigem) {
                 pagDestino.innerHTML = '';
                 pagDestino.appendChild(pagOrigem.cloneNode(true));
             }
-
-            // 3. Popula Entrega (Clona da página principal - NOVO)
             const entOrigem = document.getElementById('conteudo-entrega-original');
             const entDestino = document.getElementById('conteudoEntregaModal');
             if(entOrigem) {
                 entDestino.innerHTML = '';
-                // Copia o conteúdo interno e coloca o título H4 no modal
                 entDestino.innerHTML = `<h4 style="color: var(--cor-whatsapp); margin-top:0;">🚚 Entrega Grátis</h4>` + entOrigem.innerHTML;
             }
-
-            // 4. Define Título
             const nomes = {'economica': 'Cesta Econômica', 'mini': 'Cesta Mini', 'pequena': 'Cesta Pequena', 'media': 'Cesta Média', 'grande': 'Cesta Grande'};
             document.getElementById('tituloModalInfo').innerText = nomes[cestaTipo] || 'Informações';
-
-            // 5. Reseta para aba produtos
             mudarAba('produtos');
-
-            // 6. Abre
             document.getElementById('modalInformacoes').style.display = 'flex';
         }
 
@@ -1109,25 +1041,21 @@
         function mudarAba(abaNome) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            
             const btns = document.querySelectorAll('.tab-btn');
-            // Índices: 0=Produtos, 1=Pagamento, 2=Entrega, 3=Sorteio
             if(abaNome === 'produtos') btns[0].classList.add('active');
             if(abaNome === 'pagamento') btns[1].classList.add('active');
             if(abaNome === 'entrega') btns[2].classList.add('active');
             if(abaNome === 'sorteio') btns[3].classList.add('active');
-
             document.getElementById('aba-' + abaNome).classList.add('active');
         }
 
-        // --- FUNÇÕES MODAL CONTATOS ---
+        // --- MODAL CONTATOS ---
         function abrirModalContatos() { document.getElementById('modalContatos').style.display = 'flex'; }
         function fecharModalContatos() { document.getElementById('modalContatos').style.display = 'none'; }
 
         // --- PWA ---
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // Comentado para o preview, pois o ficheiro não existe
                 // navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('SW falhou', err));
             });
         }
@@ -1141,17 +1069,12 @@
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') { 
-                        deferredPrompt = null; 
-                        mostrarMensagemToast("Instalado com sucesso!", "success"); 
-                    }
+                    if (choiceResult.outcome === 'accepted') { deferredPrompt = null; mostrarMensagemToast("Instalado com sucesso!", "success"); }
                 });
-            } else { 
-                mostrarMensagemToast("Para instalar, abra o menu do navegador e escolha 'Adicionar à tela inicial' ou 'Instalar aplicativo'.", "info"); 
-            }
+            } else { mostrarMensagemToast("Para instalar, abra o menu do navegador e escolha 'Adicionar à tela inicial'.", "info"); }
         }
 
-        // --- FUNÇÕES PRODUTO ---
+        // --- PRODUTO ---
         function encomendarDireto(produto, preco, incluirBrinde = true) { 
             let brindeTexto = incluirBrinde ? ". Com Amaciante Ypê de 2L de brinde." : ".";
             const textoZap = `Olá, quero encomendar a *${produto}* (Valor: R$ ${preco})${brindeTexto}`;
@@ -1190,7 +1113,7 @@
 
         function fecharModalVariacao() { document.getElementById('modalVariacao').style.display = 'none'; }
         
-        // --- FUNÇÕES DE SORTEIO E CADASTRO (REFATORADAS) ---
+        // --- SORTEIO / CADASTRO ---
         function mostrarMensagemToast(msg, type = "info") {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -1211,11 +1134,8 @@
             mostrarMensagemToast(msg, isError ? "error" : "success");
         }
 
-        // Função para garantir o carregamento dos dados (mesmo se o arquivo for JSON puro)
         async function carregarDadosClientes() {
-            // Em ambiente de preview, os dados já foram injetados manualmente acima.
             if (typeof clientes !== 'undefined' && clientes.length > 0) return; 
-
             try {
                 const response = await fetch('data/clientes.js');
                 if (response.ok) {
@@ -1223,13 +1143,9 @@
                     try {
                         const jsonText = text.replace(/const\s+clientes\s*=\s*/, '').replace(/;\s*$/, '');
                         clientes = JSON.parse(jsonText);
-                    } catch (e) {
-                         console.warn("Falha ao parsear clientes.js.");
-                    }
+                    } catch (e) { console.warn("Falha ao parsear clientes.js."); }
                 }
-            } catch (err) {
-                console.warn("Modo preview: usando dados fictícios.");
-            }
+            } catch (err) { console.warn("Modo preview: usando dados fictícios."); }
         }
         
         async function buscarCadastro(sufixoId) {
@@ -1249,9 +1165,7 @@
                 mostrarMensagemBusca("Digite pelo menos os 6 últimos dígitos do seu telefone.", true); 
                 return; 
             }
-
             const termoBusca = inputLimpo.slice(-6);
-
             const txtOriginal = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...'; 
             btn.disabled = true;
@@ -1261,9 +1175,7 @@
             setTimeout(() => {
                 btn.innerHTML = txtOriginal; 
                 btn.disabled = false;
-                
                 let cliente = null;
-                
                 if(typeof clientes !== 'undefined' && Array.isArray(clientes) && clientes.length > 0) {
                     cliente = clientes.find(c => {
                         const telCadastro = String(c.telefone || '').replace(/\D/g, '');
@@ -1279,16 +1191,33 @@
                     buscaTelefoneInput.setAttribute('data-nome', cliente.nome);
                     buscaTelefoneInput.setAttribute('data-cidade', cliente.cidade);
                     buscaTelefoneInput.setAttribute('data-bairro', cliente.bairro);
-                    
                     cadastroEncontradoDiv.style.display = 'block';
                 } else {
                     const inputNovoTel = document.getElementById('novo-telefone' + sufixoId);
-                    if(inputNovoTel) {
-                        inputNovoTel.value = inputRaw; 
-                    }
+                    if(inputNovoTel) { inputNovoTel.value = inputRaw; }
                     cadastroNovoDiv.style.display = 'block';
                 }
             }, 600); 
+        }
+
+        // Função de Validação Visual (NOVA)
+        function verificarPreenchimento(sufixoId) {
+            const nome = document.getElementById('novo-nome' + sufixoId).value.trim();
+            const cidade = document.getElementById('novo-cidade' + sufixoId).value;
+            const bairro = document.getElementById('novo-bairro' + sufixoId).value.trim();
+            
+            const btn = sufixoId === '' 
+                ? document.getElementById('btn-enviar-cadastro') 
+                : document.getElementById('btn-enviar-cadastro-modal');
+
+            // Se tudo tiver preenchido (string não vazia)
+            if (nome.length > 2 && cidade !== "" && bairro.length > 2) {
+                btn.classList.add('pronto'); // Fica verde
+                btn.innerHTML = '<i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Enviar Cadastro Agora!';
+            } else {
+                btn.classList.remove('pronto'); // Volta a cinza
+                btn.innerHTML = '<i class="fas fa-edit" style="margin-right: 8px;"></i> Preencha tudo...';
+            }
         }
 
         function enviarNovoCadastro(sufixoId) {
@@ -1296,7 +1225,13 @@
             const tel = document.getElementById('novo-telefone' + sufixoId).value.trim(); 
             const cid = document.getElementById('novo-cidade' + sufixoId).value;
             const bai = document.getElementById('novo-bairro' + sufixoId).value.trim();
-            if (!nome || !tel) return;
+            
+            // Validação simples
+            if (!nome || !cid || !bai) {
+                mostrarMensagemToast("Preencha todos os campos antes de enviar!", "error");
+                return;
+            }
+
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(`CADASTRO SORTEIO:\nNome: ${nome}\nTel: ${tel}\nCidade: ${cid}\nBairro: ${bai}`)}`, '_blank');
         }
 
@@ -1311,7 +1246,7 @@
 
         window.onload = function() {
             iniciarLoopLogoAnimada(); 
-            iniciarBannerRotativo(); // Iniciando o banner rotativo
+            iniciarBannerRotativo(); 
             carregarDadosClientes(); 
         };
     </script>
