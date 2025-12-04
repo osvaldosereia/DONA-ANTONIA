@@ -30,7 +30,7 @@
     
     <!-- PWA & Manifest -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0F2546"> <!-- Atualizado para o Azul da Logo -->
+    <meta name="theme-color" content="#0F2546"> 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
@@ -43,30 +43,31 @@
 
         :root {
             /* --- PALETA DE CORES DA LOGO --- */
-            --cor-primaria: #0F2546; /* Azul Marinho Profundo (Base da Logo) */
-            --cor-destaque-vermelho: #D92328; /* Vermelho do Coração da Logo */
-            --cor-destaque-dourado: #FFC107; /* Amarelo/Dourado do Texto da Logo */
+            --cor-primaria: #0F2546; /* Azul Marinho Profundo */
+            --cor-destaque-vermelho: #D92328; /* Vermelho do Coração */
+            --cor-destaque-dourado: #FFC107; /* Dourado */
             
             /* Cores Funcionais */
             --cor-whatsapp: #25D366;
             --cor-telegram: #0088cc;
             --cor-facebook: #1877F2; 
             --cor-info: #1E88E5; 
-            --cor-texto: #222;
+            --cor-texto: #333; /* Texto suavizado */
             --cor-fundo: #fafafa;
             --cor-pagamento: #2196F3; 
             --cor-sorteio: #4CAF50; 
             --cor-entrega: #FF9800;
             --cor-header-fundo: #f5f5f5;
-            --altura-header: 90px;
-            --largura-logo: 115px; 
-            --altura-bottom-nav: 60px; 
+            --altura-header: 80px; /* Reduzido levemente */
+            --largura-logo: 100px; /* Logo um pouco menor */
+            --altura-bottom-nav: 55px; 
         }
 
         html { 
             background-color: #e0e0e0; 
             scroll-behavior: smooth;
             scroll-padding-top: calc(var(--altura-header) + 5px); 
+            font-size: 14.5px; /* Reduzido de 16px para 14.5px (Base menor) */
         }
 
         body {
@@ -80,6 +81,8 @@
             min-height: 10vh;
             position: relative; 
             width: 100%;
+            line-height: 1.4; 
+            -webkit-font-smoothing: antialiased;
         }
 
         .main-content-wrapper {
@@ -105,11 +108,11 @@
         .toast-message {
             background-color: #333;
             color: white;
-            padding: 12px 20px;
-            border-radius: 8px;
+            padding: 10px 18px;
+            border-radius: 6px;
             margin-bottom: 10px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            font-size: 14px;
+            font-size: 0.85rem;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.3s, transform 0.3s;
@@ -127,7 +130,7 @@
             padding: 0;
             display: flex;
             flex-direction: row; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             position: fixed;
             top: 0;
             left: 50%; 
@@ -167,7 +170,7 @@
             width: var(--largura-logo); 
             object-fit: cover; 
             border-radius: 50%; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
             position: fixed;
             top: 5px; 
             left: 15px; 
@@ -178,42 +181,40 @@
             transition: all 0.3s ease;
         }
 
+        /* Botão Pulsante do Header */
         .btn-contato-principal {
             display: flex;
             flex-direction: column; 
             align-items: center;    
             justify-content: center;
-            background-color: #FFFde7; /* Mantive o fundo claro amarelado, combina com o dourado */
+            background-color: #FFFde7; 
             color: #333;
-            border: 2px solid var(--cor-destaque-dourado); /* Borda Dourada da Logo */
-            border-radius: 8px;
-            padding: 8px 12px; 
+            border: 2px solid var(--cor-destaque-dourado); 
+            border-radius: 6px;
+            padding: 5px 10px; /* Reduzido padding */
             cursor: pointer;
             text-decoration: none;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 5px rgba(0,0,0,0.08);
             margin-left: auto;
             text-align: center;
             max-width: calc(100% - var(--largura-logo) - 10px);
             animation: animacao-pulsar 2s infinite;
         }
 
-        .btn-contato-principal:active { 
-            transform: scale(0.95); 
-            animation: none; 
-        }
+        .btn-contato-principal:active { transform: scale(0.95); animation: none; }
 
         @keyframes animacao-pulsar {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); } 
+            70% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(255, 193, 7, 0); } 
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
         }
 
         .linha-destaque-vermelho {
-            color: var(--cor-destaque-vermelho); /* Vermelho da Logo */
-            font-weight: 900;
-            font-size: 13px; 
+            color: var(--cor-destaque-vermelho); 
+            font-weight: 800;
+            font-size: 0.75rem; /* Menor e mais delicado */
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             margin-bottom: 2px;
             line-height: 1.1;
         }
@@ -221,36 +222,50 @@
         .linha-localizacao {
             color: #555;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 0.65rem; 
         }
 
         @media (max-width: 380px) {
-            :root { --largura-logo: 90px; --altura-header: 85px; }
+            :root { --largura-logo: 85px; --altura-header: 75px; }
             .logo-pequ { left: 10px; }
-            .linha-destaque-vermelho { font-size: 12px; }
-            .linha-localizacao { font-size: 10px; }
+            .linha-destaque-vermelho { font-size: 0.7rem; }
         }
 
-        /* --- CARDS --- */
+        /* --- CARDS & TIPOGRAFIA OTIMIZADA --- */
         .secao-conteudo { padding: 15px; }
+        
         .card { 
             background: white; 
-            border-radius: 12px; 
-            padding: 15px; 
+            border-radius: 10px; 
+            padding: 12px; 
             margin-bottom: 15px; 
             border: 1px solid #f0f0f0; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03); 
             height: 100%; 
             display: flex;
             flex-direction: column;
         }
         
-        h2 { color: var(--cor-primaria); margin-top: 0; font-size: 1.2rem; }
+        h2 { 
+            color: var(--cor-primaria); 
+            margin-top: 0; 
+            font-size: 1.25rem; /* Menos exagerado */
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
         
         .card-cesta { padding: 0; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; }
-        /* Header da Cesta agora usa o Azul da Marca */
-        .cesta-header { background-color: var(--cor-primaria); padding: 10px; text-align: center; color: white; }
-        .cesta-header h3 { margin: 0; color: white; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Header Card */
+        .cesta-header { background-color: var(--cor-primaria); padding: 8px; text-align: center; color: white; }
+        .cesta-header h3 { 
+            margin: 0; 
+            color: white; 
+            font-size: 1rem; /* Título Cesta mais discreto */
+            font-weight: 600;
+            text-transform: uppercase; 
+            letter-spacing: 0.8px;
+        }
         
         .cesta-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
 
@@ -259,105 +274,121 @@
             aspect-ratio: 1 / 0.8; 
             object-fit: cover; 
             display: block;
-            border-radius: 8px;
+            border-radius: 6px;
             margin-bottom: 5px;
             background: #eee;
         }
 
         .lista-precos-cesta {
-            background-color: #f9f9f9; border-radius: 8px; 
-            padding: 8px 10px; 
-            margin: 5px 0 10px 0; 
-            border: 1px solid #eee; margin-top: auto;
+            background-color: #f8f9fa; border-radius: 6px; 
+            padding: 6px 10px; 
+            margin: 5px 0 8px 0; 
+            border: 1px solid #e9ecef; margin-top: auto;
         }
-        .item-preco { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; font-size: 15px; color: #444; }
+        .item-preco { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; font-size: 0.9rem; color: #444; }
         .item-preco:last-child { margin-bottom: 0; }
-        /* Preço em destaque usa o Azul para ser sério ou Vermelho para urgência? Vamos de Azul para consistência */
-        .item-preco strong { color: var(--cor-primaria); font-size: 18px; }
+        
+        .item-preco strong { 
+            color: var(--cor-destaque-vermelho); 
+            font-size: 1.15rem; /* Preço um pouco menor */
+            font-weight: 800;
+        }
 
-        /* --- BOTÕES --- */
+        /* --- BOTÕES OTIMIZADOS --- */
         .botoes-wrapper { 
             display: grid; 
-            grid-template-columns: 3fr 1fr; 
+            grid-template-columns: 1fr 1fr; 
             grid-template-rows: auto auto;
             grid-template-areas: 
                 "hero hero"
                 "info share";
-            gap: 8px; 
+            gap: 6px; /* Gap menor */
             margin-top: 0; 
         }
         
         .btn {
-            display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; 
-            border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer;
-            text-decoration: none; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;
-            word-break: break-word; 
+            display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; /* Padding menor */
+            border: none; border-radius: 6px; cursor: pointer;
+            text-decoration: none; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+            transition: transform 0.2s, filter 0.2s;
+            font-family: inherit;
         }
         
+        /* Botão Hero */
         .btn-encomendar { 
             grid-area: hero;
             background-color: var(--cor-whatsapp); 
-            font-size: 17px; 
+            font-size: 0.95rem; /* Fonte confortável */
+            font-weight: 700;
             text-transform: uppercase;
-            padding: 14px;
-            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
-            margin-bottom: 4px;
+            padding: 12px;
+            box-shadow: 0 3px 8px rgba(37, 211, 102, 0.25);
+            margin-bottom: 2px;
+            letter-spacing: 0.3px;
         }
         
+        /* Botões Secundários */
         .btn-info { 
             grid-area: info;
-            background-color: #4fc3f7; 
-            color: #01579b; 
-            font-size: 14px;
+            background-color: #E3F2FD; 
+            color: #1565C0; 
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #BBDEFB;
+            box-shadow: none;
         } 
         
         .btn-share {
             grid-area: share;
-            background-color: #0277bd; 
-            padding: 0; 
-            font-size: 18px;
+            background-color: #E8F5E9; 
+            color: #2E7D32; 
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid #C8E6C9;
+            box-shadow: none;
         }
 
-        .btn:active { transform: scale(0.98); }
+        .btn:active { transform: scale(0.97); }
         
         /* --- EXTRAS --- */
-        .section-icon-header { text-align: center; margin-bottom: 20px; position: relative; z-index: 10; }
+        .section-icon-header { text-align: center; margin-bottom: 15px; position: relative; z-index: 10; }
         .section-icon-header img {
-            width: 60px; height: 60px; object-fit: contain; background-color: var(--cor-primaria);
-            border-radius: 50%; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            width: 50px; height: 50px; /* Ícones menores */
+            object-fit: contain; background-color: var(--cor-primaria);
+            border-radius: 50%; padding: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
 
         .lista-pagamento { list-style: none; padding: 0; }
-        .lista-pagamento li { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 16px; display: flex; align-items: center; }
-        .lista-pagamento li span.emoji-icon { font-size: 20px; width: 30px; text-align: center; margin-right: 5px; }
+        .lista-pagamento li { padding: 10px 0; border-bottom: 1px solid #eee; font-size: 0.95rem; display: flex; align-items: center; color: #444; }
+        .lista-pagamento li span.emoji-icon { font-size: 1.2rem; width: 30px; text-align: center; margin-right: 8px; }
 
         .area-resultado-busca {
-            background-color: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 15px; margin-top: 15px; text-align: center;
+            background-color: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 12px; margin-top: 15px; text-align: center;
         }
-        .area-resultado-busca h2 { color: #388e3c; } 
+        .area-resultado-busca h2 { color: #388e3c; font-size: 1.1rem; } 
         
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 0.95rem; }
 
         /* --- ESTILO NOVO CADASTRO --- */
         .cadastro-novo-style {
             background-color: #fff; 
             border: 2px solid #ffcc80; 
-            border-radius: 12px;
+            border-radius: 10px;
             text-align: left; 
         }
 
         .titulo-novo-cadastro {
             color: #E65100;
-            font-size: 18px;
+            font-size: 1.1rem;
             margin-top: 0;
             margin-bottom: 5px;
-            font-weight: 800;
+            font-weight: 700;
         }
 
         .subtitulo-novo-cadastro {
-            font-size: 14px;
+            font-size: 0.9rem;
             color: #666;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         /* Botão Inteligente */
@@ -368,6 +399,9 @@
             transition: all 0.3s ease;
             transform: scale(0.98);
             opacity: 0.7;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            font-weight: bold;
         }
 
         .btn-validacao.pronto {
@@ -378,12 +412,6 @@
             opacity: 1;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); 
             animation: pulsoBotao 1.5s infinite; 
-        }
-
-        @keyframes pulsoBotao {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
         
         /* --- MODAIS --- */
@@ -396,33 +424,33 @@
         #modalInformacoes { z-index: 4600; }
 
         .modal-info-content {
-            background-color: white; width: 100%; max-width: 420px; border-radius: 12px; 
+            background-color: white; width: 100%; max-width: 400px; border-radius: 12px; 
             overflow: hidden; display: flex; flex-direction: column; max-height: 90vh;
             box-shadow: 0 5px 25px rgba(0,0,0,0.3); animation: zoomIn 0.2s;
         }
         
         .modal-info-header {
-            background-color: var(--cor-fundo); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
+            background-color: var(--cor-fundo); padding: 12px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
             flex-shrink: 0;
         }
-        .modal-info-header h3 { margin: 0; color: var(--cor-primaria); font-size: 20px; margin-left: 10px; font-weight: 800;}
-        .btn-fechar-modal-info { background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 0 10px; }
+        .modal-info-header h3 { margin: 0; color: var(--cor-primaria); font-size: 1.1rem; margin-left: 10px; font-weight: 700;}
+        .btn-fechar-modal-info { background: none; border: none; font-size: 1.4rem; color: #999; cursor: pointer; padding: 0 10px; }
 
         .modal-body-scroll {
-            padding: 20px; overflow-y: auto;
+            padding: 15px; overflow-y: auto;
             flex: 1; 
         }
         
         .lista-produtos-modal { list-style: none; padding: 0; margin: 0; }
-        .lista-produtos-modal li { padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 15px; color: #444; display: flex; align-items: flex-start;}
+        .lista-produtos-modal li { padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.9rem; color: #444; display: flex; align-items: flex-start;}
         .lista-produtos-modal li:last-child { border-bottom: none; }
-        .lista-produtos-modal li i { color: var(--cor-whatsapp); margin-right: 12px; font-size: 14px; margin-top: 4px;}
-        .section-title { font-weight: 900; color: var(--cor-primaria); margin-top: 20px; margin-bottom: 8px; font-size: 16px; display: block; background: #ffebee; padding: 8px; border-radius: 6px; text-transform: uppercase;}
+        .lista-produtos-modal li i { color: var(--cor-whatsapp); margin-right: 10px; font-size: 0.85rem; margin-top: 4px;}
+        .section-title { font-weight: 800; color: var(--cor-primaria); margin-top: 15px; margin-bottom: 6px; font-size: 0.85rem; display: block; background: #ffebee; padding: 6px; border-radius: 4px; text-transform: uppercase;}
 
         @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         
         .modal-variacao-content {
-            background-color: white; width: 100%; max-width: 350px; border-radius: 16px; padding: 20px;
+            background-color: white; width: 100%; max-width: 340px; border-radius: 12px; padding: 15px;
             position: relative; text-align: center;
             max-height: 85vh; 
             overflow-y: auto;
@@ -430,34 +458,31 @@
         }
 
         .btn-fechar-modal-var { 
-            position: absolute; top: 10px; right: 15px; 
+            position: absolute; top: 10px; right: 10px; 
             background: rgba(255,255,255,0.9);
-            border: none; font-size: 26px; color: #999; cursor: pointer; 
+            border: none; font-size: 24px; color: #999; cursor: pointer; 
             z-index: 100;
-            width: 32px; height: 32px; border-radius: 50%;
+            width: 30px; height: 30px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             line-height: 1;
         }
 
-        .titulo-modal-var, .modal-variacao-content h3 {
-            margin-top: 10px; 
-            padding-right: 25px;
-        }
+        .titulo-modal-var { margin-top: 10px; padding-right: 25px; font-size: 1.1rem; }
         
         .opcao-select {
-            display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 2px solid #eee; 
-            border-radius: 8px; margin-bottom: 10px; cursor: pointer; text-align: left;
+            display: flex; align-items: center; justify-content: space-between; padding: 12px; border: 2px solid #eee; 
+            border-radius: 8px; margin-bottom: 8px; cursor: pointer; text-align: left;
             flex-shrink: 0;
         }
-        .opcao-select.selected { border-color: var(--cor-primaria); background-color: #ffebee; }
-        .opcao-nome { font-weight: bold; color: #333; }
-        .opcao-preco { color: var(--cor-primaria); font-weight: 900; }
-        .radio-custom { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%; position: relative; }
-        .selected .radio-custom::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background-color: var(--cor-primaria); border-radius: 50%; }
+        .opcao-select.selected { border-color: var(--cor-primaria); background-color: #E3F2FD; }
+        .opcao-nome { font-weight: bold; color: #333; font-size: 0.95rem; }
+        .opcao-preco { color: var(--cor-destaque-vermelho); font-weight: 800; font-size: 0.95rem; }
+        .radio-custom { width: 18px; height: 18px; border: 2px solid #ccc; border-radius: 50%; position: relative; }
+        .selected .radio-custom::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 8px; height: 8px; background-color: var(--cor-primaria); border-radius: 50%; }
         .btn-confirmar-pedido { 
-            width: 100%; padding: 15px; background-color: var(--cor-whatsapp); color: white; border: none; 
-            border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase;
+            width: 100%; padding: 12px; background-color: var(--cor-whatsapp); color: white; border: none; 
+            border-radius: 8px; font-weight: bold; font-size: 0.95rem; margin-top: 10px; cursor: pointer; 
+            display: flex; align-items: center; justify-content: center; gap: 8px; text-transform: uppercase;
             flex-shrink: 0;
         }
         .btn-confirmar-pedido:disabled { background-color: #ccc; cursor: not-allowed; }
@@ -466,27 +491,27 @@
         .btn-whatsapp-hero {
             background-color: var(--cor-whatsapp);
             color: white;
-            font-size: 18px;
+            font-size: 1rem;
             font-weight: bold;
-            padding: 15px;
-            border-radius: 12px;
+            padding: 12px;
+            border-radius: 10px;
             text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
             width: 100%;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
             flex-direction: column;
             animation: pulsoBotao 2s infinite;
         }
-        .btn-whatsapp-hero i { font-size: 32px; margin-bottom: 8px; }
-        .btn-whatsapp-hero span { font-size: 13px; font-weight: normal; opacity: 0.9; }
+        .btn-whatsapp-hero i { font-size: 1.8rem; margin-bottom: 6px; }
+        .btn-whatsapp-hero span { font-size: 0.8rem; font-weight: normal; opacity: 0.9; }
 
         .modal-section-title {
-            font-size: 14px;
+            font-size: 0.8rem;
             color: #888;
-            margin: 15px 0 10px;
+            margin: 12px 0 8px;
             text-align: center;
             font-weight: 600;
             text-transform: uppercase;
@@ -502,17 +527,17 @@
         .grid-botoes-modal {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .btn-secundario-modal {
             background-color: #f9f9f9;
             color: #555;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -521,30 +546,30 @@
             transition: all 0.2s;
         }
         .btn-secundario-modal:active { background-color: #e0e0e0; transform: scale(0.98); }
-        .btn-secundario-modal i { margin-right: 8px; color: var(--cor-primaria); }
+        .btn-secundario-modal i { margin-right: 6px; color: var(--cor-primaria); }
 
         .social-buttons-row {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 10px;
-            margin-bottom: 15px;
+            gap: 15px;
+            margin-top: 8px;
+            margin-bottom: 12px;
         }
         .btn-social-icon {
-            width: 45px; height: 45px;
+            width: 40px; height: 40px;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             color: white;
             text-decoration: none;
-            font-size: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            font-size: 1.1rem;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
             transition: transform 0.2s;
         }
         .btn-social-icon:active { transform: scale(0.9); }
         
         .btn-app-link {
             background: none; border: none; 
-            color: #1976D2; font-weight: bold; font-size: 14px; 
+            color: #1976D2; font-weight: bold; font-size: 0.85rem; 
             margin-top: 10px; cursor: pointer; text-decoration: underline;
         }
 
@@ -577,7 +602,7 @@
             align-items: center;
             justify-content: center;
             color: #666;
-            font-size: 10px;
+            font-size: 0.65rem; 
             text-decoration: none;
             width: 20%; 
             height: 100%;
@@ -585,8 +610,8 @@
         }
 
         .nav-item i {
-            font-size: 20px;
-            margin-bottom: 4px;
+            font-size: 1.1rem;
+            margin-bottom: 3px;
         }
 
         .nav-item:active, .nav-item:hover {
@@ -596,19 +621,24 @@
 
         /* --- RESPONSIVIDADE --- */
         @media (min-width: 481px) {
-            .main-content-wrapper, header, .header-background-bar { max-width: 900px; }
-            .bottom-nav { max-width: 900px; }
+            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } /* Ajustado para 1100px */
+            .bottom-nav { max-width: 1100px; }
             .secao-conteudo { padding: 20px 30px; }
+            
+            /* Ajuste de fontes para Desktop - Um pouco maiores que mobile, mas contidas */
+            html { font-size: 15px; } 
+            h2 { font-size: 1.5rem; }
+            .cesta-header h3 { font-size: 1.15rem; }
         }
-        @media (min-width: 940px) { .logo-pequ { left: 50%; margin-left: calc(-450px + 20px); } }
+        @media (min-width: 940px) { .logo-pequ { left: 50%; margin-left: calc(-550px + 20px); } }
         @media (min-width: 768px) { 
             .cesta-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; } 
         }
 
         @media (min-width: 1024px) {
-            .main-content-wrapper, header, .header-background-bar { max-width: 900px; }
-            .bottom-nav { max-width: 900px; } 
-            .logo-pequ { margin-left: calc(-450px + 20px); } 
+            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } /* Ajustado para 1100px */
+            .bottom-nav { max-width: 1100px; } 
+            .logo-pequ { margin-left: calc(-550px + 20px); } 
             .cesta-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
             .secoes-extras-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0 15px; }
             .secoes-extras-grid .secao-conteudo { padding: 0; margin-bottom: 0; }
@@ -624,7 +654,7 @@
     <div class="header-background-bar"></div>
 
     <!-- LOGO FIXA -->
-    <img src="img/logo2.png" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
+    <img src="img/logo1.png" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
     <header>
         <div class="header-top">
@@ -645,7 +675,7 @@
             <div class="cesta-cards-grid">
                 <!-- CESTA ECONÔMICA -->
                 <div class="card card-cesta" id="cestaeconomica">
-                    <div class="cesta-header"><h3>CESTA ECONÔMICA</h3></div>
+                    <div class="cesta-header"><h3>Cesta Econômica</h3></div>
                     <div class="cesta-body">
                         <img src="img/cesta-economica1.jpg" class="foto-cesta-unica" alt="Cesta Básica Econômica" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
                         <div class="lista-precos-cesta">
@@ -655,11 +685,12 @@
                             <button class="btn btn-encomendar" onclick="encomendarDireto('Cesta Econômica', '85,00', false)">
                                 <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
+                            <!-- BOTÕES CORRIGIDOS: 50% CADA -->
                             <button class="btn btn-info" onclick="abrirModalInfo('economica')">
                                 <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
                             </button>
                             <button class="btn btn-share" onclick="compartilharCesta('Cesta Econômica', '85,00')">
-                                <i class="fas fa-share-alt"></i>
+                                <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Enviar
                             </button>
                         </div>
                     </div>
@@ -667,7 +698,7 @@
 
                 <!-- CESTA MINI -->
                 <div class="card card-cesta" id="cestamini">
-                    <div class="cesta-header"><h3>CESTA MINI</h3></div>
+                    <div class="cesta-header"><h3>Cesta Mini</h3></div>
                     <div class="cesta-body">
                         <img src="img/cesta-mini1.jpg" class="foto-cesta-unica" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
                         <div class="lista-precos-cesta">
@@ -682,7 +713,7 @@
                                 <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
                             </button>
                             <button class="btn btn-share" onclick="compartilharCesta('Cesta Mini', '165,00')">
-                                <i class="fas fa-share-alt"></i>
+                                <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Enviar
                             </button>
                         </div>
                     </div>
@@ -690,7 +721,7 @@
 
                 <!-- CESTA PEQUENA -->
                 <div class="card card-cesta" id="cestapequena">
-                    <div class="cesta-header"><h3>CESTA PEQUENA</h3></div>
+                    <div class="cesta-header"><h3>Cesta Pequena</h3></div>
                     <div class="cesta-body">
                         <img src="img/cesta-pequena1.jpg" class="foto-cesta-unica" alt="Cesta Básica Pequena" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
                         <div class="lista-precos-cesta">
@@ -705,7 +736,7 @@
                                 <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
                             </button>
                             <button class="btn btn-share" onclick="compartilharCesta('Cesta Pequena', '215,00')">
-                                <i class="fas fa-share-alt"></i>
+                                <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Enviar
                             </button>
                         </div>
                     </div>
@@ -713,7 +744,7 @@
 
                 <!-- CESTA MÉDIA -->
                 <div class="card card-cesta" id="cestamedia">
-                    <div class="cesta-header"><h3>CESTA MÉDIA</h3></div>
+                    <div class="cesta-header"><h3>Cesta Média</h3></div>
                     <div class="cesta-body">
                         <img src="img/cesta-media1.jpg" class="foto-cesta-unica" alt="Cesta Básica Média" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
                         <div class="lista-precos-cesta">
@@ -728,7 +759,7 @@
                                 <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
                             </button>
                             <button class="btn btn-share" onclick="compartilharCesta('Cesta Média', '320,00')">
-                                <i class="fas fa-share-alt"></i>
+                                <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Enviar
                             </button>
                         </div>
                     </div>
@@ -736,7 +767,7 @@
 
                 <!-- CESTA GRANDE -->
                 <div class="card card-cesta" id="cestagrande">
-                    <div class="cesta-header"><h3>CESTA GRANDE</h3></div>
+                    <div class="cesta-header"><h3>Cesta Grande</h3></div>
                     <div class="cesta-body">
                         <img src="img/cesta-grande1.jpg" class="foto-cesta-unica" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
                         <div class="lista-precos-cesta">
@@ -751,7 +782,7 @@
                                 <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
                             </button>
                             <button class="btn btn-share" onclick="compartilharCesta('Cesta Grande', '380,00')">
-                                <i class="fas fa-share-alt"></i>
+                                <i class="fab fa-whatsapp" style="margin-right: 5px;"></i> Enviar
                             </button>
                         </div>
                     </div>
@@ -759,7 +790,7 @@
             </div>
         </div>
         
-        <!-- SEÇÕES EXTRAS (COM IDS PARA NAVEGAÇÃO) -->
+        <!-- SEÇÕES EXTRAS -->
         <div class="secoes-extras-grid">
             
             <!-- 1. SORTEIO -->
@@ -798,21 +829,21 @@
                         <p class="subtitulo-novo-cadastro">Não achamos seu número. Preencha abaixo para participar:</p>
                         
                         <form onsubmit="event.preventDefault(); enviarNovoCadastro('');">
-                            <label style="font-weight:bold; font-size:13px; color:#444;">Nome Completo:</label>
+                            <label style="font-weight:bold; font-size:0.95rem; color:#444;">Nome Completo:</label>
                             <input type="text" id="novo-nome" placeholder="Digite seu nome..." required 
                                    onkeyup="verificarPreenchimento('')" onchange="verificarPreenchimento('')">
                             
-                            <label style="font-weight:bold; font-size:13px; color:#444;">Telefone:</label>
+                            <label style="font-weight:bold; font-size:0.95rem; color:#444;">Telefone:</label>
                             <input type="tel" id="novo-telefone" disabled style="background:#eee; color:#777;"> 
                             
-                            <label style="font-weight:bold; font-size:13px; color:#444;">Cidade:</label>
+                            <label style="font-weight:bold; font-size:0.95rem; color:#444;">Cidade:</label>
                             <select id="novo-cidade" required onchange="verificarPreenchimento('')">
                                 <option value="">Toque para escolher...</option>
                                 <option value="Cuiabá">Cuiabá</option>
                                 <option value="Várzea Grande">Várzea Grande</option>
                             </select>
                             
-                            <label style="font-weight:bold; font-size:13px; color:#444;">Bairro:</label>
+                            <label style="font-weight:bold; font-size:0.95rem; color:#444;">Bairro:</label>
                             <input type="text" id="novo-bairro" placeholder="Digite seu bairro..." required
                                    onkeyup="verificarPreenchimento('')" onchange="verificarPreenchimento('')">
                             
@@ -839,7 +870,7 @@
                         <li><span class="emoji-icon">🥗</span> Alelo, Sodexo, Pluxee (Alimentação e Refeição)</li>
                         <li><span class="emoji-icon">📱</span> Ifood, Caju e Flash</li>
                     </ul>
-                    <p style="color: red; font-size: 18px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
+                    <p style="color: red; font-size: 1rem; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
                 </div>
             </div>
 
@@ -851,11 +882,11 @@
                 <div class="card">
                     <h2 style="color: #F57C00;">🚚 Entrega Grátis</h2>
                     <div id="conteudo-entrega-original">
-                        <p>Entregamos em <strong>Cuiabá</strong> e <strong>Várzea Grande</strong> (área urbana).</p>
+                        <p style="font-size: 0.95rem;">Entregamos em <strong>Cuiabá</strong> e <strong>Várzea Grande</strong> (área urbana).</p>
                         <hr style="border:0; border-top:1px dashed #eee; margin: 15px 0;">
-                        <p><i class="fas fa-clock" style="color:#666; margin-right:5px;"></i> <strong>Horários:</strong></p>
-                        <p>As entregas são realizadas por rota.</p>
-                        <p style="background-color: #e8f5e9; padding: 10px; border-radius: 6px; margin-top: 10px;">
+                        <p style="font-size: 0.95rem;"><i class="fas fa-clock" style="color:#666; margin-right:5px;"></i> <strong>Horários:</strong></p>
+                        <p style="font-size: 0.95rem;">As entregas são realizadas por rota.</p>
+                        <p style="background-color: #e8f5e9; padding: 10px; border-radius: 6px; margin-top: 10px; font-size: 0.95rem;">
                             Encomende até as <strong>10h da manhã</strong> para receber no mesmo dia!
                         </p>
                     </div>
@@ -864,7 +895,7 @@
 
         </div>
 
-        <footer class="seo-text-block" style="text-align: center; font-size: 12px; color: #888; padding: 15px 30px;">
+        <footer class="seo-text-block" style="text-align: center; font-size: 0.85rem; color: #888; padding: 15px 30px;">
             <p><strong>Cesta Básica Dona Antônia</strong> - A melhor opção em alimentos para sua família.</p>
             <p>Atendemos toda a região de <strong>Cuiabá - MT</strong> e <strong>Várzea Grande - MT</strong>.</p>
         </footer>
