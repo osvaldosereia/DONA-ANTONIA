@@ -661,10 +661,10 @@
     <!-- BARRA DE FUNDO CINZA CLARA -->
     <div class="header-background-bar"></div>
 
-    <!-- LOGO FIXA: ALTERADO para img/logo1.png (PNG Estático) e adicionado o ID para controle JS -->
-    <img src="img/logo1.png" 
+    <!-- LOGO FIXA: AGORA USA O GIF ANIMADO. O JS irá recarregar este GIF a cada 20s. -->
+    <img src="img/logo.gif" 
          id="logo-principal" 
-         onerror="this.src='https://placehold.co/120x120/808080/ffffff?text=D.A'" 
+         onerror="this.src='img/logo1.png'" 
          alt="Logo Dona Antônia" 
          class="logo-pequena">
 
@@ -1036,9 +1036,9 @@
     <div id="modalReceptivo" onclick="if(event.target === this) fecharModalReceptivo()" class="modal-variacao">
         <div class="modal-receptivo-content">
             
-            <!-- LOGO SOBREPOSTA (ALTERADO para img/.png) -->
+            <!-- LOGO SOBREPOSTA: AGORA USA O PNG ESTÁTICO -->
             <div class="modal-logo-receptivo">
-                 <img src="img/.png" 
+                 <img src="img/logo1.png" 
                      alt="Logo Dona Antônia" 
                      onerror="this.src='https://placehold.co/80x80/808080/ffffff?text=D.A'"
                      >
@@ -1089,15 +1089,13 @@
     <script>
         // Caminhos das imagens
         const LOGO_ESTATICA_SRC = 'img/logo1.png';
-        const LOGO_ANIMADA_SRC = 'img/logo1.gif'; // Usaremos este caminho para forçar o loop
-
-        // ID do elemento da logo principal
+        const LOGO_ANIMADA_SRC = 'img/logo.gif'; // O caminho para o GIF
         const LOGO_ELEMENT_ID = 'logo-principal';
 
-        // Intervalo de tempo para o loop (5 segundos)
-        const INTERVALO_LOOP_MS = 5000; 
-        // Duração da reprodução do GIF animado (6,8 segundos)
-        const DURACAO_ANIMACAO_MS = 6800; 
+        // Intervalo de tempo para o loop (20 segundos)
+        const INTERVALO_LOOP_MS = 500; 
+        // Duração da reprodução do GIF animado (2 segundos)
+        const DURACAO_ANIMACAO_MS = 14000; 
         
         // Instruções Detalhadas e Documentação
         
@@ -1134,19 +1132,24 @@
                 logo.src = LOGO_ANIMADA_SRC + `?t=${new Date().getTime()}`;
                 
                 // 2. Agenda a volta para a imagem estática (após a duração da animação)
+                // Comentado para deixar o GIF rodar continuamente até o próximo reinício
+                // Se for um GIF com looping nativo, esta etapa é desnecessária.
+                
+                // Opção alternativa (se o GIF for muito longo ou se a intenção for mostrar a animação e parar):
+                /*
                 setTimeout(() => {
-                    logo.src = LOGO_ESTATICA_SRC; // Volta para o PNG estático
+                    logo.src = LOGO_ESTATICA_SRC; // Volta para o PNG estático após a animação
                 }, DURACAO_ANIMACAO_MS);
+                */
             };
 
-            // Define o loop inicial para garantir que começa no PNG
-            logo.src = LOGO_ESTATICA_SRC; 
-
-            // 3. Inicia o loop para repetir a cada 20 segundos
-            // O intervalo começa após 20 segundos, permitindo a primeira execução do GIF.
+            // A logo principal já começa com o GIF (img/logo.gif).
+            // O setInterval garante que ele recarrega a cada 20 segundos para reiniciar a animação.
+            
+            // 3. Inicia o loop para repetir o reinício do GIF a cada 20 segundos
             setInterval(alternarLogo, INTERVALO_LOOP_MS);
             
-            // Opcional: Executa a primeira animação imediatamente
+            // Executa o primeiro reinício (se o GIF for carregado, a animação deve rodar)
             alternarLogo();
         }
 
