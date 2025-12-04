@@ -55,6 +55,7 @@
             --cor-header-fundo: #f5f5f5;
             --altura-header: 90px;
             --largura-logo: 115px; 
+            --altura-bottom-nav: 60px; /* Altura da nova barra inferior */
         }
 
         html { 
@@ -70,24 +71,24 @@
             margin: 0; 
             padding: 0;
             padding-top: calc(var(--altura-header) + 5px); 
-            padding-bottom: 20px;
+            padding-bottom: calc(var(--altura-bottom-nav) + 20px); /* Espaço para a barra inferior não cobrir conteúdo */
             min-height: 10vh;
             position: relative; 
             width: 100%;
         }
 
         .main-content-wrapper {
-            max-width: 480px; /* Padrão Mobile */
+            max-width: 480px; 
             margin: 0 auto; 
             background-color: var(--cor-fundo); 
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
-            transition: max-width 0.3s ease; /* Transição suave ao redimensionar */
+            transition: max-width 0.3s ease; 
         }
 
         /* --- TOAST NOTIFICATION --- */
         #toast-container {
             position: fixed;
-            bottom: 20px; 
+            bottom: 80px; /* Subi um pouco por causa da barra inferior */
             left: 50%;
             transform: translateX(-50%);
             z-index: 6000;
@@ -127,7 +128,7 @@
             left: 50%; 
             transform: translateX(-50%); 
             width: 100%;
-            max-width: 480px; /* Padrão Mobile */
+            max-width: 480px; 
             z-index: 1000;
             transition: max-width 0.3s ease;
         }
@@ -135,10 +136,10 @@
         .header-background-bar {
             position: absolute;
             top: 0;
-            left: 50%; /* Centralizado */
+            left: 50%; 
             transform: translateX(-50%);
             width: 100%;
-            max-width: 480px; /* Padrão Mobile */
+            max-width: 480px; 
             height: var(--altura-header);
             background-color: var(--cor-header-fundo);
             z-index: 999;
@@ -173,14 +174,13 @@
         }
 
         .btn-contato-principal {
-            /* Mantendo a base anterior mas ajustando para a nova estratégia */
             display: flex;
-            flex-direction: column; /* Texto um embaixo do outro */
-            align-items: center;    /* Centralizado */
+            flex-direction: column; 
+            align-items: center;    
             justify-content: center;
-            background-color: #FFFde7; /* Amarelo bem clarinho no fundo */
+            background-color: #FFFde7; 
             color: #333;
-            border: 2px solid #FFD600; /* Borda amarela forte */
+            border: 2px solid #FFD600; 
             border-radius: 8px;
             padding: 8px 12px; 
             cursor: pointer;
@@ -189,26 +189,24 @@
             margin-left: auto;
             text-align: center;
             max-width: calc(100% - var(--largura-logo) - 10px);
-            
-            /* A MÁGICA DA RETENÇÃO: */
             animation: animacao-pulsar 2s infinite;
         }
 
         .btn-contato-principal:active { 
             transform: scale(0.95); 
-            animation: none; /* Para de pulsar ao clicar */
+            animation: none; 
         }
 
         @keyframes animacao-pulsar {
             0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 214, 0, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 214, 0, 0); } /* Efeito de onda */
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(255, 214, 0, 0); } 
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 214, 0, 0); }
         }
 
         .linha-destaque-vermelho {
-            color: #D50000; /* Vermelho forte */
+            color: #D50000; 
             font-weight: 900;
-            font-size: 13px; /* Tamanho bom para mobile */
+            font-size: 13px; 
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 2px;
@@ -237,7 +235,7 @@
             margin-bottom: 15px; 
             border: 1px solid #f0f0f0; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.02); 
-            height: 100%; /* Para que os cards tenham a mesma altura no grid */
+            height: 100%; 
             display: flex;
             flex-direction: column;
         }
@@ -245,39 +243,78 @@
         h2 { color: var(--cor-primaria); margin-top: 0; font-size: 1.2rem; }
         
         .card-cesta { padding: 0; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; }
-        .cesta-header { background-color: var(--cor-primaria); padding: 15px; text-align: center; color: white; }
+        .cesta-header { background-color: var(--cor-primaria); padding: 10px; text-align: center; color: white; }
         .cesta-header h3 { margin: 0; color: white; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .cesta-body { padding: 15px; display: flex; flex-direction: column; flex-grow: 1; }
+        
+        /* CORREÇÃO: Menos respiro (padding reduzido) */
+        .cesta-body { padding: 10px; display: flex; flex-direction: column; flex-grow: 1; }
 
         .foto-cesta-unica { 
             width: 100%; 
-            /* ALTURA AJUSTADA: 100% largura / 80% altura = ratio 1/0.8 */
             aspect-ratio: 1 / 0.8; 
-            object-fit: cover; /* Garante que não achata */
+            object-fit: cover; 
             display: block;
             border-radius: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 5px; /* Super compacto */
             background: #eee;
         }
 
         .lista-precos-cesta {
-            background-color: #f9f9f9; border-radius: 8px; padding: 12px; margin: 15px 0; border: 1px solid #eee; margin-top: auto;
+            background-color: #f9f9f9; border-radius: 8px; 
+            padding: 8px 10px; 
+            margin: 5px 0 10px 0; /* Compacto */
+            border: 1px solid #eee; margin-top: auto;
         }
-        .item-preco { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 15px; color: #444; }
+        .item-preco { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; font-size: 15px; color: #444; }
         .item-preco:last-child { margin-bottom: 0; }
         .item-preco strong { color: var(--cor-primaria); font-size: 18px; }
 
+        /* --- NOVO LAYOUT DE BOTÕES: HIERARQUIA INVERTIDA --- */
         .botoes-wrapper { 
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;
+            display: grid; 
+            grid-template-columns: 3fr 1fr; /* 75% Info, 25% Share */
+            grid-template-rows: auto auto;
+            grid-template-areas: 
+                "hero hero"
+                "info share";
+            gap: 8px; 
+            margin-top: 0; 
         }
+        
         .btn {
-            display: flex; align-items: center; justify-content: center; width: 100%; padding: 15px; 
+            display: flex; align-items: center; justify-content: center; width: 100%; padding: 12px; 
             border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer;
             text-decoration: none; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s;
             word-break: break-word; 
         }
-        .btn-encomendar { background-color: var(--cor-whatsapp); }
-        .btn-info { background-color: var(--cor-info); } 
+        
+        /* Botão Hero: Pedir no WhatsApp */
+        .btn-encomendar { 
+            grid-area: hero;
+            background-color: var(--cor-whatsapp); 
+            font-size: 17px; 
+            text-transform: uppercase;
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+            margin-bottom: 4px;
+        }
+        
+        /* Botão Secundário: Ver Itens */
+        .btn-info { 
+            grid-area: info;
+            background-color: #4fc3f7; /* Azul claro para diferenciar */
+            color: #01579b; /* Texto escuro para contraste */
+            font-size: 14px;
+        } 
+        
+        /* Botão Secundário: Compartilhar */
+        .btn-share {
+            grid-area: share;
+            background-color: #0277bd; /* Azul escuro */
+            padding: 0; 
+            font-size: 18px;
+        }
+
         .btn:active { transform: scale(0.98); }
         
         /* --- EXTRAS --- */
@@ -298,12 +335,12 @@
         
         input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 10px; font-size: 16px; }
 
-        /* --- ESTILO NOVO CADASTRO (ATUALIZADO) --- */
+        /* --- ESTILO NOVO CADASTRO --- */
         .cadastro-novo-style {
-            background-color: #fff; /* Fundo branco para ficar mais limpo */
-            border: 2px solid #ffcc80; /* Borda laranja suave */
+            background-color: #fff; 
+            border: 2px solid #ffcc80; 
             border-radius: 12px;
-            text-align: left; /* Alinhamento a esquerda facilita leitura */
+            text-align: left; 
         }
 
         .titulo-novo-cadastro {
@@ -322,7 +359,7 @@
 
         /* Botão Inteligente */
         .btn-validacao {
-            background-color: #ccc; /* Começa cinza */
+            background-color: #ccc; 
             color: #666;
             cursor: not-allowed;
             transition: all 0.3s ease;
@@ -330,15 +367,14 @@
             opacity: 0.7;
         }
 
-        /* Quando estiver pronto (adicionado via JS) */
         .btn-validacao.pronto {
-            background-color: var(--cor-whatsapp); /* Vira Verde Zap */
+            background-color: var(--cor-whatsapp); 
             color: white;
             cursor: pointer;
             transform: scale(1);
             opacity: 1;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); /* Brilho verde */
-            animation: pulsoBotao 1.5s infinite; /* Chama atenção */
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); 
+            animation: pulsoBotao 1.5s infinite; 
         }
 
         @keyframes pulsoBotao {
@@ -347,48 +383,6 @@
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
         
-        /* --- ESTILOS BANNER ROTATIVO --- */
-        .banner-container {
-            position: relative;
-            overflow: hidden;
-            background-color: #fff3e0;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid #ffe0b2;
-            min-height: 90px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .banner-slide {
-            display: none;
-            width: 100%;
-            text-align: center;
-            padding: 15px;
-            animation: fadeEffect 1s;
-        }
-
-        .banner-slide.active { display: block; }
-
-        @keyframes fadeEffect { from {opacity: 0.4} to {opacity: 1} }
-
-        .btn-banner-action {
-            background-color: var(--cor-sorteio);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            margin-top: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
-        }
-        .btn-banner-action:active { transform: scale(0.95); }
-
         /* --- MODAIS (GERAL) --- */
         .modal-variacao, #modalContatos, #modalInformacoes {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
@@ -405,47 +399,25 @@
         }
         
         .modal-info-header {
-            background-color: var(--cor-fundo); padding: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
+            background-color: var(--cor-fundo); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
             flex-shrink: 0;
         }
-        .modal-info-header h3 { margin: 0; color: var(--cor-primaria); font-size: 18px; margin-left: 10px;}
+        .modal-info-header h3 { margin: 0; color: var(--cor-primaria); font-size: 20px; margin-left: 10px; font-weight: 800;}
         .btn-fechar-modal-info { background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 0 10px; }
 
-        /* ABAS */
-        .tabs { 
-            display: flex; 
-            background-color: white; 
-            border-bottom: 2px solid #eee; 
-            overflow-x: auto;
-            flex-shrink: 0; 
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .tabs::-webkit-scrollbar { display: none; }
-
-        .tab-btn {
-            flex: 1; padding: 15px 5px; border: none; background: none; font-size: 13px; 
-            font-weight: 600; color: #666; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
-            border-bottom: 3px solid transparent; min-width: 70px; white-space: nowrap;
-        }
-        .tab-btn.active { color: var(--cor-primaria); border-bottom-color: var(--cor-primaria); background-color: #fff8f8; }
-        
-        /* CONTEÚDO DAS ABAS */
-        .tab-content-area {
+        /* CONTEÚDO MODAL LIMPO (SEM ABAS) */
+        .modal-body-scroll {
             padding: 20px; overflow-y: auto;
             flex: 1; 
         }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; animation: fadeIn 0.3s; }
         
         .lista-produtos-modal { list-style: none; padding: 0; margin: 0; }
-        .lista-produtos-modal li { padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 14px; color: #444; }
+        .lista-produtos-modal li { padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 15px; color: #444; display: flex; align-items: flex-start;}
         .lista-produtos-modal li:last-child { border-bottom: none; }
-        .lista-produtos-modal li i { color: var(--cor-whatsapp); margin-right: 8px; font-size: 10px; }
-        .section-title { font-weight: bold; color: var(--cor-primaria); margin-top: 15px; margin-bottom: 5px; font-size: 15px; display: block; background: #ffebee; padding: 5px; border-radius: 4px; }
+        .lista-produtos-modal li i { color: var(--cor-whatsapp); margin-right: 12px; font-size: 14px; margin-top: 4px;}
+        .section-title { font-weight: 900; color: var(--cor-primaria); margin-top: 20px; margin-bottom: 8px; font-size: 16px; display: block; background: #ffebee; padding: 8px; border-radius: 6px; text-transform: uppercase;}
 
         @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         /* MODAL VARIAÇÃO / CONTATOS */
         .modal-variacao-content {
@@ -509,9 +481,52 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.15); font-weight: 700; margin-top: 5px; justify-content: center; text-transform: uppercase; font-size: 14px;
         }
 
+        /* --- NOVA BARRA DE NAVEGAÇÃO INFERIOR --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px; /* Igual ao main wrapper no mobile */
+            height: var(--altura-bottom-nav);
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 5000;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 10px;
+            text-decoration: none;
+            width: 25%;
+            height: 100%;
+            transition: color 0.2s;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .nav-item:active, .nav-item:hover {
+            color: var(--cor-primaria);
+            background-color: #f9f9f9;
+        }
+
         /* --- RESPONSIVIDADE AVANÇADA PARA DESKTOP --- */
         @media (min-width: 481px) {
             .main-content-wrapper, header, .header-background-bar { max-width: 900px; }
+            /* Aumenta a barra de navegação no desktop para acompanhar */
+            .bottom-nav { max-width: 900px; }
             .secao-conteudo { padding: 20px 30px; }
         }
         @media (min-width: 940px) { .logo-pequ { left: 50%; margin-left: calc(-450px + 20px); } }
@@ -521,38 +536,14 @@
 
         /* --- NOVO: LAYOUT DE 3 COLUNAS PARA DESKTOP GRANDE --- */
         @media (min-width: 1024px) {
-            /* 1. Aumenta a largura máxima do site */
-            .main-content-wrapper, header, .header-background-bar { 
-                max-width: 1200px; 
-            }
-            .logo-pequ { margin-left: calc(-600px + 20px); } /* Ajuste logo */
-            
-            /* 2. Cestas em 3 colunas */
-            .cesta-cards-grid { 
-                display: grid; 
-                grid-template-columns: repeat(3, 1fr); 
-                gap: 20px; 
-            }
-
-            /* 3. Seções Extras (Sorteio, Pagamento, Entrega) em 3 colunas */
-            .secoes-extras-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-                padding: 0 15px; /* Alinhamento visual */
-            }
-            
-            /* Ajuste para que o grid funcione bem */
-            .secoes-extras-grid .secao-conteudo {
-                padding: 0; /* Remove padding duplo pois o grid já tem gap */
-                margin-bottom: 0;
-            }
-            .secoes-extras-grid .card {
-                height: 100%; /* Garante altura igual */
-            }
-            .secoes-extras-grid .section-icon-header {
-                margin-top: 15px;
-            }
+            .main-content-wrapper, header, .header-background-bar { max-width: 1200px; }
+            .bottom-nav { max-width: 1200px; } /* Ajuste Nav */
+            .logo-pequ { margin-left: calc(-600px + 20px); } 
+            .cesta-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+            .secoes-extras-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 0 15px; }
+            .secoes-extras-grid .secao-conteudo { padding: 0; margin-bottom: 0; }
+            .secoes-extras-grid .card { height: 100%; }
+            .secoes-extras-grid .section-icon-header { margin-top: 15px; }
         }
     </style>
 </head>
@@ -562,11 +553,11 @@
 
     <div class="header-background-bar"></div>
 
-    <img src="img/logo2.gif" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia - Cestas Básicas em Cuiabá" class="logo-pequ">
+    <!-- LOGO FIXA (SEM LOOP) -->
+    <img src="img/logo1.png" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
     <header>
         <div class="header-top">
-            <!-- Botão com estratégia de Pulso/Heartbeat -->
             <button class="btn-contato-principal" onclick="abrirModalContatos()">
                 <div class="linha-destaque-vermelho">
                     <i class="fas fa-save"></i> CLIQUE P/ SALVAR O CONTATO
@@ -581,28 +572,6 @@
     <div class="main-content-wrapper">
         <div id="pag-cestas" class="secao-conteudo">
             
-            <!-- BANNER ROTATIVO -->
-            <div class="banner-container">
-                <div class="banner-slide active">
-                    <h2 style="margin: 0; font-size: 1.1rem; color: #E65100;">🚚 Entrega Grátis</h2>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">Em Cuiabá e Várzea Grande</p>
-                </div>
-                <div class="banner-slide">
-                    <h2 style="margin: 0; font-size: 1.1rem; color: #2E7D32;">🍀 Participe dos Sorteios</h2>
-                    <button onclick="document.getElementById('pag-sorteio').scrollIntoView({behavior: 'smooth'})" class="btn-banner-action">
-                        Participar Agora <i class="fas fa-chevron-down"></i>
-                    </button>
-                </div>
-                <div class="banner-slide">
-                    <h2 style="margin: 0; font-size: 1.1rem; color: #1565C0;">💳 Parcelamos em 3x</h2>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">Sem Juros no Cartão de Crédito</p>
-                </div>
-                <div class="banner-slide">
-                    <h2 style="margin: 0; font-size: 1.1rem; color: #6A1B9A;">🎁 Brinde do Mês</h2>
-                    <p style="margin: 5px 0 0 0; font-size: 0.95rem; font-weight: 600; color: #444;">1 Amaciante de 2 Litros da YPÊ</p>
-                </div>
-            </div>
-
             <div class="cesta-cards-grid">
                 <!-- CESTA ECONÔMICA -->
                 <div class="card card-cesta" id="cestaeconomica">
@@ -614,10 +583,13 @@
                         </div>
                         <div class="botoes-wrapper">
                             <button class="btn btn-encomendar" onclick="encomendarDireto('Cesta Econômica', '85,00', false)">
-                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Encomendar
+                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
                             <button class="btn btn-info" onclick="abrirModalInfo('economica')">
-                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i> Informações
+                                <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
+                            </button>
+                            <button class="btn btn-share" onclick="compartilharCesta('Cesta Econômica', '85,00')">
+                                <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -634,10 +606,13 @@
                         </div>
                         <div class="botoes-wrapper">
                             <button class="btn btn-encomendar" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00')">
-                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Encomendar
+                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
                             <button class="btn btn-info" onclick="abrirModalInfo('mini')">
-                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i> Informações
+                                <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
+                            </button>
+                            <button class="btn btn-share" onclick="compartilharCesta('Cesta Mini', '165,00')">
+                                <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -654,10 +629,13 @@
                         </div>
                         <div class="botoes-wrapper">
                             <button class="btn btn-encomendar" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00')">
-                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Encomendar
+                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
                             <button class="btn btn-info" onclick="abrirModalInfo('pequena')">
-                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i> Informações
+                                <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
+                            </button>
+                            <button class="btn btn-share" onclick="compartilharCesta('Cesta Pequena', '215,00')">
+                                <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -674,10 +652,13 @@
                         </div>
                         <div class="botoes-wrapper">
                             <button class="btn btn-encomendar" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00')">
-                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Encomendar
+                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
                             <button class="btn btn-info" onclick="abrirModalInfo('media')">
-                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i> Informações
+                                <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
+                            </button>
+                            <button class="btn btn-share" onclick="compartilharCesta('Cesta Média', '320,00')">
+                                <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -694,10 +675,13 @@
                         </div>
                         <div class="botoes-wrapper">
                             <button class="btn btn-encomendar" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00')">
-                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Encomendar
+                                <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> PEDIR NO WHATSAPP
                             </button>
                             <button class="btn btn-info" onclick="abrirModalInfo('grande')">
-                                <i class="fas fa-info-circle" style="margin-right: 8px;"></i> Informações
+                                <i class="fas fa-list" style="margin-right: 5px;"></i> Ver Itens
+                            </button>
+                            <button class="btn btn-share" onclick="compartilharCesta('Cesta Grande', '380,00')">
+                                <i class="fas fa-share-alt"></i>
                             </button>
                         </div>
                     </div>
@@ -705,7 +689,7 @@
             </div>
         </div>
         
-        <!-- SEÇÕES EXTRAS -->
+        <!-- SEÇÕES EXTRAS (COM IDS PARA NAVEGAÇÃO) -->
         <div class="secoes-extras-grid">
             
             <!-- 1. SORTEIO -->
@@ -739,13 +723,11 @@
                         </button>
                     </div>
                     
-                    <!-- NOVO FORMULÁRIO OTIMIZADO -->
                     <div id="cadastro-novo" class="card cadastro-novo-style" style="display: none;">
                         <h3 class="titulo-novo-cadastro">📝 Fazer Cadastro</h3>
                         <p class="subtitulo-novo-cadastro">Não achamos seu número. Preencha abaixo para participar:</p>
                         
                         <form onsubmit="event.preventDefault(); enviarNovoCadastro('');">
-                            
                             <label style="font-weight:bold; font-size:13px; color:#444;">Nome Completo:</label>
                             <input type="text" id="novo-nome" placeholder="Digite seu nome..." required 
                                    onkeyup="verificarPreenchimento('')" onchange="verificarPreenchimento('')">
@@ -769,7 +751,6 @@
                             </button>
                         </form>
                     </div>
-
                 </div>
             </div>
 
@@ -819,6 +800,26 @@
         </footer>
     </div>
 
+    <!-- NOVA BARRA DE NAVEGAÇÃO INFERIOR -->
+    <nav class="bottom-nav">
+        <a href="#pag-cestas" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Início</span>
+        </a>
+        <a href="#pag-sorteio" class="nav-item">
+            <i class="fas fa-gift" style="color: var(--cor-sorteio);"></i>
+            <span>Sorteio</span>
+        </a>
+        <a href="#pag-pagamento" class="nav-item">
+            <i class="fas fa-credit-card" style="color: var(--cor-pagamento);"></i>
+            <span>Pagamento</span>
+        </a>
+        <a href="#pag-entrega" class="nav-item">
+            <i class="fas fa-truck" style="color: var(--cor-entrega);"></i>
+            <span>Entrega</span>
+        </a>
+    </nav>
+
     <!-- MODAL DE ESCOLHA -->
     <div id="modalVariacao" class="modal-variacao" onclick="if(event.target === this) fecharModalVariacao()">
         <div class="modal-variacao-content">
@@ -839,93 +840,20 @@
         </div>
     </div>
 
-    <!-- MODAL: INFORMAÇÕES -->
+    <!-- MODAL: INFORMAÇÕES (SIMPLIFICADO) -->
     <div id="modalInformacoes" class="modal-variacao" onclick="if(event.target === this) fecharModalInfo()">
         <div class="modal-info-content">
             <!-- Header Modal -->
             <div class="modal-info-header">
-                <h3 id="tituloModalInfo">Informações</h3>
+                <h3 id="tituloModalInfo">Itens da Cesta</h3>
                 <button class="btn-fechar-modal-info" onclick="fecharModalInfo()">&times;</button>
             </div>
             
-            <!-- Abas -->
-            <div class="tabs">
-                <button class="tab-btn active" onclick="mudarAba('produtos')">Produtos</button>
-                <button class="tab-btn" onclick="mudarAba('pagamento')">Pagamento</button>
-                <button class="tab-btn" onclick="mudarAba('entrega')">Entrega</button>
-                <button class="tab-btn" onclick="mudarAba('sorteio')" style="color: var(--cor-sorteio);">Sorteio</button>
-            </div>
-
-            <!-- Conteúdo Abas -->
-            <div id="aba-produtos" class="tab-content-area tab-pane active">
+            <!-- Conteúdo Único (Sem Abas) -->
+            <div class="modal-body-scroll">
                 <ul class="lista-produtos-modal" id="listaProdutosContent">
                     <!-- Preenchido via JS -->
                 </ul>
-            </div>
-
-            <div id="aba-pagamento" class="tab-content-area tab-pane">
-                <div id="conteudoPagamentoModal"></div>
-                <p style="color: red; font-size: 14px; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
-            </div>
-
-            <div id="aba-entrega" class="tab-content-area tab-pane">
-                 <div id="conteudoEntregaModal"></div>
-            </div>
-
-            <!-- ABA SORTEIO NO MODAL -->
-            <div id="aba-sorteio" class="tab-content-area tab-pane">
-                <h4 style="color: var(--cor-sorteio); margin-top:0; text-align: center;">🍀 Participe do Sorteio</h4>
-                <p style="text-align: center; font-size: 14px; margin-bottom: 15px;">Todos os Domingos as 18h.</p>
-                
-                <div id="area-busca-telefone-modal" class="card" style="margin-bottom: 15px; border: 1px solid #ddd;">
-                    <label></label>
-                    <input type="tel" id="busca-telefone-modal" placeholder="Digite seu whatsapp" required>
-                    <button onclick="buscarCadastro('-modal')" class="btn" style="background-color: var(--cor-primaria); margin-top: 5px;">
-                        <i class="fas fa-search" style="margin-right: 8px;"></i> Participar
-                    </button>
-                </div>
-
-                <div id="cadastro-encontrado-modal" class="area-resultado-busca" style="display: none;">
-                    <h2>✅ Encontrado!</h2>
-                    <div style="text-align: left; font-size: 14px;">
-                        <p><strong>Nome:</strong> <span id="nome-cliente-encontrado-modal"></span></p>
-                        <p><strong>Cidade:</strong> <span id="cidade-cliente-encontrado-modal"></span></p>
-                        <p><strong>Bairro:</strong> <span id="bairro-cliente-encontrado-modal"></span></p>
-                    </div>
-                    <button onclick="confirmarJaCadastrado('-modal')" class="btn" style="background-color: var(--cor-whatsapp); margin-top: 15px;">
-                        <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar
-                    </button>
-                </div>
-                
-                <!-- NOVO FORMULÁRIO OTIMIZADO (MODAL) -->
-                <div id="cadastro-novo-modal" class="card cadastro-novo-style" style="display: none;">
-                    <h3 class="titulo-novo-cadastro">📝 Fazer Cadastro</h3>
-                    <p class="subtitulo-novo-cadastro">Preencha rapidinho para participar:</p>                    
-                    
-                    <form onsubmit="event.preventDefault(); enviarNovoCadastro('-modal');">
-                        <label style="font-weight:bold; font-size:13px; color:#444;">Nome:</label>
-                        <input type="text" id="novo-nome-modal" placeholder="Seu nome" required
-                               onkeyup="verificarPreenchimento('-modal')" onchange="verificarPreenchimento('-modal')">
-                        
-                        <label style="font-weight:bold; font-size:13px; color:#444;">Whatsapp:</label>
-                        <input type="tel" id="novo-telefone-modal" disabled style="background:#eee; color:#777;"> 
-                        
-                        <label style="font-weight:bold; font-size:13px; color:#444;">Cidade:</label>
-                        <select id="novo-cidade-modal" required onchange="verificarPreenchimento('-modal')">
-                            <option value="">Escolher...</option>
-                            <option value="Cuiabá">Cuiabá</option>
-                            <option value="Várzea Grande">Várzea Grande</option>
-                        </select>
-                        
-                        <label style="font-weight:bold; font-size:13px; color:#444;">Bairro:</label>
-                        <input type="text" id="novo-bairro-modal" placeholder="Seu bairro" required
-                               onkeyup="verificarPreenchimento('-modal')" onchange="verificarPreenchimento('-modal')">
-                        
-                        <button type="submit" id="btn-enviar-cadastro-modal" class="btn btn-validacao">
-                            <i class="fas fa-edit" style="margin-right: 8px;"></i> Preencha tudo...
-                        </button>
-                    </form>
-                </div>
             </div>
         </div>
     </div>
@@ -965,10 +893,6 @@
     <script src="data/clientes.js" onerror="console.warn('Usando dados mockados para preview.')"></script>
 
     <script>
-        const LOGO_ESTATICA_SRC = 'img/logo1.png';
-        const LOGO_ANIMADA_SRC = 'img/logo2.gif';
-        const LOGO_ELEMENT_ID = 'logo-principal';
-        const INTERVALO_LOOP_MS = 50000; 
         const TELEFONE = "5565998150975"; 
         
         let deferredPrompt; 
@@ -1032,34 +956,13 @@
             ]
         };
 
-        function iniciarLoopLogoAnimada() {
-            const logo = document.getElementById(LOGO_ELEMENT_ID);
-            if (!logo) return;
-            const alternarLogo = () => { logo.src = LOGO_ANIMADA_SRC + `?t=${new Date().getTime()}`; };
-            setInterval(alternarLogo, INTERVALO_LOOP_MS);
-            alternarLogo();
+        // Função de Compartilhamento
+        function compartilharCesta(nomeCesta, precoCesta) {
+            const texto = `Olha essa cesta: *${nomeCesta}* por *R$ ${precoCesta}*.\nAcesse o site: https://donaantonia.com.br/`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
-        // --- BANNER ROTATIVO ---
-        let slideIndex = 0;
-        function iniciarBannerRotativo() { showSlides(); }
-
-        function showSlides() {
-            let i;
-            let slides = document.getElementsByClassName("banner-slide");
-            if(slides.length === 0) return;
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";  
-                slides[i].classList.remove("active");
-            }
-            slideIndex++;
-            if (slideIndex > slides.length) {slideIndex = 1}    
-            slides[slideIndex-1].style.display = "block";  
-            setTimeout(() => slides[slideIndex-1].classList.add("active"), 10);
-            setTimeout(showSlides, 4000); 
-        }
-
-        // --- MODAL INFO ---
+        // --- MODAL INFO (SIMPLIFICADO) ---
         function abrirModalInfo(cestaTipo) {
             const listaEl = document.getElementById('listaProdutosContent');
             listaEl.innerHTML = ''; 
@@ -1074,36 +977,15 @@
                 }
                 listaEl.appendChild(li);
             });
-            const pagOrigem = document.getElementById('lista-pagamento-original');
-            const pagDestino = document.getElementById('conteudoPagamentoModal');
-            if(pagOrigem) {
-                pagDestino.innerHTML = '';
-                pagDestino.appendChild(pagOrigem.cloneNode(true));
-            }
-            const entOrigem = document.getElementById('conteudo-entrega-original');
-            const entDestino = document.getElementById('conteudoEntregaModal');
-            if(entOrigem) {
-                entDestino.innerHTML = '';
-                entDestino.innerHTML = `<h4 style="color: var(--cor-whatsapp); margin-top:0;">🚚 Entrega Grátis</h4>` + entOrigem.innerHTML;
-            }
+            // Não copia mais pagamento/entrega, pois agora ficam na navegação inferior
+            
             const nomes = {'economica': 'Cesta Econômica', 'mini': 'Cesta Mini', 'pequena': 'Cesta Pequena', 'media': 'Cesta Média', 'grande': 'Cesta Grande'};
-            document.getElementById('tituloModalInfo').innerText = nomes[cestaTipo] || 'Informações';
-            mudarAba('produtos');
+            document.getElementById('tituloModalInfo').innerText = 'Itens: ' + (nomes[cestaTipo] || 'Informações');
+            
             document.getElementById('modalInformacoes').style.display = 'flex';
         }
 
         function fecharModalInfo() { document.getElementById('modalInformacoes').style.display = 'none'; }
-
-        function mudarAba(abaNome) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-            const btns = document.querySelectorAll('.tab-btn');
-            if(abaNome === 'produtos') btns[0].classList.add('active');
-            if(abaNome === 'pagamento') btns[1].classList.add('active');
-            if(abaNome === 'entrega') btns[2].classList.add('active');
-            if(abaNome === 'sorteio') btns[3].classList.add('active');
-            document.getElementById('aba-' + abaNome).classList.add('active');
-        }
 
         // --- MODAL CONTATOS ---
         function abrirModalContatos() { document.getElementById('modalContatos').style.display = 'flex'; }
@@ -1301,8 +1183,6 @@
         }
 
         window.onload = function() {
-            iniciarLoopLogoAnimada(); 
-            iniciarBannerRotativo(); 
             carregarDadosClientes(); 
         };
     </script>
