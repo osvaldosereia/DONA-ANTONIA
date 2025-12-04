@@ -277,34 +277,46 @@
         .modal-variacao, #modalContatos, #modalInformacoes {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; backdrop-filter: blur(2px);
+            padding: 20px; /* Adicionado Padding para evitar que o modal toque as bordas da tela */
         }
         #modalContatos { z-index: 4500; }
         #modalInformacoes { z-index: 4600; }
 
         .modal-info-content {
-            background-color: white; width: 90%; max-width: 420px; border-radius: 12px; 
-            overflow: hidden; display: flex; flex-direction: column; max-height: 85vh; 
+            background-color: white; width: 100%; max-width: 420px; border-radius: 12px; 
+            overflow: hidden; display: flex; flex-direction: column; max-height: 90vh; /* Altura Maxima */
             box-shadow: 0 5px 25px rgba(0,0,0,0.3); animation: zoomIn 0.2s;
         }
         
         .modal-info-header {
             background-color: var(--cor-fundo); padding: 10px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd;
+            flex-shrink: 0; /* Header não encolhe */
         }
         .modal-info-header h3 { margin: 0; color: var(--cor-primaria); font-size: 18px; margin-left: 10px;}
         .btn-fechar-modal-info { background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 0 10px; }
 
-        /* ABAS */
-        .tabs { display: flex; background-color: white; border-bottom: 2px solid #eee; overflow-x: auto;}
+        /* ABAS (CORREÇÃO DE SCROLLBAR) */
+        .tabs { 
+            display: flex; 
+            background-color: white; 
+            border-bottom: 2px solid #eee; 
+            overflow-x: auto;
+            flex-shrink: 0; /* Abas não encolhem */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+
         .tab-btn {
             flex: 1; padding: 15px 5px; border: none; background: none; font-size: 13px; 
             font-weight: 600; color: #666; cursor: pointer; transition: all 0.2s; text-transform: uppercase;
-            border-bottom: 3px solid transparent; min-width: 70px;
+            border-bottom: 3px solid transparent; min-width: 70px; white-space: nowrap;
         }
         .tab-btn.active { color: var(--cor-primaria); border-bottom-color: var(--cor-primaria); background-color: #fff8f8; }
         
         /* CONTEÚDO DAS ABAS */
         .tab-content-area {
-            padding: 20px; overflow-y: auto; 
+            padding: 20px; overflow-y: auto; /* Scroll apenas no conteúdo */
             flex: 1; 
         }
         .tab-pane { display: none; }
@@ -319,24 +331,46 @@
         @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
+        /* CORREÇÃO MODAL VARIAÇÃO / CONTATOS */
         .modal-variacao-content {
-            background-color: white; width: 90%; max-width: 350px; border-radius: 16px; padding: 20px;
+            background-color: white; width: 100%; max-width: 350px; border-radius: 16px; padding: 20px;
             position: relative; text-align: center;
+            max-height: 85vh; /* Limite de altura */
+            overflow-y: auto; /* Habilita scroll se conteúdo for grande */
+            display: flex; flex-direction: column;
         }
-        .btn-fechar-modal-var { position: absolute; top: 10px; right: 15px; background: none; border: none; font-size: 24px; color: #999; cursor: pointer; }
+
+        .btn-fechar-modal-var { 
+            position: absolute; top: 10px; right: 15px; 
+            background: rgba(255,255,255,0.9); /* Fundo leve para garantir visibilidade */
+            border: none; font-size: 26px; color: #999; cursor: pointer; 
+            z-index: 100; /* Garante que fique por cima */
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            line-height: 1;
+        }
+
+        .titulo-modal-var, .modal-variacao-content h3 {
+            margin-top: 10px; /* Espaço para não bater no X */
+            padding-right: 25px; /* Espaço lateral para o X não cobrir texto */
+        }
+        
         .opcao-select {
             display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 2px solid #eee; 
             border-radius: 8px; margin-bottom: 10px; cursor: pointer; text-align: left;
+            flex-shrink: 0; /* Impede que encolham */
         }
         .opcao-select.selected { border-color: var(--cor-primaria); background-color: #ffebee; }
         .opcao-nome { font-weight: bold; color: #333; }
         .opcao-preco { color: var(--cor-primaria); font-weight: 900; }
         .radio-custom { width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%; position: relative; }
         .selected .radio-custom::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background-color: var(--cor-primaria); border-radius: 50%; }
+        
         .btn-confirmar-pedido { 
             width: 100%; padding: 15px; background-color: var(--cor-whatsapp); color: white; border: none; 
             border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 10px; cursor: pointer; 
             display: flex; align-items: center; justify-content: center; gap: 10px; text-transform: uppercase;
+            flex-shrink: 0; /* Garante tamanho do botão */
         }
         .btn-confirmar-pedido:disabled { background-color: #ccc; cursor: not-allowed; }
 
@@ -345,6 +379,7 @@
             display: flex; align-items: center; justify-content: flex-start; padding: 12px 15px;
             border-radius: 8px; text-decoration: none; font-weight: 600; color: white;
             transition: opacity 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
         .btn-contato-modal:active { opacity: 0.8; transform: scale(0.98); }
         .btn-contato-modal i { font-size: 20px; width: 30px; text-align: center; margin-right: 10px; }
@@ -939,7 +974,7 @@
 
         function fecharModalVariacao() { document.getElementById('modalVariacao').style.display = 'none'; }
         
-        // --- FUNÇÕES DE SORTEIO E CADASTRO (REFATORADAS PARA SUPORTAR MODAL E MAIN) ---
+        // --- FUNÇÕES DE SORTEIO E CADASTRO (REFATORADAS) ---
         function mostrarMensagemToast(msg, type = "info") {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -960,41 +995,73 @@
             mostrarMensagemToast(msg, isError ? "error" : "success");
         }
         
-        // Parâmetro 'sufixoId' é string vazia '' para main ou '-modal' para o modal
         function buscarCadastro(sufixoId) {
+            // Elementos
             const cadastroEncontradoDiv = document.getElementById('cadastro-encontrado' + sufixoId);
             const cadastroNovoDiv = document.getElementById('cadastro-novo' + sufixoId);
             const buscaTelefoneInput = document.getElementById('busca-telefone' + sufixoId);
-            
-            cadastroEncontradoDiv.style.display = 'none';
-            cadastroNovoDiv.style.display = 'none';
-            const inputTel = buscaTelefoneInput.value.replace(/\D/g, ''); 
-            
-            if (inputTel.length < 6) { mostrarMensagemBusca("Digite seu telefone completo.", true); return; }
-
-            // Encontrar botão dentro do container correto
             const containerBusca = sufixoId === '' ? document.getElementById('area-busca-telefone') : document.getElementById('area-busca-telefone-modal');
             const btn = containerBusca.querySelector('.btn');
+
+            // Reset visual
+            cadastroEncontradoDiv.style.display = 'none';
+            cadastroNovoDiv.style.display = 'none';
+
+            // Tratamento do Input
+            const inputRaw = buscaTelefoneInput.value;
+            const inputLimpo = inputRaw.replace(/\D/g, ''); 
             
+            // Validação mínima (6 últimos dígitos)
+            if (inputLimpo.length < 6) { 
+                mostrarMensagemBusca("Digite pelo menos os 6 últimos dígitos do seu telefone.", true); 
+                return; 
+            }
+
+            // O termo de busca são os últimos 6 dígitos digitados
+            const termoBusca = inputLimpo.slice(-6);
+
+            // Feedback de carregamento
             const txtOriginal = btn.innerHTML;
-            btn.innerHTML = 'Buscando...'; btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Buscando...'; 
+            btn.disabled = true;
 
             setTimeout(() => {
-                btn.innerHTML = txtOriginal; btn.disabled = false;
+                btn.innerHTML = txtOriginal; 
+                btn.disabled = false;
+                
                 let cliente = null;
-                if(typeof clientes !== 'undefined') cliente = clientes.find(c => c.telefone.replace(/\D/g, '').endsWith(inputTel.slice(-6)));
+                
+                // Lógica de Busca Robusta
+                // Verifica se a variável 'clientes' foi carregada corretamente do arquivo .js
+                if(typeof clientes !== 'undefined' && Array.isArray(clientes)) {
+                    cliente = clientes.find(c => {
+                        // Converte para string e limpa o telefone do cadastro
+                        const telCadastro = String(c.telefone || '').replace(/\D/g, '');
+                        // Verifica se o telefone do cadastro termina com o termo buscado
+                        return telCadastro.endsWith(termoBusca);
+                    });
+                } else {
+                    console.warn('Variável clientes não encontrada ou vazia.');
+                }
                 
                 if (cliente) {
+                    // Preenche dados encontrados
                     document.getElementById('nome-cliente-encontrado' + sufixoId).innerText = cliente.nome;
                     document.getElementById('cidade-cliente-encontrado' + sufixoId).innerText = cliente.cidade;
                     document.getElementById('bairro-cliente-encontrado' + sufixoId).innerText = cliente.bairro;
-                    // Salvar dados no input para uso posterior
+                    
+                    // Salva atributos para uso no botão de confirmação
                     buscaTelefoneInput.setAttribute('data-nome', cliente.nome);
                     buscaTelefoneInput.setAttribute('data-cidade', cliente.cidade);
                     buscaTelefoneInput.setAttribute('data-bairro', cliente.bairro);
+                    
                     cadastroEncontradoDiv.style.display = 'block';
                 } else {
-                    document.getElementById('novo-telefone' + sufixoId).value = buscaTelefoneInput.value; 
+                    // Preenche o campo de telefone no formulário de novo cadastro
+                    const inputNovoTel = document.getElementById('novo-telefone' + sufixoId);
+                    if(inputNovoTel) {
+                        inputNovoTel.value = inputRaw; // Mantém a formatação original se houver
+                    }
                     cadastroNovoDiv.style.display = 'block';
                 }
             }, 600); 
