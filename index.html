@@ -58,8 +58,8 @@
             --cor-sorteio: #4CAF50; 
             --cor-entrega: #FF9800;
             --cor-header-fundo: #f5f5f5;
-            --altura-header: 80px; /* Reduzido levemente */
-            --largura-logo: 100px; /* Logo um pouco menor */
+            --altura-header: 80px; 
+            --largura-logo: 100px; 
             --altura-bottom-nav: 55px; 
         }
 
@@ -67,7 +67,7 @@
             background-color: #e0e0e0; 
             scroll-behavior: smooth;
             scroll-padding-top: calc(var(--altura-header) + 5px); 
-            font-size: 14.5px; /* Reduzido de 16px para 14.5px (Base menor) */
+            font-size: 14.5px; 
         }
 
         body {
@@ -177,66 +177,58 @@
             margin-left: 0;
             z-index: 2000; 
             background-color: white;
-            padding: 2px;
+            padding: 0; /* Padding removido conforme pedido */
             transition: all 0.3s ease;
         }
 
-        /* Botão Pulsante do Header */
+        /* --- NOVO VISUAL: BOTÃO TOP BAR ELEGANTE --- */
         .btn-contato-principal {
             display: flex;
-            flex-direction: column; 
             align-items: center;    
             justify-content: center;
-            background-color: #FFFde7; 
-            color: #333;
-            border: 2px solid var(--cor-destaque-dourado); 
-            border-radius: 6px;
-            padding: 5px 10px; /* Reduzido padding */
+            background-color: var(--cor-primaria); /* Fundo Azul da Marca */
+            color: var(--cor-destaque-dourado); /* Texto Dourado */
+            border: 1px solid var(--cor-destaque-dourado); 
+            border-radius: 50px; /* Borda redonda elegante */
+            padding: 8px 20px; 
             cursor: pointer;
             text-decoration: none;
-            box-shadow: 0 3px 5px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 10px rgba(15, 37, 70, 0.3);
             margin-left: auto;
             text-align: center;
             max-width: calc(100% - var(--largura-logo) - 10px);
-            animation: animacao-pulsar 2s infinite;
+            animation: none; /* Removido pulso para ficar mais sóbrio/elegante */
+            transition: all 0.3s ease;
         }
 
-        .btn-contato-principal:active { transform: scale(0.95); animation: none; }
-
-        @keyframes animacao-pulsar {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 6px rgba(255, 193, 7, 0); } 
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+        .btn-contato-principal:hover {
+            background-color: #1a3b6e;
+            box-shadow: 0 6px 15px rgba(15, 37, 70, 0.4);
         }
 
-        .linha-destaque-vermelho {
-            color: var(--cor-destaque-vermelho); 
-            font-weight: 800;
-            font-size: 0.75rem; /* Menor e mais delicado */
+        .linha-destaque-top {
+            font-weight: 700;
+            font-size: 0.9rem; 
             text-transform: uppercase;
-            letter-spacing: 0.3px;
-            margin-bottom: 2px;
-            line-height: 1.1;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-
-        .linha-localizacao {
-            color: #555;
-            font-weight: 600;
-            font-size: 0.65rem; 
-        }
+        .linha-destaque-top i { font-size: 1.1rem; }
 
         @media (max-width: 380px) {
             :root { --largura-logo: 85px; --altura-header: 75px; }
             .logo-pequ { left: 10px; }
-            .linha-destaque-vermelho { font-size: 0.7rem; }
+            .linha-destaque-top { font-size: 0.75rem; }
         }
 
-        /* --- BARRA DE CONFIANÇA (NOVO) --- */
+        /* --- BARRA DE CONFIANÇA (TRUST BAR) --- */
         .trust-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #E3F2FD; /* Azul muito suave */
+            background-color: #E3F2FD; 
             border: 1px solid #BBDEFB;
             border-radius: 8px;
             padding: 10px 5px;
@@ -269,7 +261,7 @@
             background-color: #BBDEFB;
         }
 
-        /* --- CARDS & TIPOGRAFIA OTIMIZADA --- */
+        /* --- CARDS --- */
         .secao-conteudo { padding: 15px; }
         
         .card { 
@@ -287,19 +279,18 @@
         h2 { 
             color: var(--cor-primaria); 
             margin-top: 0; 
-            font-size: 1.25rem; /* Menos exagerado */
+            font-size: 1.25rem; 
             font-weight: 700;
             letter-spacing: -0.3px;
         }
         
         .card-cesta { padding: 0; overflow: hidden; border: 1px solid #eee; display: flex; flex-direction: column; }
         
-        /* Header Card */
         .cesta-header { background-color: var(--cor-primaria); padding: 8px; text-align: center; color: white; }
         .cesta-header h3 { 
             margin: 0; 
             color: white; 
-            font-size: 1rem; /* Título Cesta mais discreto */
+            font-size: 1rem; 
             font-weight: 600;
             text-transform: uppercase; 
             letter-spacing: 0.8px;
@@ -328,11 +319,11 @@
         
         .item-preco strong { 
             color: var(--cor-destaque-vermelho); 
-            font-size: 1.15rem; /* Preço um pouco menor */
+            font-size: 1.15rem; 
             font-weight: 800;
         }
 
-        /* --- BOTÕES OTIMIZADOS --- */
+        /* --- BOTÕES --- */
         .botoes-wrapper { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -340,23 +331,22 @@
             grid-template-areas: 
                 "hero hero"
                 "info share";
-            gap: 6px; /* Gap menor */
+            gap: 6px; 
             margin-top: 0; 
         }
         
         .btn {
-            display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; /* Padding menor */
+            display: flex; align-items: center; justify-content: center; width: 100%; padding: 10px; 
             border: none; border-radius: 6px; cursor: pointer;
             text-decoration: none; color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
             transition: transform 0.2s, filter 0.2s;
             font-family: inherit;
         }
         
-        /* Botão Hero */
         .btn-encomendar { 
             grid-area: hero;
             background-color: var(--cor-whatsapp); 
-            font-size: 0.95rem; /* Fonte confortável */
+            font-size: 0.95rem; 
             font-weight: 700;
             text-transform: uppercase;
             padding: 12px;
@@ -365,7 +355,6 @@
             letter-spacing: 0.3px;
         }
         
-        /* Botões Secundários */
         .btn-info { 
             grid-area: info;
             background-color: #E3F2FD; 
@@ -376,7 +365,6 @@
             box-shadow: none;
         } 
         
-        /* Botão Share com Estilo Atualizado */
         .btn-share {
             grid-area: share;
             background-color: #E8F5E9; 
@@ -386,7 +374,6 @@
             border: 1px solid #C8E6C9;
             box-shadow: none;
         }
-        /* Ajuste do ícone no botão share */
         .btn-share i { margin-right: 5px; font-size: 1rem; }
 
         .btn:active { transform: scale(0.97); }
@@ -394,7 +381,7 @@
         /* --- EXTRAS --- */
         .section-icon-header { text-align: center; margin-bottom: 15px; position: relative; z-index: 10; }
         .section-icon-header img {
-            width: 50px; height: 50px; /* Ícones menores */
+            width: 50px; height: 50px; 
             object-fit: contain; background-color: var(--cor-primaria);
             border-radius: 50%; padding: 8px; box-shadow: 0 3px 8px rgba(0,0,0,0.2);
         }
@@ -432,7 +419,6 @@
             margin-bottom: 12px;
         }
 
-        /* Botão Inteligente */
         .btn-validacao {
             background-color: #ccc; 
             color: #666;
@@ -465,9 +451,16 @@
         #modalInformacoes { z-index: 4600; }
 
         .modal-info-content {
-            background-color: white; width: 100%; max-width: 400px; border-radius: 12px; 
-            overflow: hidden; display: flex; flex-direction: column; max-height: 90vh;
-            box-shadow: 0 5px 25px rgba(0,0,0,0.3); animation: zoomIn 0.2s;
+            background-color: white; 
+            width: 100%; 
+            max-width: 400px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            max-height: 80vh; /* ALTURA REDUZIDA PARA 80vh */
+            box-shadow: 0 5px 25px rgba(0,0,0,0.3); 
+            animation: zoomIn 0.2s;
         }
         
         .modal-info-header {
@@ -482,6 +475,40 @@
             flex: 1; 
         }
         
+        /* ESTILO DO BRINDE NO MODAL */
+        .brinde-container {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #E3F2FD, #FFFFFF);
+            border: 1px solid #BBDEFB;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .brinde-img {
+            width: 50px;
+            height: auto;
+            margin-right: 12px;
+            filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.1));
+        }
+        .brinde-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .brinde-label {
+            font-size: 0.75rem;
+            color: #1976D2;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .brinde-desc {
+            font-size: 0.9rem;
+            color: #333;
+            font-weight: 600;
+        }
+
         .lista-produtos-modal { list-style: none; padding: 0; margin: 0; }
         .lista-produtos-modal li { padding: 8px 0; border-bottom: 1px dashed #eee; font-size: 0.9rem; color: #444; display: flex; align-items: flex-start;}
         .lista-produtos-modal li:last-child { border-bottom: none; }
@@ -662,11 +689,11 @@
 
         /* --- RESPONSIVIDADE --- */
         @media (min-width: 481px) {
-            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } /* Ajustado para 1100px */
+            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } 
             .bottom-nav { max-width: 1100px; }
             .secao-conteudo { padding: 20px 30px; }
             
-            /* Ajuste de fontes para Desktop - Um pouco maiores que mobile, mas contidas */
+            /* Ajuste de fontes para Desktop */
             html { font-size: 15px; } 
             h2 { font-size: 1.5rem; }
             .cesta-header h3 { font-size: 1.15rem; }
@@ -677,7 +704,7 @@
         }
 
         @media (min-width: 1024px) {
-            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } /* Ajustado para 1100px */
+            .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } 
             .bottom-nav { max-width: 1100px; } 
             .logo-pequ { margin-left: calc(-550px + 20px); } 
             .cesta-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
@@ -700,11 +727,8 @@
     <header>
         <div class="header-top">
             <button class="btn-contato-principal" onclick="abrirModalContatos()">
-                <div class="linha-destaque-vermelho">
-                    <i class="fas fa-save"></i> CLIQUE P/ SALVAR O CONTATO
-                </div>
-                <div class="linha-localizacao">
-                    Somos de Cuiabá e Várzea Grande
+                <div class="linha-destaque-top">
+                    <i class="fab fa-whatsapp"></i> SALVAR CONTATO WHATSAPP
                 </div>
             </button>
         </div>
@@ -936,7 +960,7 @@
             <!-- 3. ENTREGA -->
             <div id="pag-entrega" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/entrega.png" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
+                    <img src="img/caminhao.png" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
                 </div>
                 <div class="card">
                     <h2 style="color: #F57C00;">🚚 Entrega Grátis</h2>
@@ -1016,6 +1040,8 @@
             
             <!-- Conteúdo Único (Sem Abas) -->
             <div class="modal-body-scroll">
+                <!-- Div do Brinde injetada via JS aqui -->
+                <div id="brindeArea"></div>
                 <ul class="lista-produtos-modal" id="listaProdutosContent">
                     <!-- Preenchido via JS -->
                 </ul>
@@ -1145,10 +1171,28 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
         }
 
-        // --- MODAL INFO (SIMPLIFICADO) ---
+        // --- MODAL INFO (SIMPLIFICADO E COM BRINDE) ---
         function abrirModalInfo(cestaTipo) {
             const listaEl = document.getElementById('listaProdutosContent');
+            const brindeArea = document.getElementById('brindeArea');
             listaEl.innerHTML = ''; 
+            brindeArea.innerHTML = ''; // Limpa brinde anterior
+
+            // Lógica do Brinde: Apenas para Mini, Pequena, Média e Grande
+            const cestasComBrinde = ['mini', 'pequena', 'media', 'grande'];
+            
+            if (cestasComBrinde.includes(cestaTipo)) {
+                brindeArea.innerHTML = `
+                    <div class="brinde-container">
+                        <img src="img/amaciante.png" alt="Amaciante Ypê" class="brinde-img" onerror="this.style.display='none'">
+                        <div class="brinde-text">
+                            <span class="brinde-label">🎁 BRINDE EXCLUSIVO</span>
+                            <span class="brinde-desc">1 Amaciante Ypê 2L</span>
+                        </div>
+                    </div>
+                `;
+            }
+
             const itens = listasCestas[cestaTipo] || ["Lista de produtos não disponível."];
             itens.forEach(item => {
                 const li = document.createElement('li');
@@ -1160,7 +1204,6 @@
                 }
                 listaEl.appendChild(li);
             });
-            // Não copia mais pagamento/entrega, pois agora ficam na navegação inferior
             
             const nomes = {'economica': 'Cesta Econômica', 'mini': 'Cesta Mini', 'pequena': 'Cesta Pequena', 'media': 'Cesta Média', 'grande': 'Cesta Grande'};
             document.getElementById('tituloModalInfo').innerText = 'Itens: ' + (nomes[cestaTipo] || 'Informações');
