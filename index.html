@@ -183,42 +183,10 @@
             transition: max-width 0.3s ease; 
         }
 
-        /* === MENU DE ANCORAS (AJUSTE FINAL) === */
+        /* === MENU DE ANCORAS (OCULTO - AJUSTE DO USUÁRIO) === */
+        /* Oculta apenas visualmente os botões, mantendo a estrutura da página */
         .menu-ancoras-cestas {
-            display: flex;
-            gap: 6px; 
-            padding: 8px 5px;
-            margin-bottom: 5px;
-            flex-wrap: wrap; 
-            justify-content: center; 
-            
-            position: sticky;
-            top: var(--altura-header); /* Cola logo abaixo do header */
-            background: var(--cor-fundo);
-            z-index: 90; 
-            border-bottom: 1px solid #eee;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
-            
-            /* Animação suave para quando a posição mudar */
-            transition: top 0.3s ease, padding 0.3s ease;
-        }
-
-        /* FIX MOBILE: Ajuste para NÃO cobrir botões, mas encostar na top bar */
-        @media (max-width: 768px) {
-            .menu-ancoras-cestas {
-                /* A barra fica colada no header */
-                top: 75px; 
-                
-                /* Adicionamos padding na esquerda para "pular" a logo redonda */
-                /* Assim a barra cinza toca o topo, mas o conteúdo (botões) não fica embaixo da logo */
-                padding-left: 90px; 
-                padding-right: 10px;
-                justify-content: flex-start; /* Alinha botões à esquerda após o padding */
-                
-                /* Garante que a barra cinza tenha altura suficiente */
-                min-height: 50px;
-                align-items: center;
-            }
+            display: none !important;
         }
 
         .chip-ancora {
@@ -392,6 +360,13 @@
             z-index: 101; /* Fica acima do overlay escuro */
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Destaque extra */
         }
+
+        /* Ajuste de Respiro para Mobile - Evita que a logo tampe o banner */
+        @media (max-width: 480px) {
+            .trust-bar {
+                margin-top: 40px; /* Garante que o banner inicie abaixo da área da logo */
+            }
+        }
         
         .trust-item {
             flex: 1;
@@ -409,13 +384,14 @@
             /* INÍCIO DA ANIMAÇÃO: Invisível e deslocado para baixo */
             opacity: 0;
             transform: translateY(20px);
-            animation: slideUpFade 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+            /* Animação mais lenta para destaque (1s de duração) */
+            animation: slideUpFade 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
         }
         
-        /* Delays para efeito cascata */
-        .trust-item:nth-child(1) { animation-delay: 0.3s; }
-        .trust-item:nth-child(3) { animation-delay: 0.5s; } /* Pula o divider */
-        .trust-item:nth-child(5) { animation-delay: 0.7s; }
+        /* Delays aumentados para efeito cascata mais lento e destacado */
+        .trust-item:nth-child(1) { animation-delay: 0.5s; }
+        .trust-item:nth-child(3) { animation-delay: 1.2s; } /* Pula o divider */
+        .trust-item:nth-child(5) { animation-delay: 1.9s; }
 
         @keyframes slideUpFade {
             to { opacity: 1; transform: translateY(0); }
@@ -446,9 +422,9 @@
             z-index: 95; /* Acima do conteúdo, abaixo da trust-bar (z-101) */
             pointer-events: none; /* Permite scroll mesmo se visível (opcional, mas melhor travar visualmente) */
             
-            /* Animação de saída */
+            /* Animação de saída - ajustada para o tempo maior dos itens */
             animation: fadeOutOverlay 0.8s ease forwards;
-            animation-delay: 2.2s; /* Fica escuro por 2.2s enquanto a animação acontece */
+            animation-delay: 3.2s; /* Fica escuro por mais tempo para cobrir a animação lenta */
         }
 
         @keyframes fadeOutOverlay {
