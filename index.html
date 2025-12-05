@@ -364,7 +364,7 @@
         /* Ajuste de Respiro para Mobile - Evita que a logo tampe o banner */
         @media (max-width: 480px) {
             .trust-bar {
-                margin-top: 20px; /* Garante que o banner inicie abaixo da área da logo */
+                margin-top: 40px; /* Garante que o banner inicie abaixo da área da logo */
             }
         }
         
@@ -1505,7 +1505,7 @@
         }
 
         async function carregarDadosClientes() {
-            if (typeof clientes !== 'undefined' && clientes.length > 0) return; 
+            // REMOVIDO: A verificação de clientes.length > 0 foi retirada para forçar o carregamento do arquivo
             try {
                 const response = await fetch('data/clientes.js');
                 if (response.ok) {
