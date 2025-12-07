@@ -1,5 +1,161 @@
 const clientes = [
   {
+    "nome": "ALESSANDRA PEREIRA RODRIGUES",
+    "telefone": "65999742889",
+    "cidade": "Cuiabá",
+    "bairro": "Areao"
+  },
+  {
+    "nome": "Michelly thainara da Silva Almeida",
+    "telefone": "65993384574",
+    "cidade": "Cuiabá",
+    "bairro": "jardim Florianópolis"
+  },
+  {
+    "nome": "Rejane de Souza melo costa",
+    "telefone": "65996282152",
+    "cidade": "Cuiabá",
+    "bairro": "São João del rei"
+  },
+  {
+    "nome": "Henrry Lisaso Roja",
+    "telefone": "65981367192",
+    "cidade": "Cuiabá",
+    "bairro": "Planalto"
+  },
+  {
+    "nome": "ROSALINA MARA CRISTINA DE LIMA SILVA",
+    "telefone": "65992910757",
+    "cidade": "Cuiabá",
+    "bairro": "Praiero"
+  },
+  {
+    "nome": "David Cardenas Roque",
+    "telefone": "65981018575",
+    "cidade": "Cuiabá",
+    "bairro": "Planalto"
+  },
+  {
+    "nome": "Cynde Laura Santana Carvalho",
+    "telefone": "65993495850",
+    "cidade": "Cuiabá",
+    "bairro": "Pascoal ramos"
+  },
+  {
+    "nome": "Silvia mikaely Rodrigues dos santos",
+    "telefone": "65996951410",
+    "cidade": "Várzea Grande",
+    "bairro": "Solaris taruma"
+  },
+  {
+    "nome": "Ivete vitoriano vitorino",
+    "telefone": "669923455531",
+    "cidade": "Várzea Grande",
+    "bairro": "Marajuara"
+  },
+  {
+    "nome": "Ladis Rojas furet",
+    "telefone": "65981018554",
+    "cidade": "Cuiabá",
+    "bairro": "Residência São Carlos"
+  },
+  {
+    "nome": "Grazieli Cristina Gomes Pereira",
+    "telefone": "65992437739",
+    "cidade": "Cuiabá",
+    "bairro": "Nova esperança"
+  },
+  {
+    "nome": "Regina Fernandes da Silva",
+    "telefone": "79998878343",
+    "cidade": "Cuiabá",
+    "bairro": "Preda 90"
+  },
+  {
+    "nome": "PAULO HENRIQUE DOS SANTOS SILVA",
+    "telefone": "65999759771",
+    "cidade": "Várzea Grande",
+    "bairro": "Santa Terezinha"
+  },
+  {
+    "nome": "Kamila Jesus de arruda",
+    "telefone": "65981042321",
+    "cidade": "Cuiabá",
+    "bairro": "Vila nova"
+  },
+  {
+    "nome": "Ariane Moreira de barros",
+    "telefone": "65998178271",
+    "cidade": "Várzea Grande",
+    "bairro": "Marajoara"
+  },
+  {
+    "nome": "Arlet Verastegui Roja",
+    "telefone": "95984167830",
+    "cidade": "Cuiabá",
+    "bairro": "Planalto"
+  },
+  {
+    "nome": "Fellype césar",
+    "telefone": "65992770590",
+    "cidade": "Várzea Grande",
+    "bairro": "Costa verde"
+  },
+  {
+    "nome": "Alice Maciel De Cerqueira",
+    "telefone": "65993098907",
+    "cidade": "Cuiabá",
+    "bairro": "Osmar Cabral"
+  },
+  {
+    "nome": "JOSE MARIA PEREZ MORALES",
+    "telefone": "95984253731",
+    "cidade": "Cuiabá",
+    "bairro": "8 de abril"
+  },
+  {
+    "nome": "NÃO INFORMADO",
+    "telefone": "65981233921",
+    "cidade": "Cuiabá",
+    "bairro": "Brasil 21"
+  },
+  {
+    "nome": "Vanessa Alves Ferreira de Almeida",
+    "telefone": "65993349397",
+    "cidade": "Várzea Grande",
+    "bairro": "Paiaguás"
+  },
+  {
+    "nome": "Amarilys Ramirez castillo",
+    "telefone": "9584033049",
+    "cidade": "Cuiabá",
+    "bairro": "8 de abril"
+  },
+  {
+    "nome": "Rogerio jose santo de souza",
+    "telefone": "65992972470",
+    "cidade": "Várzea Grande",
+    "bairro": "Icaraí"
+  },
+  {
+    "nome": "Mirian cordeiro dos Santos",
+    "telefone": "65993104655",
+    "cidade": "Várzea Grande",
+    "bairro": "Jardim Eldorado"
+  },
+  {
+    "nome": "Adiles Benedita Rodrigues Da Silva",
+    "telefone": "65992487079",
+    "cidade": "Cuiabá",
+    "bairro": "Recanto do Sol"
+  },
+  {
+    "nome": "Solange Célia Silva de Arruda",
+    "telefone": "65992050436",
+    "cidade": "Cuiabá",
+    "bairro": "Três barras"
+  }, 
+  {
     "nome": "SUELLEN MARIA DOS SANTOS",
     "telefone": "65992923920",
     "cidade": "Várzea Grande",
