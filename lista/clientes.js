@@ -6,6 +6,12 @@ const clientes = [
     "bairro": "Areao"
   },
   {
+    "nome": "Jéssica da Silva",
+    "telefone": "65992656308",
+    "cidade": "Várzea Grande",
+    "bairro": "Avenida contorno Leste Lula Bracel 1"
+  },
+  {
     "nome": "Marianny Ferreira",
     "telefone": "65684012599",
     "cidade": "Cuiabá",
