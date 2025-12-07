@@ -6,6 +6,12 @@ const clientes = [
     "bairro": "Areao"
   },
   {
+  "nome": "ANDERSON TEIXEIRA",
+  "telefone": "66992614828",
+  "cidade": "Cuiabá",
+  "bairro": "Nico baract"
+},
+  {
   "nome": "CRISTIANE JESUS DE ALMEIDA",
   "telefone": "65999367835",
   "cidade": "Cuiabá",
