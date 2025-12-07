@@ -6,6 +6,18 @@ const clientes = [
     "bairro": "Areao"
   },
   {
+  "nome": "CRISTIANE JESUS DE ALMEIDA",
+  "telefone": "65999367835",
+  "cidade": "Cuiabá",
+  "bairro": "Jardim Vitória"
+},
+  {
+  "nome": "RAYELY FERNANDES DOS SANTOS",
+  "telefone": "65984550972",
+  "cidade": "Cuiabá",
+  "bairro": "Morada da Serra"
+},
+  {
   "nome": "IZAMAIRA AUGUSTA RODRIGUES",
   "telefone": "65993094881",
   "cidade": "Cuiabá",
@@ -113,6 +125,30 @@ const clientes = [
     "cidade": "Cuiabá",
     "bairro": "Residência São Carlos"
   },
+  {
+  "nome": "JESSICA SUELEN DOS SANTOS SILVA",
+  "telefone": "65998174095",
+  "cidade": "Cuiabá",
+  "bairro": "centro"
+},
+  {
+  "nome": "IASMIM KIRAH SANTANA DO AMARAL",
+  "telefone": "66992095134",
+  "cidade": "Várzea Grande",
+  "bairro": "Novo Mato Grosso"
+},
+  {
+  "nome": "TATIANE DA SILVA PINHO CAMPOS",
+  "telefone": "65993186570",
+  "cidade": "Várzea Grande",
+  "bairro": "Figueirinha"
+},
+    {
+  "nome": "KEILLON MAKC DE JESUS",
+  "telefone": "65996484639",
+  "cidade": "Cuiabá",
+  "bairro": "Coopamil"
+},
   {
     "nome": "Grazieli Cristina Gomes Pereira",
     "telefone": "65992437739",
