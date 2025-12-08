@@ -6,6 +6,108 @@ const clientes = [
     "bairro": "Areao"
   },
   {
+    "nome": "Jurema Nunes de Oliveira",
+    "telefone": "65999175357",
+    "cidade": "Cuiabá",
+    "bairro": "Brasil 21 Osmar Cabral"
+  },
+  {
+    "nome": "EMILLY LETICIA BONDESPACHO DA SILVA",
+    "telefone": "65984212116",
+    "cidade": "Cuiabá",
+    "bairro": "São Gonçalo 3"
+  },
+  {
+    "nome": "Alan da Silva Assunção de Souza",
+    "telefone": "65996230174",
+    "cidade": "Cuiabá",
+    "bairro": "Parque Cuiabá"
+  },
+  {
+    "nome": "Silvane Aparecida Dias",
+    "telefone": "65984294108",
+    "cidade": "Várzea Grande",
+    "bairro": "Mapim"
+  },
+  {
+    "nome": "Bruna rany",
+    "telefone": "65981710514",
+    "cidade": "Cuiabá",
+    "bairro": "Praeiro"
+  },
+  {
+    "nome": "Diandra da Silva correia",
+    "telefone": "65996239590",
+    "cidade": "Cuiabá",
+    "bairro": "Doutor Fábio 2"
+  },
+  {
+    "nome": "Maykelen Feniman",
+    "telefone": "65999748008",
+    "cidade": "Várzea Grande",
+    "bairro": "Nova fronteira"
+  },
+  {
+    "nome": "Crislaine Gomes de Sousa Moraes Macedo",
+    "telefone": "65981380673",
+    "cidade": "Cuiabá",
+    "bairro": "Pedra90"
+  },
+  {
+    "nome": "LOUISE CLARA DE OLIVEIRA SILVA",
+    "telefone": "6699527369",
+    "cidade": "Cuiabá",
+    "bairro": "Vila Cuiabá"
+  },
+  {
+    "nome": "Denis Carvalho",
+    "telefone": "65992140440",
+    "cidade": "Cuiabá",
+    "bairro": "Jardim Imperial"
+  },
+  {
+    "nome": "Thiago Rodrigues",
+    "telefone": "65999825843",
+    "cidade": "Cuiabá",
+    "bairro": "Paiaguás"
+  },
+  {
+    "nome": "CARLOS HENRIQUE TEIXEIRA RODRIGUES",
+    "telefone": "38992435605",
+    "cidade": "Cuiabá",
+    "bairro": "São Francisco"
+  },
+  {
+    "nome": "Edivan leite pereira",
+    "telefone": "65993538808",
+    "cidade": "Várzea Grande",
+    "bairro": "São Simão"
+  },
+  {
+    "nome": "Rheyla Malhado coelho",
+    "telefone": "65993043807",
+    "cidade": "Cuiabá",
+    "bairro": "Nico Baracat 2"
+  },
+  {
+    "nome": "Anderson Jose de Souza",
+    "telefone": "65992516429",
+    "cidade": "Várzea Grande",
+    "bairro": "Residência são Benedito coab"
+  },
+  {
+    "nome": "Charles Pereira Da Silva",
+    "telefone": "65981024997",
+    "cidade": "Várzea Grande",
+    "bairro": "Parque do largo"
+  },
+  {
+    "nome": "Osvaldo sereia junior",
+    "telefone": "998150975",
+    "cidade": "Cuiabá",
+    "bairro": "Chácara dos Pinheiros"
+  },  
+  {
   "nome": "LUCIMARA FERREIRA DA ROSA",
   "telefone": "65999927053",
   "cidade": "Cuiabá",
