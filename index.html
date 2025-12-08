@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- Event snippet for Website lead conversion page -->
+    <!-- Event snippet for Website lead conversion page
+In your html page, add the snippet and call gtag_report_conversion when someone clicks on the chosen link or button. -->
 <script>
-  gtag('event', 'conversion', {'send_to': 'AW-979692776/OzcWCNb7tIACEOjZk9MD'});
+function gtag_report_conversion(url) {
+  var callback = function () {
+    if (typeof(url) != 'undefined') {
+      window.location = url;
+    }
+  };
+  gtag('event', 'conversion', {
+      'send_to': 'AW-979692776/OzcWCNb7tIACEOjZk9MD',
+      'event_callback': callback
+  });
+  return false;
+}
 </script>
+
 
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV"></script>
     <script>
