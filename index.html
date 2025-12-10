@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+    <!-- OTIMIZAÇÃO: Preconnect para adiantar a conexão com servidores externos -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-979692776"></script>
     <script>
@@ -34,7 +38,6 @@
       gtag('config', 'G-9XS8B8Z8BV');
     </script>
     <meta charset="UTF-8">
-    <!-- Removido user-scalable=no para melhor acessibilidade, conforme recomendação do PageSpeed -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
     <title>Cesta Básica em Cuiabá e VG | Entrega Grátis | Dona Antônia</title>
@@ -45,7 +48,9 @@
     <meta name="author" content="Dona Antônia Cestas e Alimentos">
     <meta name="theme-color" content="#0F2546"> 
     
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- OTIMIZAÇÃO: Carregamento assíncrono do CSS para não bloquear a renderização -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
         /* === ESTILOS GLOBAIS === */
@@ -340,7 +345,6 @@
             font-weight: 600;
             line-height: 1.2;
             padding: 0 2px;
-            /* REMOVIDO: opacity: 0 e animation para melhorar LCP */
             opacity: 1; 
             transform: none;
         }
@@ -356,8 +360,6 @@
             height: 25px;
             background-color: #BBDEFB;
         }
-
-        /* REMOVIDO: #intro-overlay e @keyframes fadeOutOverlay */
 
         /* --- CARDS --- */
         .secao-conteudo { padding: 15px; }
@@ -836,8 +838,6 @@
         <span id="mini-banner-text" class="mini-banner-content">🚚 Entregamos em Cuiabá e VG</span>
     </div>
 
-    <!-- REMOVIDO: <div id="intro-overlay"></div> -->
-
     <!-- ADICIONADO: width e height para melhorar CLS -->
     <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.png" width="100" height="100" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
@@ -883,8 +883,8 @@
                 <div class="card card-cesta" id="cestaeconomica">
                     <div class="cesta-header"><h3>Cesta Econômica</h3></div>
                     <div class="cesta-body">
-                        <!-- ADICIONADO: width e height nas imagens -->
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-economica.jpg" width="400" height="320" class="foto-cesta-unica" alt="Cesta Básica Econômica Entrega Rápida Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
+                        <!-- OTIMIZAÇÃO: fetchpriority="high" para LCP (primeira imagem visível) -->
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-economica.jpg" width="400" height="320" fetchpriority="high" class="foto-cesta-unica" alt="Cesta Básica Econômica Entrega Rápida Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
                         </div>
@@ -905,7 +905,8 @@
                 <div class="card card-cesta" id="cestamini">
                     <div class="cesta-header"><h3>Cesta Mini</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-mini.jpg" width="400" height="320" class="foto-cesta-unica" alt="Cesta Básica Mini Completa em Várzea Grande - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MINI'">
+                        <!-- OTIMIZAÇÃO: loading="lazy" para imagens fora da tela inicial -->
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-mini.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Mini Completa em Várzea Grande - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MINI'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 165,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
@@ -927,7 +928,7 @@
                 <div class="card card-cesta" id="cestapequena">
                     <div class="cesta-header"><h3>Cesta Pequena</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.jpg" width="400" height="320" class="foto-cesta-unica" alt="Cesta Básica Pequena com Entrega Grátis no CPA e Coxipó" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Pequena com Entrega Grátis no CPA e Coxipó" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 215,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
@@ -949,7 +950,7 @@
                 <div class="card card-cesta" id="cestamedia">
                     <div class="cesta-header"><h3>Cesta Média</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-media.jpg" width="400" height="320" class="foto-cesta-unica" alt="Cesta Básica Média em Oferta Cuiabá e VG - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-media.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Média em Oferta Cuiabá e VG - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 320,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
@@ -971,7 +972,7 @@
                 <div class="card card-cesta" id="cestagrande">
                     <div class="cesta-header"><h3>Cesta Grande</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-grande.jpg" width="400" height="320" class="foto-cesta-unica" alt="Cesta Básica Grande Família Completa Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-grande.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Grande Família Completa Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 380,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
@@ -996,7 +997,8 @@
             
             <div id="pag-sorteio" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/cesta.png" width="60" height="60" alt="Sorteio Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
+                    <!-- OTIMIZAÇÃO: loading="lazy" -->
+                    <img src="img/cesta.png" width="60" height="60" loading="lazy" alt="Sorteio Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
                 </div>
                 <div class="card">
                     <h2>🎉 Sorteio todo Domingo.</h2>
@@ -1057,7 +1059,7 @@
 
             <div id="pag-pagamento" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/pagamento.png" width="60" height="60" alt="Formas de Pagamento" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
+                    <img src="img/pagamento.png" width="60" height="60" loading="lazy" alt="Formas de Pagamento" onerror="this.onerror=null;this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
                 </div>
                 <div class="card">
                     <h2>💳 Formas de Pagamento</h2>
@@ -1075,7 +1077,7 @@
 
             <div id="pag-entrega" class="secao-conteudo">
                 <div class="section-icon-header">
-                    <img src="img/entrega.png" width="60" height="60" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
+                    <img src="img/entrega.png" width="60" height="60" loading="lazy" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
                 </div>
                 <div class="card">
                     <h2 style="color: #F57C00;">🚚 Entrega Grátis</h2>
