@@ -1679,27 +1679,36 @@
             element.classList.add('active');
         }
 
+        // OTIMIZAÇÃO INP: Adicionado throttling com requestAnimationFrame
+        // para evitar recálculos pesados a cada pixel rolado
+        let isScrolling = false;
+        const secoes = document.querySelectorAll('.card-cesta');
+        const navLinks = document.querySelectorAll('.chip-ancora');
+
         window.addEventListener('scroll', function() {
-            const secoes = document.querySelectorAll('.card-cesta');
-            const navLinks = document.querySelectorAll('.chip-ancora');
-            
-            let currentId = "";
+            if (!isScrolling) {
+                window.requestAnimationFrame(function() {
+                    let currentId = "";
 
-            secoes.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (window.scrollY >= (sectionTop - 180)) {
-                    currentId = section.getAttribute('id');
-                }
-            });
+                    secoes.forEach(section => {
+                        const sectionTop = section.offsetTop;
+                        if (window.scrollY >= (sectionTop - 180)) {
+                            currentId = section.getAttribute('id');
+                        }
+                    });
 
-            if(currentId) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if(link.getAttribute('href') === '#' + currentId) {
-                        link.classList.add('active');
+                    if(currentId) {
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if(link.getAttribute('href') === '#' + currentId) {
+                                link.classList.add('active');
+                            }
+                        });
                     }
+                    isScrolling = false;
                 });
             }
+            isScrolling = true;
         });
 
         window.onload = function() {
