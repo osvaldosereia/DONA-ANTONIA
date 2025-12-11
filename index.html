@@ -4,6 +4,15 @@
     <!-- OTIMIZAÇÃO: Preconnect para adiantar a conexão com servidores externos -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
+    <!-- PWA: Link para o Manifesto (ESSENCIAL PARA INSTALAÇÃO) -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA: Meta tags para iOS (Apple) -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dona Antônia">
+    <link rel="apple-touch-icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-979692776"></script>
@@ -1615,25 +1624,55 @@
         function abrirModalContatos() { document.getElementById('modalContatos').style.display = 'flex'; }
         function fecharModalContatos() { document.getElementById('modalContatos').style.display = 'none'; }
 
-        // --- PWA ---
+        // --- PWA LOGIC (CORRIGIDA) ---
+        // 1. Registro do Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                // navigator.serviceWorker.register('./service-worker.js').catch(err => console.log('SW falhou', err));
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(reg => console.log('Service Worker registrado!', reg))
+                    .catch(err => console.error('Falha ao registrar SW:', err));
             });
         }
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
+
+        // 2. Captura do evento de instalação (Chrome/Android/Desktop)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Impede o mini-infobar padrão de aparecer
+            e.preventDefault();
+            // Guarda o evento para usar depois
+            deferredPrompt = e;
+            console.log("Evento 'beforeinstallprompt' capturado.");
+        });
+
+        // 3. Função chamada pelo botão "Baixar o Aplicativo"
         function instalarPWA() {
+            // Detecta se é iOS (iPhone/iPad)
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
             if (isIOS) {
-                mostrarMensagemToast("Para instalar no iPhone: Toque no botão 'Compartilhar' abaixo e depois em 'Adicionar à Tela de Início'.", "info");
+                // No iOS, não existe instalação automática via JS. Precisa ser manual.
+                mostrarMensagemToast("No iPhone: Toque em 'Compartilhar' (seta pra cima) e depois 'Adicionar à Tela de Início'.", "info");
                 return;
             }
+
+            // Para Android e Desktop
             if (deferredPrompt) {
+                // Mostra o prompt nativo do navegador
                 deferredPrompt.prompt();
+                
+                // Espera a escolha do usuário
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') { deferredPrompt = null; mostrarMensagemToast("Instalado com sucesso!", "success"); }
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação');
+                        mostrarMensagemToast("Aplicativo instalando...", "success");
+                    } else {
+                        console.log('Usuário recusou a instalação');
+                    }
+                    deferredPrompt = null; // Limpa a variável
                 });
-            } else { mostrarMensagemToast("Para instalar, abra o menu do navegador e escolha 'Adicionar à tela inicial'.", "info"); }
+            } else {
+                // Se o prompt não estiver disponível (ex: já instalado, ou navegador não suportado)
+                mostrarMensagemToast("Para instalar: Abra o menu do navegador e procure 'Adicionar à tela inicial'.", "info");
+            }
         }
 
         // --- PRODUTO ---
