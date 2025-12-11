@@ -1,71 +1,43 @@
-const CACHE_NAME = 'dona-antonia-v1';
-const URLS_TO_CACHE = [
+const CACHE_NAME = 'dona-antonia-cache-v1';
+const ASSETS_TO_CACHE = [
   './',
   './index.html',
-  // Se tiveres um ficheiro CSS externo, adiciona aqui.
-  // Como o CSS está inline no HTML, não é necessário.
+  './manifest.json',
+  './img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif'
+  // Adicione aqui outros arquivos que deseja que funcionem offline
 ];
 
-// Instalação do Service Worker
-self.addEventListener('install', event => {
+// 1. Instalação do SW e cache dos arquivos
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Cache aberto');
-        return cache.addAll(URLS_TO_CACHE);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Service Worker: Caching files');
+      return cache.addAll(ASSETS_TO_CACHE);
+    })
   );
 });
 
-// Estratégia de Cache: Stale-While-Revalidate
-// 1. Tenta servir do cache (rápido).
-// 2. Em segundo plano, vai à internet buscar a versão nova.
-// 3. Atualiza o cache para a próxima vez.
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Se encontrou no cache, retorna.
-        if (response) {
-          return response;
-        }
-        
-        // Se não, busca na rede.
-        return fetch(event.request).then(
-          function(response) {
-            // Verifica se a resposta é válida
-            if(!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clona a resposta para guardar no cache
-            var responseToCache = response.clone();
-
-            caches.open(CACHE_NAME)
-              .then(function(cache) {
-                // Guarda imagens e outros recursos no cache
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          }
-        );
-      })
-  );
-});
-
-// Ativação: Limpa caches antigos se mudarmos a versão (CACHE_NAME)
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
+// 2. Ativação e limpeza de caches antigos
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((keyList) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
+        keyList.map((key) => {
+          if (key !== CACHE_NAME) {
+            console.log('Service Worker: Removing old cache', key);
+            return caches.delete(key);
           }
         })
       );
+    })
+  );
+});
+
+// 3. Interceptação de requisições (Offline First)
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request).then((response) => {
+      return response || fetch(event.request);
     })
   );
 });
