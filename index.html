@@ -30,6 +30,7 @@
     }
     </script>
 
+    <!-- OTIMIZAÇÃO JS: Combinado tags redundantes se possível, mas mantendo separadas por segurança dos IDs diferentes -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -37,6 +38,7 @@
       gtag('js', new Date());
       gtag('config', 'G-9XS8B8Z8BV');
     </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
@@ -48,7 +50,9 @@
     <meta name="author" content="Dona Antônia Cestas e Alimentos">
     <meta name="theme-color" content="#0F2546"> 
     
-    <!-- OTIMIZAÇÃO: Carregamento assíncrono do CSS para não bloquear a renderização -->
+    <!-- OTIMIZAÇÃO CSS: Carregamento assíncrono mantido. 
+         Para reduzir CSS não usado, seria ideal criar um arquivo .css apenas com os ícones usados, 
+         mas manteremos o CDN pela simplicidade da manutenção. -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
@@ -59,19 +63,19 @@
         :root {
             /* --- PALETA DE CORES DA LOGO --- */
             --cor-primaria: #0F2546; /* Azul Marinho Profundo */
-            --cor-destaque-vermelho: #D92328; /* Vermelho do Coração */
+            --cor-destaque-vermelho: #D32F2F; /* CORRIGIDO: Vermelho mais escuro para contraste */
             --cor-destaque-dourado: #FFC107; /* Dourado */
             
-            /* Cores Funcionais */
-            --cor-whatsapp: #25D366;
+            /* Cores Funcionais - CORRIGIDAS PARA ACESSIBILIDADE */
+            --cor-whatsapp: #128C7E; /* Verde oficial WhatsApp (mais escuro para passar contraste com branco) */
             --cor-telegram: #0088cc;
             --cor-facebook: #1877F2; 
-            --cor-info: #1E88E5; 
+            --cor-info: #1565C0; /* Azul mais escuro */
             --cor-texto: #333; 
             --cor-fundo: #fafafa;
-            --cor-pagamento: #2196F3; 
-            --cor-sorteio: #4CAF50; 
-            --cor-entrega: #FF9800;
+            --cor-pagamento: #0277BD; /* Azul ajustado */
+            --cor-sorteio: #2E7D32; /* Verde ajustado */
+            --cor-entrega: #EF6C00; /* Laranja mais escuro para contraste em fundo branco */
             --cor-header-fundo: #f5f5f5;
             --altura-header: 80px; 
             --largura-logo: 100px; 
@@ -100,6 +104,7 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        /* OTIMIZAÇÃO LCP: Assegurar que o conteúdo principal seja renderizado de forma otimizada */
         .main-content-wrapper {
             max-width: 480px; 
             margin: 0 auto; 
@@ -111,22 +116,22 @@
         /* === MINI BANNER ROTATIVO === */
         .mini-banner {
             position: fixed;
-            top: var(--altura-header); /* Começa logo após o header */
+            top: var(--altura-header); 
             left: 50%;
             transform: translateX(-50%);
             width: 100%;
             max-width: 480px;
-            height: 35px; /* Altura fixa */
-            background-color: #FFF9C4; /* Amarelo clarinho */
+            height: 35px; 
+            background-color: #FFF9C4; 
             color: #5d4037;
             font-size: 0.85rem;
             font-weight: 600;
             padding: 0 15px;
             display: flex;
             align-items: center;
-            justify-content: flex-end; /* Alinha à direita */
+            justify-content: flex-end; 
             text-align: right;
-            z-index: 998; /* Abaixo do header, acima do conteúdo */
+            z-index: 998; 
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             border-bottom: 1px solid #FFF59D;
             overflow: hidden;
@@ -145,12 +150,11 @@
             font-weight: bold;
         }
         
-        /* Ajuste para telas maiores */
         @media (min-width: 481px) {
             .mini-banner { max-width: 1100px; }
         }
 
-        /* === MENU DE ANCORAS (OCULTO - AJUSTE DO USUÁRIO) === */
+        /* === MENU DE ANCORAS === */
         .menu-ancoras-cestas {
             display: none !important;
         }
@@ -312,7 +316,7 @@
             .linha-destaque-top { font-size: 0.75rem; }
         }
 
-        /* --- BARRA DE CONFIANÇA (OTIMIZADA - SEM ANIMAÇÃO DE ENTRADA) --- */
+        /* --- BARRA DE CONFIANÇA --- */
         .trust-bar {
             display: flex;
             justify-content: space-between;
@@ -494,7 +498,7 @@
         .area-resultado-busca {
             background-color: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 8px; padding: 12px; margin-top: 15px; text-align: center;
         }
-        .area-resultado-busca h2 { color: #388e3c; font-size: 1.1rem; } 
+        .area-resultado-busca h2 { color: #2E7D32; font-size: 1.1rem; } 
         
         input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 10px; font-size: 0.95rem; }
 
@@ -599,7 +603,7 @@
         }
         .brinde-label {
             font-size: 0.75rem;
-            color: #1976D2;
+            color: #1565C0;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -738,7 +742,7 @@
         
         .btn-app-link {
             background: none; border: none; 
-            color: #1976D2; font-weight: bold; font-size: 0.85rem; 
+            color: #1565C0; font-weight: bold; font-size: 0.85rem; 
             margin-top: 10px; cursor: pointer; text-decoration: underline;
         }
 
@@ -838,7 +842,7 @@
         <span id="mini-banner-text" class="mini-banner-content">🚚 Entregamos em Cuiabá e VG</span>
     </div>
 
-    <!-- ADICIONADO: width e height para melhorar CLS -->
+    <!-- OTIMIZAÇÃO: width e height explícitos para evitar Layout Shift (CLS) -->
     <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="100" height="100" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
     <header>
@@ -851,7 +855,8 @@
         </div>
     </header>
 
-    <div class="main-content-wrapper">
+    <!-- OTIMIZAÇÃO SEMÂNTICA: 'main' é um landmark importante para acessibilidade -->
+    <main class="main-content-wrapper">
         <div id="pag-cestas" class="secao-conteudo">
             
             <div class="trust-bar">
@@ -883,7 +888,7 @@
                 <div class="card card-cesta" id="cestaeconomica">
                     <div class="cesta-header"><h3>Cesta Econômica</h3></div>
                     <div class="cesta-body">
-                        <!-- OTIMIZAÇÃO: fetchpriority="high" para LCP (primeira imagem visível) -->
+                        <!-- OTIMIZAÇÃO: fetchpriority="high" para LCP (primeira imagem visível) e dimensões explícitas -->
                         <img src="img/cesta-basica-cuiaba-varzea-grande-economica.avif" width="400" height="320" fetchpriority="high" class="foto-cesta-unica" alt="Cesta Básica Econômica Entrega Rápida Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 85,00</strong></div>
@@ -906,7 +911,7 @@
                     <div class="cesta-header"><h3>Cesta Mini</h3></div>
                     <div class="cesta-body">
                         <!-- OTIMIZAÇÃO: loading="lazy" para imagens fora da tela inicial -->
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-mini.avif" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Mini Completa em Várzea Grande - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MINI'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-mini.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Mini Completa em Várzea Grande - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MINI'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 165,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 170,00</strong></div>
@@ -928,7 +933,7 @@
                 <div class="card card-cesta" id="cestapequena">
                     <div class="cesta-header"><h3>Cesta Pequena</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.avif" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Pequena com Entrega Grátis no CPA e Coxipó" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Pequena com Entrega Grátis no CPA e Coxipó" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 215,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 220,00</strong></div>
@@ -950,7 +955,7 @@
                 <div class="card card-cesta" id="cestamedia">
                     <div class="cesta-header"><h3>Cesta Média</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-media.avif" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Média em Oferta Cuiabá e VG - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-media.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Média em Oferta Cuiabá e VG - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 320,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 325,00</strong></div>
@@ -972,7 +977,7 @@
                 <div class="card card-cesta" id="cestagrande">
                     <div class="cesta-header"><h3>Cesta Grande</h3></div>
                     <div class="cesta-body">
-                        <img src="img/cesta-basica-cuiaba-varzea-grande-grande.avif" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Grande Família Completa Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
+                        <img src="img/cesta-basica-cuiaba-varzea-grande-grande.jpg" width="400" height="320" loading="lazy" class="foto-cesta-unica" alt="Cesta Básica Grande Família Completa Cuiabá - Dona Antônia" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
                         <div class="lista-precos-cesta">
                             <div class="item-preco"><span>Com Arroz Tio Alvino:</span><strong>R$ 380,00</strong></div>
                             <div class="item-preco"><span>Com Arroz Koblenz:</span><strong>R$ 390,00</strong></div>
@@ -1071,7 +1076,8 @@
                         <li><span class="emoji-icon">🥗</span> Alelo, Sodexo, Pluxee (Alimentação e Refeição)</li>
                         <li><span class="emoji-icon">📱</span> Ifood, Caju e Flash</li>
                     </ul>
-                    <p style="color: red; font-size: 1rem; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
+                    <!-- OTIMIZAÇÃO: Cor vermelha ajustada para #D32F2F (mais legível em fundo branco) -->
+                    <p style="color: #D32F2F; font-size: 1rem; text-align: center; margin-top: 20px;"><strong>⚠️ Atenção:</strong> Não vendemos a prazo.</p>
                 </div>
             </div>
 
@@ -1080,7 +1086,7 @@
                     <img src="img/entrega.png" width="60" height="60" loading="lazy" alt="Entrega de Cesta Básica" onerror="this.onerror=null;this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
                 </div>
                 <div class="card">
-                    <h2 style="color: #F57C00;">🚚 Entrega Grátis</h2>
+                    <h2 style="color: var(--cor-entrega);">🚚 Entrega Grátis</h2>
                     <div id="conteudo-entrega-original">
                         <p style="font-size: 0.95rem;">Entregamos em <strong>Cuiabá</strong> e <strong>Várzea Grande</strong> (área urbana).</p>
                         <hr style="border:0; border-top:1px dashed #eee; margin: 15px 0;">
@@ -1099,7 +1105,7 @@
             <p><strong>Cesta Básica Dona Antônia</strong> - A melhor opção em alimentos para sua família.</p>
             <p>Atendemos toda a região de <strong>Cuiabá - MT</strong> e <strong>Várzea Grande - MT</strong>. Distribuidora de Alimentos, Sacolão e Atacado.</p>
         </footer>
-    </div>
+    </main> <!-- Fechamento da tag main -->
 
     <nav class="bottom-nav">
         <a href="#pag-cestas" class="nav-item">
