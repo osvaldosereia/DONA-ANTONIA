@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- OTIMIZAÇÃO: Preconnect para performance -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <!-- OTIMIZAÇÃO: Preconnect e DNS-Prefetch para performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://maps.google.com">
     
     <!-- PWA -->
@@ -13,150 +18,6 @@
     <meta name="apple-mobile-web-app-title" content="Dona Antônia">
     <link rel="apple-touch-icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-979692776"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'AW-979692776');
-    </script>
-    
-    <!-- Event snippet for Website lead conversion page -->
-    <script>
-    function gtag_report_conversion(url) {
-      var callback = function () {
-        if (typeof(url) != 'undefined') {
-          window.location = url;
-        }
-      };
-      gtag('event', 'conversion', {
-          'send_to': 'AW-979692776/OzcWCNb7tIACEOjZk9MD',
-          'event_callback': callback
-      });
-      return false;
-    }
-    </script>
-
-    <!-- OTIMIZAÇÃO JS -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-9XS8B8Z8BV');
-    </script>
-
-    <!-- OTIMIZAÇÃO SEO LOCAL "NUCLEAR": Dados Estruturados (Schema.org) -->
-    <!-- Isso diz ao Google EXATAMENTE quem você é, onde está e o que vende -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "GroceryStore",
-      "name": "Super Cestas Básicas Dona Antônia",
-      "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
-      "description": "Distribuidora de Cestas Básicas e Sacolão com entrega grátis em Cuiabá e Várzea Grande. O melhor preço em atacado e varejo de alimentos no Jardim Nossa Sra. Aparecida.",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "R. Trinta, 105 - Jardim Nossa Sra. Aparecida",
-        "addressLocality": "Cuiabá",
-        "addressRegion": "MT",
-        "postalCode": "78090-660",
-        "addressCountry": "BR"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": -15.6014,
-        "longitude": -56.0979
-      },
-      "url": "https://donaantonia.com.br/",
-      "telephone": "+5565996813588",
-      "priceRange": "$$",
-      "openingHoursSpecification": [
-        {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-          "opens": "09:00",
-          "closes": "18:00"
-        }
-      ],
-      "areaServed": [
-        "Cuiabá", 
-        "Várzea Grande", 
-        "Jardim Nossa Sra. Aparecida", 
-        "Coxipó", 
-        "CPA", 
-        "Cristo Rei"
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "reviewCount": "23",
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Catálogo de Cestas Básicas",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Econômica",
-              "description": "Perfeita para doação. Itens essenciais."
-            },
-            "price": "85.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Mini",
-              "description": "Cesta compacta com itens de limpeza."
-            },
-            "price": "170.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Pequena",
-              "description": "Ideal para casais ou pequenas famílias."
-            },
-            "price": "220.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Média",
-              "description": "Completa para o mês."
-            },
-            "price": "325.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Grande",
-              "description": "A maior e mais completa da região."
-            },
-            "price": "390.00",
-            "priceCurrency": "BRL"
-          }
-        ]
-      }
-    }
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    
     <!-- TÍTULO HÍBRIDO OTIMIZADO -->
     <title>Super Cestas Básicas Dona Antônia | Cuiabá e VG | Entrega Grátis</title>
     
@@ -174,6 +35,8 @@
     <meta name="author" content="Super Cestas Básicas Dona Antônia">
     <meta name="theme-color" content="#0F2546"> 
     
+    <!-- OTIMIZAÇÃO: CSS Crítico Inline e FontAwesome Assíncrono -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
@@ -321,6 +184,7 @@
             max-width: 480px; 
             z-index: 1000;
             transition: max-width 0.3s ease;
+            contain: layout size; /* Otimização CSS */
         }
 
         .header-background-bar {
@@ -407,11 +271,13 @@
             height: 100%; 
             display: flex;
             flex-direction: column;
+            contain: content; /* Otimização CSS */
         }
         
+        /* AJUSTE DE PESO DE FONTE */
         .card h2 { 
             font-size: 1.2rem; 
-            font-weight: 700;
+            font-weight: 600; /* Reduzido de 700 */
             letter-spacing: -0.3px;
             margin-bottom: 10px;
         }
@@ -428,6 +294,7 @@
             overflow: hidden;
             min-height: 130px;
             transition: box-shadow 0.2s;
+            contain: content; /* Otimização CSS */
         }
 
         .cesta-img-container {
@@ -474,7 +341,7 @@
             font-size: 1.15rem; 
             margin: 0;
             color: var(--cor-primaria);
-            font-weight: 700; 
+            font-weight: 600; /* Reduzido de 700 */
             line-height: 1.2;
         }
 
@@ -489,7 +356,7 @@
         
         .cesta-price-highlight {
             color: var(--cor-destaque-vermelho);
-            font-weight: 800;
+            font-weight: 700; /* Reduzido de 800 */
             font-size: 1.1rem;
         }
 
@@ -507,7 +374,7 @@
             border-radius: 6px;
             padding: 10px;
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 600; /* Reduzido de 700 */
             cursor: pointer;
             text-transform: uppercase;
             display: flex;
@@ -758,22 +625,55 @@
         }
         
         @media (min-width: 1024px) {
-            .main-content-wrapper, header, .header-background-bar { max-width: 1200px; } 
+            /* AJUSTE DE ALINHAMENTO GERAL */
+            .main-content-wrapper, header, .header-background-bar, .header-top { 
+                max-width: 1200px; 
+            } 
+            
             body { padding-bottom: 20px; } 
             .logo-pequ { display: none !important; }
-            .header-top { max-width: 1200px; margin: 0 auto; justify-content: space-between; padding: 5px 30px; }
+            
+            /* Ajuste de Padding do Header para alinhar com conteudo */
+            .header-top { 
+                margin: 0 auto; 
+                justify-content: space-between; 
+                padding: 5px 20px; /* Igual ao padding lateral do main */
+            }
+            
             .desktop-only { display: flex !important; }
             .desktop-logo-wrapper { position: relative; width: 60px; }
             .big-logo-desktop { width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 4px solid white; position: absolute; top: -25px; left: 0; z-index: 3000; transition: transform 0.3s ease; }
             .big-logo-desktop:hover { transform: scale(1.05); }
+            
             .desktop-nav { display: flex; gap: 30px; align-items: center; height: 100%; margin-left: 120px; }
             .desktop-nav a { text-decoration: none; color: var(--cor-primaria); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 0; position: relative; transition: color 0.3s; }
             .desktop-nav a:hover { color: var(--cor-destaque-vermelho); }
+            
             .btn-contato-principal { margin-left: 0; width: auto; }
-            .main-content-wrapper { display: grid; grid-template-columns: 320px 1fr; gap: 30px; padding: 30px 40px; background-color: transparent; box-shadow: none; align-items: start; }
+            
+            /* GRID PRINCIPAL: Coluna esquerda mais estreita (250px) */
+            .main-content-wrapper { 
+                display: grid; 
+                grid-template-columns: 250px 1fr; /* Sidebar estreita, Cards largos */
+                gap: 30px; 
+                padding: 30px 20px; /* Alinhado com header */
+                background-color: transparent; 
+                box-shadow: none; 
+                align-items: start; 
+            }
+            
             .seo-text-block { grid-column: 1 / -1; margin-top: 40px; background: white; border-radius: 12px; padding: 30px; }
             #pag-cestas { grid-column: 2; grid-row: 1; background: transparent; }
-            .cesta-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr) !important; gap: 20px; max-width: 900px; margin: 0 auto; }
+            
+            /* CARDS: 1 Coluna para ficarem bem largos e alinhados */
+            .cesta-cards-grid { 
+                display: grid; 
+                grid-template-columns: 1fr !important; /* Força 1 coluna larga */
+                gap: 20px; 
+                max-width: 100%; 
+                margin: 0 auto; 
+            }
+            
             .menu-ancoras-cestas { display: none !important; }
             .secoes-extras-grid { grid-column: 1; grid-row: 1; display: flex !important; flex-direction: column; gap: 20px; padding: 0; }
             .secoes-extras-grid .secao-conteudo { padding: 0; margin-bottom: 0; }
@@ -808,6 +708,113 @@
             color: var(--cor-primaria);
         }
     </style>
+
+    <!-- OTIMIZAÇÃO SEO LOCAL "NUCLEAR": Dados Estruturados (Schema.org) -->
+    <!-- Isso diz ao Google EXATAMENTE quem você é, onde está e o que vende -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "GroceryStore",
+      "name": "Super Cestas Básicas Dona Antônia",
+      "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
+      "description": "Distribuidora de Cestas Básicas e Sacolão com entrega grátis em Cuiabá e Várzea Grande. O melhor preço em atacado e varejo de alimentos no Jardim Nossa Sra. Aparecida.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "R. Trinta, 105 - Jardim Nossa Sra. Aparecida",
+        "addressLocality": "Cuiabá",
+        "addressRegion": "MT",
+        "postalCode": "78090-660",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -15.6014,
+        "longitude": -56.0979
+      },
+      "url": "https://donaantonia.com.br/",
+      "telephone": "+5565996813588",
+      "priceRange": "$$",
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "18:00"
+        }
+      ],
+      "areaServed": [
+        "Cuiabá", 
+        "Várzea Grande", 
+        "Jardim Nossa Sra. Aparecida", 
+        "Coxipó", 
+        "CPA", 
+        "Cristo Rei"
+      ],
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "23",
+        "bestRating": "5",
+        "worstRating": "1"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Catálogo de Cestas Básicas",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Básica Econômica",
+              "description": "Perfeita para doação. Itens essenciais."
+            },
+            "price": "85.00",
+            "priceCurrency": "BRL"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Mini",
+              "description": "Cesta compacta com itens de limpeza."
+            },
+            "price": "170.00",
+            "priceCurrency": "BRL"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Básica Pequena",
+              "description": "Ideal para casais ou pequenas famílias."
+            },
+            "price": "220.00",
+            "priceCurrency": "BRL"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Básica Média",
+              "description": "Completa para o mês."
+            },
+            "price": "325.00",
+            "priceCurrency": "BRL"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Básica Grande",
+              "description": "A maior e mais completa da região."
+            },
+            "price": "390.00",
+            "priceCurrency": "BRL"
+          }
+        ]
+      }
+    }
+    </script>
 </head>
 <body>
     
@@ -815,12 +822,13 @@
 
     <div class="header-background-bar"></div>
 
-    <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="100" height="100" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
+    <!-- OTIMIZAÇÃO: LCP Priorizado + CLS Fix -->
+    <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="100" height="100" fetchpriority="high" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
     <header>
         <div class="header-top">
             <div class="desktop-only desktop-logo-wrapper">
-                <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="big-logo-desktop" alt="Logo Dona Antônia Grande" onerror="this.src='https://placehold.co/120x120?text=LOGO'">
+                <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="big-logo-desktop" width="120" height="120" alt="Logo Dona Antônia Grande" onerror="this.src='https://placehold.co/120x120?text=LOGO'">
             </div>
 
             <nav class="desktop-nav desktop-only">
@@ -859,10 +867,10 @@
                 </div>
 
                 <div class="cesta-cards-grid">
-                    <!-- Cards -->
+                    <!-- Cards OTIMIZAÇÃO: Dimensões explicitas nas imagens para evitar CLS -->
                     <div class="card-cesta-horizontal" id="cestaeconomica">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-economica.avif', 'Cesta Econômica')">
-                            <img src="img/cesta-basica-cuiaba-varzea-grande-economica.avif" alt="Cesta Básica Econômica" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
+                            <img src="img/cesta-basica-cuiaba-varzea-grande-economica.avif" width="400" height="400" alt="Cesta Básica Econômica" onerror="this.src='https://placehold.co/400x400?text=ECONÔMICA'">
                             <div class="zoom-overlay-icon"><i class="fas fa-search-plus"></i></div>
                         </div>
                         <div class="cesta-info-container">
@@ -887,7 +895,7 @@
 
                     <div class="card-cesta-horizontal" id="cestamini">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-mini.avif', 'Cesta Mini')">
-                            <img src="img/cesta-basica-cuiaba-varzea-grande-mini.avif" loading="lazy" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
+                            <img src="img/cesta-basica-cuiaba-varzea-grande-mini.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
                             <div class="zoom-overlay-icon"><i class="fas fa-search-plus"></i></div>
                         </div>
                         <div class="cesta-info-container">
@@ -911,7 +919,7 @@
 
                     <div class="card-cesta-horizontal" id="cestapequena">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-pequena.avif', 'Cesta Pequena')">
-                            <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.avif" loading="lazy" alt="Cesta Básica Pequena" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
+                            <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Pequena" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
                             <div class="zoom-overlay-icon"><i class="fas fa-search-plus"></i></div>
                         </div>
                         <div class="cesta-info-container">
@@ -935,7 +943,7 @@
 
                     <div class="card-cesta-horizontal" id="cestamedia">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-media.avif', 'Cesta Média')">
-                            <img src="img/cesta-basica-cuiaba-varzea-grande-media.avif" loading="lazy" alt="Cesta Básica Média" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
+                            <img src="img/cesta-basica-cuiaba-varzea-grande-media.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Média" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
                             <div class="zoom-overlay-icon"><i class="fas fa-search-plus"></i></div>
                         </div>
                         <div class="cesta-info-container">
@@ -959,7 +967,7 @@
 
                     <div class="card-cesta-horizontal" id="cestagrande">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-grande.avif', 'Cesta Grande')">
-                            <img src="img/cesta-basica-cuiaba-varzea-grande-grande.avif" loading="lazy" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
+                            <img src="img/cesta-basica-cuiaba-varzea-grande-grande.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
                             <div class="zoom-overlay-icon"><i class="fas fa-search-plus"></i></div>
                         </div>
                         <div class="cesta-info-container">
@@ -989,7 +997,7 @@
             <div id="pag-pagamento" class="secao-conteudo">
                 <div class="card">
                     <div class="section-icon-header">
-                        <img src="img/pagamento.png" alt="Pagamento" onerror="this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
+                        <img src="img/pagamento.png" width="60" height="60" alt="Pagamento" onerror="this.src='https://placehold.co/60x60/2196F3/ffffff?text=P'">
                     </div>
                     <h2 style="text-align: center;">Formas de Pagamento</h2>
                     <ul class="lista-pagamento">
@@ -1006,7 +1014,7 @@
             <div id="pag-entrega" class="secao-conteudo">
                 <div class="card">
                     <div class="section-icon-header">
-                        <img src="img/entrega.png" alt="Entrega" onerror="this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
+                        <img src="img/entrega.png" width="60" height="60" alt="Entrega" onerror="this.src='https://placehold.co/60x60/FF9800/ffffff?text=E'">
                     </div>
                     <h2 style="text-align: center; color: var(--cor-entrega);">Entrega Grátis</h2>
                     <div style="text-align: center;">
@@ -1082,8 +1090,8 @@
             <div style="padding: 25px 20px;">
                 <div style="text-align: center; margin-bottom: 15px;">
                     <img src="img/cesta.png" width="60" height="60" loading="lazy" alt="Sorteio" onerror="this.onerror=null;this.src='https://placehold.co/60x60/4CAF50/ffffff?text=S'">
-                    <h3 style="margin: 10px 0 5px; font-size: 1.4rem; color: var(--cor-primaria); font-weight: 700;">Sorteio 20 Cestas</h3>
-                    <p style="font-size: 0.9rem; color: #666; margin: 0;">Dia 22 de Dezembro!</p>
+                    <h3 style="margin: 10px 0 5px; font-size: 1.4rem; color: var(--cor-primaria); font-weight: 700;">Sorteio 20 Cestas Econômicas</h3>
+                    <p style="font-size: 0.9rem; color: #666; margin: 0;">Dia 22 de Dezembro as 20h ao vivo no Instagram</p>
                 </div>
                 
                 <div id="area-busca-telefone-modal" style="background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee;">
@@ -1091,7 +1099,7 @@
                     <input type="tel" id="busca-telefone-modal" placeholder="(65) 99999-9999" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 12px; font-size: 1rem;" required>
                     <!-- BOTÃO COM CONTRASTE CORRIGIDO: TEXTO BRANCO -->
                     <button onclick="buscarCadastro('-modal')" style="background-color: var(--cor-primaria); color: white !important; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
-                        <i class="fas fa-search" style="margin-right: 8px;"></i> Por Nome na Lista
+                        <i class="fas fa-search" style="margin-right: 8px;"></i> Verificar Cadastro
                     </button>
                 </div>
 
@@ -1163,6 +1171,49 @@
     
     <!-- Scripts -->
     <script>
+        // OTIMIZAÇÃO JS: Carregamento deferido de Analytics
+        function carregarAnalytics() {
+            if (window.analyticsCarregado) return;
+            window.analyticsCarregado = true;
+            console.log('Carregando Analytics...');
+
+            // Gtag Global
+            const s1 = document.createElement('script');
+            s1.src = 'https://www.googletagmanager.com/gtag/js?id=AW-979692776';
+            s1.async = true;
+            document.head.appendChild(s1);
+
+            // G-tag 2
+            const s2 = document.createElement('script');
+            s2.src = 'https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV';
+            s2.async = true;
+            document.head.appendChild(s2);
+        }
+
+        // Delay para carregar scripts pesados (3.5s ou interação)
+        setTimeout(carregarAnalytics, 3500);
+        ['click', 'scroll', 'mousemove', 'touchstart'].forEach(evt => 
+            window.addEventListener(evt, carregarAnalytics, {once: true, passive: true})
+        );
+
+        // Stub para garantir que funções chamadas antes do script não quebrem
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'AW-979692776');
+        gtag('config', 'G-9XS8B8Z8BV');
+
+        function gtag_report_conversion(url) {
+            var callback = function () {
+                if (typeof(url) != 'undefined') { window.location = url; }
+            };
+            gtag('event', 'conversion', {
+                'send_to': 'AW-979692776/OzcWCNb7tIACEOjZk9MD',
+                'event_callback': callback
+            });
+            return false;
+        }
+
         // Dados de teste iniciais (agora incluem a cliente que pediu)
         var clientes = [
             { nome: "Cliente Teste", telefone: "65999991234", cidade: "Cuiabá", bairro: "Centro" },
@@ -1218,7 +1269,7 @@
             el.innerHTML = ''; brinde.innerHTML = '';
             
             if (['mini','pequena','media','grande'].includes(tipo)) {
-                brinde.innerHTML = `<div class="brinde-container"><img src="img/amaciante.png" class="brinde-img" onerror="this.style.display='none'"><div class="brinde-text"><span class="brinde-label">🎁 BRINDE</span><span class="brinde-desc">Amaciante Ypê 2L</span></div></div>`;
+                brinde.innerHTML = `<div class="brinde-container"><img src="img/amaciante.png" class="brinde-img" width="50" height="50" onerror="this.style.display='none'"><div class="brinde-text"><span class="brinde-label">🎁 BRINDE</span><span class="brinde-desc">Amaciante Ypê 2L</span></div></div>`;
             }
             (listasCestas[tipo]||[]).forEach(item => {
                 const li = document.createElement('li');
