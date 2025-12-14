@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- OTIMIZAÇÃO: Preconnect para adiantar a conexão com servidores externos -->
+    <!-- OTIMIZAÇÃO: Preconnect para performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://maps.google.com">
     
-    <!-- PWA: Link para o Manifesto (ESSENCIAL PARA INSTALAÇÃO) -->
+    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- PWA: Meta tags para iOS (Apple) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dona Antônia">
@@ -48,7 +47,8 @@
       gtag('config', 'G-9XS8B8Z8BV');
     </script>
 
-    <!-- OTIMIZAÇÃO SEO LOCAL AVANÇADA: Dados Estruturados Completos -->
+    <!-- OTIMIZAÇÃO SEO LOCAL "NUCLEAR": Dados Estruturados (Schema.org) -->
+    <!-- Isso diz ao Google EXATAMENTE quem você é, onde está e o que vende -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -75,20 +75,29 @@
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
           "opens": "09:00",
           "closes": "18:00"
         }
       ],
-      "areaServed": ["Cuiabá", "Várzea Grande", "Coxipó", "CPA", "Cristo Rei", "Jardim Nossa Sra. Aparecida"],
+      "areaServed": [
+        "Cuiabá", 
+        "Várzea Grande", 
+        "Jardim Nossa Sra. Aparecida", 
+        "Coxipó", 
+        "CPA", 
+        "Cristo Rei"
+      ],
       "aggregateRating": {
         "@type": "AggregateRating",
         "ratingValue": "5.0",
-        "reviewCount": "23"
+        "reviewCount": "23",
+        "bestRating": "5",
+        "worstRating": "1"
       },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Cestas Básicas",
+        "name": "Catálogo de Cestas Básicas",
         "itemListElement": [
           {
             "@type": "Offer",
@@ -148,11 +157,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
-    <title>Super Cestas Básicas Dona Antônia | Cuiabá e Várzea Grande</title>
-    <meta name="description" content="Procurando Cesta Básica em Cuiabá? A Super Cestas Dona Antônia tem o melhor preço no Jardim Nossa Sra. Aparecida. Entrega Grátis em Cuiabá e VG. Atacado e Varejo.">
-    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta doação, jardim nossa senhora aparecida, compra de alimentos, entrega grátis mercado, cesta de natal cuiabá">
+    <!-- TÍTULO HÍBRIDO OTIMIZADO -->
+    <title>Super Cestas Básicas Dona Antônia | Cuiabá e VG | Entrega Grátis</title>
     
-    <!-- Meta Tags Geo-Localização -->
+    <!-- META DESCRIPTION COM PALAVRAS-CHAVE LOCAIS -->
+    <meta name="description" content="Procurando Cesta Básica em Cuiabá? A Super Cestas Dona Antônia no Jardim Nossa Sra. Aparecida tem o melhor preço. Clientes satisfeitos! Entrega Grátis.">
+    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta doação, jardim nossa senhora aparecida, compra de alimentos, entrega grátis mercado, cesta de natal cuiabá, atacado de alimentos">
+    
+    <!-- GEO TAGS -->
     <meta name="geo.region" content="BR-MT" />
     <meta name="geo.placename" content="Cuiabá" />
     <meta name="geo.position" content="-15.6014;-56.0979" />
@@ -166,7 +178,7 @@
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
-        /* === ESTILOS GLOBAIS E TIPOGRAFIA PROFISSIONAL === */
+        /* === ESTILOS GLOBAIS E TIPOGRAFIA === */
         * { box-sizing: border-box; }
 
         :root {
@@ -185,8 +197,6 @@
             --cor-header-fundo: #f5f5f5;
             --altura-header: 80px; 
             --largura-logo: 100px; 
-            
-            /* VARIAVEIS DE ESPAÇAMENTO PARA BOTÕES FLUTUANTES */
             --altura-floating-bar: 70px;
         }
 
@@ -194,26 +204,25 @@
             background-color: #e0e0e0; 
             scroll-behavior: smooth;
             scroll-padding-top: calc(var(--altura-header) + 40px); 
-            font-size: 15px; /* Fonte base um pouco mais legível */
+            font-size: 15px;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; /* Fonte moderna padrão do sistema */
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background-color: #e0e0e0; 
             color: var(--cor-texto);
             margin: 0; 
             padding: 0;
             padding-top: calc(var(--altura-header) + 10px); 
-            padding-bottom: 90px; /* Espaço seguro para botões flutuantes */
+            padding-bottom: 90px; 
             min-height: 10vh;
             position: relative; 
             width: 100%;
             line-height: 1.5; 
         }
 
-        /* === MELHORIAS VISUAIS GERAIS === */
         h1, h2, h3, h4, h5, h6 {
             color: var(--cor-primaria);
             margin-top: 0;
@@ -224,21 +233,21 @@
             max-width: 480px; 
             margin: 0 auto; 
             background-color: var(--cor-fundo); 
-            box-shadow: 0 0 20px rgba(0,0,0,0.05); /* Sombra mais suave */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05); 
             transition: max-width 0.3s ease; 
         }
         
         .desktop-only { display: none !important; }
 
-        /* === TITULO H1 SEO (POLIDO) === */
+        /* === TITULO H1 SEO === */
         .seo-main-title {
             text-align: center;
             padding: 20px 15px 10px 15px;
             background: #fff;
         }
         .seo-main-title h1 {
-            font-size: 1.25rem; /* Tamanho equilibrado */
-            font-weight: 700; /* Negrito padrão, não extra-pesado */
+            font-size: 1.25rem; 
+            font-weight: 700; 
             margin: 0;
             letter-spacing: -0.5px;
         }
@@ -248,6 +257,31 @@
             margin: 6px 0 0 0;
             font-weight: 400;
         }
+
+        /* === AVALIAÇÕES GOOGLE === */
+        .google-reviews-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+            background: #f9f9f9;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin: 10px auto 0;
+            border: 1px solid #eee;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .google-reviews-badge:hover {
+            background-color: #E3F2FD;
+            border-color: #BBDEFB;
+            color: #1565C0;
+        }
+        .stars { color: #FFC107; letter-spacing: -2px;}
 
         /* === MENU DE ANCORAS === */
         .menu-ancoras-cestas { display: none !important; }
@@ -365,7 +399,7 @@
         
         .card { 
             background: white; 
-            border-radius: 12px; /* Cantos um pouco mais arredondados */
+            border-radius: 12px;
             padding: 15px; 
             margin-bottom: 15px; 
             border: 1px solid #f0f0f0; 
@@ -375,7 +409,6 @@
             flex-direction: column;
         }
         
-        /* Ajuste fino nos H2 dos cards para tirar o "Pesadíssimo" */
         .card h2 { 
             font-size: 1.2rem; 
             font-weight: 700;
@@ -383,7 +416,7 @@
             margin-bottom: 10px;
         }
 
-        /* === CARD CESTA HORIZONTAL (VISUAL LIMPO) === */
+        /* === CARD CESTA HORIZONTAL === */
         .card-cesta-horizontal {
             display: flex;
             flex-direction: row;
@@ -397,7 +430,6 @@
             transition: box-shadow 0.2s;
         }
 
-        /* Lado da Imagem */
         .cesta-img-container {
             width: 110px;
             min-width: 110px;
@@ -430,7 +462,6 @@
             pointer-events: none; 
         }
 
-        /* Lado das Informações */
         .cesta-info-container {
             flex-grow: 1;
             padding: 12px;
@@ -440,12 +471,11 @@
         }
 
         .cesta-title-row h2 {
-            font-size: 1.15rem; /* Ajustado para não ser gigante */
+            font-size: 1.15rem; 
             margin: 0;
             color: var(--cor-primaria);
             font-weight: 700; 
             line-height: 1.2;
-            text-transform: none; /* Removido uppercase forçado */
         }
 
         .cesta-price-tag {
@@ -459,11 +489,10 @@
         
         .cesta-price-highlight {
             color: var(--cor-destaque-vermelho);
-            font-weight: 800; /* Aqui sim, extra bold para o preço */
+            font-weight: 800;
             font-size: 1.1rem;
         }
 
-        /* Botões */
         .cesta-actions-row {
             display: flex;
             flex-wrap: wrap; 
@@ -522,10 +551,10 @@
             flex-shrink: 0; 
         }
         
-        /* === BOTÕES FLUTUANTES INFERIORES (MODERNO) === */
+        /* === BOTÕES FLUTUANTES === */
         .floating-buttons-container {
             position: fixed;
-            bottom: 10px; /* Bem próximo da borda */
+            bottom: 10px; 
             left: 50%;
             transform: translateX(-50%);
             z-index: 5000;
@@ -538,7 +567,7 @@
         .btn-float-action {
             flex: 1;
             padding: 14px;
-            border-radius: 12px; /* Levemente quadrado, estilo app moderno */
+            border-radius: 12px; 
             border: none;
             font-weight: 700;
             text-transform: uppercase;
@@ -556,13 +585,13 @@
         .btn-float-action:active { transform: scale(0.96); }
 
         .btn-float-sorteio { 
-            background: linear-gradient(135deg, #2E7D32, #1B5E20); /* Verde Profundo */
+            background: linear-gradient(135deg, #2E7D32, #1B5E20);
         } 
         .btn-float-app { 
-            background: linear-gradient(135deg, #1565C0, #0D47A1); /* Azul Profundo */
+            background: linear-gradient(135deg, #1565C0, #0D47A1); 
         }
 
-        /* === MODAIS & LIGHTBOX === */
+        /* === MODAIS === */
         .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.65); justify-content: center; align-items: center; backdrop-filter: blur(3px);
@@ -580,7 +609,6 @@
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
-            /* ALTURA CONTROLADA: Evita encostar nos botões flutuantes */
             max-height: calc(100vh - 140px); 
             box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
             animation: zoomIn 0.2s;
@@ -603,7 +631,6 @@
             flex: 1; 
         }
         
-        /* BRINDE */
         .brinde-container {
             display: flex;
             align-items: center;
@@ -624,11 +651,9 @@
         }
         .brinde-desc { font-weight: 600; color: #333; }
 
-        /* LISTA PRODUTOS */
         .lista-produtos-modal li { padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #444; display: flex; align-items: flex-start;}
         .section-title { font-weight: 700; color: var(--cor-primaria); margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; display: block; background: #f5f5f5; padding: 6px 10px; border-radius: 6px; text-transform: uppercase;}
 
-        /* ZOOM */
         #modalZoomImagem {
             display: none; position: fixed; z-index: 9000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; flex-direction: column;
@@ -638,7 +663,6 @@
         .btn-fechar-zoom { position: absolute; top: -50px; right: 20px; color: white; font-size: 36px; background: none; border: none; cursor: pointer; }
         .zoom-caption { color: white; margin-top: 15px; font-size: 1.1rem; font-weight: 500; }
 
-        /* PAGINA PAGAMENTO & ENTREGA - VISUAL LIMPO */
         .section-icon-header { text-align: center; margin-bottom: 15px; }
         .section-icon-header img {
             width: 50px; height: 50px; object-fit: contain; background-color: var(--cor-primaria);
@@ -646,7 +670,6 @@
         }
         .lista-pagamento li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; display: flex; align-items: center; color: #555; }
 
-        /* OPÇÕES MODAL VARIACAO */
         .titulo-modal-var { margin-top: 15px; font-size: 1.3rem; font-weight: 700; color: var(--cor-primaria); }
         .subtitulo-modal-var { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
         
@@ -664,8 +687,6 @@
         }
         .btn-confirmar-pedido:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* MODAL CONTATO CORRIGIDO */
-        /* Estilos específicos para o Modal de Contato para evitar deformações */
         .btn-whatsapp-hero {
             background-color: var(--cor-whatsapp);
             color: white;
@@ -681,7 +702,7 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
             flex-direction: column;
-            text-align: center; /* Centraliza o texto */
+            text-align: center;
         }
         
         .modal-section-title {
@@ -692,7 +713,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            border-top: 1px solid #eee; /* Linha sutil acima */
+            border-top: 1px solid #eee;
             padding-top: 15px;
         }
 
@@ -718,7 +739,6 @@
             gap: 6px;
         }
         
-        /* RESPONSIVIDADE DESKTOP */
         @media (min-width: 481px) {
             .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } 
             .secao-conteudo { padding: 25px 40px; }
@@ -763,8 +783,30 @@
             .sidebar-menu-list a:hover { color: var(--cor-primaria); padding-left: 15px; background-color: #f9f9f9; }
         }
         
-        /* TOAST */
         .toast-message { background-color: #333; color: white; padding: 12px 20px; border-radius: 8px; font-weight: 600; }
+        
+        /* FOOTER OTIMIZADO */
+        .footer-map-container {
+            width: 100%;
+            height: 250px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+            border: 1px solid #eee;
+        }
+        .footer-links-seo {
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+        .footer-links-seo a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+        .footer-links-seo a:hover {
+            text-decoration: underline;
+            color: var(--cor-primaria);
+        }
     </style>
 </head>
 <body>
@@ -801,6 +843,10 @@
             <div class="seo-main-title">
                 <h1>Super Cestas Básicas Dona Antônia</h1>
                 <p>O Melhor Preço em Cuiabá e Várzea Grande. Entrega Grátis.</p>
+                <a href="https://www.google.com/search?q=Super+Cestas+Básicas+Dona+Antônia+avaliações" target="_blank" class="google-reviews-badge">
+                    <span class="stars">★★★★★</span> 
+                    <strong>5.0</strong> (23 avaliações no Google)
+                </a>
             </div>
 
             <div class="secao-conteudo">
@@ -939,20 +985,6 @@
         </div>
         
         <div class="secoes-extras-grid">
-            <!-- SIDEBAR DESKTOP -->
-            <div class="card desktop-only" id="menu-lateral-produtos">
-                <h3 style="color:var(--cor-primaria); margin-top:0; font-size:1.1rem; border-bottom:1px solid #eee; padding-bottom:8px;">
-                    <i class="fas fa-shopping-basket"></i> Nossas Cestas
-                </h3>
-                <ul class="sidebar-menu-list">
-                    <li><a href="#cestaeconomica">Cesta Econômica</a></li>
-                    <li><a href="#cestamini">Cesta Mini</a></li>
-                    <li><a href="#cestapequena">Cesta Pequena</a></li>
-                    <li><a href="#cestamedia">Cesta Média</a></li>
-                    <li><a href="#cestagrande">Cesta Grande</a></li>
-                </ul>
-            </div>
-
             <!-- BLOCOS DE INFO -->
             <div id="pag-pagamento" class="secao-conteudo">
                 <div class="card">
@@ -992,6 +1024,12 @@
             <p><strong>Super Cestas Básicas Dona Antônia</strong></p>
             <p style="margin-top: 5px;">R. Trinta, 105 - Jardim Nossa Sra. Aparecida, Cuiabá - MT, 78090-660</p>
             <p style="margin-top: 5px;">Cuiabá - MT &bull; Várzea Grande - MT</p>
+            
+            <div class="footer-links-seo">
+                <a href="#cestas-basicas-cuiaba">Cestas Básicas em Cuiabá</a> | 
+                <a href="#cestas-basicas-varzea-grande">Cestas em Várzea Grande</a> | 
+                <a href="#doacao-cesta-basica">Cestas para Doação</a>
+            </div>
         </footer>
     </main>
 
