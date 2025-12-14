@@ -1040,7 +1040,7 @@
         </button>
         <!-- BOTÃO APP (APARECE NO NAVEGADOR) -->
         <button id="btnInstallApp" onclick="instalarPWA()" class="btn-float-action btn-float-app">
-            <i class="fas fa-download"></i> Baixar Aplicativo
+            <i class="fas fa-download"></i> Baixar Aplicativo para Comprar com Brinde
         </button>
     </div>
 
@@ -1243,6 +1243,13 @@
             ]
         };
 
+        // --- FUNÇÃO AUXILIAR: VERIFICA APP ---
+        function isAppInstalled() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+            const isInstalledStorage = localStorage.getItem('appInstalled') === 'true';
+            return isStandalone || isInstalledStorage;
+        }
+
         // --- FUNÇÕES DE INTERAÇÃO ---
         function compartilharCesta(nome, preco) {
             window.open(`https://wa.me/?text=${encodeURIComponent(`Olha essa ${nome} por R$ ${preco} na Dona Antônia: https://donaantonia.com.br/`)}`, '_blank');
@@ -1261,9 +1268,11 @@
             const brinde = document.getElementById('brindeArea');
             el.innerHTML = ''; brinde.innerHTML = '';
             
-            if (['mini','pequena','media','grande'].includes(tipo)) {
-                brinde.innerHTML = `<div class="brinde-container"><img src="img/amaciante.png" class="brinde-img" onerror="this.style.display='none'"><div class="brinde-text"><span class="brinde-label">🎁 BRINDE</span><span class="brinde-desc">Amaciante Ypê 2L</span></div></div>`;
+            // Só mostra o brinde se for uma cesta elegível E o usuário tiver o App
+            if (['mini','pequena','media','grande'].includes(tipo) && isAppInstalled()) {
+                brinde.innerHTML = `<div class="brinde-container"><img src="img/amaciante.png" class="brinde-img" onerror="this.style.display='none'"><div class="brinde-text"><span class="brinde-label">🎁 BRINDE EXCLUSIVO APP</span><span class="brinde-desc">Amaciante Ypê 2L</span></div></div>`;
             }
+            
             (listasCestas[tipo]||[]).forEach(item => {
                 const li = document.createElement('li');
                 if(item.includes('section-title')) { li.innerHTML = item; li.style.border='none'; li.style.paddingTop='15px'; }
@@ -1273,8 +1282,12 @@
             document.getElementById('modalInformacoes').style.display = 'flex';
         }
         
-        function encomendarDireto(prod, preco, brinde) {
-            const txt = `Olá, quero encomendar a *${prod}* (R$ ${preco})${brinde ? '. Com brinde.' : '.'}`;
+        function encomendarDireto(prod, preco, cestaElegivel) {
+            // Verifica se tem app para dar o brinde
+            const ganhaBrinde = cestaElegivel && isAppInstalled();
+            const textoBrinde = ganhaBrinde ? '. Com brinde de Amaciante Ypê 2L.' : '.';
+            
+            const txt = `Olá, quero encomendar a *${prod}* (R$ ${preco})${textoBrinde}`;
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(txt)}`, '_blank');
         }
         
@@ -1298,7 +1311,12 @@
         function confirmarAcao() {
             const marca = dadosCestaAtual.tipo === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
             const preco = dadosCestaAtual.tipo === 'alvino' ? dadosCestaAtual.pA : dadosCestaAtual.pK;
-            const txt = `Olá, quero a *${dadosCestaAtual.nome}* com *${marca}* (R$ ${preco}). Com brinde.`;
+            
+            // Verifica se tem app para dar o brinde (Cestas variaveis são elegíveis)
+            const ganhaBrinde = isAppInstalled();
+            const textoBrinde = ganhaBrinde ? '. Com brinde de Amaciante Ypê 2L.' : '.';
+
+            const txt = `Olá, quero a *${dadosCestaAtual.nome}* com *${marca}* (R$ ${preco})${textoBrinde}`;
             window.open(`https://wa.me/${TELEFONE}?text=${encodeURIComponent(txt)}`, '_blank');
             fecharModalVariacao();
         }
@@ -1415,15 +1433,13 @@
 
             // VERIFICAÇÃO DE ESTADO PWA
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-            
-            // AGORA VERIFICA SE JÁ FOI INSTALADO PELO LOCALSTORAGE TAMBÉM
+            const isInstalledStorage = localStorage.getItem('appInstalled') === 'true';
+
             // Se estiver em standalone OU já tiver sido instalado antes -> Mostra Sorteio
-            /* LÓGICA REVERTIDA PARA MOSTRAR OS DOIS BOTÕES, EXCETO NO APP ONDE O BOTÃO DE APP SOME */
-             if (isStandalone) {
+            if (isStandalone || isInstalledStorage) {
                 document.getElementById('btnInstallApp').style.setProperty('display', 'none', 'important');
+                document.getElementById('btnSorteio').style.setProperty('display', 'flex', 'important');
             }
-            // Sorteio sempre visível
-            document.getElementById('btnSorteio').style.setProperty('display', 'flex', 'important');
         });
 
         // Evento que dispara se a app NÃO estiver instalada (ou se o navegador permitir instalar)
@@ -1432,10 +1448,11 @@
             deferredPrompt = e;
             
             // Se este evento disparou, significa que o navegador acha que NÃO está instalado.
-            // Mas o usuário pediu para manter os botões visíveis.
-            // Apenas garantimos que o botão de instalar está visível.
+            // Por segurança, removemos a flag de localStorage e mostramos o botão de instalar.
+            localStorage.removeItem('appInstalled');
             
             document.getElementById('btnInstallApp').style.setProperty('display', 'flex', 'important');
+            document.getElementById('btnSorteio').style.setProperty('display', 'none', 'important');
         });
         
         async function instalarPWA() {
@@ -1470,9 +1487,15 @@
             console.log('PWA foi instalado com sucesso');
             deferredPrompt = null;
             
-            // 1. Esconde botão de instalar (pois agora está instalado)
-            // A pessoa ainda está no navegador, mas já instalou.
+            // Salva na memória persistente
+            localStorage.setItem('appInstalled', 'true');
+            
+            // 1. Esconde botão de instalar
             document.getElementById('btnInstallApp').style.setProperty('display', 'none', 'important');
+            
+            // 2. Mostra botão de sorteio
+            const btnSorteio = document.getElementById('btnSorteio');
+            btnSorteio.style.setProperty('display', 'flex', 'important');
             
             // 3. Feedback visual
             mostrarMensagemToast("🎉 App Instalado! Você já pode participar.", "success");
