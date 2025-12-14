@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <!-- OTIMIZAÇÃO: Preconnect para adiantar a conexão com servidores externos -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
-    <!-- PWA: Link para o Manifesto (ESSENCIAL PARA INSTALAÇÃO) -->
+    <!-- =========================================
+         SEO & METADADOS
+    ========================================== -->
+    <title>Cesta Básica e Sacolão em Cuiabá e VG | Dona Antônia | Entrega Grátis</title>
+    <meta name="description" content="Sacolão e Cesta Básica em Cuiabá e Várzea Grande é na Dona Antônia. Arroz, óleo, feijão e limpeza com entrega grátis. Atacado e varejo de alimentos. Peça no Zap!">
+    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta básica várzea grande, sacolão delivery vg, comprar alimentos atacado, arroz tio alvino, supermercado delivery">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="Dona Antônia Cestas e Alimentos">
+    <meta name="theme-color" content="#0F2546">
+
+    <!-- =========================================
+         PWA & ÍCONES (iOS e Android)
+    ========================================== -->
     <link rel="manifest" href="manifest.json">
-    
-    <!-- PWA: Meta tags para iOS (Apple) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dona Antônia">
     <link rel="apple-touch-icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
+
+    <!-- =========================================
+         PERFORMANCE & GOOGLE TAGS
+    ========================================== -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-979692776"></script>
@@ -23,13 +40,11 @@
       gtag('config', 'AW-979692776');
     </script>
     
-    <!-- Event snippet for Website lead conversion page -->
+    <!-- Event snippet for conversion -->
     <script>
     function gtag_report_conversion(url) {
       var callback = function () {
-        if (typeof(url) != 'undefined') {
-          window.location = url;
-        }
+        if (typeof(url) != 'undefined') { window.location = url; }
       };
       gtag('event', 'conversion', {
           'send_to': 'AW-979692776/OzcWCNb7tIACEOjZk9MD',
@@ -39,7 +54,7 @@
     }
     </script>
 
-    <!-- OTIMIZAÇÃO JS -->
+    <!-- GA4 -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -48,7 +63,7 @@
       gtag('config', 'G-9XS8B8Z8BV');
     </script>
 
-    <!-- OTIMIZAÇÃO SEO LOCAL: Dados Estruturados com foco em Local e Sacolão -->
+    <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
     [
       {
@@ -56,67 +71,21 @@
         "@type": "GroceryStore",
         "name": "Dona Antônia Cestas Básicas e Sacolão",
         "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
-        "description": "Distribuidora de Cestas Básicas e Sacolão com entrega grátis em Cuiabá e Várzea Grande. O melhor preço em atacado e varejo de alimentos.",
+        "telephone": "+5565996813588",
         "address": {
           "@type": "PostalAddress",
           "addressLocality": "Cuiabá",
           "addressRegion": "MT",
           "addressCountry": "BR"
-        },
-        "geo": {
-          "@type": "GeoCoordinates",
-          "latitude": -15.6014,
-          "longitude": -56.0979
-        },
-        "url": "https://donaantonia.com.br/",
-        "telephone": "+5565996813588",
-        "priceRange": "$$",
-        "openingHoursSpecification": [
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-            "opens": "07:00",
-            "closes": "18:00"
-          }
-        ],
-        "areaServed": ["Cuiabá", "Várzea Grande", "Coxipó", "CPA", "Cristo Rei"]
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Cesta Básica Econômica",
-        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif",
-        "description": "Cesta básica econômica com itens essenciais: Arroz 5kg, Feijão, Óleo e mais. Entrega Grátis Cuiabá e VG.",
-        "sku": "CESTA-ECO",
-        "offers": {
-          "@type": "Offer",
-          "price": "85.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": "https://donaantonia.com.br/#cestaeconomica",
-          "priceValidUntil": "2025-12-31"
         }
       }
     ]
     </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    
-    <title>Cesta Básica e Sacolão em Cuiabá e VG | Dona Antônia | Entrega Grátis</title>
-    <meta name="description" content="Sacolão e Cesta Básica em Cuiabá e Várzea Grande é na Dona Antônia. Arroz, óleo, feijão e limpeza com entrega grátis. Atacado e varejo de alimentos. Peça no Zap!">
-    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta básica várzea grande, sacolão delivery vg, comprar alimentos atacado, arroz tio alvino, supermercado delivery, disk entrega alimentos, cpa, coxipó, cristo rei, dona antônia cestas">
-    <meta name="robots" content="index, follow">
-    <meta name="author" content="Dona Antônia Cestas e Alimentos">
-    <meta name="theme-color" content="#0F2546"> 
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
     <style>
-        /* === ESTILOS GLOBAIS E TIPOGRAFIA PROFISSIONAL === */
-        * { box-sizing: border-box; }
-
+        /* =========================================
+           1. VARIÁVEIS GLOBAIS (DESIGN SYSTEM)
+        ========================================== */
         :root {
             --cor-primaria: #0F2546; 
             --cor-destaque-vermelho: #D32F2F; 
@@ -133,60 +102,64 @@
             --cor-header-fundo: #f5f5f5;
             --altura-header: 80px; 
             --largura-logo: 100px; 
-            
-            /* VARIAVEIS DE ESPAÇAMENTO PARA BOTÕES FLUTUANTES */
-            --altura-floating-bar: 70px;
         }
+
+        /* =========================================
+           2. RESET E BASE
+        ========================================== */
+        * { box-sizing: border-box; }
 
         html { 
             background-color: #e0e0e0; 
             scroll-behavior: smooth;
             scroll-padding-top: calc(var(--altura-header) + 40px); 
-            font-size: 15px; /* Fonte base um pouco mais legível */
+            font-size: 15px; /* Tamanho de fonte base otimizado */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; /* Fonte moderna padrão do sistema */
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             background-color: #e0e0e0; 
             color: var(--cor-texto);
             margin: 0; 
             padding: 0;
             padding-top: calc(var(--altura-header) + 10px); 
-            padding-bottom: 90px; /* Espaço seguro para botões flutuantes */
+            padding-bottom: 90px; /* Espaço para botões flutuantes */
             min-height: 10vh;
             position: relative; 
             width: 100%;
             line-height: 1.5; 
         }
 
-        /* === MELHORIAS VISUAIS GERAIS === */
-        h1, h2, h3, h4, h5, h6 {
+        h1, h2, h3, h4 {
             color: var(--cor-primaria);
             margin-top: 0;
             line-height: 1.2;
         }
 
+        /* =========================================
+           3. LAYOUT PRINCIPAL
+        ========================================== */
         .main-content-wrapper {
             max-width: 480px; 
             margin: 0 auto; 
             background-color: var(--cor-fundo); 
-            box-shadow: 0 0 20px rgba(0,0,0,0.05); /* Sombra mais suave */
+            box-shadow: 0 0 20px rgba(0,0,0,0.05); 
             transition: max-width 0.3s ease; 
         }
         
         .desktop-only { display: none !important; }
 
-        /* === TITULO H1 SEO (POLIDO) === */
+        /* Título H1 para SEO */
         .seo-main-title {
             text-align: center;
             padding: 20px 15px 10px 15px;
             background: #fff;
         }
         .seo-main-title h1 {
-            font-size: 1.25rem; /* Tamanho equilibrado */
-            font-weight: 700; /* Negrito padrão, não extra-pesado */
+            font-size: 1.25rem;
+            font-weight: 700;
             margin: 0;
             letter-spacing: -0.5px;
         }
@@ -197,7 +170,7 @@
             font-weight: 400;
         }
 
-        /* === MENU DE ANCORAS === */
+        /* Menu de Âncoras (Chips) */
         .menu-ancoras-cestas { display: none !important; }
 
         .chip-ancora {
@@ -219,7 +192,9 @@
             border-color: var(--cor-primaria);
         }
 
-        /* --- CABEÇALHO --- */
+        /* =========================================
+           4. CABEÇALHO (HEADER)
+        ========================================== */
         header {
             background-color: white;
             height: var(--altura-header);
@@ -308,12 +283,14 @@
             .linha-destaque-top { font-size: 0.75rem; }
         }
 
-        /* --- CARDS E CONTEÚDO --- */
+        /* =========================================
+           5. CARDS E PRODUTOS
+        ========================================== */
         .secao-conteudo { padding: 15px; }
         
         .card { 
             background: white; 
-            border-radius: 12px; /* Cantos um pouco mais arredondados */
+            border-radius: 12px; 
             padding: 15px; 
             margin-bottom: 15px; 
             border: 1px solid #f0f0f0; 
@@ -323,7 +300,6 @@
             flex-direction: column;
         }
         
-        /* Ajuste fino nos H2 dos cards para tirar o "Pesadíssimo" */
         .card h2 { 
             font-size: 1.2rem; 
             font-weight: 700;
@@ -331,7 +307,7 @@
             margin-bottom: 10px;
         }
 
-        /* === CARD CESTA HORIZONTAL (VISUAL LIMPO) === */
+        /* Card Horizontal (Lista) */
         .card-cesta-horizontal {
             display: flex;
             flex-direction: row;
@@ -345,7 +321,11 @@
             transition: box-shadow 0.2s;
         }
 
-        /* Lado da Imagem */
+        .card-cesta-horizontal:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        /* Imagem do Card */
         .cesta-img-container {
             width: 110px;
             min-width: 110px;
@@ -378,7 +358,7 @@
             pointer-events: none; 
         }
 
-        /* Lado das Informações */
+        /* Informações do Card */
         .cesta-info-container {
             flex-grow: 1;
             padding: 12px;
@@ -388,12 +368,12 @@
         }
 
         .cesta-title-row h2 {
-            font-size: 1.15rem; /* Ajustado para não ser gigante */
+            font-size: 1.15rem; 
             margin: 0;
             color: var(--cor-primaria);
             font-weight: 700; 
             line-height: 1.2;
-            text-transform: none; /* Removido uppercase forçado */
+            text-transform: none; 
         }
 
         .cesta-price-tag {
@@ -407,11 +387,11 @@
         
         .cesta-price-highlight {
             color: var(--cor-destaque-vermelho);
-            font-weight: 800; /* Aqui sim, extra bold para o preço */
+            font-weight: 800; 
             font-size: 1.1rem;
         }
 
-        /* Botões */
+        /* Botões de Ação no Card */
         .cesta-actions-row {
             display: flex;
             flex-wrap: wrap; 
@@ -470,10 +450,12 @@
             flex-shrink: 0; 
         }
         
-        /* === BOTÕES FLUTUANTES INFERIORES (MODERNO) === */
+        /* =========================================
+           6. BOTÕES FLUTUANTES INFERIORES
+        ========================================== */
         .floating-buttons-container {
             position: fixed;
-            bottom: 10px; /* Bem próximo da borda */
+            bottom: 10px; 
             left: 50%;
             transform: translateX(-50%);
             z-index: 5000;
@@ -481,12 +463,13 @@
             gap: 12px;
             width: 92%;
             max-width: 460px;
+            justify-content: center;
         }
 
         .btn-float-action {
             flex: 1;
             padding: 14px;
-            border-radius: 12px; /* Levemente quadrado, estilo app moderno */
+            border-radius: 12px; 
             border: none;
             font-weight: 700;
             text-transform: uppercase;
@@ -503,14 +486,29 @@
         }
         .btn-float-action:active { transform: scale(0.96); }
 
+        /* Botão Sorteio: Escondido no navegador, visível na App */
         .btn-float-sorteio { 
-            background: linear-gradient(135deg, #2E7D32, #1B5E20); /* Verde Profundo */
+            display: none !important; 
+            background: linear-gradient(135deg, #2E7D32, #1B5E20); 
         } 
+        
+        /* Botão Baixar App: Visível no navegador, escondido na App */
         .btn-float-app { 
-            background: linear-gradient(135deg, #1565C0, #0D47A1); /* Azul Profundo */
+            display: flex !important;
+            width: 100%;
+            background: linear-gradient(135deg, #E65100, #EF6C00); 
         }
 
-        /* === MODAIS & LIGHTBOX === */
+        /* DETECÇÃO DE MODO STANDALONE (PWA INSTALADO) */
+        @media all and (display-mode: standalone) {
+            .btn-float-app { display: none !important; }
+            .btn-float-sorteio { display: flex !important; }
+            body { padding-top: calc(var(--altura-header) + 20px); }
+        }
+
+        /* =========================================
+           7. MODAIS & LIGHTBOX
+        ========================================== */
         .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.65); justify-content: center; align-items: center; backdrop-filter: blur(3px);
@@ -528,8 +526,7 @@
             overflow: hidden; 
             display: flex; 
             flex-direction: column; 
-            /* ALTURA CONTROLADA: Evita encostar nos botões flutuantes */
-            max-height: calc(100vh - 140px); 
+            max-height: calc(100vh - 140px); /* Evita sobrepor a barra flutuante */
             box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
             animation: zoomIn 0.2s;
             position: relative;
@@ -546,58 +543,24 @@
         }
         .btn-fechar-modal-var { position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255,255,255,0.8); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;}
 
-        .modal-body-scroll {
-            padding: 20px; overflow-y: auto;
-            flex: 1; 
-        }
+        .modal-body-scroll { padding: 20px; overflow-y: auto; flex: 1; }
         
-        /* BRINDE */
+        /* Modal: Brinde */
         .brinde-container {
-            display: flex;
-            align-items: center;
-            background: #E3F2FD;
-            border: 1px solid #BBDEFB;
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 20px;
+            display: flex; align-items: center; background: #E3F2FD; border: 1px solid #BBDEFB;
+            border-radius: 8px; padding: 12px; margin-bottom: 20px;
         }
-        .brinde-label {
-            font-size: 0.7rem;
-            color: #1565C0;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: block;
-            margin-bottom: 2px;
-        }
+        .brinde-label { font-size: 0.7rem; color: #1565C0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 2px; }
         .brinde-desc { font-weight: 600; color: #333; }
 
-        /* LISTA PRODUTOS */
+        /* Modal: Listas */
+        .lista-produtos-modal { list-style: none; padding: 0; margin: 0; }
         .lista-produtos-modal li { padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #444; display: flex; align-items: flex-start;}
         .section-title { font-weight: 700; color: var(--cor-primaria); margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; display: block; background: #f5f5f5; padding: 6px 10px; border-radius: 6px; text-transform: uppercase;}
 
-        /* ZOOM */
-        #modalZoomImagem {
-            display: none; position: fixed; z-index: 9000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; flex-direction: column;
-        }
-        .zoom-img-container { max-width: 100%; max-height: 100%; position: relative; display: flex; justify-content: center; align-items: center;}
-        .img-zoom-full { max-width: 95%; max-height: 80vh; object-fit: contain; }
-        .btn-fechar-zoom { position: absolute; top: -50px; right: 20px; color: white; font-size: 36px; background: none; border: none; cursor: pointer; }
-        .zoom-caption { color: white; margin-top: 15px; font-size: 1.1rem; font-weight: 500; }
-
-        /* PAGINA PAGAMENTO & ENTREGA - VISUAL LIMPO */
-        .section-icon-header { text-align: center; margin-bottom: 15px; }
-        .section-icon-header img {
-            width: 50px; height: 50px; object-fit: contain; background-color: var(--cor-primaria);
-            border-radius: 50%; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        .lista-pagamento li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; display: flex; align-items: center; color: #555; }
-
-        /* OPÇÕES MODAL VARIACAO */
+        /* Modal: Variação */
         .titulo-modal-var { margin-top: 15px; font-size: 1.3rem; font-weight: 700; color: var(--cor-primaria); }
         .subtitulo-modal-var { color: #666; margin-bottom: 20px; font-size: 0.95rem; }
-        
         .opcao-select {
             display: flex; align-items: center; justify-content: space-between; padding: 15px; border: 2px solid #eee; 
             border-radius: 10px; margin-bottom: 10px; cursor: pointer; text-align: left; transition: all 0.2s;
@@ -612,61 +575,51 @@
         }
         .btn-confirmar-pedido:disabled { background-color: #ccc; cursor: not-allowed; }
 
-        /* MODAL CONTATO CORRIGIDO */
-        /* Estilos específicos para o Modal de Contato para evitar deformações */
+        /* Modal: Contato */
         .btn-whatsapp-hero {
-            background-color: var(--cor-whatsapp);
-            color: white;
-            font-size: 1rem;
-            font-weight: bold;
-            padding: 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            flex-direction: column;
-            text-align: center; /* Centraliza o texto */
+            background-color: var(--cor-whatsapp); color: white !important; font-size: 1rem; font-weight: bold;
+            padding: 12px; border-radius: 10px; text-decoration: none; display: flex; align-items: center;
+            justify-content: center; width: 100%; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            flex-direction: column; text-align: center;
         }
-        
         .modal-section-title {
-            font-size: 0.8rem;
-            color: #888;
-            margin: 15px 0 10px;
-            text-align: center;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-top: 1px solid #eee; /* Linha sutil acima */
-            padding-top: 15px;
+            font-size: 0.8rem; color: #888; margin: 15px 0 10px; text-align: center; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 1px; border-top: 1px solid #eee; padding-top: 15px;
         }
-
-        .grid-botoes-modal {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
+        .grid-botoes-modal { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .btn-secundario-modal {
-            background-color: #f9f9f9;
-            color: #555;
-            padding: 12px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #eee;
-            font-weight: 600;
-            gap: 6px;
+            background-color: #f9f9f9; color: #555; padding: 12px; border-radius: 8px; text-decoration: none;
+            font-size: 0.85rem; display: flex; align-items: center; justify-content: center; border: 1px solid #eee;
+            font-weight: 600; gap: 6px;
         }
-        
-        /* RESPONSIVIDADE DESKTOP */
+
+        /* Lightbox Zoom */
+        #modalZoomImagem {
+            display: none; position: fixed; z-index: 9000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; flex-direction: column;
+        }
+        .zoom-img-container { max-width: 100%; max-height: 100%; position: relative; display: flex; justify-content: center; align-items: center;}
+        .img-zoom-full { max-width: 95%; max-height: 80vh; object-fit: contain; }
+        .btn-fechar-zoom { position: absolute; top: -50px; right: 20px; color: white; font-size: 36px; background: none; border: none; cursor: pointer; }
+        .zoom-caption { color: white; margin-top: 15px; font-size: 1.1rem; font-weight: 500; }
+
+        /* Pagamentos & Extras */
+        .section-icon-header { text-align: center; margin-bottom: 15px; }
+        .section-icon-header img {
+            width: 50px; height: 50px; object-fit: contain; background-color: var(--cor-primaria);
+            border-radius: 50%; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .lista-pagamento { list-style: none; padding: 0; margin: 0; }
+        .lista-pagamento li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; display: flex; align-items: center; color: #555; }
+        .lista-pagamento li span.emoji-icon { font-size: 1.2rem; width: 30px; text-align: center; margin-right: 8px; }
+
+        /* Animações */
+        @keyframes zoomIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes pulsoBotao { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* =========================================
+           8. RESPONSIVIDADE (DESKTOP)
+        ========================================== */
         @media (min-width: 481px) {
             .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } 
             .secao-conteudo { padding: 25px 40px; }
@@ -676,13 +629,12 @@
                 gap: 15px; padding: 15px; flex-wrap: nowrap; display: flex !important;
                 overflow-x: auto; -webkit-overflow-scrolling: touch;
             }
-            
             .cesta-img-container { width: 160px; min-width: 160px; }
             
             .floating-buttons-container {
-                max-width: 1100px; width: auto; right: 40px; left: auto; transform: none; gap: 20px;
+                max-width: 1100px; width: auto; right: 40px; left: auto; transform: none; gap: 20px; justify-content: flex-end; 
             }
-            .btn-float-action { width: auto; min-width: 160px; }
+            .btn-float-action { width: auto; min-width: 160px; flex: 0 1 auto;}
         }
         
         @media (min-width: 1024px) {
@@ -694,17 +646,23 @@
             .desktop-logo-wrapper { position: relative; width: 60px; }
             .big-logo-desktop { width: 120px; height: 120px; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 4px solid white; position: absolute; top: -25px; left: 0; z-index: 3000; transition: transform 0.3s ease; }
             .big-logo-desktop:hover { transform: scale(1.05); }
+            
             .desktop-nav { display: flex; gap: 30px; align-items: center; height: 100%; margin-left: 120px; }
             .desktop-nav a { text-decoration: none; color: var(--cor-primaria); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 0; position: relative; transition: color 0.3s; }
             .desktop-nav a:hover { color: var(--cor-destaque-vermelho); }
+            
             .btn-contato-principal { margin-left: 0; width: auto; }
+            
             .main-content-wrapper { display: grid; grid-template-columns: 320px 1fr; gap: 30px; padding: 30px 40px; background-color: transparent; box-shadow: none; align-items: start; }
             .seo-text-block { grid-column: 1 / -1; margin-top: 40px; background: white; border-radius: 12px; padding: 30px; }
+            
             #pag-cestas { grid-column: 2; grid-row: 1; background: transparent; }
             .cesta-cards-grid { display: grid; grid-template-columns: repeat(2, 1fr) !important; gap: 20px; max-width: 900px; margin: 0 auto; }
+            
             .menu-ancoras-cestas { display: none !important; }
             .secoes-extras-grid { grid-column: 1; grid-row: 1; display: flex !important; flex-direction: column; gap: 20px; padding: 0; }
             .secoes-extras-grid .secao-conteudo { padding: 0; margin-bottom: 0; }
+            
             .sidebar-menu-list { list-style: none; padding: 0; margin: 0; }
             .sidebar-menu-list li { border-bottom: 1px solid #eee; }
             .sidebar-menu-list a { display: block; padding: 12px 10px; text-decoration: none; color: #555; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
@@ -717,12 +675,16 @@
 </head>
 <body>
     
+    <!-- NOTIFICAÇÃO TOAST -->
     <div id="toast-container"></div> 
 
+    <!-- FUNDO HEADER -->
     <div class="header-background-bar"></div>
 
+    <!-- LOGO FLUTUANTE MOBILE -->
     <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="100" height="100" id="logo-principal" onerror="this.src='https://placehold.co/120x120?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
 
+    <!-- CABEÇALHO -->
     <header>
         <div class="header-top">
             <div class="desktop-only desktop-logo-wrapper">
@@ -744,6 +706,7 @@
         </div>
     </header>
 
+    <!-- CONTEÚDO PRINCIPAL -->
     <main class="main-content-wrapper">
         <div id="pag-cestas">
             <div class="seo-main-title">
@@ -943,15 +906,18 @@
 
     <!-- BOTÕES FLUTUANTES INFERIORES -->
     <div class="floating-buttons-container">
+        <!-- BOTÃO SORTEIO (APARECE SÓ NO APP) -->
         <button onclick="abrirModalSorteio()" class="btn-float-action btn-float-sorteio">
-            <i class="fas fa-gift"></i> Sorteio
+            <i class="fas fa-gift"></i> Participar do Sorteio
         </button>
+        <!-- BOTÃO APP (APARECE NO NAVEGADOR) -->
         <button onclick="instalarPWA()" class="btn-float-action btn-float-app">
-            <i class="fas fa-download"></i> Aplicativo
+            <i class="fas fa-download"></i> Baixar App do Sorteio
         </button>
     </div>
 
     <!-- MODAIS -->
+    <!-- Modal Variação -->
     <div id="modalVariacao" class="modal-variacao" onclick="if(event.target === this) fecharModalVariacao()">
         <div class="modal-variacao-content">
             <button class="btn-fechar-modal-var" onclick="fecharModalVariacao()">&times;</button>
@@ -973,6 +939,7 @@
         </div>
     </div>
 
+    <!-- Modal Informações -->
     <div id="modalInformacoes" class="modal-variacao" onclick="if(event.target === this) fecharModalInfo()">
         <div class="modal-info-content">
             <div class="modal-info-header">
@@ -986,7 +953,7 @@
         </div>
     </div>
 
-    <!-- MODAL SORTEIO (REVISADO E COM CONTRASTE) -->
+    <!-- Modal Sorteio -->
     <div id="modalSorteio" class="modal-variacao" onclick="if(event.target === this) fecharModalSorteio()">
         <div class="modal-variacao-content">
             <button class="btn-fechar-modal-var" onclick="fecharModalSorteio()">&times;</button>
@@ -997,15 +964,16 @@
                     <p style="font-size: 0.9rem; color: #666; margin: 0;">Participe todo domingo!</p>
                 </div>
                 
+                <!-- Busca -->
                 <div id="area-busca-telefone-modal" style="background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee;">
                     <label style="display:block; font-weight:700; font-size: 0.85rem; color: #444; margin-bottom: 8px;">Seu WhatsApp:</label>
                     <input type="tel" id="busca-telefone-modal" placeholder="(65) 99999-9999" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 12px; font-size: 1rem;" required>
-                    <!-- BOTÃO COM CONTRASTE CORRIGIDO: TEXTO BRANCO -->
                     <button onclick="buscarCadastro('-modal')" style="background-color: var(--cor-primaria); color: white !important; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
                         <i class="fas fa-search" style="margin-right: 8px;"></i> Verificar Cadastro
                     </button>
                 </div>
 
+                <!-- Encontrado -->
                 <div id="cadastro-encontrado-modal" style="display: none; text-align: center; background-color: #E8F5E9; border: 1px solid #C8E6C9; padding: 15px; border-radius: 12px; margin-top: 15px;">
                     <div style="color: #2E7D32; font-size: 2.5rem; margin-bottom: 5px;"><i class="fas fa-check-circle"></i></div>
                     <h2 style="font-size: 1.1rem; color: #2E7D32; margin: 0 0 10px 0; font-weight: 700;">Cadastro Encontrado!</h2>
@@ -1018,6 +986,7 @@
                     </button>
                 </div>
                 
+                <!-- Novo Cadastro -->
                 <div id="cadastro-novo-modal" style="display: none; margin-top: 15px; text-align: left;">
                     <div style="background-color: #FFF3E0; border: 1px solid #FFE0B2; padding: 15px; border-radius: 12px;">
                         <h3 style="font-size: 1rem; color: #E65100; margin: 0 0 10px 0; font-weight: 700;">Novo Cadastro</h3>
@@ -1042,19 +1011,16 @@
         </div>
     </div>
 
-    <!-- MODAL CONTATOS CORRIGIDO -->
+    <!-- Modal Contatos -->
     <div id="modalContatos" class="modal-variacao" onclick="if(event.target === this) fecharModalContatos()">
         <div class="modal-variacao-content" style="padding-top: 40px; padding-bottom: 20px;">
             <button class="btn-fechar-modal-var" onclick="fecharModalContatos()">&times;</button>
             <div style="padding: 20px;">
-                <!-- Link direto com texto centralizado e estilo correto -->
                 <a href="https://wa.me/5565996813588?text=Ol%C3%A1%2C%20estou%20salvando%20seu%20contato." class="btn-whatsapp-hero" target="_blank">
                     <i class="fab fa-whatsapp" style="font-size: 2rem; margin-bottom: 8px;"></i> 
                     <span>Mande um Oi</span>
                 </a>
-                
                 <div class="modal-section-title">Ou ligue para nós</div>
-                
                 <div class="grid-botoes-modal">
                     <a href="tel:+5565996813588" class="btn-secundario-modal"><i class="fas fa-phone-alt"></i> (65) 99681-3588</a>
                     <a href="tel:+5565996813588" class="btn-secundario-modal"><i class="fas fa-phone-alt"></i> Ligar Agora</a>
@@ -1063,7 +1029,7 @@
         </div>
     </div>
 
-    <!-- ZOOM -->
+    <!-- Zoom Lightbox -->
     <div id="modalZoomImagem" onclick="if(event.target === this) fecharZoom()">
         <div class="zoom-img-container">
             <button class="btn-fechar-zoom" onclick="fecharZoom()">&times;</button>
@@ -1072,8 +1038,11 @@
         </div>
     </div>
     
-    <!-- Scripts (Mantidos) -->
+    <!-- =========================================
+         JAVASCRIPT & LÓGICA
+    ========================================== -->
     <script>
+        // Dados de Clientes (Simulação)
         var clientes = [
             { nome: "Cliente Teste", telefone: "65999991234", cidade: "Cuiabá", bairro: "Centro" },
             { nome: "Maria Silva", telefone: "65988885678", cidade: "Várzea Grande", bairro: "Cristo Rei" }
@@ -1082,19 +1051,55 @@
         let deferredPrompt; 
         let dadosCestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '' };
         
-        // Dados das Cestas (Listas)
+        // Dados das Cestas (Expandido para clareza)
         const listasCestas = {
-            'economica': ["<span class='section-title'>Alimentos:</span>", "1 Arroz de 5kg", "1 Açúcar Cristal de 2kg", "1 Óleo de Soja 900ml", "1 Feijão 1kg", "1 Café 250g", "1 Espaguete 400g", "1 Trigo 1kg", "1 Farinha Mandioca 1kg", "1 Sal 1kg", "1 Molho Tomate", "1 Milho", "1 Bolacha Recheada", "1 Miojo", "1 Suco Pó"],
-            'mini': ["<span class='section-title'>Alimentos:</span>", "1 Arroz 5kg", "1 Açúcar 2kg", "2 Óleo 900ml", "2 Feijão 1kg", "1 Café 250g", "1 Espaguete", "1 Sal 1kg", "1 Molho Tomate", "1 Milho", "1 Bolacha", "1 Miojo", "2 Suco Pó", "<span class='section-title'>Limpeza:</span>", "1 Sabão Barra (5un)", "1 Creme Dental", "1 Papel Higiênico (4un)", "1 Amaciante 2L", "1 Desinfetante 2L", "1 Sabão Pó", "1 Detergente", "1 Qboa 1L", "2 Sabonete", "1 Bombril", "1 Bucha"],
-            'pequena': ["<span class='section-title'>Alimentos:</span>", "2 Arroz 5kg", "1 Açúcar 2kg", "2 Óleo", "2 Feijão", "1 Café 250g", "12 Ovos", "1 Mistura Bolo", "1 Espaguete", "1 Trigo", "1 Sal", "1 Molho", "1 Milho", "1 Tempero", "2 Bolacha", "2 Miojo", "2 Suco", "<span class='section-title'>Limpeza:</span>", "1 Sabão Barra", "1 Creme Dental", "1 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", "1 Sabão Pó", "2 Detergente", "1 Qboa", "2 Sabonete", "1 Bombril", "1 Bucha"],
-            'media': ["<span class='section-title'>Alimentos:</span>", "3 Arroz 5kg", "2 Açúcar 2kg", "3 Óleo", "3 Feijão", "1 Café 500g", "12 Ovos", "1 Mistura Bolo", "2 Espaguete", "1 Trigo", "1 Sal", "2 Molho", "1 Milho", "1 Tempero", "2 Bolacha", "2 Miojo", "3 Suco", "<span class='section-title'>Limpeza:</span>", "1 Sabão Barra", "2 Creme Dental", "2 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", "1 Sabão Pó", "2 Detergente", "1 Qboa", "3 Sabonete", "1 Bombril", "1 Bucha"],
-            'grande': ["<span class='section-title'>Alimentos:</span>", "4 Arroz 5kg", "3 Açúcar 2kg", "4 Óleo", "4 Feijão", "1 Café 500g", "3 Espaguete", "12 Ovos", "1 Mistura Bolo", "1 Trigo", "1 Sal", "2 Molho", "1 Milho", "1 Tempero", "2 Bolacha", "2 Miojo", "4 Suco", "<span class='section-title'>Limpeza:</span>", "1 Sabão Barra", "2 Creme Dental", "2 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", "1 Sabão Pó", "2 Detergente", "1 Qboa", "4 Sabonete", "1 Bombril", "1 Bucha"]
+            'economica': [
+                "<span class='section-title'>Alimentos:</span>", 
+                "1 Arroz de 5kg", "1 Açúcar Cristal de 2kg", "1 Óleo de Soja 900ml", "1 Feijão 1kg", 
+                "1 Café 250g", "1 Espaguete 400g", "1 Trigo 1kg", "1 Farinha Mandioca 1kg", 
+                "1 Sal 1kg", "1 Molho Tomate", "1 Milho", "1 Bolacha Recheada", "1 Miojo", "1 Suco Pó"
+            ],
+            'mini': [
+                "<span class='section-title'>Alimentos:</span>", 
+                "1 Arroz 5kg", "1 Açúcar 2kg", "2 Óleo 900ml", "2 Feijão 1kg", "1 Café 250g", "1 Espaguete", 
+                "1 Sal 1kg", "1 Molho Tomate", "1 Milho", "1 Bolacha", "1 Miojo", "2 Suco Pó", 
+                "<span class='section-title'>Limpeza:</span>", 
+                "1 Sabão Barra (5un)", "1 Creme Dental", "1 Papel Higiênico (4un)", "1 Amaciante 2L", 
+                "1 Desinfetante 2L", "1 Sabão Pó", "1 Detergente", "1 Qboa 1L", "2 Sabonete", "1 Bombril", "1 Bucha"
+            ],
+            'pequena': [
+                "<span class='section-title'>Alimentos:</span>", 
+                "2 Arroz 5kg", "1 Açúcar 2kg", "2 Óleo", "2 Feijão", "1 Café 250g", "12 Ovos", 
+                "1 Mistura Bolo", "1 Espaguete", "1 Trigo", "1 Sal", "1 Molho", "1 Milho", "1 Tempero", 
+                "2 Bolacha", "2 Miojo", "2 Suco", 
+                "<span class='section-title'>Limpeza:</span>", 
+                "1 Sabão Barra", "1 Creme Dental", "1 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", 
+                "1 Sabão Pó", "2 Detergente", "1 Qboa", "2 Sabonete", "1 Bombril", "1 Bucha"
+            ],
+            'media': [
+                "<span class='section-title'>Alimentos:</span>", 
+                "3 Arroz 5kg", "2 Açúcar 2kg", "3 Óleo", "3 Feijão", "1 Café 500g", "12 Ovos", 
+                "1 Mistura Bolo", "2 Espaguete", "1 Trigo", "1 Sal", "2 Molho", "1 Milho", "1 Tempero", 
+                "2 Bolacha", "2 Miojo", "3 Suco", 
+                "<span class='section-title'>Limpeza:</span>", 
+                "1 Sabão Barra", "2 Creme Dental", "2 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", 
+                "1 Sabão Pó", "2 Detergente", "1 Qboa", "3 Sabonete", "1 Bombril", "1 Bucha"
+            ],
+            'grande': [
+                "<span class='section-title'>Alimentos:</span>", 
+                "4 Arroz 5kg", "3 Açúcar 2kg", "4 Óleo", "4 Feijão", "1 Café 500g", "3 Espaguete", "12 Ovos", 
+                "1 Mistura Bolo", "1 Trigo", "1 Sal", "2 Molho", "1 Milho", "1 Tempero", "2 Bolacha", "2 Miojo", "4 Suco", 
+                "<span class='section-title'>Limpeza:</span>", 
+                "1 Sabão Barra", "2 Creme Dental", "2 Papel Higiênico", "1 Amaciante 2L", "1 Desinfetante 2L", 
+                "1 Sabão Pó", "2 Detergente", "1 Qboa", "4 Sabonete", "1 Bombril", "1 Bucha"
+            ]
         };
 
-        // Funções de Interação
+        // --- FUNÇÕES DE INTERAÇÃO ---
         function compartilharCesta(nome, preco) {
             window.open(`https://wa.me/?text=${encodeURIComponent(`Olha essa ${nome} por R$ ${preco} na Dona Antônia: https://donaantonia.com.br/`)}`, '_blank');
         }
+        
         function abrirZoom(src, titulo) {
             document.getElementById('imgZoomAlvo').src = src;
             document.getElementById('imgZoomAlvo').onerror = function() { this.src = 'https://placehold.co/800x600?text=Imagem'; };
@@ -1150,7 +1155,7 @@
             fecharModalVariacao();
         }
 
-        // Funções Genéricas de Modal
+        // --- GESTÃO DE MODAIS ---
         function fecharModalInfo() { document.getElementById('modalInformacoes').style.display = 'none'; }
         function fecharModalVariacao() { document.getElementById('modalVariacao').style.display = 'none'; }
         function fecharModalContatos() { document.getElementById('modalContatos').style.display = 'none'; }
@@ -1158,7 +1163,7 @@
         function fecharModalSorteio() { document.getElementById('modalSorteio').style.display = 'none'; }
         function abrirModalSorteio() { document.getElementById('modalSorteio').style.display = 'flex'; }
 
-        // Sorteio Logic
+        // --- LÓGICA DO SORTEIO ---
         async function buscarCadastro(sufix) {
             const inp = document.getElementById('busca-telefone'+sufix);
             if(inp.value.replace(/\D/g,'').length < 8) return alert("Digite o telefone completo.");
@@ -1191,18 +1196,25 @@
         }
 
         function verificarPreenchimento(sufix) {
-            // Lógica simples de validação visual se necessário
+            // Placeholder para validação visual futura
         }
 
-        // PWA
+        // --- PWA (INSTALAÇÃO) ---
         window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
         function instalarPWA() {
             if(deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
             else { alert("Para instalar: Toque em Compartilhar > Adicionar à Tela de Início (iOS) ou Menu > Instalar App (Android)."); }
         }
 
-        // Observer
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js').catch(err => console.error('Erro SW:', err));
+            });
+        }
+
+        // --- OBSERVER PARA MENU ---
         window.addEventListener('load', () => {
+            carregarDadosClientes();
             const obs = new IntersectionObserver((entries) => {
                 entries.forEach(e => {
                     if(e.isIntersecting) {
@@ -1218,6 +1230,19 @@
         function ativarChip(el) {
             document.querySelectorAll('.chip-ancora').forEach(c => c.classList.remove('active'));
             el.classList.add('active');
+        }
+
+        async function carregarDadosClientes() {
+            try {
+                const response = await fetch('lista/clientes.js');
+                if (response.ok) {
+                    const text = await response.text();
+                    try {
+                        const jsonText = text.replace(/const\s+clientes\s*=\s*/, '').replace(/;\s*$/, '');
+                        clientes = JSON.parse(jsonText);
+                    } catch (e) { console.warn("Falha ao parsear clientes.js."); }
+                }
+            } catch (err) { console.warn("Modo preview: dados mock."); }
         }
     </script>
 </body>
