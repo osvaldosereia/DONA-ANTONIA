@@ -96,70 +96,6 @@
           "url": "https://donaantonia.com.br/#cestaeconomica",
           "priceValidUntil": "2025-12-31"
         }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Cesta Básica Mini",
-        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif",
-        "description": "Cesta Mini completa com alimentos e itens de limpeza. Opção com Arroz Tio Alvino ou Koblenz.",
-        "sku": "CESTA-MINI",
-        "offers": {
-          "@type": "Offer",
-          "price": "165.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": "https://donaantonia.com.br/#cestamini",
-          "priceValidUntil": "2025-12-31"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Cesta Básica Pequena",
-        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif",
-        "description": "Cesta Pequena ideal para casais. Contém 2 pacotes de Arroz 5kg, limpeza completa e alimentos.",
-        "sku": "CESTA-PEQ",
-        "offers": {
-          "@type": "Offer",
-          "price": "215.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": "https://donaantonia.com.br/#cestapequena",
-          "priceValidUntil": "2025-12-31"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Cesta Básica Média",
-        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif",
-        "description": "Cesta Média robusta com 3 pacotes de Arroz 5kg e variedade de itens de mercearia e limpeza.",
-        "sku": "CESTA-MED",
-        "offers": {
-          "@type": "Offer",
-          "price": "320.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": "https://donaantonia.com.br/#cestamedia",
-          "priceValidUntil": "2025-12-31"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Cesta Básica Grande",
-        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif",
-        "description": "Nossa maior cesta. 4 pacotes de Arroz 5kg, feijão, óleo e kit limpeza completo para famílias grandes.",
-        "sku": "CESTA-GRD",
-        "offers": {
-          "@type": "Offer",
-          "price": "380.00",
-          "priceCurrency": "BRL",
-          "availability": "https://schema.org/InStock",
-          "url": "https://donaantonia.com.br/#cestagrande",
-          "priceValidUntil": "2025-12-31"
-        }
       }
     ]
     </script>
@@ -1092,13 +1028,6 @@
                 flex-direction: column; 
                 gap: 15px; 
                 padding: 0;
-                
-                /* REMOVIDO: Efeito Sticky para rolar normal com a página */
-                /* position: sticky; */
-                /* top: 100px; */
-                /* height: fit-content; */
-                /* max-height: 85vh; */
-                /* overflow-y: auto; */
             }
             
             .secoes-extras-grid .secao-conteudo { 
@@ -1143,10 +1072,103 @@
                 font-weight: bold;
             }
         }
+
+        /* --- ESTILO DO POPUP ESPECIAL DE INSTALAÇÃO --- */
+        #modalInstalacao {
+            display: none; /* Começa escondido */
+            position: fixed;
+            z-index: 9999; /* Fica acima de TUDO */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85); /* Fundo bem escuro para foco */
+            backdrop-filter: blur(5px); /* Desfoque no fundo */
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .install-box {
+            background-color: white;
+            padding: 30px 20px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            position: relative;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .install-logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .btn-install-destaque {
+            background-color: var(--cor-whatsapp); /* Verde chamativo */
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: pulse 2s infinite; /* Animação de pulso */
+        }
+
+        .btn-fechar-install {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Animação para chamar atenção */
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
     </style>
 </head>
 <body>
     
+    <!-- MODAL ESPECIAL DE INSTALAÇÃO (Só aparece com o link especial) -->
+    <div id="modalInstalacao">
+        <div class="install-box">
+            <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="install-logo" alt="Logo App">
+            <h2 style="color: #333; margin: 0 0 5px 0;">Instalar Aplicativo</h2>
+            <p style="color: #666; font-size: 0.95rem; line-height: 1.4; margin-bottom: 20px;">
+                Tenha a Dona Antônia no seu celular para pedir mais rápido! 📲
+            </p>
+            
+            <!-- Botão que chama a função de instalar -->
+            <button class="btn-install-destaque" onclick="instalarPWA(); fecharModalInstalacao();">
+                <i class="fas fa-download"></i> BAIXAR AGORA
+            </button>
+            
+            <button class="btn-fechar-install" onclick="fecharModalInstalacao()">
+                Não, obrigado. Continuar no site.
+            </button>
+        </div>
+    </div>
+
     <div id="toast-container"></div> 
 
     <div class="header-background-bar"></div>
@@ -1572,30 +1594,6 @@
             { nome: "Cliente Teste", telefone: "65999991234", cidade: "Cuiabá", bairro: "Centro" },
             { nome: "Maria Silva", telefone: "65988885678", cidade: "Várzea Grande", bairro: "Cristo Rei" }
         ];
-        // --- CÓDIGO DO LINK INTELIGENTE DE INSTALAÇÃO ---
-        window.addEventListener('load', function() {
-            // Verifica se o link tem "?instalar=agora" no final
-            const params = new URLSearchParams(window.location.search);
-            
-            if (params.get('instalar') === 'agora') {
-                // Espera meio segundo para o site carregar e abre o modal
-                setTimeout(() => {
-                    abrirModalContatos();
-                    mostrarMensagemToast("Toque no botão abaixo para instalar! 👇", "success");
-                    
-                    // Dá um destaque visual no botão de baixar
-                    const btnInstall = document.querySelector('.btn-app-link');
-                    if(btnInstall) {
-                        btnInstall.style.backgroundColor = "#FFF9C4";
-                        btnInstall.style.transform = "scale(1.1)";
-                        setTimeout(() => {
-                            btnInstall.style.transform = "scale(1)";
-                            btnInstall.style.backgroundColor = "transparent";
-                        }, 1000);
-                    }
-                }, 800);
-            }
-        });
     </script>
     <script>
         const TELEFONE = "5565996813588"; 
@@ -1733,6 +1731,16 @@
         // --- MODAL CONTATOS ---
         function abrirModalContatos() { document.getElementById('modalContatos').style.display = 'flex'; }
         function fecharModalContatos() { document.getElementById('modalContatos').style.display = 'none'; }
+
+        // --- FUNÇÕES DO MODAL ESPECIAL ---
+        
+        function abrirModalInstalacao() {
+            document.getElementById('modalInstalacao').style.display = 'flex';
+        }
+
+        function fecharModalInstalacao() {
+            document.getElementById('modalInstalacao').style.display = 'none';
+        }
 
         // --- PWA LOGIC (CORRIGIDA) ---
         // 1. Registro do Service Worker
@@ -1990,6 +1998,15 @@
             document.querySelectorAll('.card-cesta').forEach(section => {
                 observer.observe(section);
             });
+
+            // --- LÓGICA DO POPUP AUTOMÁTICO VIA LINK ---
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('instalar') === 'app') {
+                // Delay para garantir que o site carregou visualmente
+                setTimeout(() => {
+                    abrirModalInstalacao();
+                }, 1000);
+            }
         });
     </script>
 </body>
