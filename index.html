@@ -421,7 +421,7 @@
         /* === BOTÕES FLUTUANTES === */
         .floating-buttons-container {
             position: fixed;
-            bottom: 10px; 
+            bottom: 20px; 
             left: 50%;
             transform: translateX(-50%);
             z-index: 5000;
@@ -433,14 +433,14 @@
 
         .btn-float-action {
             flex: 1;
-            padding: 14px;
+            padding: 18px 24px; /* Aumentado verticalmente */
             border-radius: 12px; 
-            border: none;
-            font-weight: 700;
+            border: 2px solid rgba(255,255,255,0.4); /* Borda sutil */
+            font-weight: 800; /* Mais destacado */
             text-transform: uppercase;
-            font-size: 0.85rem;
+            font-size: 1rem; /* Fonte maior */
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4); /* Sombra mais forte */
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -651,10 +651,10 @@
             
             .btn-contato-principal { margin-left: 0; width: auto; }
             
-            /* GRID PRINCIPAL: Coluna esquerda mais estreita (250px) */
+            /* GRID PRINCIPAL: Coluna esquerda ajustada para 270px */
             .main-content-wrapper { 
                 display: grid; 
-                grid-template-columns: 250px 1fr; /* Sidebar estreita, Cards largos */
+                grid-template-columns: 270px 1fr; /* Sidebar mais larga (270px) */
                 gap: 30px; 
                 padding: 30px 20px; /* Alinhado com header */
                 background-color: transparent; 
@@ -665,18 +665,36 @@
             .seo-text-block { grid-column: 1 / -1; margin-top: 40px; background: white; border-radius: 12px; padding: 30px; }
             #pag-cestas { grid-column: 2; grid-row: 1; background: transparent; }
             
-            /* CARDS: 1 Coluna para ficarem bem largos e alinhados */
+            /* CARDS: 2 Colunas para ficarem menores horizontalmente */
             .cesta-cards-grid { 
                 display: grid; 
-                grid-template-columns: 1fr !important; /* Força 1 coluna larga */
+                grid-template-columns: repeat(2, 1fr) !important; /* Volta para 2 colunas para cards menores */
                 gap: 20px; 
                 max-width: 100%; 
                 margin: 0 auto; 
             }
             
             .menu-ancoras-cestas { display: none !important; }
-            .secoes-extras-grid { grid-column: 1; grid-row: 1; display: flex !important; flex-direction: column; gap: 20px; padding: 0; }
-            .secoes-extras-grid .secao-conteudo { padding: 0; margin-bottom: 0; }
+            
+            /* AJUSTE DA SIDEBAR PARA ALINHAMENTO PROFISSIONAL */
+            .secoes-extras-grid { 
+                grid-column: 1; 
+                grid-row: 1; 
+                display: flex !important; 
+                flex-direction: column; 
+                gap: 20px; 
+                padding: 0; 
+                width: 100%;
+            }
+            .secoes-extras-grid .secao-conteudo { 
+                padding: 0; 
+                margin-bottom: 0; 
+            }
+            .secoes-extras-grid .card {
+                padding: 25px 20px; /* Mais espaço interno */
+                align-items: center; /* Centralizado ou left? Mantendo center para ícones */
+            }
+            
             .sidebar-menu-list { list-style: none; padding: 0; margin: 0; }
             .sidebar-menu-list li { border-bottom: 1px solid #eee; }
             .sidebar-menu-list a { display: block; padding: 12px 10px; text-decoration: none; color: #555; font-weight: 600; font-size: 0.95rem; transition: all 0.2s; }
@@ -1099,7 +1117,7 @@
                     <input type="tel" id="busca-telefone-modal" placeholder="(65) 99999-9999" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 12px; font-size: 1rem;" required>
                     <!-- BOTÃO COM CONTRASTE CORRIGIDO: TEXTO BRANCO -->
                     <button onclick="buscarCadastro('-modal')" style="background-color: var(--cor-primaria); color: white !important; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
-                        <i class="fas fa-search" style="margin-right: 8px;"></i> Por Nome na Lista
+                        <i class="fas fa-search" style="margin-right: 8px;"></i> Verificar Cadastro
                     </button>
                 </div>
 
