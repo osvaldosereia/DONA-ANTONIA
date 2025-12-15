@@ -16,7 +16,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Dona Antônia">
+    <!-- Placeholder para favicon se não existir -->
     <link rel="apple-touch-icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
+    <link rel="shortcut icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
 
     <!-- TÍTULO HÍBRIDO OTIMIZADO -->
     <title>Super Cestas Básicas Dona Antônia | Cuiabá e VG | Entrega Grátis</title>
@@ -282,28 +284,41 @@
             margin-bottom: 10px;
         }
 
-        /* === CARD CESTA HORIZONTAL (PADRÃO) === */
+        /* =========================================
+           PADRONIZAÇÃO DOS CARDS (Horizontal no PC, Vertical/Grande no Mobile)
+           ========================================= */
         .card-cesta-horizontal {
             display: flex;
-            flex-direction: row;
+            flex-direction: row; /* Padrão Desktop */
             background: white;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 25px; /* Mais espaço entre cards */
             border: 1px solid #f0f0f0;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-            overflow: hidden; /* CULPADO: Isso corta o selo nos cards normais */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06); /* Sombra um pouco maior */
+            position: relative;
+            overflow: visible !important; /* Importante para o selo */
             min-height: 130px;
             transition: box-shadow 0.2s;
-            contain: content; /* CULPADO: Isso também corta o selo */
+            z-index: 1;
+        }
+
+        /* Estilo especial para o destaque (primeiro card) */
+        #cestaeconomica {
+            border: 2px solid var(--cor-destaque-dourado);
+            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.15);
+            z-index: 5;
         }
 
         .cesta-img-container {
-            width: 110px;
-            min-width: 110px;
+            width: 160px; /* Padrão desktop */
+            min-width: 160px;
             position: relative;
             background-color: #fff;
             flex-shrink: 0;
             cursor: pointer;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+            overflow: hidden;
         }
 
         .cesta-img-container img {
@@ -331,24 +346,25 @@
 
         .cesta-info-container {
             flex-grow: 1;
-            padding: 12px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .cesta-title-row h2 {
-            font-size: 1.15rem; 
+            font-size: 1.25rem; 
             margin: 0;
             color: var(--cor-primaria);
-            font-weight: 600; /* Reduzido de 700 */
+            font-weight: 700;
             line-height: 1.2;
+            margin-bottom: 5px;
         }
 
         .cesta-price-tag {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex;
             align-items: baseline;
             gap: 5px;
@@ -356,8 +372,8 @@
         
         .cesta-price-highlight {
             color: var(--cor-destaque-vermelho);
-            font-weight: 700; /* Reduzido de 800 */
-            font-size: 1.1rem;
+            font-weight: 800;
+            font-size: 1.3rem;
         }
 
         .cesta-actions-row {
@@ -371,29 +387,29 @@
             background-color: var(--cor-whatsapp);
             color: white !important;
             border: none;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 0.85rem;
-            font-weight: 600; /* Reduzido de 700 */
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
             text-transform: uppercase;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             width: 100%; 
             flex-basis: 100%; 
             letter-spacing: 0.5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
         }
         
         .btn-ver-produtos {
             background-color: #E3F2FD;
             color: #1565C0 !important;
             border: 1px solid #BBDEFB;
-            border-radius: 6px;
-            padding: 8px 12px;
-            font-size: 0.8rem;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.85rem;
             font-weight: 600;
             flex-grow: 1; 
             cursor: pointer;
@@ -408,30 +424,14 @@
             background-color: #E8F5E9;
             color: #2E7D32 !important;
             border: 1px solid #C8E6C9;
-            border-radius: 6px;
-            padding: 8px;
-            width: 40px;
+            border-radius: 8px;
+            padding: 10px;
+            width: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             flex-shrink: 0; 
-        }
-
-        /* =========================================
-           NOVO: ESTILOS PARA CESTA DESTAQUE (ECONÔMICA)
-           ========================================= */
-        #cestaeconomica {
-            /* Fundo levemente destacado */
-            background-color: #FFF; 
-            border: 2px solid var(--cor-destaque-dourado);
-            position: relative;
-            /* CORREÇÃO: Forçar que o conteúdo não seja cortado */
-            overflow: visible !important; 
-            contain: none !important; 
-            margin-top: 25px; /* Espaço extra para o selo no topo */
-            box-shadow: 0 6px 15px rgba(255, 193, 7, 0.15);
-            z-index: 5;
         }
 
         /* Selo "Mais Vendida" */
@@ -449,40 +449,42 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 20; /* Garantir que fique acima do card */
+            z-index: 20; 
             white-space: nowrap;
             border: 2px solid white;
         }
 
-        /* === MOBILE: MODO FOTO GRANDE (Vertical) === */
+        /* === MOBILE: TODOS OS CARDS IGUAIS AO PRIMEIRO === */
         @media (max-width: 480px) {
-            #cestaeconomica {
-                flex-direction: column !important; /* Força layout vertical */
+            .card-cesta-horizontal {
+                flex-direction: column !important; /* Força layout vertical para TODOS */
             }
-            #cestaeconomica .cesta-img-container {
+            .cesta-img-container {
                 width: 100% !important; /* Foto ocupa largura total */
-                height: 230px !important; /* Altura maior para foto grande */
+                height: 230px !important; /* Altura grande padronizada */
+                border-top-right-radius: 12px;
+                border-bottom-left-radius: 0;
                 border-bottom: 1px solid #f0f0f0;
             }
-            #cestaeconomica .cesta-info-container {
+            .cesta-info-container {
                 padding: 20px 15px;
                 text-align: center; /* Centraliza informações */
             }
-            #cestaeconomica .cesta-title-row h2 {
+            .cesta-title-row h2 {
                 font-size: 1.4rem; /* Título maior */
                 margin-bottom: 5px;
             }
-            #cestaeconomica .cesta-price-tag {
+            .cesta-price-tag {
                 justify-content: center; /* Preço centralizado */
                 font-size: 1rem;
             }
-            #cestaeconomica .cesta-price-highlight {
+            .cesta-price-highlight {
                 font-size: 1.4rem;
             }
-            #cestaeconomica .cesta-actions-row {
+            .cesta-actions-row {
                 justify-content: center;
             }
-            #cestaeconomica .btn-cta-small {
+            .btn-cta-small {
                 padding: 14px; /* Botão maior */
                 font-size: 1rem;
             }
@@ -529,7 +531,7 @@
         }
 
         /* === MODAIS === */
-        .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio {
+        .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio, #modalZoomImagem {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.65); justify-content: center; align-items: center; backdrop-filter: blur(3px);
             padding: 20px;
@@ -537,6 +539,7 @@
         #modalContatos { z-index: 4500; }
         #modalInformacoes { z-index: 4600; }
         #modalSorteio { z-index: 4700; }
+        #modalZoomImagem { z-index: 9000; background-color: rgba(0,0,0,0.92); flex-direction: column; }
 
         .modal-info-content, .modal-variacao-content {
             background-color: white; 
@@ -591,13 +594,10 @@
         .lista-produtos-modal li { padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.95rem; color: #444; display: flex; align-items: flex-start;}
         .section-title { font-weight: 700; color: var(--cor-primaria); margin-top: 15px; margin-bottom: 5px; font-size: 0.9rem; display: block; background: #f5f5f5; padding: 6px 10px; border-radius: 6px; text-transform: uppercase;}
 
-        #modalZoomImagem {
-            display: none; position: fixed; z-index: 9000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.92); justify-content: center; align-items: center; flex-direction: column;
-        }
+        /* ZOOM */
         .zoom-img-container { max-width: 100%; max-height: 100%; position: relative; display: flex; justify-content: center; align-items: center;}
         .img-zoom-full { max-width: 95%; max-height: 80vh; object-fit: contain; }
-        .btn-fechar-zoom { position: absolute; top: -50px; right: 20px; color: white; font-size: 36px; background: none; border: none; cursor: pointer; }
+        .btn-fechar-zoom { position: absolute; top: 20px; right: 20px; color: white; font-size: 36px; background: none; border: none; cursor: pointer; z-index: 9001;}
         .zoom-caption { color: white; margin-top: 15px; font-size: 1.1rem; font-weight: 500; }
 
         .section-icon-header { text-align: center; margin-bottom: 15px; }
@@ -675,6 +675,12 @@
             font-weight: 600;
             gap: 6px;
         }
+
+        /* Animação Zoom */
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
         
         @media (min-width: 481px) {
             .main-content-wrapper, header, .header-background-bar { max-width: 1100px; } 
@@ -685,8 +691,6 @@
                 gap: 15px; padding: 15px; flex-wrap: nowrap; display: flex !important;
                 overflow-x: auto; -webkit-overflow-scrolling: touch;
             }
-            
-            .cesta-img-container { width: 160px; min-width: 160px; }
             
             .floating-buttons-container {
                 max-width: 1100px; width: auto; right: 40px; left: auto; transform: none; gap: 20px;
@@ -707,7 +711,7 @@
             .header-top { 
                 margin: 0 auto; 
                 justify-content: space-between; 
-                padding: 5px 20px; /* Igual ao padding lateral do main */
+                padding: 5px 20px; 
             }
             
             .desktop-only { display: flex !important; }
@@ -768,8 +772,6 @@
                 font-size: 1.8rem;
                 margin-bottom: 15px;
             }
-
-            /* Fim ajuste Destaque */
             
             .menu-ancoras-cestas { display: none !important; }
             
@@ -788,8 +790,8 @@
                 margin-bottom: 0; 
             }
             .secoes-extras-grid .card {
-                padding: 25px 20px; /* Mais espaço interno */
-                align-items: center; /* Centralizado ou left? Mantendo center para ícones */
+                padding: 25px 20px; 
+                align-items: center; 
             }
             
             .sidebar-menu-list { list-style: none; padding: 0; margin: 0; }
@@ -825,7 +827,6 @@
     </style>
 
     <!-- OTIMIZAÇÃO SEO LOCAL "NUCLEAR": Dados Estruturados (Schema.org) -->
-    <!-- Isso diz ao Google EXATAMENTE quem você é, onde está e o que vende -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -864,70 +865,7 @@
         "Coxipó", 
         "CPA", 
         "Cristo Rei"
-      ],
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "5.0",
-        "reviewCount": "23",
-        "bestRating": "5",
-        "worstRating": "1"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Catálogo de Cestas Básicas",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Econômica",
-              "description": "Perfeita para doação. Itens essenciais."
-            },
-            "price": "85.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Mini",
-              "description": "Cesta compacta com itens de limpeza."
-            },
-            "price": "170.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Pequena",
-              "description": "Ideal para casais ou pequenas famílias."
-            },
-            "price": "220.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Média",
-              "description": "Completa para o mês."
-            },
-            "price": "325.00",
-            "priceCurrency": "BRL"
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Product",
-              "name": "Cesta Básica Grande",
-              "description": "A maior e mais completa da região."
-            },
-            "price": "390.00",
-            "priceCurrency": "BRL"
-          }
-        ]
-      }
+      ]
     }
     </script>
 </head>
@@ -985,10 +923,7 @@
                     
                     <!-- 
                        ITEM EM DESTAQUE: CESTA ECONÔMICA 
-                       Alterações: 
-                       1. Adicionado <div class="selo-destaque">
-                       2. O CSS para o ID #cestaeconomica cuida do layout vertical no mobile
-                       e do span de colunas no desktop.
+                       Nota: O estilo mobile (foto grande e layout vertical) agora é padrão para TODOS os cards.
                     -->
                     <div class="card-cesta-horizontal" id="cestaeconomica">
                         <div class="selo-destaque"><i class="fas fa-star"></i> Mais Vendida</div>
@@ -1018,6 +953,7 @@
                         </div>
                     </div>
 
+                    <!-- CESTA MINI (Agora com visual igual ao primeiro no mobile) -->
                     <div class="card-cesta-horizontal" id="cestamini">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-mini.avif', 'Cesta Mini')">
                             <img src="img/cesta-basica-cuiaba-varzea-grande-mini.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
@@ -1173,7 +1109,7 @@
         </button>
     </div>
 
-    <!-- MODAIS -->
+    <!-- MODAL VARIACAO -->
     <div id="modalVariacao" class="modal-variacao" onclick="if(event.target === this) fecharModalVariacao()">
         <div class="modal-variacao-content">
             <button class="btn-fechar-modal-var" onclick="fecharModalVariacao()">&times;</button>
@@ -1182,11 +1118,11 @@
                 <p class="subtitulo-modal-var">Escolha a marca do arroz:</p>
                 <div class="opcao-select" id="optAlvino" onclick="selecionarOpcao('alvino')">
                     <div class="opcao-info"><span class="opcao-nome">Arroz Tio Alvino</span><span class="opcao-preco" id="precoAlvinoDisplay">R$ 0,00</span></div>
-                    <div class="radio-custom"></div>
+                    <div class="radio-custom" style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;"></div>
                 </div>
                 <div class="opcao-select" id="optKoblenz" onclick="selecionarOpcao('koblenz')">
                     <div class="opcao-info"><span class="opcao-nome">Arroz Koblenz</span><span class="opcao-preco" id="precoKoblenzDisplay">R$ 0,00</span></div>
-                    <div class="radio-custom"></div>
+                    <div class="radio-custom" style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;"></div>
                 </div>
                 <button class="btn-confirmar-pedido" id="btnConfirmarPedido" onclick="confirmarAcao()" disabled>
                     <i class="fab fa-whatsapp"></i> Enviar Pedido
@@ -1195,6 +1131,7 @@
         </div>
     </div>
 
+    <!-- MODAL INFORMAÇÕES -->
     <div id="modalInformacoes" class="modal-variacao" onclick="if(event.target === this) fecharModalInfo()">
         <div class="modal-info-content">
             <div class="modal-info-header">
@@ -1208,7 +1145,7 @@
         </div>
     </div>
 
-    <!-- MODAL SORTEIO (REVISADO E COM CONTRASTE) -->
+    <!-- MODAL SORTEIO -->
     <div id="modalSorteio" class="modal-variacao" onclick="if(event.target === this) fecharModalSorteio()">
         <div class="modal-variacao-content">
             <button class="btn-fechar-modal-var" onclick="fecharModalSorteio()">&times;</button>
@@ -1244,4 +1181,337 @@
                     <div style="background-color: #FFF3E0; border: 1px solid #FFE0B2; padding: 15px; border-radius: 12px;">
                         <h3 style="font-size: 1rem; color: #E65100; margin: 0 0 10px 0; font-weight: 700;">Novo Cadastro</h3>
                         <form onsubmit="event.preventDefault(); enviarNovoCadastro('-modal');">
-                            <input type="text" id="novo-nome-modal" placeholder="Nome Completo" required style="width: 10
+                            <input type="text" id="novo-nome-modal" placeholder="Nome Completo" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            <input type="text" id="novo-bairro-modal" placeholder="Bairro" required style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                            <select id="novo-cidade-modal" style="width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 6px;">
+                                <option value="Cuiabá">Cuiabá</option>
+                                <option value="Várzea Grande">Várzea Grande</option>
+                            </select>
+                            <button type="submit" style="background-color: #E65100; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700;">
+                                Cadastrar para Sorteio
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONTATOS -->
+    <div id="modalContatos" class="modal-variacao" onclick="if(event.target === this) fecharModalContatos()">
+        <div class="modal-info-content" style="max-width: 340px;">
+            <div class="modal-info-header">
+                <h3>Fale Conosco</h3>
+                <button class="btn-fechar-modal-info" onclick="fecharModalContatos()">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <a href="https://wa.me/5565996813588" class="btn-whatsapp-hero" target="_blank">
+                    <i class="fab fa-whatsapp" style="font-size: 24px; margin-bottom: 5px;"></i>
+                    Chamar no WhatsApp
+                </a>
+                
+                <p style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 15px;">Dúvidas? Entre em contato agora mesmo!</p>
+                
+                <div class="grid-botoes-modal">
+                    <a href="tel:5565996813588" class="btn-secundario-modal">
+                        <i class="fas fa-phone"></i> Ligar
+                    </a>
+                    <a href="https://maps.app.goo.gl/XYZ" target="_blank" class="btn-secundario-modal">
+                        <i class="fas fa-map-marker-alt"></i> Localização
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ZOOM IMAGEM -->
+    <div id="modalZoomImagem" onclick="if(event.target === this) fecharZoom()">
+        <button class="btn-fechar-zoom" onclick="fecharZoom()">&times;</button>
+        <div class="zoom-img-container">
+            <img id="imgZoomTarget" class="img-zoom-full" src="" alt="Zoom">
+        </div>
+        <div id="captionZoom" class="zoom-caption"></div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        // === DADOS DAS CESTAS ===
+        const dadosCestas = {
+            'economica': {
+                titulo: 'Cesta Econômica',
+                brinde: '🍬 BALA DE BRINDE',
+                itens: [
+                    '01 Pc. Arroz 5kg (Tio Alvino ou Similar)',
+                    '01 Pc. Açúcar 2kg (Itamarati)',
+                    '01 Lt. Óleo 900ml (Concórdia)',
+                    '01 Pc. Café 250g (3 Corações)',
+                    '01 Pc. Feijão 1kg (Carioca)',
+                    '01 Pc. Sal 1kg (Lebre)',
+                    '01 Pc. Trigo 1kg (Rosa Branca)',
+                    '01 Pc. Macarrão 500g (Dona Benta)',
+                    '01 Pc. Fubá 500g (Yoki)',
+                    '01 Pc. Extrato 340g (Elefante)',
+                    '01 Pc. Farofa 400g (Yoki)'
+                ]
+            },
+            'mini': {
+                titulo: 'Cesta Mini',
+                brinde: '🧼 KIT LIMPEZA BÁSICA',
+                itens: [
+                    '01 Pc. Arroz 5kg (Marca a escolha)',
+                    '02 Pc. Açúcar 2kg',
+                    '02 Lt. Óleo 900ml',
+                    '01 Pc. Café 500g',
+                    '02 Pc. Feijão 1kg',
+                    '01 Pc. Sal 1kg',
+                    '01 Pc. Trigo 1kg',
+                    '02 Pc. Macarrão 500g',
+                    '01 Pc. Fubá 500g',
+                    '02 Un. Sabonete',
+                    '01 Un. Creme Dental',
+                    '01 Pc. Papel Higiênico (4 rolos)'
+                ]
+            },
+            'pequena': {
+                titulo: 'Cesta Pequena',
+                brinde: '🍪 PACOTE DE BOLACHA',
+                itens: [
+                    '01 Pc. Arroz 5kg (Marca a escolha)',
+                    '02 Pc. Açúcar 2kg',
+                    '03 Lt. Óleo 900ml',
+                    '02 Pc. Café 250g',
+                    '03 Pc. Feijão 1kg',
+                    '01 Pc. Sal 1kg',
+                    '02 Pc. Trigo 1kg',
+                    '03 Pc. Macarrão 500g',
+                    '01 Un. Goiabada',
+                    '01 Lt. Sardinha',
+                    '01 Pc. Farofa Pronta'
+                ]
+            },
+            'media': {
+                titulo: 'Cesta Média',
+                brinde: '🍫 CAIXA DE BOMBOM',
+                itens: [
+                    '02 Pc. Arroz 5kg (Total 10kg)',
+                    '03 Pc. Açúcar 2kg',
+                    '04 Lt. Óleo 900ml',
+                    '03 Pc. Café 250g',
+                    '04 Pc. Feijão 1kg',
+                    '01 Pc. Sal 1kg',
+                    '03 Pc. Trigo 1kg',
+                    '04 Pc. Macarrão 500g',
+                    '02 Un. Molho de Tomate',
+                    '01 Un. Maionese',
+                    '02 Lt. Sardinha',
+                    '01 Un. Milho Verde'
+                ]
+            },
+            'grande': {
+                titulo: 'Cesta Grande',
+                brinde: '🧴 KIT HIGIENE COMPLETO',
+                itens: [
+                    '03 Pc. Arroz 5kg (Total 15kg)',
+                    '04 Pc. Açúcar 2kg',
+                    '05 Lt. Óleo 900ml',
+                    '04 Pc. Café 250g',
+                    '05 Pc. Feijão 1kg',
+                    '02 Pc. Sal 1kg',
+                    '04 Pc. Trigo 1kg',
+                    '05 Pc. Macarrão 500g',
+                    '03 Un. Sabonete',
+                    '02 Un. Creme Dental',
+                    '02 Pc. Papel Higiênico',
+                    '01 Un. Sabão em Pó 1kg',
+                    '01 Un. Amaciante 2L',
+                    '01 Un. Detergente',
+                    '01 Un. Esponja de Aço'
+                ]
+            }
+        };
+
+        // Estado atual da seleção
+        let cestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '', selecao: '' };
+
+        // === FUNÇÕES DOS MODAIS ===
+
+        function abrirModalInfo(tipo) {
+            const dados = dadosCestas[tipo];
+            if (!dados) return;
+
+            document.getElementById('tituloModalInfo').innerText = dados.titulo;
+            const lista = document.getElementById('listaProdutosContent');
+            lista.innerHTML = '';
+
+            // Renderizar Brinde
+            const brindeArea = document.getElementById('brindeArea');
+            if (dados.brinde) {
+                brindeArea.innerHTML = `
+                    <div class="brinde-container">
+                        <i class="fas fa-gift" style="font-size: 24px; color: #1565C0; margin-right: 15px;"></i>
+                        <div>
+                            <span class="brinde-label">BRINDE ESPECIAL</span>
+                            <span class="brinde-desc">${dados.brinde}</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                brindeArea.innerHTML = '';
+            }
+
+            // Renderizar Itens
+            dados.itens.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `<i class="fas fa-check" style="color: #4CAF50; margin-right: 10px; margin-top: 4px;"></i> ${item}`;
+                lista.appendChild(li);
+            });
+
+            document.getElementById('modalInformacoes').style.display = 'flex';
+        }
+
+        function fecharModalInfo() {
+            document.getElementById('modalInformacoes').style.display = 'none';
+        }
+
+        function abrirModalVariacao(nomeCesta, precoAlvino, precoKoblenz) {
+            cestaAtual = { nome: nomeCesta, precoAlvino, precoKoblenz, selecao: '' };
+            
+            document.getElementById('tituloCestaModal').innerText = nomeCesta;
+            document.getElementById('precoAlvinoDisplay').innerText = `R$ ${precoAlvino}`;
+            document.getElementById('precoKoblenzDisplay').innerText = `R$ ${precoKoblenz}`;
+            
+            // Resetar seleção
+            document.getElementById('optAlvino').classList.remove('selected');
+            document.getElementById('optKoblenz').classList.remove('selected');
+            document.getElementById('btnConfirmarPedido').disabled = true;
+            
+            // Resetar estilos dos radios
+            document.querySelectorAll('.radio-custom').forEach(el => {
+                el.style.backgroundColor = 'transparent';
+                el.style.borderColor = '#ccc';
+            });
+
+            document.getElementById('modalVariacao').style.display = 'flex';
+        }
+
+        function fecharModalVariacao() {
+            document.getElementById('modalVariacao').style.display = 'none';
+        }
+
+        function selecionarOpcao(marca) {
+            cestaAtual.selecao = marca;
+            
+            // Atualizar classes visuais
+            document.getElementById('optAlvino').classList.remove('selected');
+            document.getElementById('optKoblenz').classList.remove('selected');
+            document.getElementById(`opt${marca === 'alvino' ? 'Alvino' : 'Koblenz'}`).classList.add('selected');
+            
+            // Atualizar radios
+            document.querySelectorAll('.radio-custom').forEach(el => {
+                el.style.backgroundColor = 'transparent';
+                el.style.borderColor = '#ccc';
+            });
+            const selectedRadio = document.querySelector(`#opt${marca === 'alvino' ? 'Alvino' : 'Koblenz'} .radio-custom`);
+            if(selectedRadio) {
+                selectedRadio.style.backgroundColor = 'var(--cor-primaria)';
+                selectedRadio.style.borderColor = 'var(--cor-primaria)';
+            }
+
+            document.getElementById('btnConfirmarPedido').disabled = false;
+        }
+
+        function confirmarAcao() {
+            const marcaNome = cestaAtual.selecao === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
+            const precoFinal = cestaAtual.selecao === 'alvino' ? cestaAtual.precoAlvino : cestaAtual.precoKoblenz;
+            
+            const texto = `Olá! Gostaria de encomendar a *${cestaAtual.nome}* com *${marcaNome}* no valor de *R$ ${precoFinal}*.`;
+            const url = `https://wa.me/5565996813588?text=${encodeURIComponent(texto)}`;
+            
+            window.open(url, '_blank');
+            fecharModalVariacao();
+        }
+
+        function encomendarDireto(nome, preco) {
+            const texto = `Olá! Gostaria de encomendar a *${nome}* no valor de *R$ ${preco}*.`;
+            window.open(`https://wa.me/5565996813588?text=${encodeURIComponent(texto)}`, '_blank');
+        }
+        
+        function compartilharCesta(nome, preco) {
+             if (navigator.share) {
+                navigator.share({
+                    title: `Super Cestas Dona Antônia - ${nome}`,
+                    text: `Olha essa oferta: ${nome} por R$ ${preco}! Entrega Grátis em Cuiabá e VG.`,
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // Fallback simples
+                const texto = `Olha essa oferta: ${nome} por R$ ${preco}! Entrega Grátis em Cuiabá e VG. ${window.location.href}`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+            }
+        }
+
+        // === FUNÇÕES DE SORTEIO ===
+        function abrirModalSorteio() {
+            document.getElementById('modalSorteio').style.display = 'flex';
+        }
+        function fecharModalSorteio() {
+            document.getElementById('modalSorteio').style.display = 'none';
+        }
+        
+        // Simulação de busca (apenas frontend)
+        function buscarCadastro(sufixo) {
+            const tel = document.getElementById(`busca-telefone${sufixo}`).value;
+            if(tel.length < 8) {
+                alert('Digite um número válido');
+                return;
+            }
+            
+            // Simulação simples: se terminar em 1, acha cadastro. Senão, novo.
+            if(tel.endsWith('1')) {
+                document.getElementById(`area-busca-telefone${sufixo}`).style.display = 'none';
+                document.getElementById(`cadastro-encontrado${sufixo}`).style.display = 'block';
+                document.getElementById(`nome-cliente-encontrado${sufixo}`).innerText = 'Cliente Exemplo Silva';
+                document.getElementById(`cidade-cliente-encontrado${sufixo}`).innerText = 'Cuiabá - CPA 3';
+            } else {
+                document.getElementById(`area-busca-telefone${sufixo}`).style.display = 'none';
+                document.getElementById(`cadastro-novo${sufixo}`).style.display = 'block';
+            }
+        }
+        
+        function confirmarJaCadastrado() {
+            alert("Confirmado! Você está participando.");
+            fecharModalSorteio();
+        }
+        
+        function enviarNovoCadastro() {
+             alert("Cadastro realizado! Você está participando.");
+             fecharModalSorteio();
+        }
+
+        // === FUNÇÕES DE CONTATO ===
+        function abrirModalContatos() {
+            document.getElementById('modalContatos').style.display = 'flex';
+        }
+        function fecharModalContatos() {
+            document.getElementById('modalContatos').style.display = 'none';
+        }
+
+        // === ZOOM ===
+        function abrirZoom(src, alt) {
+            document.getElementById('imgZoomTarget').src = src;
+            document.getElementById('captionZoom').innerText = alt;
+            document.getElementById('modalZoomImagem').style.display = 'flex';
+        }
+        function fecharZoom() {
+            document.getElementById('modalZoomImagem').style.display = 'none';
+        }
+        
+        // === HELPERS ===
+        function ativarChip(elemento) {
+             document.querySelectorAll('.chip-ancora').forEach(el => el.classList.remove('active'));
+             elemento.classList.add('active');
+        }
+
+    </script>
+</body>
+</html>
