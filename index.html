@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
+    <!-- SEO: Canonical Tag (Evita conteúdo duplicado) -->
+    <link rel="canonical" href="https://donaantonia.com.br/" />
+
     <!-- OTIMIZAÇÃO: Preconnect e DNS-Prefetch para performance -->
     <link rel="preconnect" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
@@ -20,14 +23,23 @@
     <link rel="apple-touch-icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
     <link rel="shortcut icon" href="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
 
-    <!-- TÍTULO HÍBRIDO OTIMIZADO -->
+    <!-- TÍTULO HÍBRIDO OTIMIZADO (Marca + Local + Benefício) -->
     <title>Super Cestas Básicas Dona Antônia | Cuiabá e VG | Entrega Grátis</title>
     
-    <!-- META DESCRIPTION COM PALAVRAS-CHAVE LOCAIS -->
-    <meta name="description" content="Procurando Cesta Básica em Cuiabá? A Super Cestas Dona Antônia no Jardim Nossa Sra. Aparecida tem o melhor preço. Clientes satisfeitos! Entrega Grátis.">
-    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta doação, jardim nossa senhora aparecida, compra de alimentos, entrega grátis mercado, cesta de natal cuiabá, atacado de alimentos">
+    <!-- META DESCRIPTION COM PALAVRAS-CHAVE LOCAIS E GATILHOS MENTAIS -->
+    <meta name="description" content="Procurando Cesta Básica em Cuiabá? A Dona Antônia tem o melhor preço no Atacado e Varejo. Entregamos no CPA, Coxipó, Centro e Várzea Grande. Peça pelo WhatsApp!">
+    <meta name="keywords" content="cesta básica cuiabá, sacolão cuiabá, cesta doação, jardim nossa senhora aparecida, compra de alimentos, entrega grátis mercado, cesta de natal cuiabá, atacado de alimentos, cesta basica várzea grande">
     
-    <!-- GEO TAGS -->
+    <!-- OPEN GRAPH (Para ficar bonito no WhatsApp e Facebook) -->
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Super Cestas Básicas Dona Antônia | O Melhor Preço de Cuiabá" />
+    <meta property="og:description" content="Cestas completas a partir de R$ 85,00. Entrega grátis em toda Cuiabá e Várzea Grande. Aceitamos cartões de alimentação." />
+    <meta property="og:url" content="https://donaantonia.com.br/" />
+    <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" />
+    <meta property="og:site_name" content="Dona Antônia Alimentos" />
+
+    <!-- GEO TAGS (Sinalizadores de Localização para Robôs Antigos) -->
     <meta name="geo.region" content="BR-MT" />
     <meta name="geo.placename" content="Cuiabá" />
     <meta name="geo.position" content="-15.6014;-56.0979" />
@@ -505,32 +517,33 @@
 
         .btn-float-action {
             flex: 1;
-            padding: 14px 10px; /* Ajustado para caber 2 botões */
-            border-radius: 12px; 
-            border: 2px solid rgba(255,255,255,0.4); 
-            font-weight: 800; 
+            padding: 10px 8px; /* Menor verticalmente */
+            border-radius: 50px; /* Mais arredondado */
+            border: none; 
+            font-weight: 700; 
             text-transform: uppercase;
-            font-size: 0.85rem; 
+            font-size: 0.75rem; /* Fonte menor */
             letter-spacing: 0.5px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2); /* Sombra menor */
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 0; /* Sem gap */
             color: white !important;
             transition: transform 0.2s;
             text-align: center;
             line-height: 1.2;
+            white-space: nowrap; /* Forçar uma linha */
         }
         .btn-float-action:active { transform: scale(0.96); }
 
         .btn-float-sorteio { 
-            background: linear-gradient(135deg, #2E7D32, #1B5E20);
+            background: linear-gradient(to right, #E65100, #F57C00); /* Laranja Escuro */
         } 
         /* Novo estilo para o botão de salvar contato */
         .btn-float-whatsapp { 
-            background: linear-gradient(135deg, #128C7E, #075E54); 
+            background: linear-gradient(to right, #FF9800, #FFB74D); /* Laranja Claro */
         }
 
         /* === MODAIS === */
@@ -1026,7 +1039,68 @@
         "Coxipó", 
         "CPA", 
         "Cristo Rei"
-      ]
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Cestas Básicas",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Econômica",
+              "description": "Cesta básica econômica ideal para doação e consumo rápido. Contém itens essenciais como arroz, feijão, açúcar e óleo."
+            },
+            "price": "85.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Mini",
+              "description": "Cesta básica compacta com itens de limpeza e higiene. Perfeita para casais ou pessoas que moram sozinhas."
+            },
+            "price": "165.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Pequena",
+              "description": "Cesta básica completa com variedade de alimentos e produtos de limpeza. Ótimo custo-benefício."
+            },
+            "price": "215.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Média",
+              "description": "Cesta básica robusta para famílias médias. Inclui maior quantidade de itens essenciais e limpeza."
+            },
+            "price": "320.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Cesta Grande",
+              "description": "Nossa maior cesta básica. Abastecimento completo para famílias grandes, com itens de primeira qualidade."
+            },
+            "price": "380.00",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          }
+        ]
+      }
     }
     </script>
 </head>
@@ -1241,6 +1315,11 @@
                     <h2 style="text-align: center; color: var(--cor-entrega);">Entrega Grátis</h2>
                     <div style="text-align: center;">
                         <p style="font-size: 0.95rem; color: #555;">Atendemos toda área urbana de <strong>Cuiabá</strong> e <strong>Várzea Grande</strong>.</p>
+                        <!-- CONTEÚDO HYPER-LOCAL NOVO -->
+                        <div style="margin-top: 15px; font-size: 0.85rem; color: #666; background: #f9f9f9; padding: 10px; border-radius: 8px;">
+                            <strong>Principais Bairros Atendidos:</strong><br>
+                            CPA (1, 2, 3 e 4), Coxipó, Centro, Jardim Imperial, Tijucal, Pedra 90, Cristo Rei, Centro-Sul e muito mais.
+                        </div>
                         <hr style="border:0; border-top:1px dashed #eee; margin: 15px 0;">
                         <p style="background-color: #FFF3E0; color: #E65100; padding: 12px; border-radius: 8px; font-size: 0.9rem; font-weight: 600;">
                             <i class="fas fa-clock"></i> Pedindo até as 10h, recebe hoje!
@@ -1260,16 +1339,21 @@
                 <a href="#cestas-basicas-varzea-grande">Cestas em Várzea Grande</a> | 
                 <a href="#doacao-cesta-basica">Cestas para Doação</a>
             </div>
+
+            <!-- MAPA INCORPORADO NOVO (Lazy Load) -->
+            <div class="footer-map-container" style="margin-top: 20px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3842.684742796286!2d-56.0979!3d-15.6014!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDM2JzA1LjAiUyA1NsKwMDUnNTIuNCJX!5e0!3m2!1spt-BR!2sbr!4v1600000000000!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" title="Localização Dona Antônia"></iframe>
+            </div>
         </footer>
     </main>
 
     <!-- BOTÕES FLUTUANTES INFERIORES -->
     <div class="floating-buttons-container">
         <button onclick="abrirModalSorteio()" class="btn-float-action btn-float-sorteio">
-            <i class="fas fa-gift"></i> SORTEIO
+            SORTEIO
         </button>
         <button onclick="salvarContato()" class="btn-float-action btn-float-whatsapp">
-            <i class="fab fa-whatsapp"></i> SALVAR CONTATO
+            SALVAR CONTATO
         </button>
     </div>
 
