@@ -265,10 +265,22 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s, border-color 0.2s;
         }
         .produto-item:hover {
             border-color: var(--cor-primaria);
+        }
+        
+        /* ESTILO SELECIONADO - FUNDO VERDE CLARO */
+        .produto-item.selecionado {
+            background-color: #E8F5E9; /* Verde bem claro */
+            border-color: #4CAF50; /* Borda verde mais forte */
+            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.15);
+        }
+        /* Garantir que o fundo verde apareça removendo fundos brancos filhos */
+        .produto-item.selecionado .prod-img-wrapper,
+        .produto-item.selecionado .prod-info {
+            background-color: transparent; 
         }
 
         /* IMAGEM MAIOR NO CARD COMPACTO */
@@ -281,6 +293,7 @@
             justify-content: center;
             overflow: hidden;
             padding: 5px;
+            transition: background-color 0.2s;
         }
         .prod-img-wrapper img {
             max-width: 95%;
@@ -293,6 +306,7 @@
             text-align: center;
             background: #fff;
             border-top: 1px solid #f5f5f5;
+            transition: background-color 0.2s;
         }
 
         .prod-nome {
@@ -313,9 +327,12 @@
             align-items: center;
             justify-content: center;
             gap: 5px;
-            background-color: #f5f5f5;
+            background-color: #f5f5f5; /* Mantem fundo cinza nos botoes */
             border-radius: 20px;
             padding: 3px; 
+        }
+        .produto-item.selecionado .controle-qtd {
+            background-color: #C8E6C9; /* Fundo mais escuro para controle selecionado */
         }
 
         .btn-qtd {
@@ -815,6 +832,10 @@
             const qtd = cesta[prod.id] || 0;
             const card = document.createElement('div');
             card.className = 'produto-item';
+            // Se já tiver item na cesta ao criar, marca como selecionado
+            if (qtd > 0) card.classList.add('selecionado');
+            card.id = `card-produto-${prod.id}`; // Add ID para fácil acesso
+            
             card.innerHTML = `
                 <div class="prod-img-wrapper">
                     <img src="${prod.img}" alt="${prod.nome}" onerror="this.src='https://placehold.co/150x150/eee/999?text=Item'">
@@ -840,6 +861,14 @@
             // Atualiza visual apenas do número
             document.getElementById(`qtd-${id}`).innerText = cesta[id];
             
+            // Atualiza visual do card (verde se > 0)
+            const card = document.getElementById(`card-produto-${id}`);
+            if (cesta[id] > 0) {
+                card.classList.add('selecionado');
+            } else {
+                card.classList.remove('selecionado');
+            }
+
             // RESETAR O CALCULO VISUAL
             document.getElementById('totalValor').innerText = "Clique em Calcular";
             document.getElementById('totalValor').style.color = "#666";
@@ -993,8 +1022,17 @@
             
             // Atualiza UI
             produtos.forEach(prod => {
+                const qtd = cesta[prod.id] || 0;
+                
                 const el = document.getElementById(`qtd-${prod.id}`);
-                if(el) el.innerText = cesta[prod.id] || 0;
+                if(el) el.innerText = qtd;
+
+                // Atualiza visual do card
+                const card = document.getElementById(`card-produto-${prod.id}`);
+                if (card) {
+                    if (qtd > 0) card.classList.add('selecionado');
+                    else card.classList.remove('selecionado');
+                }
             });
 
             // Tenta calcular e validar
@@ -1014,8 +1052,17 @@
             if (salva) {
                 cesta = JSON.parse(salva);
                 produtos.forEach(prod => {
+                    const qtd = cesta[prod.id] || 0;
+                    
                     const el = document.getElementById(`qtd-${prod.id}`);
-                    if(el) el.innerText = cesta[prod.id] || 0;
+                    if(el) el.innerText = qtd;
+
+                    // Atualiza visual do card ao carregar
+                    const card = document.getElementById(`card-produto-${prod.id}`);
+                    if (card) {
+                        if (qtd > 0) card.classList.add('selecionado');
+                        else card.classList.remove('selecionado');
+                    }
                 });
             }
         }
