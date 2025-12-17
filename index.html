@@ -554,7 +554,7 @@
         }
 
         /* === MODAIS === */
-        .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio, #modalZoomImagem, #modalApresentacao {
+        .modal-variacao, #modalContatos, #modalInformacoes, #modalSorteio, #modalZoomImagem, #modalApresentacao, #modalBrindeApp {
             display: none; position: fixed; z-index: 4000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.65); justify-content: center; align-items: center; backdrop-filter: blur(5px);
             padding: 20px;
@@ -1371,8 +1371,9 @@
         <button onclick="abrirModalSorteio()" class="btn-float-action btn-float-sorteio">
             SORTEIO
         </button>
-        <button onclick="salvarContato()" class="btn-float-action btn-float-whatsapp">
-            SALVAR CONTATO
+        <!-- BOTÃO ALTERADO -->
+        <button onclick="abrirModalBrinde()" class="btn-float-action btn-float-whatsapp">
+            <i class="fas fa-gift" style="margin-right:5px;"></i> COMPRAR COM BRINDE
         </button>
     </div>
 
@@ -1394,6 +1395,44 @@
                 <button class="btn-confirmar-pedido" id="btnConfirmarPedido" onclick="confirmarAcao()" disabled>
                     <i class="fab fa-whatsapp"></i> Enviar Pedido
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL: BRINDE APP -->
+    <div id="modalBrindeApp" class="modal-variacao" onclick="if(event.target === this) fecharModalBrinde()">
+        <div class="modal-info-content">
+            <div class="modal-info-header" style="background: linear-gradient(135deg, #1565C0, #0D47A1); color: white;">
+                <h3 style="color: white;"><i class="fas fa-gift"></i> Ativar Modo Brinde</h3>
+                <button class="btn-fechar-modal-info" onclick="fecharModalBrinde()" style="background: rgba(255,255,255,0.2); color: white; border: none;">Fechar</button>
+            </div>
+            <div class="modal-body-scroll" style="text-align: center; padding: 25px;">
+                <img src="img/celular-app.png" width="80" height="80" alt="App" style="margin-bottom: 15px;" onerror="this.src='https://placehold.co/80x80/2196F3/ffffff?text=APP'">
+                
+                <h2 style="font-size: 1.2rem; color: var(--cor-primaria); margin-bottom: 10px;">Baixe o App e Ganhe Brindes!</h2>
+                
+                <p style="color: #555; font-size: 0.95rem; line-height: 1.5; margin-bottom: 20px;">
+                    Ao instalar nosso aplicativo oficial, você ativa automaticamente o <strong>MODO BRINDE</strong>.
+                </p>
+
+                <div style="background-color: #E3F2FD; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: left;">
+                    <p style="font-weight: 700; color: #1565C0; margin: 0 0 10px 0; font-size: 0.9rem;">🎁 Brindes disponíveis nas cestas:</p>
+                    <ul style="margin: 0; padding-left: 20px; color: #333; font-size: 0.9rem;">
+                        <li>Amaciante Ypê 2L</li>
+                        <li>Sabão em Pó OMO</li>
+                        <li>Café Premiado 250g</li>
+                        <li>Desinfetante Remmus</li>
+                    </ul>
+                    <p style="font-size: 0.75rem; color: #666; margin-top: 10px;">*Válido para cestas Mini, Pequena, Média e Grande.</p>
+                </div>
+
+                <!-- Botão de Simulação de Instalação para o Canvas -->
+                <button onclick="simularInstalacaoApp()" style="background-color: #2E7D32; color: white; width: 100%; padding: 14px; border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <i class="fas fa-download"></i> INSTALAR APP AGORA
+                </button>
+                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">
+                    (Clique para simular a instalação e desbloquear os brindes)
+                </p>
             </div>
         </div>
     </div>
@@ -1723,6 +1762,15 @@
         // Estado atual da seleção
         let cestaAtual = { nome: '', precoAlvino: '', precoKoblenz: '', selecao: '' };
 
+        // === VERIFICAÇÃO DE APP INSTALADO ===
+        function isAppInstalled() {
+            // Verifica modo standalone (PWA real) OU flag de simulação no localStorage
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const isSimulated = localStorage.getItem('donaAntoniaAppInstalado') === 'true';
+            
+            return isStandalone || isSimulated;
+        }
+
         // === FUNÇÕES DOS MODAIS ===
 
         function abrirModalInfo(tipo) {
@@ -1733,15 +1781,26 @@
             const lista = document.getElementById('listaProdutosContent');
             lista.innerHTML = '';
 
-            // Renderizar Brinde
+            // Renderizar Brinde APENAS SE APP INSTALADO
             const brindeArea = document.getElementById('brindeArea');
-            if (dados.brinde) {
+            if (dados.brinde && isAppInstalled()) {
                 brindeArea.innerHTML = `
                     <div class="brinde-container">
                         <i class="fas fa-gift" style="font-size: 24px; color: #1565C0; margin-right: 15px;"></i>
                         <div>
-                            <span class="brinde-label">BRINDE ESPECIAL</span>
+                            <span class="brinde-label">BRINDE ESPECIAL (MODO APP)</span>
                             <span class="brinde-desc">${dados.brinde}</span>
+                        </div>
+                    </div>
+                `;
+            } else if (dados.brinde && !isAppInstalled()) {
+                // Opcional: Mostrar aviso que existe brinde se instalar
+                 brindeArea.innerHTML = `
+                    <div class="brinde-container" style="background-color: #f5f5f5; border-color: #ddd; cursor: pointer;" onclick="abrirModalBrinde(); fecharModalInfo();">
+                        <i class="fas fa-lock" style="font-size: 24px; color: #777; margin-right: 15px;"></i>
+                        <div>
+                            <span class="brinde-label" style="color: #666;">BRINDE BLOQUEADO</span>
+                            <span class="brinde-desc" style="color: #666; font-size: 0.8rem;">Instale o App para liberar este brinde!</span>
                         </div>
                     </div>
                 `;
@@ -1771,6 +1830,24 @@
 
         function fecharModalInfo() {
             document.getElementById('modalInformacoes').style.display = 'none';
+        }
+
+        // === NOVO: FUNÇÕES DE BRINDE APP ===
+        function abrirModalBrinde() {
+            document.getElementById('modalBrindeApp').style.display = 'flex';
+        }
+        function fecharModalBrinde() {
+            document.getElementById('modalBrindeApp').style.display = 'none';
+        }
+        
+        function simularInstalacaoApp() {
+            // Simula a instalação salvando no localStorage
+            localStorage.setItem('donaAntoniaAppInstalado', 'true');
+            alert('Parabéns! App "Instalado" com sucesso.\nO MODO BRINDE foi ativado para suas próximas compras.');
+            fecharModalBrinde();
+            // Recarrega para atualizar a interface se necessário, ou apenas deixa o usuario navegar
+            // Vamos forçar reload para garantir que tudo pegue o novo estado limpo
+            window.location.reload(); 
         }
 
         function abrirModalVariacao(nomeCesta, precoAlvino, precoKoblenz) {
@@ -1811,11 +1888,10 @@
                 el.style.backgroundColor = 'transparent';
                 el.style.borderColor = '#ccc';
             });
-            const selectedRadio = document.querySelector(`#opt${marca === 'alvino' ? 'Alvino' : 'Koblenz'}`).classList.add('radio-custom');
-            const radio = document.querySelector(`#opt${marca === 'alvino' ? 'Alvino' : 'Koblenz'} .radio-custom`);
-            if(radio) {
-                radio.style.backgroundColor = 'var(--cor-primaria)';
-                radio.style.borderColor = 'var(--cor-primaria)';
+            const selectedRadio = document.querySelector(`#opt${marca === 'alvino' ? 'Alvino' : 'Koblenz'} .radio-custom`);
+            if(selectedRadio) {
+                selectedRadio.style.backgroundColor = 'var(--cor-primaria)';
+                selectedRadio.style.borderColor = 'var(--cor-primaria)';
             }
 
             document.getElementById('btnConfirmarPedido').disabled = false;
@@ -1825,7 +1901,13 @@
             const marcaNome = cestaAtual.selecao === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
             const precoFinal = cestaAtual.selecao === 'alvino' ? cestaAtual.precoAlvino : cestaAtual.precoKoblenz;
             
-            const texto = `Olá! Gostaria de encomendar a *${cestaAtual.nome}* com *${marcaNome}* no valor de *R$ ${precoFinal}*.`;
+            // Adicionar aviso de brinde no pedido se app instalado
+            let textoBrinde = "";
+            if (isAppInstalled()) {
+                textoBrinde = " (COM BRINDE APP ATIVADO)";
+            }
+            
+            const texto = `Olá! Gostaria de encomendar a *${cestaAtual.nome}* com *${marcaNome}* no valor de *R$ ${precoFinal}*${textoBrinde}.`;
             const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
             
             window.open(url, '_blank');
@@ -1833,7 +1915,13 @@
         }
 
         function encomendarDireto(nome, preco) {
-            const texto = `Olá! Gostaria de encomendar a *${nome}* no valor de *R$ ${preco}*.`;
+            // Adicionar aviso de brinde no pedido se app instalado
+            let textoBrinde = "";
+            if (isAppInstalled()) {
+                textoBrinde = " (COM BRINDE APP ATIVADO)";
+            }
+            
+            const texto = `Olá! Gostaria de encomendar a *${nome}* no valor de *R$ ${preco}*${textoBrinde}.`;
             window.open(`https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`, '_blank');
         }
         
