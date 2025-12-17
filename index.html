@@ -1636,6 +1636,18 @@
 
     <!-- SCRIPTS -->
     <script>
+        // === VARIÁVEL PARA INSTALAÇÃO PWA ===
+        let deferredPrompt = null;
+
+        // Escutar evento de instalação (antes de aparecer o prompt nativo)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Impede o Chrome 67 e anteriores de mostrar o prompt automaticamente
+            e.preventDefault();
+            // Guarda o evento para ser disparado depois
+            deferredPrompt = e;
+            console.log("PWA: Evento de instalação capturado e salvo.");
+        });
+
         // === DADOS DAS CESTAS ===
         const dadosCestas = {
             'economica': {
@@ -1894,14 +1906,40 @@
             document.getElementById('modalBrindeApp').style.display = 'none';
         }
         
+        // Função de Fallback (Simulação)
         function simularInstalacaoApp() {
             // Simula a instalação salvando no localStorage
             localStorage.setItem('donaAntoniaAppInstalado', 'true');
-            alert('Parabéns! App "Instalado" com sucesso.\nO MODO BRINDE foi ativado para suas próximas compras.');
+            alert('Modo Brinde Ativado! (Simulação/Web)\nAgora você verá os brindes nas cestas.');
             fecharModalBrinde();
-            // Recarrega para atualizar a interface se necessário, ou apenas deixa o usuario navegar
-            // Vamos forçar reload para garantir que tudo pegue o novo estado limpo
             window.location.reload(); 
+        }
+
+        // === NOVA FUNÇÃO: TENTAR INSTALAR REALMENTE ===
+        async function tentarInstalarApp() {
+            if (deferredPrompt) {
+                // Se o navegador suporta e guardou o evento, dispara o prompt real
+                deferredPrompt.prompt();
+                
+                // Espera a escolha do usuário
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Resultado da instalação: ${outcome}`);
+                
+                // Limpa a variável
+                deferredPrompt = null;
+
+                if (outcome === 'accepted') {
+                    // Se o usuário aceitou, ativa o modo brinde
+                    localStorage.setItem('donaAntoniaAppInstalado', 'true');
+                    alert('Obrigado por instalar! O Modo Brinde foi ativado.');
+                    fecharModalBrinde();
+                    window.location.reload();
+                }
+            } else {
+                // Se não suporta instalação nativa (ou já instalou/não capturou evento), usa o fallback
+                console.log("Instalação nativa não disponível. Usando fallback.");
+                simularInstalacaoApp();
+            }
         }
 
         function abrirModalVariacao(nomeCesta, precoAlvino, precoKoblenz) {
