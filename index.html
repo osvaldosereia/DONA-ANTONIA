@@ -502,55 +502,75 @@
             }
         }
         
-        /* === BOTÕES FLUTUANTES === */
+        /* === BOTÕES FLUTUANTES MODERNIZADOS (GLASSMORPHISM) === */
         .floating-buttons-container {
             position: fixed;
-            bottom: 0; /* Fixado no fundo */
-            left: 0;
-            width: 100%; /* Largura total para a vinheta de ponta a ponta */
+            bottom: 20px; /* Descolado da base */
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto; /* Largura automática */
             z-index: 5000;
             display: flex;
-            justify-content: center; /* Centralizado horizontalmente sempre */
-            gap: 12px;
-            padding: 20px 15px 20px 15px; /* Espaço interno */
+            justify-content: center; 
+            gap: 15px;
+            padding: 10px 20px; 
             
-            /* VINHETA ESCURA TIPO DEGRADÊ DE BAIXO PARA CIMA - MAIS CLARA */
-            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);
+            /* Efeito Glassmorphism */
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
             
-            pointer-events: none; /* Permite clicar através da área transparente */
+            pointer-events: auto; 
         }
 
         .btn-float-action {
-            pointer-events: auto; /* Reativa cliques nos botões */
-            padding: 10px 16px; /* Mais compacto verticalmente */
+            pointer-events: auto; 
+            padding: 12px 20px; 
             border-radius: 50px; 
-            border: none; /* Sem borda grossa */
-            font-weight: 700; 
+            border: none; 
+            font-weight: 800; 
             text-transform: uppercase;
-            font-size: 0.75rem; /* Fonte menor e discreta */
+            font-size: 0.85rem; 
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0; 
+            gap: 8px; 
             color: white !important;
-            transition: transform 0.2s;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             text-align: center;
-            line-height: 1.2;
-            white-space: nowrap; /* Garante 1 linha */
-            min-width: 100px; /* Largura mínima */
+            line-height: 1;
+            white-space: nowrap; 
+            min-width: 110px; 
+            
+            /* Sombras coloridas (Glow) */
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .btn-float-action:active { transform: scale(0.96); }
+        
+        .btn-float-action:hover { transform: translateY(-3px); }
+        .btn-float-action:active { transform: scale(0.96) translateY(0); }
 
-        /* VARIAÇÕES DE LARANJA */
+        /* Estilo Sorteio */
         .btn-float-sorteio { 
-            background: linear-gradient(to right, #FF6F00, #FF8F00); /* Laranja mais escuro/forte */
+            background: linear-gradient(135deg, #FF9800, #F57C00); 
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
         } 
         
+        /* Estilo Brinde (Com animação de pulso) */
         .btn-float-whatsapp { 
-            background: linear-gradient(to right, #EF6C00, #FB8C00); /* Laranja médio */
+            background: linear-gradient(135deg, #2E7D32, #1B5E20); 
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+            animation: pulse-green 2s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(46, 125, 50, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
         }
 
         /* === MODAIS === */
@@ -873,11 +893,13 @@
                 overflow-x: auto; -webkit-overflow-scrolling: touch;
             }
             
+            /* Ajuste do container flutuante no desktop */
             .floating-buttons-container {
-                /* REMOVIDO PARA MANTER O ESTILO CENTRALIZADO DO MOBILE */
-                /* max-width: 1100px; width: auto; right: 40px; left: auto; transform: none; gap: 20px; */
+                left: auto;
+                right: 30px; /* Alinha a direita no desktop */
+                transform: none;
+                bottom: 30px;
             }
-            .btn-float-action { /* width: auto; min-width: 160px; REMOVIDO */ }
         }
         
         @media (min-width: 1024px) {
@@ -1369,11 +1391,11 @@
     <!-- BOTÕES FLUTUANTES INFERIORES -->
     <div class="floating-buttons-container">
         <button onclick="abrirModalSorteio()" class="btn-float-action btn-float-sorteio">
-            SORTEIO
+            <i class="fas fa-ticket-alt"></i> SORTEIO
         </button>
         <!-- BOTÃO ALTERADO -->
         <button onclick="abrirModalBrinde()" class="btn-float-action btn-float-whatsapp">
-            <i class="fas fa-gift" style="margin-right:5px;"></i> COMPRAR COM BRINDE
+            <i class="fas fa-gift"></i> COMPRAR COM BRINDE
         </button>
     </div>
 
@@ -1407,7 +1429,8 @@
                 <button class="btn-fechar-modal-info" onclick="fecharModalBrinde()" style="background: rgba(255,255,255,0.2); color: white; border: none;">Fechar</button>
             </div>
             <div class="modal-body-scroll" style="text-align: center; padding: 25px;">
-                <img src="img/celular-app.png" width="80" height="80" alt="App" style="margin-bottom: 15px;" onerror="this.src='https://placehold.co/80x80/2196F3/ffffff?text=APP'">
+                <!-- LOGO REDONDA AGORA AQUI -->
+                <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="100" height="100" alt="Logo Dona Antônia" style="margin-bottom: 15px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" onerror="this.src='https://placehold.co/100x100/2196F3/ffffff?text=LOGO'">
                 
                 <h2 style="font-size: 1.2rem; color: var(--cor-primaria); margin-bottom: 10px;">Baixe o App e Ganhe Brindes!</h2>
                 
@@ -1426,11 +1449,26 @@
                     <p style="font-size: 0.75rem; color: #666; margin-top: 10px;">*Válido para cestas Mini, Pequena, Média e Grande.</p>
                 </div>
 
-                <!-- Botão de Simulação de Instalação para o Canvas -->
-                <button onclick="simularInstalacaoApp()" style="background-color: #2E7D32; color: white; width: 100%; padding: 14px; border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <!-- Botão de Instalação (Simulado) - PADRÃO (Android/Desktop) -->
+                <button id="btn-install-android" onclick="simularInstalacaoApp()" style="background-color: #2E7D32; color: white; width: 100%; padding: 14px; border: none; border-radius: 50px; font-weight: 700; font-size: 1rem; cursor: pointer; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px;">
                     <i class="fas fa-download"></i> INSTALAR APP AGORA
                 </button>
-                <p style="font-size: 0.8rem; color: #888; margin-top: 10px;">
+                
+                <!-- INSTRUÇÕES ESPECÍFICAS PARA IPHONE (Oculto por padrão) -->
+                <div id="instrucoes-ios" style="display: none; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px; padding: 15px; text-align: left;">
+                    <p style="font-weight: 700; color: #333; margin-bottom: 10px; font-size: 0.95rem;">Para ativar no iPhone:</p>
+                    <ol style="margin: 0; padding-left: 20px; color: #555; font-size: 0.9rem; line-height: 1.6;">
+                        <li>Toque no botão <strong>Compartilhar</strong> <i class="fas fa-share-square"></i> abaixo.</li>
+                        <li>Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong> <i class="fas fa-plus-square"></i>.</li>
+                        <li>Clique em <strong>"Adicionar"</strong> no canto superior direito.</li>
+                    </ol>
+                    <!-- Botão de confirmação manual para usuários de iPhone -->
+                    <button onclick="simularInstalacaoApp()" style="margin-top: 15px; background-color: #007AFF; color: white; width: 100%; padding: 12px; border: none; border-radius: 50px; font-weight: 700; font-size: 0.9rem; cursor: pointer;">
+                        JÁ INSTALEI / ATIVAR DESCONTO
+                    </button>
+                </div>
+
+                <p id="legenda-install" style="font-size: 0.8rem; color: #888; margin-top: 10px;">
                     (Clique para simular a instalação e desbloquear os brindes)
                 </p>
             </div>
@@ -1835,7 +1873,23 @@
         // === NOVO: FUNÇÕES DE BRINDE APP ===
         function abrirModalBrinde() {
             document.getElementById('modalBrindeApp').style.display = 'flex';
+            
+            // Lógica de Detecção de iOS (iPhone/iPad)
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            
+            if (isIOS) {
+                // Se for iPhone, mostra as instruções manuais
+                document.getElementById('instrucoes-ios').style.display = 'block';
+                document.getElementById('btn-install-android').style.display = 'none';
+                document.getElementById('legenda-install').style.display = 'none';
+            } else {
+                // Se for Android/Outro, mostra o botão padrão
+                document.getElementById('instrucoes-ios').style.display = 'none';
+                document.getElementById('btn-install-android').style.display = 'flex';
+                document.getElementById('legenda-install').style.display = 'block';
+            }
         }
+        
         function fecharModalBrinde() {
             document.getElementById('modalBrindeApp').style.display = 'none';
         }
