@@ -55,6 +55,15 @@
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
             100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
+
+        /* Esconder barra de rolagem mas permitir scroll */
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center py-6 px-4">
@@ -69,13 +78,7 @@
             
             <div class="relative z-10">
                 <div class="w-32 h-32 mx-auto bg-white rounded-full p-1 shadow-lg mb-4 flex items-center justify-center border-4 border-[#FFC107] overflow-hidden">
-                    <!-- 
-                        LÓGICA DA IMAGEM INTELIGENTE:
-                        1. Tenta carregar 'img/logo2 (3).png' (Local)
-                        2. Se falhar, carrega a logo do site oficial (Backup)
-                        3. Se falhar tudo, mostra o ícone da cesta
-                    -->
-                    <img src="img/logo2 (3).png" 
+                    <img src="img/logo2.png" 
                          alt="Dona Antônia Logo" 
                          class="w-full h-full object-cover" 
                          onerror="this.onerror=null; this.src='https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif'; this.parentElement.innerHTML='<img src=\'https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif\' class=\'w-full h-full object-cover\'>'">
@@ -136,47 +139,160 @@
 
         </div>
 
-        <!-- INFORMAÇÕES DE ENTREGA E PAGAMENTO -->
-        <div class="px-6 py-4 bg-gray-50">
-            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 text-sm text-blue-900 space-y-3">
+        <!-- SLIDER / CARROSSEL DE CESTAS -->
+        <div class="relative w-full bg-gray-100 py-6 border-t border-gray-200">
+            
+            <!-- Setas de Navegação -->
+            <button onclick="scrollSlider(-1)" class="absolute left-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 shadow-md text-[#0F2546] w-8 h-8 rounded-full flex items-center justify-center hover:bg-white">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button onclick="scrollSlider(1)" class="absolute right-2 top-1/2 -translate-y-1/2 z-20 bg-white/90 shadow-md text-[#0F2546] w-8 h-8 rounded-full flex items-center justify-center hover:bg-white">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <!-- Container do Slider -->
+            <div id="slider-cestas" class="flex overflow-x-auto gap-4 px-6 snap-x snap-mandatory scrollbar-hide scroll-smooth">
                 
-                <!-- Entrega -->
-                <div class="flex items-start gap-3">
-                    <div class="bg-white p-1.5 rounded-full shadow-sm text-blue-600">
-                        <i class="fas fa-truck"></i>
+                <!-- 1. CHAMADA INICIAL -->
+                <div class="min-w-[240px] snap-center bg-blue-900 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center text-white border-2 border-[#FFC107]">
+                    <div class="bg-[#FFC107] text-[#0F2546] w-14 h-14 rounded-full flex items-center justify-center mb-3 shadow-lg">
+                        <i class="fas fa-shopping-basket text-2xl"></i>
                     </div>
-                    <div>
-                        <span class="font-bold block text-blue-800 uppercase text-xs tracking-wide">Entrega Grátis</span>
-                        <span class="opacity-90 leading-tight block">Cuiabá e Várzea Grande.<br><span class="text-xs opacity-75">Pedindo até as 10h recebe hoje!</span></span>
+                    <h3 class="text-xl font-black uppercase leading-tight mb-2">Conheça<br>nossas Cestas</h3>
+                    <p class="text-sm opacity-90">Deslize para ver os modelos e preços <i class="fas fa-arrow-right ml-1"></i></p>
+                </div>
+
+                <!-- 2. INFORMAÇÃO ENTREGA -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md p-5 flex flex-col items-center justify-center text-center border border-gray-200">
+                    <i class="fas fa-truck text-3xl text-blue-600 mb-3"></i>
+                    <h3 class="font-bold text-gray-800 uppercase mb-2">Entrega Grátis</h3>
+                    <p class="text-sm text-gray-600">Entregamos em toda área urbana de <strong>Cuiabá e Várzea Grande</strong>.</p>
+                </div>
+
+                <!-- 3. INFORMAÇÃO PAGAMENTO (ATUALIZADO) -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md p-5 flex flex-col items-center justify-center text-center border border-gray-200">
+                    <i class="fas fa-credit-card text-3xl text-green-600 mb-2"></i>
+                    <h3 class="font-bold text-gray-800 uppercase mb-1">Pagamento</h3>
+                    <p class="text-xs text-gray-700 font-bold mb-1">
+                        Cartão de Crédito em 3x sem juros
+                    </p>
+                    <p class="text-[11px] text-gray-500 mb-3 leading-tight px-1">
+                        Aceitamos: Alelo, Sodexo, Pluxee, Flash, iFood, Caju.
+                    </p>
+                    <div class="bg-red-100 text-red-700 text-xs font-black px-3 py-1 rounded uppercase">
+                        ⚠️ Não vendemos a prazo
                     </div>
                 </div>
 
-                <div class="border-t border-blue-200/60"></div>
+                <!-- 4. CESTA ECONÔMICA -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+                    <!-- AUMENTO DE ALTURA (h-48) -->
+                    <div class="h-48 bg-gray-200 relative">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif" alt="Cesta Econômica" class="w-full h-full object-cover">
+                        <div class="absolute top-0 right-0 bg-[#FFC107] text-[#0F2546] text-xs font-bold px-2 py-1">Mais Vendida</div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 text-center">
+                        <h3 class="font-bold text-[#0F2546] text-lg">Cesta Econômica</h3>
+                        <div class="text-[#D32F2F] font-black text-xl my-2">R$ 85,00</div>
+                        <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20a%20Cesta%20Econ%C3%B4mica." class="mt-auto bg-[#25D366] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase shadow hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Conhecer
+                        </a>
+                    </div>
+                </div>
 
-                <!-- Pagamento -->
-                <div class="flex items-start gap-3">
-                    <div class="bg-white p-1.5 rounded-full shadow-sm text-blue-600">
-                        <i class="fas fa-credit-card"></i>
+                <!-- 5. CESTA MINI -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+                    <!-- AUMENTO DE ALTURA (h-48) -->
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif" alt="Cesta Mini" class="w-full h-full object-cover">
                     </div>
-                    <div>
-                        <span class="font-bold block text-blue-800 uppercase text-xs tracking-wide">Formas de Pagamento</span>
-                        <span class="opacity-90 leading-tight block">Pix, Dinheiro, Cartão (até 3x) e <strong>Vale Alimentação</strong> (Alelo, Sodexo, Pluxee).</span>
+                    <div class="p-4 flex flex-col flex-1 text-center">
+                        <h3 class="font-bold text-[#0F2546] text-lg">Cesta Mini</h3>
+                        <div class="text-[#D32F2F] font-black text-xl my-2">R$ 165,00</div>
+                        <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20a%20Cesta%20Mini." class="mt-auto bg-[#25D366] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase shadow hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Conhecer
+                        </a>
                     </div>
+                </div>
+
+                <!-- 6. CESTA PEQUENA -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+                    <!-- AUMENTO DE ALTURA (h-48) -->
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif" alt="Cesta Pequena" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 text-center">
+                        <h3 class="font-bold text-[#0F2546] text-lg">Cesta Pequena</h3>
+                        <div class="text-[#D32F2F] font-black text-xl my-2">R$ 215,00</div>
+                        <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20a%20Cesta%20Pequena." class="mt-auto bg-[#25D366] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase shadow hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Conhecer
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 7. CESTA MÉDIA -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+                    <!-- AUMENTO DE ALTURA (h-48) -->
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif" alt="Cesta Média" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 text-center">
+                        <h3 class="font-bold text-[#0F2546] text-lg">Cesta Média</h3>
+                        <div class="text-[#D32F2F] font-black text-xl my-2">R$ 320,00</div>
+                        <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20a%20Cesta%20M%C3%A9dia." class="mt-auto bg-[#25D366] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase shadow hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Conhecer
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 8. CESTA GRANDE -->
+                <div class="min-w-[240px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex flex-col border border-gray-200">
+                    <!-- AUMENTO DE ALTURA (h-48) -->
+                    <div class="h-48 bg-gray-200">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif" alt="Cesta Grande" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4 flex flex-col flex-1 text-center">
+                        <h3 class="font-bold text-[#0F2546] text-lg">Cesta Grande</h3>
+                        <div class="text-[#D32F2F] font-black text-xl my-2">R$ 380,00</div>
+                        <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Gostaria%20de%20conhecer%20a%20Cesta%20Grande." class="mt-auto bg-[#25D366] text-white py-2 px-4 rounded-lg font-bold text-sm uppercase shadow hover:bg-green-600 transition">
+                            <i class="fab fa-whatsapp mr-1"></i> Conhecer
+                        </a>
+                    </div>
+                </div>
+
+                 <!-- 9. CTA FINAL -->
+                 <div class="min-w-[240px] snap-center bg-gray-800 rounded-xl shadow-lg p-6 flex flex-col items-center justify-center text-center text-white">
+                    <h3 class="text-lg font-bold uppercase mb-2">Ainda com dúvida?</h3>
+                    <p class="text-sm opacity-80 mb-4">Fale com nossa equipe agora mesmo.</p>
+                    <a href="https://wa.me/5565998150975" class="bg-[#25D366] text-white py-3 px-6 rounded-full font-bold shadow-lg hover:bg-green-600 transition w-full">
+                        <i class="fab fa-whatsapp mr-2"></i> Chamar
+                    </a>
                 </div>
 
             </div>
         </div>
 
-        <!-- FOOTER (Endereço e Copyright) -->
+        <!-- FOOTER (Endereço e Copyright ATUALIZADOS) -->
         <footer class="bg-gray-100 p-6 text-center border-t border-gray-200 text-gray-500 text-sm">
             <div class="mb-4">
-                <i class="fas fa-map-marker-alt text-red-400 mb-2 text-lg"></i>
-                <p class="font-bold text-gray-700 text-xs uppercase mb-1">RETIRE E GANHE DESCONTO:</p>
-                <p class="leading-relaxed">Somente das 8h as 12h de Segunda a Sábado<br>R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>Cuiabá - MT, 78090-660</p>
+                <i class="fas fa-store text-red-400 mb-2 text-lg"></i>
+                <p class="font-bold text-[#D32F2F] text-xs uppercase mb-1">RETIRE E GANHE DESCONTO:</p>
+                <p class="text-xs font-bold text-gray-600 mb-2">Somente das 8h as 12h de Segunda a Sábado</p>
+                <p class="leading-relaxed">R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>Cuiabá - MT, 78090-660</p>
             </div>
             <p class="text-xs opacity-60 border-t border-gray-200 pt-4">© 2025 Dona Antônia Alimentos.</p>
         </footer>
     </main>
 
+    <script>
+        function scrollSlider(direction) {
+            const container = document.getElementById('slider-cestas');
+            const scrollAmount = 240; // Largura do card + gap aproximado
+            container.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html>
