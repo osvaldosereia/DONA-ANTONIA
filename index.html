@@ -373,6 +373,36 @@
             margin-bottom: 5px;
         }
 
+        /* === ESTILOS PARA LISTA DE PREÇOS NO CARD (NOVO) === */
+        .lista-precos-card {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #eee;
+        }
+        .item-preco-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+            font-size: 0.95rem; /* Leitura fácil */
+        }
+        .item-preco-card:last-child {
+            margin-bottom: 0;
+        }
+        .marca-arroz {
+            font-weight: 600;
+            color: var(--cor-texto);
+            font-size: 0.85rem;
+        }
+        .valor-arroz {
+            color: var(--cor-destaque-vermelho);
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        /* Mantido para Cesta Econômica */
         .cesta-price-tag {
             font-size: 0.95rem;
             color: #666;
@@ -1263,7 +1293,7 @@
                         </div>
                     </div>
 
-                    <!-- CESTA MINI (Agora com visual igual ao primeiro no mobile) -->
+                    <!-- CESTA MINI (LISTA DE PREÇOS NO CARD) -->
                     <div class="card-cesta-horizontal" id="cestamini">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-mini.avif', 'Cesta Mini')">
                             <img src="img/cesta-basica-cuiaba-varzea-grande-mini.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Mini" onerror="this.src='https://placehold.co/400x400?text=MINI'">
@@ -1273,7 +1303,19 @@
                             <div>
                                 <div class="cesta-title-row"><h2>Cesta Mini</h2></div>
                                 <div class="selo-brinde-extra" style="display: none;"><i class="fas fa-gift"></i> Brinde: Amaciante Ype 2L</div>
-                                <div class="cesta-price-tag">A partir de <span class="cesta-price-highlight">R$ 165,00</span></div>
+                                
+                                <!-- LISTA DE PREÇOS INSERIDA AQUI -->
+                                <div class="lista-precos-card">
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Tio Alvino</span>
+                                        <span class="valor-arroz">R$ 165,00</span>
+                                    </div>
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Koblenz</span>
+                                        <span class="valor-arroz">R$ 170,00</span>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="cesta-actions-row">
                                 <button class="btn-cta-small" onclick="abrirModalVariacao('Cesta Mini', '165,00', '170,00')">
@@ -1291,6 +1333,7 @@
                         </div>
                     </div>
 
+                    <!-- CESTA PEQUENA (LISTA DE PREÇOS NO CARD) -->
                     <div class="card-cesta-horizontal" id="cestapequena">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-pequena.avif', 'Cesta Pequena')">
                             <img src="img/cesta-basica-cuiaba-varzea-grande-pequena.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Pequena" onerror="this.src='https://placehold.co/400x400?text=PEQUENA'">
@@ -1300,7 +1343,19 @@
                             <div>
                                 <div class="cesta-title-row"><h2>Cesta Pequena</h2></div>
                                 <div class="selo-brinde-extra" style="display: none;"><i class="fas fa-gift"></i> Brinde: Amaciante Ype 2L</div>
-                                <div class="cesta-price-tag">A partir de <span class="cesta-price-highlight">R$ 215,00</span></div>
+                                
+                                <!-- LISTA DE PREÇOS INSERIDA AQUI -->
+                                <div class="lista-precos-card">
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Tio Alvino</span>
+                                        <span class="valor-arroz">R$ 215,00</span>
+                                    </div>
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Koblenz</span>
+                                        <span class="valor-arroz">R$ 220,00</span>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="cesta-actions-row">
                                 <button class="btn-cta-small" onclick="abrirModalVariacao('Cesta Pequena', '215,00', '220,00')">
@@ -1318,6 +1373,7 @@
                         </div>
                     </div>
 
+                    <!-- CESTA MEDIA (LISTA DE PREÇOS NO CARD) -->
                     <div class="card-cesta-horizontal" id="cestamedia">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-media.avif', 'Cesta Média')">
                             <img src="img/cesta-basica-cuiaba-varzea-grande-media.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Média" onerror="this.src='https://placehold.co/400x400?text=MÉDIA'">
@@ -1327,7 +1383,19 @@
                             <div>
                                 <div class="cesta-title-row"><h2>Cesta Média</h2></div>
                                 <div class="selo-brinde-extra" style="display: none;"><i class="fas fa-gift"></i> Brinde: Amaciante Ype 2L</div>
-                                <div class="cesta-price-tag">A partir de <span class="cesta-price-highlight">R$ 320,00</span></div>
+                                
+                                <!-- LISTA DE PREÇOS INSERIDA AQUI -->
+                                <div class="lista-precos-card">
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Tio Alvino</span>
+                                        <span class="valor-arroz">R$ 320,00</span>
+                                    </div>
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Koblenz</span>
+                                        <span class="valor-arroz">R$ 325,00</span>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="cesta-actions-row">
                                 <button class="btn-cta-small" onclick="abrirModalVariacao('Cesta Média', '320,00', '325,00')">
@@ -1345,6 +1413,7 @@
                         </div>
                     </div>
 
+                    <!-- CESTA GRANDE (LISTA DE PREÇOS NO CARD) -->
                     <div class="card-cesta-horizontal" id="cestagrande">
                         <div class="cesta-img-container" onclick="abrirZoom('img/cesta-basica-cuiaba-varzea-grande-grande.avif', 'Cesta Grande')">
                             <img src="img/cesta-basica-cuiaba-varzea-grande-grande.avif" width="400" height="400" loading="lazy" alt="Cesta Básica Grande" onerror="this.src='https://placehold.co/400x400?text=GRANDE'">
@@ -1354,7 +1423,19 @@
                             <div>
                                 <div class="cesta-title-row"><h2>Cesta Grande</h2></div>
                                 <div class="selo-brinde-extra" style="display: none;"><i class="fas fa-gift"></i> Brinde: Amaciante Ype 2L</div>
-                                <div class="cesta-price-tag">A partir de <span class="cesta-price-highlight">R$ 380,00</span></div>
+                                
+                                <!-- LISTA DE PREÇOS INSERIDA AQUI -->
+                                <div class="lista-precos-card">
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Tio Alvino</span>
+                                        <span class="valor-arroz">R$ 380,00</span>
+                                    </div>
+                                    <div class="item-preco-card">
+                                        <span class="marca-arroz">Arroz Koblenz</span>
+                                        <span class="valor-arroz">R$ 390,00</span>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="cesta-actions-row">
                                 <button class="btn-cta-small" onclick="abrirModalVariacao('Cesta Grande', '380,00', '390,00')">
@@ -1974,12 +2055,12 @@
                 // Se for iPhone, mostra as instruções manuais
                 document.getElementById('instrucoes-ios').style.display = 'block';
                 document.getElementById('btn-install-android').style.display = 'none';
-                document.getElementById('legenda-install').style.display = 'none';
+                // document.getElementById('legenda-install').style.display = 'none'; // Elemento removido no HTML
             } else {
                 // Se for Android/Outro, mostra o botão padrão
                 document.getElementById('instrucoes-ios').style.display = 'none';
                 document.getElementById('btn-install-android').style.display = 'flex';
-                document.getElementById('legenda-install').style.display = 'block';
+                // document.getElementById('legenda-install').style.display = 'block'; // Elemento removido no HTML
             }
         }
         
