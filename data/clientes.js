@@ -1,4 +1,4 @@
-const clientes = [
+window.listaClientes = [
   {
     "nome": "ALESSANDRA PEREIRA RODRIGUES",
     "telefone": "65999742889",
