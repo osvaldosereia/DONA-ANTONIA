@@ -86,9 +86,17 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-map-marker-alt text-gray-400"></i>
                             </div>
-                            <input type="text" id="cidade" required 
-                                class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg outline-none text-gray-700 placeholder-gray-400"
-                                placeholder="Sua cidade">
+                            <!-- ALTERAÇÃO: Input substituído por Select -->
+                            <select id="cidade" required 
+                                class="input-field w-full pl-10 pr-8 py-3 border border-gray-300 rounded-lg outline-none text-gray-700 bg-white appearance-none cursor-pointer">
+                                <option value="" disabled selected>Selecione...</option>
+                                <option value="Cuiabá">Cuiabá</option>
+                                <option value="Várzea Grande">Várzea Grande</option>
+                            </select>
+                            <!-- Ícone de seta para indicar dropdown -->
+                            <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                            </div>
                         </div>
                     </div>
                     <div>
