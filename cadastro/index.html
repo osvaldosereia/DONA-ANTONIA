@@ -3,166 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de JSON de Cadastro</title>
+    <title>Gerenciador de Cadastros JSON</title>
     <!-- Carrega o Tailwind CSS para estilização -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Define a fonte Inter como padrão */
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        /* Melhora a aparência do texto do JSON no <pre> */
-        #json-output {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        #json-output { white-space: pre-wrap; word-wrap: break-word; }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-2xl">
-        <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Formulário de Cadastro</h1>
-        <p class="text-center text-gray-600 mb-8">Preencha os dados para gerar o JSON correspondente.</p>
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-3xl">
+        <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">Gerenciador de Cadastros</h1>
+        
+        <!-- Área de Upload de Banco de Dados -->
+        <div class="mb-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <h3 class="text-md font-semibold text-blue-800 mb-2">1. Carregar Banco de Dados (Opcional)</h3>
+            <p class="text-sm text-blue-600 mb-3">Suba um arquivo JSON existente para adicionar novos registros a ele.</p>
+            <input type="file" id="file-input" accept=".json" 
+                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+            <p id="db-status" class="mt-2 text-sm font-bold text-gray-700">Registros atuais: 0</p>
+        </div>
+
+        <hr class="mb-8 border-gray-200">
 
         <!-- Formulário de Entrada -->
+        <h3 class="text-md font-semibold text-gray-800 mb-4">2. Novo Cadastro</h3>
         <form id="cadastro-form" class="space-y-5">
-            <div>
-                <label for="nome" class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
-                <input type="text" id="nome" name="nome" required
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Ex: 010 Natalia">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="nome" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
+                    <input type="text" id="nome" name="nome" required
+                           class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Ex: 010 Natalia">
+                </div>
+                <div>
+                    <label for="celular" class="block text-sm font-medium text-gray-700 mb-1">Celular</label>
+                    <input type="tel" id="celular" name="celular" required
+                           class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                           placeholder="Ex: 5565984685473">
+                </div>
             </div>
 
             <div>
-                <label for="celular" class="block text-sm font-medium text-gray-700 mb-2">Celular (com código do país)</label>
-                <input type="tel" id="celular" name="celular" required
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Ex: 5565984685473">
-            </div>
-
-            <div>
-                <label for="endereco" class="block text-sm font-medium text-gray-700 mb-2">Endereço</label>
+                <label for="endereco" class="block text-sm font-medium text-gray-700 mb-1">Endereço</label>
                 <input type="text" id="endereco" name="endereco" required
-                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                       placeholder="Ex: 010 Natalia (ou o nome da rua)">
+                       class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="Ex: Nome da Rua">
             </div>
 
             <div>
-                <label for="complemento" class="block text-sm font-medium text-gray-700 mb-2">Complemento</label>
-                <textarea id="complemento" name="complemento" rows="3" required
-                          class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                          placeholder="Ex: Rua 14 quadra 20 casa 01..."></textarea>
+                <label for="complemento" class="block text-sm font-medium text-gray-700 mb-1">Complemento</label>
+                <textarea id="complemento" name="complemento" rows="2" required
+                          class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                          placeholder="Ex: Quadra 20, Casa 01..."></textarea>
             </div>
 
-            <div>
+            <div class="flex gap-4">
                 <button type="submit"
-                        class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors duration-200">
-                    Gerar JSON
+                        class="flex-1 bg-green-600 text-white py-3 px-4 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                    + Adicionar à Lista
                 </button>
             </div>
         </form>
 
-        <!-- Área de Saída do JSON -->
-        <div id="output-area" class="mt-8 hidden">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">JSON Gerado</h2>
-            
-            <div class="relative">
-                <!-- Onde o JSON formatado aparecerá -->
-                <pre id="json-output" class="bg-gray-900 text-green-300 p-6 rounded-lg overflow-x-auto text-sm"></pre>
-                
-                <!-- Botão de Copiar -->
-                <button id="copy-btn"
-                        class="absolute top-3 right-3 bg-gray-700 text-white py-1 px-3 rounded-md text-xs font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors">
-                    Copiar
+        <!-- Mensagens de Erro/Sucesso -->
+        <div id="message-area" class="mt-4 hidden p-3 rounded-lg text-sm text-center"></div>
+
+        <!-- Área de Ação Final -->
+        <div id="action-area" class="mt-8 pt-6 border-t border-gray-200">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Lista Completa (JSON)</h2>
+                <button id="download-btn"
+                        class="bg-indigo-600 text-white py-2 px-6 rounded-lg font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Baixar Lista Atualizada
                 </button>
             </div>
             
-            <!-- Mensagem de confirmação de cópia -->
-            <span id="copy-message" class="block text-sm text-green-600 font-medium mt-3 h-4"></span>
+            <pre id="json-output" class="bg-gray-900 text-green-300 p-4 rounded-lg overflow-x-auto text-xs h-64 overflow-y-scroll"></pre>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const form = document.getElementById('cadastro-form');
-            const jsonOutput = document.getElementById('json-output');
-            const outputArea = document.getElementById('output-area');
-            const copyBtn = document.getElementById('copy-btn');
-            const copyMessage = document.getElementById('copy-message');
+            // --- Variáveis Globais ---
+            // Aqui guardamos todos os cadastros na memória
+            let database = []; 
 
-            /**
-             * Gera um ID único no formato: timestamp-5CARACTERES
-             */
+            // --- Elementos do DOM ---
+            const form = document.getElementById('cadastro-form');
+            const fileInput = document.getElementById('file-input');
+            const dbStatus = document.getElementById('db-status');
+            const jsonOutput = document.getElementById('json-output');
+            const downloadBtn = document.getElementById('download-btn');
+            const messageArea = document.getElementById('message-area');
+
+            // --- Funções Auxiliares ---
+
             function generateRandomId() {
-                const timestamp = Date.now();
-                // Gera uma string aleatória de 5 caracteres
-                const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
-                return `${timestamp}-${randomPart}`;
+                return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
             }
 
-            // Manipulador para o envio do formulário
-            form.addEventListener('submit', (e) => {
-                e.preventDefault(); // Impede o envio real do formulário
-
-                // Cria um objeto FormData para pegar os valores
-                const formData = new FormData(form);
+            function updateDisplay() {
+                // Atualiza o contador
+                dbStatus.textContent = `Registros atuais: ${database.length}`;
                 
-                // Constrói o objeto de dados no formato solicitado
-                const data = {
-                    id: generateRandomId(),
-                    nome: formData.get('nome'),
-                    celular: formData.get('celular'),
-                    endereco: formData.get('endereco'),
-                    complemento: formData.get('complemento')
+                // Atualiza a visualização do JSON (mostra o último adicionado primeiro ou a lista toda)
+                // Aqui optamos por mostrar a lista completa formatada
+                jsonOutput.textContent = JSON.stringify(database, null, 2);
+            }
+
+            function showMessage(msg, type) {
+                messageArea.textContent = msg;
+                messageArea.classList.remove('hidden', 'bg-red-100', 'text-red-700', 'bg-green-100', 'text-green-700');
+                
+                if (type === 'error') {
+                    messageArea.classList.add('bg-red-100', 'text-red-700');
+                } else {
+                    messageArea.classList.add('bg-green-100', 'text-green-700');
+                }
+                
+                messageArea.classList.remove('hidden');
+                
+                // Esconde após 3 segundos
+                setTimeout(() => {
+                    messageArea.classList.add('hidden');
+                }, 3000);
+            }
+
+            // --- 1. Função de Upload (Subir JSON) ---
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                
+                reader.onload = (event) => {
+                    try {
+                        const content = JSON.parse(event.target.result);
+                        
+                        if (Array.isArray(content)) {
+                            database = content;
+                            showMessage(`Banco de dados carregado com ${database.length} registros!`, 'success');
+                            updateDisplay();
+                        } else {
+                            showMessage('O arquivo JSON deve conter uma lista (array) de objetos.', 'error');
+                        }
+                    } catch (error) {
+                        console.error(error);
+                        showMessage('Erro ao ler o arquivo JSON. Verifique a formatação.', 'error');
+                    }
                 };
 
-                // Converte o objeto para uma string JSON formatada (com 2 espaços de indentação)
-                const jsonString = JSON.stringify(data, null, 2);
-
-                // Exibe o JSON na tela
-                jsonOutput.textContent = jsonString;
-                outputArea.classList.remove('hidden');
-                
-                // Limpa a mensagem de cópia
-                copyMessage.textContent = '';
+                reader.readAsText(file);
             });
 
-            // Manipulador para o botão de copiar
-            copyBtn.addEventListener('click', () => {
-                const jsonText = jsonOutput.textContent;
-                if (!jsonText) return;
-
-                // Cria uma área de texto temporária para usar o 'execCommand'
-                const tempTextArea = document.createElement('textarea');
-                tempTextArea.value = jsonText;
-                // Evita que a tela "pule" ao adicionar o elemento
-                tempTextArea.style.position = 'absolute';
-                tempTextArea.style.left = '-9999px';
+            // --- 2. Função de Adicionar e Verificar Duplicados ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
                 
-                document.body.appendChild(tempTextArea);
-                
-                tempTextArea.select();
-                tempTextArea.setSelectionRange(0, 99999); // Para compatibilidade móvel
+                const formData = new FormData(form);
+                const novoCelular = formData.get('celular');
 
-                try {
-                    // Tenta copiar o texto
-                    document.execCommand('copy');
-                    copyMessage.textContent = 'Copiado com sucesso!';
-                } catch (err) {
-                    console.error('Falha ao copiar: ', err);
-                    copyMessage.textContent = 'Falha ao copiar!';
+                // Verificação de Duplicados (pelo Celular)
+                // O método .some() retorna true se encontrar pelo menos um igual
+                const jaExiste = database.some(item => item.celular === novoCelular);
+
+                if (jaExiste) {
+                    showMessage(`Erro: O celular ${novoCelular} já está cadastrado!`, 'error');
+                    return; // Para a função aqui, não adiciona
                 }
 
-                // Remove o elemento temporário
-                document.body.removeChild(tempTextArea);
+                // Cria o novo objeto
+                const novoCadastro = {
+                    id: generateRandomId(),
+                    nome: formData.get('nome'),
+                    celular: novoCelular,
+                    endereco: formData.get('endereco'),
+                    complemento: formData.get('complemento'),
+                    dataCadastro: new Date().toISOString() // Opcional: data de registro
+                };
 
-                // Limpa a mensagem após 2 segundos
-                setTimeout(() => {
-                    copyMessage.textContent = '';
-                }, 2000);
+                // Adiciona à lista global
+                database.push(novoCadastro);
+
+                // Feedback visual e limpeza
+                updateDisplay();
+                showMessage('Cadastro adicionado com sucesso!', 'success');
+                form.reset(); // Limpa o formulário para o próximo
+                document.getElementById('nome').focus(); // Volta o foco para o nome
             });
+
+            // --- 3. Função de Download ---
+            downloadBtn.addEventListener('click', () => {
+                if (database.length === 0) {
+                    showMessage('A lista está vazia. Adicione algo antes de baixar.', 'error');
+                    return;
+                }
+
+                const jsonString = JSON.stringify(database, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                // Gera um nome de arquivo com data/hora
+                const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+                a.download = `cadastros_atualizados_${timestamp}.json`;
+                
+                document.body.appendChild(a);
+                a.click();
+                
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+            
+            // Inicializa a tela vazia
+            updateDisplay();
         });
     </script>
-
 </body>
 </html>
