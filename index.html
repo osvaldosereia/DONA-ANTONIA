@@ -1015,38 +1015,52 @@
             .seo-text-block { grid-column: 1 / -1; margin-top: 40px; background: white; border-radius: 12px; padding: 30px; }
             #pag-cestas { grid-column: 2; grid-row: 1; background: transparent; }
             
-            /* CARDS: 2 Colunas para ficarem menores horizontalmente */
+            /* CARDS: 1 Coluna (Lista Vertical) */
             .cesta-cards-grid { 
-                display: grid; 
-                grid-template-columns: repeat(2, 1fr) !important; /* Volta para 2 colunas para cards menores */
-                gap: 20px; 
+                display: flex; /* Mudado de grid para flex column */
+                flex-direction: column;
+                gap: 30px; 
                 max-width: 100%; 
                 margin: 0 auto; 
             }
 
-            /* === DESTAQUE DESKTOP: OCUPA 2 COLUNAS === */
-            #cestaeconomica {
-                grid-column: 1 / -1; /* Faz o item ocupar toda a linha (2 colunas) */
+            /* PADRONIZAR TODOS OS CARDS COMO HORIZONTAIS GRANDES */
+            .card-cesta-horizontal {
                 display: flex;
-                flex-direction: row; /* Mantém horizontal no PC */
-                background: linear-gradient(to right, #FFFDE7, #FFF); /* Gradiente sutil */
+                flex-direction: row !important; /* Garante horizontal */
+                min-height: 280px; /* Altura padronizada */
+                align-items: stretch;
             }
-            
-            /* Imagem bem maior no desktop para este item */
-            #cestaeconomica .cesta-img-container {
+
+            /* Imagem grande para todos os cards no desktop */
+            .cesta-img-container {
                 width: 320px !important; 
-                max-width: 45%;
-                height: auto;
+                max-width: 40%;
+                height: auto !important;
             }
             
-            #cestaeconomica .cesta-info-container {
+            /* Ajuste para imagem cobrir todo o espaço */
+            .cesta-img-container img {
+                height: 100%;
+                object-fit: cover;
+            }
+            
+            /* Área de informações centralizada */
+            .cesta-info-container {
                 justify-content: center;
                 padding: 30px;
+                flex: 1;
             }
             
-            #cestaeconomica h2 {
+            /* Títulos maiores */
+            .cesta-title-row h2 {
                 font-size: 1.8rem;
                 margin-bottom: 15px;
+            }
+
+            /* O primeiro card mantém apenas o destaque de cor, mas layout igual */
+            #cestaeconomica {
+                background: linear-gradient(to right, #FFFDE7, #FFF); 
             }
             
             .menu-ancoras-cestas { display: none !important; }
@@ -1547,7 +1561,7 @@
             <button class="btn-fechar-modal-var" onclick="fecharModalVariacao()">Fechar</button>
             <div style="padding: 20px;">
                 <h3 class="titulo-modal-var" id="tituloCestaModal">Cesta X</h3>
-                <p class="subtitulo-modal-var">Escolha a marca do arroz:</p>
+                <p class="subtitulo-modal-var">Escolha a marca do arroz para finalizar:</p>
                 <div class="opcao-select" id="optAlvino" onclick="selecionarOpcao('alvino')">
                     <div class="opcao-info"><span class="opcao-nome">Arroz Tio Alvino</span><span class="opcao-preco" id="precoAlvinoDisplay">R$ 0,00</span></div>
                     <div class="radio-custom" style="width: 20px; height: 20px; border: 2px solid #ccc; border-radius: 50%;"></div>
@@ -1639,7 +1653,7 @@
                         <p style="margin: 4px 0;"><strong>Nome:</strong> <span id="nome-cliente-encontrado-modal"></span></p>
                         <p style="margin: 4px 0;"><strong>Cidade:</strong> <span id="cidade-cliente-encontrado-modal"></span></p>
                     </div>
-                    <button onclick="confirmarJaCadastrado('-modal')" style="background-color: var(--cor-whatsapp); color: white !important; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                    <button id="btn-confirmar-cadastro-modal" onclick="confirmarJaCadastrado('-modal')" style="background-color: var(--cor-whatsapp); color: white !important; width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                         <i class="fab fa-whatsapp" style="margin-right: 8px;"></i> Confirmar
                     </button>
                 </div>
@@ -1757,6 +1771,9 @@
         <div id="captionZoom" class="zoom-caption"></div>
     </div>
 
+    <!-- IMPORTAR BANCO DE DADOS (SIMULADO) -->
+    <script src="data/clientes.js"></script>
+
     <!-- SCRIPTS -->
     <script>
         // === VARIÁVEL PARA INSTALAÇÃO PWA ===
@@ -1765,13 +1782,9 @@
         // REGISTRAR O SERVICE WORKER (OBRIGATÓRIO PARA INSTALAÇÃO)
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then((reg) => {
-                        console.log('Service Worker registrado com sucesso:', reg);
-                    })
-                    .catch((err) => {
-                        console.log('Falha ao registrar o Service Worker:', err);
-                    });
+                // Em ambiente de preview, o service-worker.js pode não existir, então comentamos o registro real para evitar erros no console
+                // navigator.serviceWorker.register('./service-worker.js') ...
+                console.log('Service Worker (simulado no preview)');
             });
         }
 
@@ -2203,7 +2216,7 @@
             }
         }
 
-        // === FUNÇÕES DE SORTEIO ===
+        // === FUNÇÕES DE SORTEIO (ATUALIZADO) ===
         function abrirModalSorteio() {
             document.getElementById('modalSorteio').style.display = 'flex';
         }
@@ -2211,33 +2224,81 @@
             document.getElementById('modalSorteio').style.display = 'none';
         }
         
-        // Simulação de busca (apenas frontend)
+        // VARIÁVEIS GLOBAIS PARA ARMAZENAR DADOS DO FORMULÁRIO DO SORTEIO
+        let clienteEncontradoAtual = null;
+        let novoTelDigitado = '';
+
+        // FUNÇÃO DE BUSCA E VERIFICAÇÃO NA BASE DE DADOS
         function buscarCadastro(sufixo) {
-            const tel = document.getElementById(`busca-telefone${sufixo}`).value;
-            if(tel.length < 8) {
-                alert('Digite um número válido');
+            const telInput = document.getElementById(`busca-telefone${sufixo}`).value;
+            // Sanitização simples: remove tudo que não for dígito
+            const telLimpo = telInput.replace(/\D/g, '');
+            novoTelDigitado = telInput; // Guarda o valor original para usar depois
+
+            if(telLimpo.length < 8) {
+                alert('Por favor, digite um número de telefone válido com DDD.');
                 return;
             }
             
-            // Simulação simples: se terminar em 1, acha cadastro. Senão, novo.
-            if(tel.endsWith('1')) {
+            // Verifica se a base de dados foi carregada
+            if (typeof window.listaClientes === 'undefined') {
+                console.error("Base de dados de clientes não carregada.");
+                alert("Erro ao conectar com a base de dados. Tente novamente.");
+                return;
+            }
+
+            // Busca na lista global (carregada de data/clientes.js)
+            // Normalizamos ambos para garantir comparação justa (apenas números)
+            const cliente = window.listaClientes.find(c => {
+                const cTel = c.telefone.replace(/\D/g, '');
+                // Compara se o input está contido no telefone do cadastro ou vice-versa (para flexibilidade)
+                return cTel === telLimpo || cTel.endsWith(telLimpo) || telLimpo.endsWith(cTel);
+            });
+
+            if(cliente) {
+                // CLIENTE ENCONTRADO
+                clienteEncontradoAtual = cliente;
                 document.getElementById(`area-busca-telefone${sufixo}`).style.display = 'none';
                 document.getElementById(`cadastro-encontrado${sufixo}`).style.display = 'block';
-                document.getElementById(`nome-cliente-encontrado${sufixo}`).innerText = 'Cliente Exemplo Silva';
-                document.getElementById(`cidade-cliente-encontrado${sufixo}`).innerText = 'Cuiabá - CPA 3';
+                document.getElementById(`nome-cliente-encontrado${sufixo}`).innerText = cliente.nome;
+                document.getElementById(`cidade-cliente-encontrado${sufixo}`).innerText = cliente.cidade + (cliente.bairro ? ' - ' + cliente.bairro : '');
             } else {
+                // CLIENTE NÃO ENCONTRADO -> NOVO CADASTRO
                 document.getElementById(`area-busca-telefone${sufixo}`).style.display = 'none';
                 document.getElementById(`cadastro-novo${sufixo}`).style.display = 'block';
             }
         }
         
-        function confirmarJaCadastrado() {
-            alert("Confirmado! Você está participando.");
+        // ENVIO DE CONFIRMAÇÃO (CLIENTE JÁ EXISTENTE)
+        function confirmarJaCadastrado(sufixo) {
+            if (!clienteEncontradoAtual) return;
+
+            const nome = clienteEncontradoAtual.nome;
+            const tel = clienteEncontradoAtual.telefone;
+            
+            const texto = `Olá! Sou ${nome}, telefone ${tel}. Já tenho cadastro e quero confirmar minha participação no sorteio.`;
+            const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+            
+            window.open(url, '_blank');
             fecharModalSorteio();
         }
         
-        function enviarNovoCadastro() {
-             alert("Cadastro realizado! Você está participando.");
+        // ENVIO DE NOVO CADASTRO
+        function enviarNovoCadastro(sufixo) {
+             const nome = document.getElementById(`novo-nome${sufixo}`).value;
+             const bairro = document.getElementById(`novo-bairro${sufixo}`).value;
+             const cidade = document.getElementById(`novo-cidade${sufixo}`).value;
+             const tel = novoTelDigitado; // Usa o telefone que foi digitado na busca
+
+             if(!nome || !bairro) {
+                 alert("Por favor, preencha todos os campos.");
+                 return;
+             }
+
+             const texto = `Olá! Quero participar do sorteio.\n*Novo Cadastro:*\nNome: ${nome}\nTel: ${tel}\nBairro: ${bairro}\nCidade: ${cidade}`;
+             const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+             
+             window.open(url, '_blank');
              fecharModalSorteio();
         }
 
