@@ -4,6 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
+    <!-- === PROTEÇÃO ANTI-CLONAGEM E ANTI-GOLPE (CRÍTICO) === -->
+    <script>
+        (function() {
+            // Lista de domínios PROIBIDOS (Golpistas conhecidos)
+            const dominiosGolpistas = [
+                "cestabasicasoferta.com",
+                "pay.cestabasicadonaantonia.online",
+                "cestabasicadonaantonia.online"
+            ];
+            
+            const hostAtual = window.location.hostname;
+            
+            // 1. Verifica se está em um domínio golpista
+            const isGolpe = dominiosGolpistas.some(dominio => hostAtual.includes(dominio));
+            
+            // 2. Verifica se NÃO é o domínio oficial (Proteção Genérica)
+            // Permite localhost/preview para testes, bloqueia o resto em produção
+            const isOficial = hostAtual.includes("donaantonia.com.br") || 
+                              hostAtual.includes("localhost") || 
+                              hostAtual.includes("127.0.0.1") ||
+                              hostAtual.includes("googleusercontent"); // Para previews do Google
+
+            if (isGolpe || (!isOficial && !hostAtual.includes("google"))) {
+                // ATIVAR MODO DE AUTODEFESA
+                document.documentElement.innerHTML = ''; // Apaga o site do golpista
+                
+                // Cria tela de alerta vermelha
+                const aviso = document.createElement('div');
+                aviso.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#b71c1c;color:white;z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font-family:sans-serif;padding:20px;';
+                
+                aviso.innerHTML = `
+                    <h1 style="font-size:3rem;margin-bottom:20px;">⚠️ ALERTA DE GOLPE ⚠️</h1>
+                    <p style="font-size:1.5rem;">VOCÊ ESTÁ EM UM SITE FALSO CRIADO PARA ROUBAR DADOS.</p>
+                    <p style="font-size:1.2rem;margin-bottom:40px;">Este não é o site da Dona Antônia.</p>
+                    <a href="https://donaantonia.com.br" style="background:#FFC107;color:#000;padding:20px 40px;text-decoration:none;font-weight:bold;font-size:1.5rem;border-radius:50px;border:3px solid #000;">IR PARA O SITE OFICIAL E SEGURO</a>
+                `;
+                
+                document.documentElement.appendChild(aviso);
+                
+                // Força redirecionamento após 3 segundos
+                setTimeout(() => {
+                    window.location.href = "https://donaantonia.com.br";
+                }, 3000);
+                
+                // Para a execução do restante do script
+                throw new Error("Execução interrompida por segurança.");
+            }
+        })();
+    </script>
+
     <!-- SEO: Canonical Tag (Evita conteúdo duplicado) -->
     <link rel="canonical" href="https://donaantonia.com.br/" />
 
@@ -57,6 +107,21 @@
     <style>
         /* === ESTILOS GLOBAIS E TIPOGRAFIA === */
         * { box-sizing: border-box; }
+
+        /* Proteção simples contra seleção de texto (dificulta cópia manual) */
+        body {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* Permite selecionar inputs para preencher formulários */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
 
         :root {
             --cor-primaria: #0F2546; 
@@ -1312,7 +1377,7 @@
     }
     </script>
 </head>
-<body>
+<body oncontextmenu="return false"> <!-- ANTI-CÓPIA SIMPLES -->
     
     <div id="toast-container"></div> 
 
@@ -1780,7 +1845,8 @@
                 <button class="btn-fechar-modal-info" onclick="fecharModalContatos()">Fechar</button>
             </div>
             <div style="padding: 20px;">
-                <a href="https://wa.me/5565998150975" class="btn-whatsapp-hero" target="_blank">
+                <!-- Link gerado dinamicamente para segurança -->
+                <a id="btn-whats-principal" class="btn-whatsapp-hero" target="_blank" onclick="abrirWhatsSeguro()">
                     <i class="fab fa-whatsapp" style="font-size: 24px; margin-bottom: 5px;"></i>
                     Chamar no WhatsApp
                 </a>
@@ -1788,7 +1854,8 @@
                 <p style="text-align: center; color: #666; font-size: 0.9rem; margin-bottom: 15px;">Dúvidas? Entre em contato agora mesmo!</p>
                 
                 <div class="grid-botoes-modal">
-                    <a href="tel:5565998150975" class="btn-secundario-modal">
+                    <!-- Link gerado dinamicamente -->
+                    <a id="btn-tel-seguro" class="btn-secundario-modal" onclick="abrirTelSeguro()">
                         <i class="fas fa-phone"></i> Ligar
                     </a>
                     <a href="https://maps.app.goo.gl/XYZ" target="_blank" class="btn-secundario-modal">
@@ -2204,6 +2271,29 @@
             document.getElementById('btnConfirmarPedido').disabled = false;
         }
 
+        // =========================================================
+        // OFUSCAÇÃO DE WHATSAPP (SEGURANÇA)
+        // Impede robôs simples de encontrarem o número no código
+        // =========================================================
+        function getWhatsNumber() {
+            // "Quebra" o número em partes para não aparecer em buscas de texto
+            var p1 = "55";
+            var p2 = "65";
+            var p3 = "9981";
+            var p4 = "50975";
+            return p1 + p2 + p3 + p4;
+        }
+
+        function abrirWhatsSeguro() {
+            const num = getWhatsNumber();
+            window.open(`https://wa.me/${num}`, '_blank');
+        }
+
+        function abrirTelSeguro() {
+            const num = getWhatsNumber();
+            window.location.href = `tel:${num}`;
+        }
+
         function confirmarAcao() {
             const marcaNome = cestaAtual.selecao === 'alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
             const precoFinal = cestaAtual.selecao === 'alvino' ? cestaAtual.precoAlvino : cestaAtual.precoKoblenz;
@@ -2217,7 +2307,8 @@
             }
             
             const texto = `Olá! Gostaria de encomendar a *${cestaAtual.nome}* com *${marcaNome}* no valor de *R$ ${precoFinal}*${textoBrinde}.`;
-            const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+            // Usa função segura
+            const url = `https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`;
             
             window.open(url, '_blank');
             fecharModalVariacao();
@@ -2233,7 +2324,8 @@
             }
             
             const texto = `Olá! Gostaria de encomendar a *${nome}* no valor de *R$ ${preco}*${textoBrinde}.`;
-            window.open(`https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`, '_blank');
+            // Usa função segura
+            window.open(`https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`, '_blank');
         }
         
         function compartilharCesta(nome, preco) {
@@ -2244,7 +2336,7 @@
                     url: window.location.href
                 }).catch(console.error);
             } else {
-                // Fallback simples
+                // Fallback simples com número seguro
                 const texto = `Olha essa oferta: ${nome} por R$ ${preco}! Entrega Grátis em Cuiabá e VG. ${window.location.href}`;
                 window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
             }
@@ -2314,7 +2406,8 @@
             const tel = clienteEncontradoAtual.telefone;
             
             const texto = `Olá! Sou ${nome}, telefone ${tel}. Já tenho cadastro e quero confirmar minha participação no sorteio.`;
-            const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+            // Usa função segura
+            const url = `https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`;
             
             window.open(url, '_blank');
             fecharModalSorteio();
@@ -2333,7 +2426,8 @@
              }
 
              const texto = `Olá! Quero participar do sorteio.\n*Novo Cadastro:*\nNome: ${nome}\nTel: ${tel}\nBairro: ${bairro}\nCidade: ${cidade}`;
-             const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+             // Usa função segura
+             const url = `https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`;
              
              window.open(url, '_blank');
              fecharModalSorteio();
@@ -2350,7 +2444,8 @@
         // === SALVAR CONTATO (NOVO) ===
         function salvarContato() {
             const texto = "Estou salvando seu contato. Vou olhar novamente as cestas básicas pelo site www.donaantonia.com.br e em breve entro em contato.";
-            const url = `https://wa.me/5565998150975?text=${encodeURIComponent(texto)}`;
+            // Usa função segura
+            const url = `https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`;
             window.open(url, '_blank');
         }
 
