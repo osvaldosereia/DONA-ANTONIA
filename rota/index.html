@@ -422,6 +422,7 @@
                     Histórico & CRM
                 </h2>
                 <div class="flex gap-2">
+                    <button onclick="App.controllers.resetarCRM()" class="bg-red-800 hover:bg-red-700 text-red-100 px-4 py-2 rounded text-sm font-bold border border-red-700">Zerar CRM</button>
                     <button onclick="window.print()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded text-sm font-medium">Exportar PDF</button>
                     <button onclick="App.ui.modalHistorico.close()" class="bg-slate-700 hover:bg-red-600 px-4 py-2 rounded text-sm font-medium">Fechar</button>
                 </div>
@@ -713,6 +714,19 @@
                 mudarFiltro: (regiao) => { Store.data.regiaoFiltro = regiao; App.ui.render(); },
                 toggleCheckAlterada: () => { const check = document.getElementById('check-alterada'); const box = document.getElementById('box-detalhes-alterada'); if(check.checked) box.classList.remove('hidden'); else box.classList.add('hidden'); },
                 
+                resetarCRM: () => {
+                    if(confirm('⚠️ PERIGO: Você está prestes a apagar TODO o histórico de vendas e clientes (CRM).\n\nEssa ação NÃO pode ser desfeita.\n\nDeseja continuar?')) {
+                        if(confirm('Tem certeza absoluta? Digite OK para confirmar.')) { 
+                             Store.data.history = [];
+                             Store.data.meta = {};
+                             Store.saveHistory();
+                             Store.saveMeta();
+                             App.controllers.crmFilter('todos'); // Refresh visualizando vazio
+                             Utils.toast('CRM resetado completamente.', 'error');
+                        }
+                    }
+                },
+
                 // Dropdowns
                 abrirDropdownCliente: () => { document.getElementById('dropdown-clientes').classList.remove('hidden'); },
                 fecharDropdownCliente: () => { setTimeout(() => document.getElementById('dropdown-clientes').classList.add('hidden'), 200); },
