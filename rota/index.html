@@ -220,7 +220,7 @@
                 <!-- Seletor de Cliente Customizado -->
                 <div class="relative group">
                     <label class="block text-sm font-medium text-slate-700 mb-1">Cliente</label>
-                    <input type="text" id="input-cliente" class="w-full rounded-lg border-slate-300 border p-3 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all bg-slate-50" placeholder="Digite o nome para buscar..." autocomplete="off">
+                    <input type="text" id="input-cliente" class="w-full rounded-lg border-slate-300 border p-3 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all bg-slate-50" placeholder="Digite nome, apelido ou telefone..." autocomplete="off">
                     
                     <!-- Dropdown de Sugestões -->
                     <div id="dropdown-clientes" class="hidden absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl custom-dropdown-list">
@@ -479,7 +479,7 @@
                 <div class="p-4 bg-white border-b border-slate-200 no-print shadow-sm">
                     <label class="block text-sm font-bold text-slate-700 mb-1">Buscar Cliente (Todo Histórico)</label>
                     <div class="flex gap-2">
-                        <input type="text" id="crm-client-search-input" placeholder="Digite nome ou telefone..." class="flex-1 border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50" onkeyup="if(event.key === 'Enter') App.controllers.crmSearchClient()">
+                        <input type="text" id="crm-client-search-input" placeholder="Digite nome, apelido ou telefone..." class="flex-1 border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-blue-500 bg-slate-50" onkeyup="if(event.key === 'Enter') App.controllers.crmSearchClient()">
                         <button onclick="App.controllers.crmSearchClient()" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition-colors">Buscar</button>
                     </div>
                 </div>
@@ -931,11 +931,13 @@
 
                     tbody.innerHTML = filtered.map(item => {
                         const cestasStr = item.cestas.map(c => `${c.qtd}x ${c.nome}`).join(', ');
+                        const apelidoHtml = item.cliente.apelido ? `<span class="text-xs text-slate-400 font-normal">(${item.cliente.apelido})</span>` : '';
+                        
                         return `
                         <tr class="hover:bg-slate-50 border-b border-slate-100">
                             <td class="p-3 text-xs font-medium text-slate-500">${Utils.formatHora(item.updatedAt)}</td>
                             <td class="p-3">
-                                <div class="font-bold text-slate-800 text-sm">${item.cliente.nome}</div>
+                                <div class="font-bold text-slate-800 text-sm">${item.cliente.nome} ${apelidoHtml}</div>
                                 <div class="text-xs text-slate-400">${item.cliente.celular || ''}</div>
                             </td>
                             <td class="p-3 text-xs text-slate-600 max-w-[200px] truncate" title="${cestasStr}">${cestasStr}</td>
@@ -982,7 +984,7 @@
                             
                             <div class="box">
                                 <div class="label">CLIENTE</div>
-                                <div class="value" style="font-size:16px;">${entrega.cliente.nome}</div>
+                                <div class="value" style="font-size:16px;">${entrega.cliente.nome} ${entrega.cliente.apelido ? `(${entrega.cliente.apelido})` : ''}</div>
                                 <div>${entrega.cliente.celular || ''}</div>
                                 <div style="margin-top:2px;">${entrega.cliente.endereco || 'Retirar'}</div>
                                 ${entrega.cliente.complemento ? `<div>(${entrega.cliente.complemento})</div>` : ''}
@@ -1101,7 +1103,7 @@
                                 <div class="text-xs text-slate-400 mt-1">${item.expDate.toLocaleDateString('pt-BR')}</div>
                             </td>
                             <td class="p-3 text-center">
-                                <button onclick="App.controllers.avisarVencimentoCupom('${item.cliente.celular}', '${item.cliente.nome}', '${item.expDate.toLocaleDateString('pt-BR')}', '${item.gift}')" class="bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-full transition-colors">
+                                <button onclick="App.controllers.avisarVencimentoCupom('${item.cliente.celular}', '${item.cliente.nome}', '${item.cliente.apelido || ''}', '${item.expDate.toLocaleDateString('pt-BR')}', '${item.gift}')" class="bg-green-100 hover:bg-green-200 text-green-700 p-2 rounded-full transition-colors">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                                 </button>
                             </td>
@@ -1121,12 +1123,13 @@
                     App.controllers.crmCouponsFilter();
                 },
 
-                avisarVencimentoCupom: (celular, nome, data, brinde) => {
+                avisarVencimentoCupom: (celular, nome, apelido, data, brinde) => {
                     if(!celular) return Utils.toast('Cliente sem celular cadastrado', 'error');
                     let num = celular.replace(/\D/g, '');
                     if(!num.startsWith('55')) num = '55' + num;
                     
-                    const msg = `Olá ${nome}! Aqui é da Rota Dona Antonia. 🌟\n\nPassando para lembrar que você tem um vale-brinde de *${brinde}* que vence dia *${data}*! 🗓️\n\nAproveite para fazer seu pedido e garantir seu brinde! 🚚📦`;
+                    const nomeFinal = apelido || nome;
+                    const msg = `Olá ${nomeFinal}! Aqui é da Rota Dona Antonia. 🌟\n\nPassando para lembrar que você tem um vale-brinde de *${brinde}* que vence dia *${data}*! 🗓️\n\nAproveite para fazer seu pedido e garantir seu brinde! 🚚📦`;
                     
                     window.open(`https://api.whatsapp.com/send?phone=${num}&text=${encodeURIComponent(msg)}`, '_blank');
                 },
@@ -1143,8 +1146,9 @@
 
                     const filtered = Store.data.history.filter(h => {
                         const nome = h.cliente.nome.toLowerCase();
+                        const apelido = h.cliente.apelido ? h.cliente.apelido.toLowerCase() : '';
                         const cel = h.cliente.celular ? h.cliente.celular.replace(/\D/g, '') : '';
-                        return nome.includes(term) || cel.includes(term);
+                        return nome.includes(term) || apelido.includes(term) || cel.includes(term);
                     });
 
                     filtered.sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt)); // Mais recente primeiro
@@ -1156,6 +1160,7 @@
 
                     container.innerHTML = filtered.map(item => {
                         const date = new Date(item.updatedAt).toLocaleDateString('pt-BR');
+                        const apelidoHtml = item.cliente.apelido ? `<span class="text-slate-400 font-normal">(${item.cliente.apelido})</span>` : '';
                         const cestasHtml = item.cestas.map(c => `
                             <div class="text-sm">
                                 <span class="font-bold">${c.qtd}x ${c.nome}</span> 
@@ -1168,7 +1173,7 @@
                         <div class="bg-white p-4 rounded-lg shadow border border-slate-200">
                             <div class="flex justify-between items-start border-b border-slate-100 pb-2 mb-2">
                                 <div>
-                                    <h4 class="font-bold text-slate-800 text-lg">${item.cliente.nome}</h4>
+                                    <h4 class="font-bold text-slate-800 text-lg">${item.cliente.nome} ${apelidoHtml}</h4>
                                     <p class="text-xs text-slate-500">${date} - ${item.cliente.celular || 'Sem celular'}</p>
                                 </div>
                                 <div class="text-right">
@@ -1424,9 +1429,14 @@
                     if(!regiaoInput) return Utils.toast('Selecione a região', 'error');
                     if(Store.data.carrinhoTemp.length === 0) return Utils.toast('Adicione cestas ao pedido', 'error');
                     
-                    let clienteData = { nome: nome, endereco: '', celular: '' };
+                    // Lógica para encontrar cliente (Nome ou Apelido)
+                    let clienteData = { nome: nome, endereco: '', celular: '', apelido: '' };
                     if (typeof CLIENTES_DB !== 'undefined') {
-                        const found = CLIENTES_DB.find(c => c.nome.toLowerCase() === nome.toLowerCase());
+                        // Tenta encontrar pelo nome exato OU apelido exato
+                        const found = CLIENTES_DB.find(c => 
+                            c.nome.toLowerCase() === nome.toLowerCase() || 
+                            (c.apelido && c.apelido.toLowerCase() === nome.toLowerCase())
+                        );
                         if (found) clienteData = found;
                     }
                     
@@ -1568,7 +1578,10 @@
                     Store.data.entregaEmAcaoId = id; 
                     const entrega = Store.data.rotaAtiva.entregas.find(e => e.id == id); 
                     if (!entrega) return Utils.toast('Erro', 'error'); 
-                    document.getElementById('pos-venda-cliente-nome').innerText = entrega.cliente.nome; 
+                    
+                    // USAR APELIDO SE DISPONÍVEL
+                    const nomeExibicao = entrega.cliente.apelido || entrega.cliente.nome;
+                    document.getElementById('pos-venda-cliente-nome').innerText = nomeExibicao; 
                     
                     // Verificar bloqueios (60 dias)
                     const meta = Store.data.meta[entrega.cliente.nome] || {};
@@ -1592,23 +1605,26 @@
                     if(!num) return Utils.toast('Sem celular', 'error');
                     if(!num.startsWith('55')) num = '55' + num;
                     
+                    // USAR APELIDO SE DISPONÍVEL
+                    const nomeCliente = entrega.cliente.apelido || entrega.cliente.nome;
+
                     let msg = '';
                     // Mensagens sem personalização de nome (genéricas)
-                    if(tipo===1) msg = `Olá! Tudo bem? Aqui é da Rota Dona Antonia. Muito obrigado pela sua compra! Deus abençoe você e sua família. 🙏`;
+                    if(tipo===1) msg = `Olá ${nomeCliente}! Tudo bem? Aqui é da Rota Dona Antonia. Muito obrigado pela sua compra! Deus abençoe você e sua família. 🙏`;
                     else if(tipo===2) { 
                         const h = new Date(); h.setDate(h.getDate()+30); 
-                        msg = `Olá! Como agradecimento, você ganhou um *DESCONTO DE R$ 10,00* na sua próxima compra! 🎁 Válido até *${h.toLocaleDateString('pt-BR')}*.`; 
+                        msg = `Olá ${nomeCliente}! Como agradecimento, você ganhou um *DESCONTO DE R$ 10,00* na sua próxima compra! 🎁 Válido até *${h.toLocaleDateString('pt-BR')}*.`; 
                         Store.updateMeta(entrega.cliente.nome, 'lastCouponDate', new Date().toISOString());
                     }
                     else if(tipo===3) { 
-                        msg = `Olá, poderia nos ajudar? 🙏 Clique no link e avalie com 5 estrelas ⭐: https://g.page/r/CaIREJtO1L6WEBM/review Deus abençoe!`;
+                        msg = `Olá ${nomeCliente}, poderia nos ajudar? 🙏 Clique no link e avalie com 5 estrelas ⭐: https://g.page/r/CaIREJtO1L6WEBM/review Deus abençoe!`;
                         Store.updateMeta(entrega.cliente.nome, 'lastGoogleReview', new Date().toISOString());
                     }
                     else if(tipo===4) { 
-                        msg = `Olá! Segue a gente no Instagram! 📸 https://www.instagram.com/super.cestas.dona.antonia/`;
+                        msg = `Olá ${nomeCliente}! Segue a gente no Instagram! 📸 https://www.instagram.com/super.cestas.dona.antonia/`;
                         Store.updateMeta(entrega.cliente.nome, 'lastInstaFollow', new Date().toISOString());
                     }
-                    else if(tipo===5) msg = `Olá! Para facilitar seus pedidos, baixe nosso App clicando aqui: ${CONSTANTS.LINK_APP}`;
+                    else if(tipo===5) msg = `Olá ${nomeCliente}! Para facilitar seus pedidos, baixe nosso App clicando aqui: ${CONSTANTS.LINK_APP}`;
 
                     window.open(`https://api.whatsapp.com/send?phone=${num}&text=${encodeURIComponent(msg)}`, '_blank');
                     document.getElementById('modal-pos-venda').classList.add('hidden');
@@ -1617,10 +1633,13 @@
                     const entrega = Store.data.rotaAtiva.entregas.find(e => e.id == Store.data.entregaEmAcaoId);
                     let num = entrega.cliente.celular.replace(/\D/g, '');
                     if(!num) { if(tipo!==4) return Utils.toast('Sem celular', 'error'); else num = CONSTANTS.NUMERO_GERENTE; } else if(!num.startsWith('55')) num = '55' + num;
+                    
+                    const nomeCliente = entrega.cliente.apelido || entrega.cliente.nome;
                     let msg = '';
+                    
                     switch(tipo) {
-                        case 1: msg = `Olá! Aqui é da Cesta Básica. Chegando em 10 minutos! 🚚`; break;
-                        case 2: msg = `Olá! O entregador chegou no seu endereço.`; break;
+                        case 1: msg = `Olá ${nomeCliente}! Aqui é da Cesta Básica. Chegando em 10 minutos! 🚚`; break;
+                        case 2: msg = `Olá ${nomeCliente}! O entregador chegou no seu endereço.`; break;
                         case 3: msg = `Dados PIX:\nCelular: ${CONSTANTS.PIX_CELULAR}\nNome: ${CONSTANTS.PIX_NOME}\nValor: ${Utils.formatMoeda(entrega.valorTotalAjustado)}`; break;
                         // MENSAGEM DO MONTADOR - FORMATO SOLICITADO
                         case 4: 
@@ -1660,19 +1679,20 @@
                          
                          // Helper para gerar link do WhatsApp (wa.me)
                          const genLink = (texto) => `https://wa.me/${clientPhone}?text=${encodeURIComponent(texto)}`;
+                         const nomeCliente = entrega.cliente.apelido || entrega.cliente.nome;
                          
                          // 1. Agradecimento
-                         const msgAgrad = `Olá! Tudo bem? Aqui é da Rota Dona Antonia. Muito obrigado pela sua compra! Deus abençoe você e sua família. 🙏`;
+                         const msgAgrad = `Olá ${nomeCliente}! Tudo bem? Aqui é da Rota Dona Antonia. Muito obrigado pela sua compra! Deus abençoe você e sua família. 🙏`;
                          
                          // 2. Cupom
                          const h = new Date(); h.setDate(h.getDate()+30); 
-                         const msgCupom = `Olá! Como agradecimento, você ganhou um *DESCONTO DE R$ 10,00* na sua próxima compra! 🎁 Válido até *${h.toLocaleDateString('pt-BR')}*.`;
+                         const msgCupom = `Olá ${nomeCliente}! Como agradecimento, você ganhou um *DESCONTO DE R$ 10,00* na sua próxima compra! 🎁 Válido até *${h.toLocaleDateString('pt-BR')}*.`;
 
                          // 3. Google
-                         const msgGoogle = `Olá, poderia nos ajudar? 🙏 Clique no link e avalie com 5 estrelas ⭐: https://g.page/r/CaIREJtO1L6WEBM/review Deus abençoe!`;
+                         const msgGoogle = `Olá ${nomeCliente}, poderia nos ajudar? 🙏 Clique no link e avalie com 5 estrelas ⭐: https://g.page/r/CaIREJtO1L6WEBM/review Deus abençoe!`;
 
                          // 4. Instagram
-                         const msgInsta = `Olá! Segue a gente no Instagram! 📸 https://www.instagram.com/super.cestas.dona.antonia/`;
+                         const msgInsta = `Olá ${nomeCliente}! Segue a gente no Instagram! 📸 https://www.instagram.com/super.cestas.dona.antonia/`;
 
                          msg += `\n-------- PÓS VENDA --------\n`;
                          msg += `🙏 Agradecer: ${genLink(msgAgrad)}\n\n`;
@@ -1969,11 +1989,23 @@
                 const val = e.target.value.toLowerCase();
                 const preview = document.getElementById('info-cliente-preview');
                 if(typeof CLIENTES_DB !== 'undefined' && val.length > 0) {
-                    const filtrados = CLIENTES_DB.filter(c => c.nome.toLowerCase().includes(val)).slice(0, 50);
+                    const filtrados = CLIENTES_DB.filter(c => {
+                        const nome = c.nome.toLowerCase();
+                        const apelido = c.apelido ? c.apelido.toLowerCase() : '';
+                        const cel = c.celular ? c.celular.replace(/\D/g, '') : '';
+                        return nome.includes(val) || apelido.includes(val) || cel.includes(val);
+                    }).slice(0, 50);
+
                     if(filtrados.length > 0) {
-                        dropdownClientes.innerHTML = filtrados.map(c => `<div class="p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors" onclick="App.controllers.selecionarCliente('${c.nome}')"><p class="font-bold text-sm text-slate-800">${c.nome}</p><p class="text-xs text-slate-500">${c.endereco || ''}</p></div>`).join('');
+                        dropdownClientes.innerHTML = filtrados.map(c => `
+                            <div class="p-3 border-b border-slate-100 hover:bg-slate-50 cursor-pointer transition-colors" onclick="App.controllers.selecionarCliente('${c.nome}')">
+                                <p class="font-bold text-sm text-slate-800">${c.nome} ${c.apelido ? `<span class="text-slate-500 font-normal">(${c.apelido})</span>` : ''}</p>
+                                <p class="text-xs text-slate-500">${c.endereco || ''}</p>
+                            </div>
+                        `).join('');
                         App.controllers.abrirDropdownCliente();
                     } else { dropdownClientes.innerHTML = '<div class="p-3 text-sm text-slate-400">Nenhum cliente encontrado</div>'; App.controllers.abrirDropdownCliente(); }
+                    
                     const found = CLIENTES_DB.find(c => c.nome.toLowerCase() === val);
                     if(found) { preview.innerHTML = `<strong>Nome:</strong> ${found.nome}<br><strong>Tel:</strong> ${found.celular || '-'}<br><strong>End:</strong> ${found.endereco || '-'}<br><strong>Comp:</strong> ${found.complemento || '-'}`; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
                 } else { App.controllers.fecharDropdownCliente(); preview.classList.add('hidden'); }
