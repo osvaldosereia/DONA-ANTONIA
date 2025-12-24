@@ -216,6 +216,9 @@
         <!-- VIEW CADASTROS CLIENTES (Nova) -->
         <div id="view-clients-db" class="hidden">
             <div class="mb-4">
+                <div class="flex justify-between items-center mb-2">
+                    <span id="client-count-badge" class="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-1 rounded-full">Carregando...</span>
+                </div>
                 <input type="text" id="input-search-db" class="w-full rounded-lg border-slate-300 border p-3 focus:ring-2 focus:ring-slate-500 focus:border-slate-500 transition-all bg-white shadow-sm" placeholder="🔍 Buscar por nome, apelido ou telefone..." onkeyup="App.controllers.renderClientsDB()">
             </div>
             <div id="list-clients-db" class="space-y-3">
@@ -246,6 +249,10 @@
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Apelido (Como gosta de ser chamado)</label>
                     <input type="text" id="edit-client-apelido" class="w-full border rounded p-2 mt-1" placeholder="Ex: Dona Maria">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700">Data de Aniversário</label>
+                    <input type="date" id="edit-client-niver" class="w-full border rounded p-2 mt-1">
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-slate-700">Telefone / WhatsApp</label>
@@ -294,6 +301,18 @@
 
                     <div id="info-cliente-preview" class="hidden mt-2 text-sm bg-blue-50 text-blue-800 p-3 rounded-lg border border-blue-100">
                         <!-- Preenchido via JS -->
+                    </div>
+                </div>
+
+                <!-- Bairro e Cidade -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Bairro</label>
+                        <input type="text" id="input-bairro" class="w-full rounded-lg border-slate-300 border p-2 bg-slate-50" placeholder="Bairro">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700">Cidade</label>
+                        <input type="text" id="input-cidade" class="w-full rounded-lg border-slate-300 border p-2 bg-slate-50" placeholder="Cidade">
                     </div>
                 </div>
 
@@ -624,7 +643,53 @@
                             </div>
                         </div>
 
-                        <!-- Grids Detalhados -->
+                        <!-- SEÇÃO DE RELATÓRIOS DETALHADOS (NOVA) -->
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100">
+                            <h4 class="font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+                                Relatórios Detalhados & Segmentação
+                            </h4>
+                            
+                            <div class="flex flex-wrap gap-4 items-end mb-4">
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Tipo de Relatório</label>
+                                    <select id="adv-report-type" class="w-full border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50" onchange="App.controllers.updateAdvReportOptions()">
+                                        <option value="pagamento">Por Forma de Pagamento</option>
+                                        <option value="produto">Por Produto/Cesta</option>
+                                        <option value="bairro">Por Bairro</option>
+                                        <option value="cidade">Por Cidade</option>
+                                    </select>
+                                </div>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Selecione o Valor</label>
+                                    <select id="adv-report-value" class="w-full border-slate-300 rounded-lg p-2.5 text-sm bg-slate-50">
+                                        <!-- Preenchido via JS -->
+                                    </select>
+                                </div>
+                                <button onclick="App.controllers.gerarRelatorioAvançado()" class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-indigo-700 shadow-md transition-colors">
+                                    Gerar Lista
+                                </button>
+                            </div>
+
+                            <!-- Tabela de Resultados Avançados -->
+                            <div class="overflow-x-auto rounded-lg border border-slate-200 hidden" id="adv-report-container">
+                                <table class="w-full text-left text-sm">
+                                    <thead class="bg-slate-50 text-slate-600 uppercase text-xs font-bold">
+                                        <tr>
+                                            <th class="p-3">Data</th>
+                                            <th class="p-3">Cliente</th>
+                                            <th class="p-3">Detalhes</th>
+                                            <th class="p-3 text-right">Valor</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adv-report-body" class="divide-y divide-slate-100 text-slate-700">
+                                        <!-- JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Grids Detalhados (Anteriores) -->
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             
                             <!-- Região -->
@@ -984,11 +1049,15 @@
                     const term = document.getElementById('input-search-db').value.toLowerCase().trim();
                     const container = document.getElementById('list-clients-db');
                     const emptyState = document.getElementById('clients-db-empty');
+                    const countBadge = document.getElementById('client-count-badge');
 
                     let lista = window.CLIENTES_DB || [];
                     
                     // Ordena Alfabético
                     lista.sort((a,b) => a.nome.localeCompare(b.nome));
+
+                    // Atualiza contador
+                    countBadge.innerText = `Total: ${lista.length}`;
 
                     // Filtra
                     if(term.length > 0) {
@@ -1000,8 +1069,8 @@
                         });
                     }
 
-                    // Limita exibição inicial para não travar se forem muitos (ex: 50)
-                    const displayList = lista.slice(0, 50);
+                    // REMOVIDO O LIMITE DE 50 (Carregar todos)
+                    const displayList = lista;
 
                     if(displayList.length === 0) {
                         container.innerHTML = '';
@@ -1015,6 +1084,7 @@
                         const realIndex = window.CLIENTES_DB.indexOf(c);
                         const lastDate = Utils.getLastPurchaseDate(c.nome);
                         const lastDateStr = lastDate ? new Date(lastDate).toLocaleDateString('pt-BR') : 'Sem histórico';
+                        const niverStr = c.aniversario ? new Date(c.aniversario + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
 
                         return `
                         <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 flex justify-between items-center">
@@ -1026,10 +1096,11 @@
                                 <div class="text-sm text-slate-600 mt-1">
                                     📞 ${c.celular || 'Sem telefone'} 
                                     <span class="mx-1 text-slate-300">|</span> 
-                                    📍 ${c.cidade || '-'} / ${c.bairro || '-'}
+                                    📍 ${c.bairro || 'Sem bairro'} - ${c.cidade || 'Sem cidade'}
                                 </div>
-                                <div class="text-xs text-slate-400 mt-1">
-                                    🕒 Última compra: <span class="font-semibold text-slate-600">${lastDateStr}</span>
+                                <div class="text-xs text-slate-400 mt-1 flex gap-4">
+                                    <span>🕒 Última compra: <span class="font-semibold text-slate-600">${lastDateStr}</span></span>
+                                    <span>🎂 Niver: <span class="font-semibold text-slate-600">${niverStr}</span></span>
                                 </div>
                             </div>
                             <button onclick="App.controllers.openEditClient(${realIndex})" class="bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-lg transition-colors ml-3">
@@ -1047,6 +1118,7 @@
                     document.getElementById('edit-client-index').value = index;
                     document.getElementById('edit-client-nome').value = client.nome || '';
                     document.getElementById('edit-client-apelido').value = client.apelido || '';
+                    document.getElementById('edit-client-niver').value = client.aniversario || ''; // YYYY-MM-DD
                     document.getElementById('edit-client-tel').value = client.celular || '';
                     document.getElementById('edit-client-end').value = client.endereco || '';
                     document.getElementById('edit-client-bairro').value = client.bairro || '';
@@ -1063,6 +1135,7 @@
                         ...window.CLIENTES_DB[idx],
                         nome: document.getElementById('edit-client-nome').value.trim(),
                         apelido: document.getElementById('edit-client-apelido').value.trim(),
+                        aniversario: document.getElementById('edit-client-niver').value,
                         celular: document.getElementById('edit-client-tel').value.trim(),
                         endereco: document.getElementById('edit-client-end').value.trim(),
                         bairro: document.getElementById('edit-client-bairro').value.trim(),
@@ -1110,6 +1183,111 @@
 
                     if(tabName === 'diario') App.controllers.crmDailyFilter(0);
                     if(tabName === 'cupons') { App.controllers.couponPagination = 20; App.controllers.crmCouponsFilter(); }
+                },
+
+                // === RELATÓRIOS AVANÇADOS ===
+                updateAdvReportOptions: () => {
+                    const type = document.getElementById('adv-report-type').value;
+                    const select = document.getElementById('adv-report-value');
+                    select.innerHTML = '<option value="">Carregando...</option>';
+                    
+                    let options = new Set();
+
+                    // Coletar opções baseadas no histórico total
+                    Store.data.history.forEach(order => {
+                        if(type === 'pagamento' && order.formaPagamento) order.formaPagamento.forEach(p => options.add(p.toUpperCase().trim()));
+                        if(type === 'produto' && order.cestas) order.cestas.forEach(c => options.add(c.nome));
+                        if(type === 'bairro' && order.cliente.bairro) options.add(order.cliente.bairro); // Tenta pegar do snapshot da venda
+                        // Fallback: se não tiver no histórico, tenta pegar da base atual de clientes para preencher lista? 
+                        // Melhor pegar apenas do histórico para garantir integridade do relatório.
+                        // Mas como acabamos de adicionar Bairro, o histórico antigo não terá.
+                        // Vamos permitir digitar livremente? Não, dropdown é melhor.
+                        if(type === 'cidade' && order.cliente.cidade) options.add(order.cliente.cidade);
+                    });
+
+                    // Se for Bairro/Cidade e estiver vazio (histórico antigo), pega da base de clientes para facilitar
+                    if((type === 'bairro' || type === 'cidade') && options.size === 0 && window.CLIENTES_DB) {
+                        window.CLIENTES_DB.forEach(c => {
+                            if(type === 'bairro' && c.bairro) options.add(c.bairro);
+                            if(type === 'cidade' && c.cidade) options.add(c.cidade);
+                        });
+                    }
+
+                    const sorted = Array.from(options).sort();
+                    select.innerHTML = sorted.length ? sorted.map(o => `<option value="${o}">${o}</option>`).join('') : '<option value="">Sem dados</option>';
+                },
+
+                gerarRelatorioAvançado: () => {
+                    const startInput = document.getElementById('rel-start').value;
+                    const endInput = document.getElementById('rel-end').value;
+                    const type = document.getElementById('adv-report-type').value;
+                    const value = document.getElementById('adv-report-value').value;
+
+                    if(!startInput || !endInput) return Utils.toast('Selecione as datas.', 'error');
+                    if(!value) return Utils.toast('Selecione um valor para filtrar.', 'error');
+
+                    const startDate = new Date(startInput + 'T00:00:00');
+                    const endDate = new Date(endInput + 'T23:59:59');
+
+                    // Filtrar Histórico
+                    const filtered = Store.data.history.filter(order => {
+                        const d = new Date(order.updatedAt || order.dataCriacao);
+                        const inDate = d >= startDate && d <= endDate;
+                        if(!inDate) return false;
+
+                        // Match Criteria
+                        if(type === 'pagamento') {
+                            return order.formaPagamento && order.formaPagamento.some(p => p.toUpperCase().trim() === value);
+                        }
+                        if(type === 'produto') {
+                            return order.cestas && order.cestas.some(c => c.nome === value);
+                        }
+                        if(type === 'bairro') {
+                            // Verifica no snapshot da venda OU no cadastro atual do cliente (fallback)
+                            const snapBairro = order.cliente.bairro || '';
+                            // Se não tiver no snapshot, tenta achar no DB atual pelo nome (para vendas antigas)
+                            let currentBairro = '';
+                            if(!snapBairro && window.CLIENTES_DB) {
+                                const c = window.CLIENTES_DB.find(cl => cl.nome === order.cliente.nome);
+                                if(c) currentBairro = c.bairro;
+                            }
+                            return snapBairro === value || currentBairro === value;
+                        }
+                        if(type === 'cidade') {
+                            const snapCidade = order.cliente.cidade || '';
+                            let currentCidade = '';
+                            if(!snapCidade && window.CLIENTES_DB) {
+                                const c = window.CLIENTES_DB.find(cl => cl.nome === order.cliente.nome);
+                                if(c) currentCidade = c.cidade;
+                            }
+                            return snapCidade === value || currentCidade === value;
+                        }
+                        return false;
+                    });
+
+                    // Render Table
+                    const tbody = document.getElementById('adv-report-body');
+                    const container = document.getElementById('adv-report-container');
+                    
+                    if(filtered.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum resultado encontrado.</td></tr>';
+                    } else {
+                        tbody.innerHTML = filtered.map(order => {
+                            const date = new Date(order.updatedAt || order.dataCriacao).toLocaleDateString('pt-BR');
+                            const detail = type === 'produto' 
+                                ? order.cestas.map(c => `${c.qtd}x ${c.nome}`).join(', ') 
+                                : (type === 'pagamento' ? order.formaPagamento.join(', ') : order.regiao);
+                            
+                            return `
+                            <tr class="hover:bg-slate-50 border-b border-slate-50">
+                                <td class="p-3 whitespace-nowrap">${date}</td>
+                                <td class="p-3 font-bold text-slate-700">${order.cliente.nome}</td>
+                                <td class="p-3 text-xs text-slate-500">${detail}</td>
+                                <td class="p-3 text-right font-bold text-green-600">${Utils.formatMoeda(order.valorTotalAjustado)}</td>
+                            </tr>`;
+                        }).join('');
+                    }
+                    container.classList.remove('hidden');
                 },
 
                 // === CRM: VENDAS POR DIA ===
@@ -1194,6 +1372,7 @@
                                 <div class="value" style="font-size:16px;">${entrega.cliente.nome} ${entrega.cliente.apelido ? `(${entrega.cliente.apelido})` : ''}</div>
                                 <div>${entrega.cliente.celular || ''}</div>
                                 <div style="margin-top:2px;">${entrega.cliente.endereco || 'Retirar'}</div>
+                                <div style="font-size:11px;">${entrega.cliente.bairro || ''} - ${entrega.cliente.cidade || ''}</div>
                                 ${entrega.cliente.complemento ? `<div>(${entrega.cliente.complemento})</div>` : ''}
                                 <div class="label" style="margin-top:5px;">REGIÃO: ${entrega.regiao}</div>
                             </div>
@@ -1522,6 +1701,9 @@
                     document.getElementById('rel-grid-brindes').innerHTML = htmlBrindes || '<span class="text-slate-400 text-xs italic">Nenhum brinde registrado</span>';
 
                     document.getElementById('relatorio-resultados').classList.remove('hidden');
+                    
+                    // Trigger update options for advanced report
+                    App.controllers.updateAdvReportOptions();
                 },
 
                 // Dropdowns
@@ -1591,6 +1773,11 @@
                     document.getElementById('info-cliente-preview').classList.add('hidden');
                     document.getElementById('input-valor-final').value = '';
                     document.getElementById('input-obs-geral').value = '';
+                    
+                    // Reset Bairro e Cidade
+                    document.getElementById('input-bairro').value = '';
+                    document.getElementById('input-cidade').value = '';
+
                     const regiaoPadrao = document.querySelector(`input[name="regiao"][value="VG"]`);
                     if(regiaoPadrao) regiaoPadrao.checked = true;
 
@@ -1618,6 +1805,10 @@
                     document.getElementById('input-cliente').value = entrega.cliente.nome;
                     const event = new Event('input'); document.getElementById('input-cliente').dispatchEvent(event); // Trigger preview
                     
+                    // Fill Bairro/Cidade if available in saved order
+                    document.getElementById('input-bairro').value = entrega.cliente.bairro || '';
+                    document.getElementById('input-cidade').value = entrega.cliente.cidade || '';
+
                     const radio = document.querySelector(`input[name="regiao"][value="${entrega.regiao}"]`);
                     if(radio) radio.checked = true;
 
@@ -1636,15 +1827,32 @@
                     if(!regiaoInput) return Utils.toast('Selecione a região', 'error');
                     if(Store.data.carrinhoTemp.length === 0) return Utils.toast('Adicione cestas ao pedido', 'error');
                     
-                    // Lógica para encontrar cliente (Nome ou Apelido)
-                    let clienteData = { nome: nome, endereco: '', celular: '', apelido: '' };
+                    // Lógica para encontrar cliente (Nome ou Apelido) ou criar objeto básico
+                    let clienteData = { 
+                        nome: nome, 
+                        endereco: '', 
+                        celular: '', 
+                        apelido: '',
+                        bairro: document.getElementById('input-bairro').value.trim(),
+                        cidade: document.getElementById('input-cidade').value.trim()
+                    };
+
                     if (typeof CLIENTES_DB !== 'undefined') {
                         // Tenta encontrar pelo nome exato OU apelido exato
                         const found = CLIENTES_DB.find(c => 
                             c.nome.toLowerCase() === nome.toLowerCase() || 
                             (c.apelido && c.apelido.toLowerCase() === nome.toLowerCase())
                         );
-                        if (found) clienteData = found;
+                        if (found) {
+                            clienteData = { ...found }; // Copia dados do cadastro
+                            // Sobrescreve com o que foi digitado no modal se não estiver vazio, 
+                            // ou mantém o do cadastro se o input estiver vazio?
+                            // Melhor: Se o input tem valor, usa o input (pode ser atualização pontual).
+                            const inputBairro = document.getElementById('input-bairro').value.trim();
+                            const inputCidade = document.getElementById('input-cidade').value.trim();
+                            if(inputBairro) clienteData.bairro = inputBairro;
+                            if(inputCidade) clienteData.cidade = inputCidade;
+                        }
                     }
                     
                     const valorFinalManual = parseFloat(document.getElementById('input-valor-final').value) || 0;
@@ -2214,7 +2422,15 @@
                     } else { dropdownClientes.innerHTML = '<div class="p-3 text-sm text-slate-400">Nenhum cliente encontrado</div>'; App.controllers.abrirDropdownCliente(); }
                     
                     const found = CLIENTES_DB.find(c => c.nome.toLowerCase() === val);
-                    if(found) { preview.innerHTML = `<strong>Nome:</strong> ${found.nome}<br><strong>Tel:</strong> ${found.celular || '-'}<br><strong>End:</strong> ${found.endereco || '-'}<br><strong>Comp:</strong> ${found.complemento || '-'}`; preview.classList.remove('hidden'); } else { preview.classList.add('hidden'); }
+                    if(found) { 
+                        preview.innerHTML = `<strong>Nome:</strong> ${found.nome}<br><strong>Tel:</strong> ${found.celular || '-'}<br><strong>End:</strong> ${found.endereco || '-'}<br><strong>Bairro:</strong> ${found.bairro || '-'}<br><strong>Cidade:</strong> ${found.cidade || '-'}<br><strong>Comp:</strong> ${found.complemento || '-'}`; 
+                        
+                        // Auto-fill Bairro/Cidade se disponível
+                        document.getElementById('input-bairro').value = found.bairro || '';
+                        document.getElementById('input-cidade').value = found.cidade || '';
+                        
+                        preview.classList.remove('hidden'); 
+                    } else { preview.classList.add('hidden'); }
                 } else { App.controllers.fecharDropdownCliente(); preview.classList.add('hidden'); }
             });
 
