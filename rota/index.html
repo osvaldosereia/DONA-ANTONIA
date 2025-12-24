@@ -876,7 +876,7 @@
                 crmDailyFilter: (daysAgo) => {
                     // Renderiza botões
                     const btnContainer = document.getElementById('daily-filters');
-                    btnContainer.innerHTML = [0, 1, 2, 3, 4, 5].map(d => {
+                    btnContainer.innerHTML = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(d => {
                         const label = d === 0 ? 'Hoje' : (d === 1 ? 'Ontem' : `Há ${d} dias`);
                         const isActive = d === daysAgo;
                         return `<button onclick="App.controllers.crmDailyFilter(${d})" class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold transition-colors border ${isActive ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'}">${label}</button>`;
