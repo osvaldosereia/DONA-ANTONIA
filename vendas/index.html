@@ -23,6 +23,7 @@
         .card-collapsed { max-height: 50px; overflow: hidden; }
         .transition-all-300 { transition: all 0.3s ease-in-out; }
         .rotate-180 { transform: rotate(180deg); }
+        .bg-pattern { background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 20px 20px; }
 
         /* --- Drag and Drop Visual --- */
         .draggable-card { cursor: grab; }
@@ -33,30 +34,34 @@
             background-color: #eef2ff !important;
         }
 
-        /* --- Estilo de Impressão (Termica 10x15) --- */
+        /* --- Estilo de Impressão (Termica Bobina 100mm) --- */
         @media print {
-            @page { size: 100mm 150mm; margin: 0; }
+            @page { 
+                size: 100mm auto; 
+                margin: 0; 
+            }
             body * { visibility: hidden; }
             #areaImpressao, #areaImpressao * { visibility: visible; }
             #areaImpressao {
-                position: fixed;
+                position: absolute;
                 left: 0;
                 top: 0;
                 width: 100mm;
-                padding: 5mm;
+                padding: 5mm 7mm;
                 background: white;
                 color: black;
                 font-family: 'Courier New', Courier, monospace;
                 font-size: 12px;
                 line-height: 1.2;
                 display: block !important;
+                overflow: visible;
             }
             .no-print { display: none !important; }
         }
         #areaImpressao { display: none; }
     </style>
 </head>
-<body class="text-gray-800">
+<body class="text-gray-800 bg-pattern">
 
     <div class="app-container p-4 no-print">
         
@@ -109,10 +114,40 @@
                     <div class="mb-4">
                         <label class="block text-xs font-bold text-gray-600 mb-1">1. Selecionar Cliente</label>
                         <div class="flex gap-2">
-                            <select id="selCliente" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500 bg-white">
+                            <select id="selCliente" onchange="verificarCuponsCliente()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500 bg-white">
                                 <option value="">Carregando clientes...</option>
                             </select>
                             <button onclick="carregarClientes()" class="bg-gray-200 px-3 rounded hover:bg-gray-300" title="Atualizar lista"><i class="fa-solid fa-sync text-xs"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- AREA DE CUPONS (NOVIDADE) -->
+                    <div id="areaCupons" class="mb-4 hidden bg-yellow-50 border border-yellow-200 rounded p-2">
+                        <label class="block text-xs font-bold text-yellow-800 mb-1 flex items-center">
+                            <i class="fa-solid fa-ticket mr-1"></i> Cupons de Desconto
+                        </label>
+                        
+                        <!-- Select Cupons Pessoais -->
+                        <div id="divCuponsPessoais" class="hidden mb-2">
+                            <span class="text-[10px] text-gray-500 block mb-1">Cupons disponíveis para este cliente:</span>
+                            <select id="selCupomPessoal" onchange="aplicarCupom('pessoal')" class="w-full border border-yellow-300 rounded compact-input text-sm bg-white">
+                                <option value="">-- Selecione para usar --</option>
+                            </select>
+                        </div>
+
+                        <!-- Input Cupom Amigo/Código -->
+                        <div>
+                            <span class="text-[10px] text-gray-500 block mb-1">Ou digite o código (Cupom Amigo):</span>
+                            <div class="flex gap-1">
+                                <input type="text" id="inputCodigoCupom" placeholder="Ex: AMIGO-1234" class="flex-1 border border-gray-300 rounded compact-input uppercase">
+                                <button onclick="aplicarCupom('codigo')" class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded text-xs font-bold">Validar</button>
+                            </div>
+                        </div>
+
+                        <!-- Feedback do Cupom Aplicado -->
+                        <div id="msgCupomAplicado" class="hidden mt-2 text-green-700 text-xs font-bold bg-green-100 p-1.5 rounded border border-green-200 flex justify-between items-center">
+                            <span>Desconto aplicado: R$ <span id="valorDescontoCupom">0,00</span></span>
+                            <button onclick="removerCupom()" class="text-red-500 hover:underline ml-2">Remover</button>
                         </div>
                     </div>
 
@@ -204,7 +239,7 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Desconto</label>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Desconto Manual</label>
                             <select id="desconto" onchange="calcularTotalFinal()" class="w-full border border-gray-300 rounded compact-input">
                                 <option value="0">Sem desconto</option>
                                 <option value="5">- R$ 5,00</option>
@@ -332,16 +367,21 @@
         // --- ESTADO GLOBAL ---
         let carrinho = []; 
         let pedidos = []; 
+        let cupons = []; // LISTA DE CUPONS
+        let cupomSelecionado = null; // CUPOM APLICADO NO PEDIDO ATUAL
+
         let filtroRotaAtual = 'todos'; 
         let dragSrcEl = null; // Para Drag n Drop
         
         const KEY_CLIENTES = 'sistema_empresarial_clientes';
         const KEY_PEDIDOS = 'sistema_empresarial_vendas';
+        const KEY_CUPONS = 'sistema_empresarial_cupons';
 
         // --- INICIALIZAÇÃO ---
         window.onload = () => {
             carregarClientes();
             carregarPedidosLocais();
+            carregarCuponsLocais();
             atualizarOpcoesPreco();
             
             document.getElementById('filtroData').valueAsDate = new Date();
@@ -369,6 +409,106 @@
             } else {
                 select.innerHTML = '<option value="">Nenhum cliente cadastrado</option>';
             }
+        }
+
+        function carregarCuponsLocais() {
+            const dados = localStorage.getItem(KEY_CUPONS);
+            if (dados) cupons = JSON.parse(dados);
+        }
+
+        function salvarCuponsLocais() {
+            localStorage.setItem(KEY_CUPONS, JSON.stringify(cupons));
+        }
+
+        // --- GESTÃO DE CUPONS ---
+        
+        function verificarCuponsCliente() {
+            const idCliente = document.getElementById('selCliente').value;
+            const divArea = document.getElementById('areaCupons');
+            const divPessoais = document.getElementById('divCuponsPessoais');
+            const selectPessoais = document.getElementById('selCupomPessoal');
+            
+            // Reset
+            removerCupom();
+            selectPessoais.innerHTML = '<option value="">-- Selecione para usar --</option>';
+            
+            if (!idCliente) {
+                divArea.classList.add('hidden');
+                return;
+            }
+
+            // Exibir área de cupons
+            divArea.classList.remove('hidden');
+
+            // Filtrar cupons pessoais válidos
+            const hoje = new Date().setHours(0,0,0,0);
+            const cuponsValidos = cupons.filter(c => 
+                c.idCliente === idCliente && 
+                c.tipo === 'pessoal' && 
+                !c.usado && 
+                new Date(c.validade) >= hoje
+            );
+
+            if (cuponsValidos.length > 0) {
+                divPessoais.classList.remove('hidden');
+                cuponsValidos.forEach(c => {
+                    const dataVal = new Date(c.validade).toLocaleDateString('pt-BR');
+                    const opt = document.createElement('option');
+                    opt.value = c.codigo;
+                    opt.text = `R$ ${c.valor},00 - ${c.cestaAlvo} (Vence: ${dataVal})`;
+                    opt.dataset.json = JSON.stringify(c);
+                    selectPessoais.appendChild(opt);
+                });
+            } else {
+                divPessoais.classList.add('hidden');
+            }
+        }
+
+        function aplicarCupom(origem) {
+            let cupomEncontrado = null;
+
+            if (origem === 'pessoal') {
+                const select = document.getElementById('selCupomPessoal');
+                if (select.value) {
+                    cupomEncontrado = JSON.parse(select.options[select.selectedIndex].dataset.json);
+                }
+            } else if (origem === 'codigo') {
+                const codigo = document.getElementById('inputCodigoCupom').value.trim().toUpperCase();
+                if (!codigo) return alert('Digite um código.');
+                
+                // Busca cupom globalmente
+                const hoje = new Date().setHours(0,0,0,0);
+                cupomEncontrado = cupons.find(c => 
+                    c.codigo === codigo && 
+                    !c.usado && 
+                    new Date(c.validade) >= hoje
+                );
+
+                if (!cupomEncontrado) return alert('Cupom inválido, vencido ou já utilizado.');
+            }
+
+            if (cupomEncontrado) {
+                cupomSelecionado = cupomEncontrado;
+                
+                // UI Feedback
+                document.getElementById('msgCupomAplicado').classList.remove('hidden');
+                document.getElementById('valorDescontoCupom').innerText = cupomSelecionado.valor.toFixed(2).replace('.', ',');
+                
+                // Desabilitar inputs conflitantes
+                document.getElementById('desconto').disabled = true;
+                document.getElementById('desconto').value = 0;
+                
+                calcularTotalFinal();
+            }
+        }
+
+        function removerCupom() {
+            cupomSelecionado = null;
+            document.getElementById('selCupomPessoal').value = "";
+            document.getElementById('inputCodigoCupom').value = "";
+            document.getElementById('msgCupomAplicado').classList.add('hidden');
+            document.getElementById('desconto').disabled = false;
+            calcularTotalFinal();
         }
 
         // --- LÓGICA DE PRODUTOS/PREÇOS ---
@@ -542,7 +682,15 @@
                  const txt = document.getElementById('lblSubtotal').innerText.replace(',', '.');
                  sub = parseFloat(txt);
             }
-            const desc = parseFloat(document.getElementById('desconto').value) || 0;
+            
+            // Prioridade para Cupom, senão pega desconto manual
+            let desc = 0;
+            if (cupomSelecionado) {
+                desc = cupomSelecionado.valor;
+            } else {
+                desc = parseFloat(document.getElementById('desconto').value) || 0;
+            }
+
             const final = Math.max(0, sub - desc);
             document.getElementById('lblTotalFinal').innerText = final.toFixed(2).replace('.', ',');
         }
@@ -558,7 +706,76 @@
             const subtotalText = document.getElementById('lblSubtotal').innerText.replace(',', '.');
             const totalText = document.getElementById('lblTotalFinal').innerText.replace(',', '.');
             
-            // Garantindo que todos os dados do cliente vão junto com o pedido
+            // Valor do desconto aplicado
+            let descontoFinal = 0;
+            if (cupomSelecionado) {
+                descontoFinal = cupomSelecionado.valor;
+                
+                // MARCAR CUPOM COMO USADO
+                const cupomIdx = cupons.findIndex(c => c.codigo === cupomSelecionado.codigo);
+                if (cupomIdx > -1) {
+                    cupons[cupomIdx].usado = true;
+                    salvarCuponsLocais();
+                }
+            } else {
+                descontoFinal = parseFloat(document.getElementById('desconto').value);
+            }
+
+            // GERAÇÃO DE NOVOS CUPONS (Lógica Nova)
+            // Analisar itens para determinar o valor do novo cupom
+            let valorNovoDesc = 5;
+            let nomeCestaNovoDesc = "Cesta Básica";
+            let maiorPeso = 0;
+
+            carrinho.forEach(item => {
+                const nome = item.tipo.toLowerCase();
+                let peso = 0; let valor = 5; let nomeCesta = "Cesta Econômica";
+                if(nome.includes('grande')) { peso = 5; valor = 15; nomeCesta = "Cesta Grande"; }
+                else if(nome.includes('média') || nome.includes('media')) { peso = 4; valor = 12; nomeCesta = "Cesta Média"; }
+                else if(nome.includes('pequena')) { peso = 3; valor = 10; nomeCesta = "Cesta Pequena"; }
+                else if(nome.includes('mini')) { peso = 2; valor = 7; nomeCesta = "Cesta Mini"; }
+                else { peso = 1; valor = 5; nomeCesta = "Cesta Econômica"; }
+
+                if(peso > maiorPeso) { maiorPeso = peso; valorNovoDesc = valor; nomeCestaNovoDesc = nomeCesta; }
+            });
+
+            // Data Validade
+            const dataVal = new Date();
+            dataVal.setDate(dataVal.getDate() + 35);
+            const dataValISO = dataVal.toISOString();
+
+            const codPessoal = `DESC-${Date.now().toString().slice(-6)}`;
+            const codAmigo = `AMIGO-${Date.now().toString().slice(-6)}`;
+
+            const novosCupons = [
+                {
+                    codigo: codPessoal,
+                    tipo: 'pessoal',
+                    idCliente: clienteDados.id,
+                    valor: valorNovoDesc,
+                    cestaAlvo: nomeCestaNovoDesc,
+                    validade: dataValISO,
+                    usado: false,
+                    criadoEm: new Date().toISOString()
+                },
+                {
+                    codigo: codAmigo,
+                    tipo: 'amigo',
+                    idCliente: null, // Genérico
+                    origemIdCliente: clienteDados.id, // Quem deu o presente
+                    origemNomeCliente: clienteDados.nome,
+                    valor: valorNovoDesc,
+                    cestaAlvo: nomeCestaNovoDesc,
+                    validade: dataValISO,
+                    usado: false,
+                    criadoEm: new Date().toISOString()
+                }
+            ];
+
+            // Salvar novos cupons
+            cupons.push(...novosCupons);
+            salvarCuponsLocais();
+
             const novoPedido = {
                 id: Date.now().toString(),
                 data: new Date().toISOString(),
@@ -571,8 +788,13 @@
                 },
                 financeiro: {
                     subtotal: parseFloat(subtotalText),
-                    desconto: parseFloat(document.getElementById('desconto').value),
-                    total: parseFloat(totalText)
+                    desconto: descontoFinal,
+                    total: parseFloat(totalText),
+                    cupomUtilizado: cupomSelecionado ? cupomSelecionado.codigo : null
+                },
+                cuponsGerados: {
+                    pessoal: codPessoal,
+                    amigo: codAmigo
                 },
                 brinde: document.getElementById('brinde').value,
                 obs: document.getElementById('obs').value,
@@ -582,7 +804,7 @@
             pedidos.push(novoPedido);
             salvarPedidosLocais();
             
-            alert('Pedido salvo com sucesso!');
+            alert('Pedido salvo! Cupons de desconto gerados para a próxima compra.');
             limparPedidoAtual();
             
             document.getElementById('filtroData').valueAsDate = new Date();
@@ -601,7 +823,12 @@
         function limparPedidoAtual() {
             carrinho = [];
             renderizarCarrinho();
+            
+            removerCupom(); // Reset cupons
+
             document.getElementById('selCliente').value = "";
+            document.getElementById('areaCupons').classList.add('hidden'); // Esconder área cupons
+            
             document.getElementById('obs').value = "";
             document.getElementById('pagStatus').value = "pendente";
             document.getElementById('desconto').value = "0";
@@ -1041,6 +1268,57 @@
             const dataF = new Date(p.data).toLocaleDateString('pt-BR');
             const horaF = new Date(p.data).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
 
+            // Verifica se o pedido já tem cupons gerados salvos (para pedidos novos)
+            let codPessoal = null;
+            let codAmigo = null;
+            let valorDesconto = 5;
+            let nomeCestaDesconto = "Cesta Básica";
+            
+            // Dados de validade baseados na data do pedido
+            const dataPedido = new Date(p.data);
+            dataPedido.setDate(dataPedido.getDate() + 35);
+            const validadeStr = dataPedido.toLocaleDateString('pt-BR');
+
+            // Lógica Híbrida: Se tem cupom salvo, usa. Se não (legado), gera visualmente.
+            if (p.cuponsGerados) {
+                codPessoal = p.cuponsGerados.pessoal;
+                codAmigo = p.cuponsGerados.amigo;
+                // Tenta achar o valor real no banco de cupons se possível, senão recalcula
+                const cupomReal = cupons.find(c => c.codigo === codPessoal);
+                if (cupomReal) {
+                    valorDesconto = cupomReal.valor;
+                    nomeCestaDesconto = cupomReal.cestaAlvo;
+                } else {
+                    // Recalcula fallback
+                    let maiorPeso = 0;
+                    p.itens.forEach(item => {
+                        const nome = item.tipo.toLowerCase();
+                        let peso = 0; let valor = 5; let nomeCesta = "Cesta Econômica";
+                        if(nome.includes('grande')) { peso = 5; valor = 15; nomeCesta = "Cesta Grande"; }
+                        else if(nome.includes('média') || nome.includes('media')) { peso = 4; valor = 12; nomeCesta = "Cesta Média"; }
+                        else if(nome.includes('pequena')) { peso = 3; valor = 10; nomeCesta = "Cesta Pequena"; }
+                        else if(nome.includes('mini')) { peso = 2; valor = 7; nomeCesta = "Cesta Mini"; }
+                        else { peso = 1; valor = 5; nomeCesta = "Cesta Econômica"; }
+
+                        if(peso > maiorPeso) { maiorPeso = peso; valorDesconto = valor; nomeCestaDesconto = nomeCesta; }
+                    });
+                }
+            } else {
+                // Legado: Recalcula tudo
+                let maiorPeso = 0;
+                p.itens.forEach(item => {
+                    const nome = item.tipo.toLowerCase();
+                    let peso = 0; let valor = 5; let nomeCesta = "Cesta Econômica";
+                    if(nome.includes('grande')) { peso = 5; valor = 15; nomeCesta = "Cesta Grande"; }
+                    else if(nome.includes('média') || nome.includes('media')) { peso = 4; valor = 12; nomeCesta = "Cesta Média"; }
+                    else if(nome.includes('pequena')) { peso = 3; valor = 10; nomeCesta = "Cesta Pequena"; }
+                    else if(nome.includes('mini')) { peso = 2; valor = 7; nomeCesta = "Cesta Mini"; }
+                    else { peso = 1; valor = 5; nomeCesta = "Cesta Econômica"; }
+
+                    if(peso > maiorPeso) { maiorPeso = peso; valorDesconto = valor; nomeCestaDesconto = nomeCesta; }
+                });
+            }
+
             let htmlItens = '';
             p.itens.forEach(item => {
                 let tituloShow = item.tipo;
@@ -1063,6 +1341,35 @@
 
             const obsBlock = p.obs ? `<div style="margin-top:5px; font-weight:bold; border: 1px solid #000; padding: 2px;">OBS: ${p.obs}</div>` : '';
             const brindeBlock = p.brinde !== 'Nenhum' ? `<div style="margin-top:5px;">🎁 BRINDE: <b>${p.brinde}</b></div>` : '';
+
+            // Cupons HTML PERSONALIZADOS
+            const cuponsHtml = `
+                <div style="margin-top: 30px; border-top: 1px dashed #000; padding-top: 20px;">
+                    <!-- Espaço de Respiro -->
+                </div>
+                
+                <!-- Cupom 1 - PESSOAL -->
+                <div style="border: 2px dashed #000; border-radius: 8px; padding: 10px; text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">CUPOM DE DESCONTO</div>
+                    <div style="font-size: 11px;">Olá <b>${p.cliente.nome}</b>, obrigado pela preferência!</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Ganhe <b>R$ ${valorDesconto},00</b> de desconto na compra da <b>${nomeCestaDesconto}</b></div>
+                    <div style="font-size: 10px; margin-top: 5px;">Válido até: <b>${validadeStr}</b></div>
+                    <div style="font-size: 10px; font-weight:bold; margin-top: 2px;">COD: ${codPessoal || 'GERADO NA LOJA'}</div>
+                    <div style="font-size: 9px;">(Válido p/ sua próxima compra)</div>
+                </div>
+
+                <!-- Cupom 2 - PRESENTE AMIGO -->
+                <div style="border: 2px dashed #000; border-radius: 8px; padding: 10px; text-align: center;">
+                    <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">PRESENTE PARA UM AMIGO</div>
+                    <div style="font-size: 11px;">Um presente especial de <b>${p.cliente.nome}</b> para você!</div>
+                    <div style="font-size: 12px; margin-top: 5px;">Use este cupom para ganhar <b>R$ ${valorDesconto},00</b> de desconto na <b>${nomeCestaDesconto}</b></div>
+                    <div style="font-size: 10px; margin-top: 5px;">Válido até: <b>${validadeStr}</b></div>
+                    <div style="font-size: 10px; font-weight:bold; margin-top: 2px;">COD: ${codAmigo || 'GERADO NA LOJA'}</div>
+                    <div style="font-size: 9px;">(Entregue para um parente ou amigo)</div>
+                </div>
+                
+                <div style="text-align: center; font-size: 9px; margin-top: 10px;">Recorte os cupons acima</div>
+            `;
 
             area.innerHTML = `
                 <div style="text-align:center; font-weight:bold; margin-bottom: 5px;">
@@ -1098,6 +1405,8 @@
                 <div style="margin-top: 15px; text-align:center; font-size: 10px;">
                     *** FIM DO PEDIDO ***
                 </div>
+
+                ${cuponsHtml}
             `;
 
             window.print();
