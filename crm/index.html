@@ -135,13 +135,23 @@
                             <input type="number" id="diasInativo" value="30" class="w-10 text-center text-xs font-bold text-red-700 outline-none" onchange="renderizarRadar()">
                         </div>
                     </div>
-                    <p class="text-[10px] text-red-600">Clientes sem comprar baseados na data de hoje.</p>
+                    <div class="flex justify-between items-center">
+                        <p class="text-[10px] text-red-600">Clientes sem comprar</p>
+                        <!-- Filtro de Rota no Radar -->
+                        <select id="filtroRotaRadar" onchange="renderizarRadar()" class="text-[10px] border border-red-200 rounded px-1 bg-white text-red-800">
+                            <option value="todas">Todas Rotas</option>
+                            <option value="Coxipó">Coxipó</option>
+                            <option value="VG">VG</option>
+                            <option value="Cuiabá">Cuiabá</option>
+                            <option value="CPA">CPA</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="flex-1 overflow-y-auto p-0 bg-white custom-scroll">
                     <table class="w-full text-left border-collapse">
                         <thead class="bg-gray-50 text-gray-500 text-[10px] sticky top-0 shadow-sm z-10">
                             <tr>
-                                <th class="p-2 border-b">Cliente</th>
+                                <th class="p-2 border-b">Cliente / Últ. Rota</th>
                                 <th class="p-2 text-center border-b">Dias Off</th>
                                 <th class="p-2 text-center border-b">Ação</th>
                             </tr>
@@ -152,12 +162,12 @@
                     </table>
                     <div id="emptyRadar" class="hidden text-center text-gray-400 p-8">
                         <i class="fa-regular fa-thumbs-up text-2xl mb-2"></i>
-                        <p class="text-xs">Todos clientes ativos!</p>
+                        <p class="text-xs">Nenhum cliente inativo nesta rota/período.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- COLUNA 3: CUPONS ATIVOS (3/12) - Aumentado para igualar -->
+            <!-- COLUNA 3: CUPONS ATIVOS (3/12) -->
             <div class="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
                 <div class="p-2 border-b border-gray-100 bg-yellow-50 flex flex-col gap-1 shrink-0">
                     <div class="flex items-center justify-between">
@@ -181,7 +191,7 @@
                 </div>
             </div>
 
-            <!-- COLUNA 4: ANÁLISE ESTRATÉGICA (3/12) - Reduzido para igualar -->
+            <!-- COLUNA 4: ANÁLISE ESTRATÉGICA (3/12) -->
             <div class="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
                 <div class="p-3 border-b border-gray-100 bg-purple-50 flex justify-between items-center shrink-0">
                     <div class="flex items-center gap-2">
@@ -248,7 +258,7 @@
         let clientes = [];
         let vendas = [];
         let vendasFiltradas = [];
-        let cupons = []; // { telefone, nome, valor, expiracao, dataGeracao }
+        let cupons = []; 
 
         const TEMPLATES = {
             agradecimento: "Olá {nome}! Tudo bem? Passando para agradecer pela preferência na sua compra do dia {data}. Espero que tenha gostado dos produtos! Qualquer coisa estou à disposição. 🛒",
@@ -265,6 +275,12 @@
         window.onload = () => {
             atualizarDados();
             definirMesAtual();
+            // INTEGRACAO: Ouve mudanças no localStorage (ex: venda feita na outra aba)
+            window.addEventListener('storage', (e) => {
+                if(e.key === KEY_PEDIDOS || e.key === KEY_CLIENTES || e.key === KEY_CUPONS) {
+                    atualizarDados();
+                }
+            });
         };
 
         function definirMesAtual() {
@@ -375,11 +391,18 @@
             const validadeISO = dataValidade.toISOString().split('T')[0];
 
             // 2. Registra no "Banco" (Array)
+            // IMPORTANTE: INTEGRACAO - Usa o mesmo formato que a Venda
             const novoCupom = {
-                telefone: telefone.replace(/\D/g, ''),
+                codigo: `CRM-${Date.now().toString().slice(-6)}`,
+                tipo: 'pessoal',
+                idCliente: null, // Opcional se gerado no CRM sem ID direto
+                telefone: telefone.replace(/\D/g, ''), // Fallback
                 nome: nome,
                 valor: parseFloat(valor),
-                expiracao: validadeISO,
+                expiracao: validadeISO, // Legado CRM
+                validade: new Date(validadeISO).toISOString(), // Compatibilidade Venda
+                cestaAlvo: 'Cesta Promocional',
+                usado: false,
                 dataGeracao: new Date().toISOString()
             };
 
@@ -405,13 +428,17 @@
             
             // Filtra cupons ativos
             let listaFiltrada = cupons.filter(c => {
-                const dataExp = new Date(c.expiracao + 'T00:00:00'); // Garante hora zerada para comparar
-                return dataExp >= hoje; // Apenas válidos
+                // Compatibilidade: tenta usar 'expiracao' (CRM antigo) ou 'validade' (Vendas novo)
+                const dataStr = c.expiracao || c.validade;
+                if(!dataStr) return false;
+                const dataExp = new Date(dataStr.split('T')[0] + 'T00:00:00');
+                return dataExp >= hoje && !c.usado; // Apenas válidos e não usados
             });
 
             // Aplica filtro de período
             listaFiltrada = listaFiltrada.filter(c => {
-                const dataExp = new Date(c.expiracao + 'T00:00:00');
+                const dataStr = c.expiracao || c.validade;
+                const dataExp = new Date(dataStr.split('T')[0] + 'T00:00:00');
                 const diffDias = Math.floor((dataExp - hoje) / (1000 * 60 * 60 * 24));
                 
                 if (filtro === 'hoje') return diffDias === 0;
@@ -422,12 +449,17 @@
             });
 
             // Ordena por vencimento (mais urgente primeiro)
-            listaFiltrada.sort((a, b) => new Date(a.expiracao) - new Date(b.expiracao));
+            listaFiltrada.sort((a, b) => {
+                const dA = new Date(a.expiracao || a.validade);
+                const dB = new Date(b.expiracao || b.validade);
+                return dA - dB;
+            });
 
             document.getElementById('countCupons').innerText = listaFiltrada.length;
 
             listaFiltrada.forEach(c => {
-                const dataExp = new Date(c.expiracao + 'T00:00:00');
+                const dataStr = c.expiracao || c.validade;
+                const dataExp = new Date(dataStr.split('T')[0] + 'T00:00:00');
                 const diffDias = Math.floor((dataExp - hoje) / (1000 * 60 * 60 * 24));
                 
                 let textoVencimento = "";
@@ -438,19 +470,23 @@
                 else if (diffDias === 1) { textoVencimento = "Vence Amanhã"; corTexto = "text-orange-600"; textoZap = "amanhã"; }
                 else { textoVencimento = `Vence em ${diffDias} dias`; corTexto = "text-yellow-700"; textoZap = `dia ${dataExp.toLocaleDateString('pt-BR')}`; }
 
+                const nomeExibicao = c.nome || c.origemNomeCliente || 'Cliente';
+                const telExibicao = c.telefone || '???';
+
                 const card = document.createElement('div');
                 card.className = "bg-white p-2 rounded border border-yellow-200 shadow-sm flex flex-col gap-1";
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div>
-                            <div class="font-bold text-xs text-gray-800 truncate w-24" title="${c.nome}">${c.nome}</div>
+                            <div class="font-bold text-xs text-gray-800 truncate w-24" title="${nomeExibicao}">${nomeExibicao}</div>
                             <div class="text-[10px] ${corTexto}">${textoVencimento}</div>
                         </div>
                         <div class="text-right">
                             <span class="bg-green-100 text-green-700 font-bold text-xs px-1 rounded">R$ ${c.valor}</span>
+                            <div class="text-[8px] text-gray-400 mt-0.5">${c.codigo || 'S/COD'}</div>
                         </div>
                     </div>
-                    <button onclick="enviarZap('${c.telefone}', 'lembrete_cupom', '${c.nome}', null, null, '${c.valor}', '${textoZap}')" 
+                    <button onclick="enviarZap('${telExibicao}', 'lembrete_cupom', '${nomeExibicao}', null, null, '${c.valor}', '${textoZap}')" 
                         class="mt-1 w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-[10px] font-bold py-1 rounded flex items-center justify-center gap-1 transition">
                         <i class="fa-regular fa-bell"></i> Lembrar
                     </button>
@@ -499,14 +535,19 @@
             else { panel.classList.add('hidden'); panel.classList.remove('panel-expand'); }
         }
 
+        // INTEGRACAO: Lógica igual ao Sistema de Vendas para consistência
         function calcularValorCupom(itens) {
             if (!itens || itens.length === 0) return 5;
-            const tipo = itens[0].tipo.toLowerCase();
-            if (tipo.includes('empresarial') || tipo.includes('familia') || tipo.includes('premium')) return 25;
-            if (tipo.includes('grande')) return 20;
-            if (tipo.includes('media') || tipo.includes('média')) return 15;
-            if (tipo.includes('pequena') || tipo.includes('individual')) return 10;
-            return 5;
+            let maiorValor = 5;
+            itens.forEach(i => {
+                const nome = i.tipo.toLowerCase();
+                if (nome.includes('grande')) maiorValor = Math.max(maiorValor, 15);
+                else if (nome.includes('média') || nome.includes('media')) maiorValor = Math.max(maiorValor, 12);
+                else if (nome.includes('pequena')) maiorValor = Math.max(maiorValor, 10);
+                else if (nome.includes('mini')) maiorValor = Math.max(maiorValor, 7);
+                else maiorValor = Math.max(maiorValor, 5); // Economica/Default
+            });
+            return maiorValor;
         }
 
         function renderizarPosVendaCompacto() {
@@ -524,17 +565,20 @@
                 const primeiroNome = v.cliente.nome.split(' ')[0];
                 const valorCupom = calcularValorCupom(v.itens);
                 
-                const dataValidade = new Date();
-                dataValidade.setDate(dataValidade.getDate() + 30); // 30 dias para vendas normais
-                // const validadeStr = dataValidade.toLocaleDateString('pt-BR');
+                // INTEGRACAO: Visualização da Rota no Card
+                const rotaLabel = v.rota ? v.rota.substring(0,3).toUpperCase() : '???';
 
                 const itensHtml = v.itens.map(i => `<div class="flex justify-between text-[10px] text-gray-600 border-b border-gray-100 py-1"><span>${i.tipo} (${i.marca || 'Padrão'})</span><span class="font-mono">x1</span></div>`).join('');
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
-                        <div class="overflow-hidden">
-                            <div class="font-bold text-xs text-gray-800 truncate" title="${v.cliente.nome}">${v.cliente.nome}</div>
-                            <div class="text-[10px] text-gray-500 font-mono">#${index + 1} • ${v.pagamento.metodo}</div>
+                        <div class="flex items-center gap-2 overflow-hidden">
+                            <!-- Badge Rota -->
+                            <span class="text-[9px] font-black uppercase bg-gray-100 text-gray-500 px-1 py-0.5 rounded border border-gray-200">${rotaLabel}</span>
+                            <div class="overflow-hidden">
+                                <div class="font-bold text-xs text-gray-800 truncate" title="${v.cliente.nome}">${v.cliente.nome}</div>
+                                <div class="text-[10px] text-gray-500 font-mono">#${index + 1} • ${v.pagamento.metodo}</div>
+                            </div>
                         </div>
                         <div class="text-right whitespace-nowrap ml-2">
                             <div class="font-bold text-xs text-blue-600">R$ ${v.financeiro.total.toFixed(0)}</div>
@@ -582,27 +626,41 @@
 
         function renderizarRadar() {
             const diasCorte = parseInt(document.getElementById('diasInativo').value) || 30;
+            const rotaFiltro = document.getElementById('filtroRotaRadar').value; // Filtro de Rota
             const tbody = document.getElementById('listaRadar');
             const empty = document.getElementById('emptyRadar');
             tbody.innerHTML = '';
             
-            const mapaUltimaCompra = {};
+            // 1. Mapear Última Compra e Rota
+            const mapaUltimaCompra = {}; // { clienteId: { data: Date, rota: string } }
+            
             vendas.forEach(v => {
                 const dataVenda = new Date(v.data);
-                if (!mapaUltimaCompra[v.cliente.id] || dataVenda > mapaUltimaCompra[v.cliente.id]) {
-                    mapaUltimaCompra[v.cliente.id] = dataVenda;
+                if (!mapaUltimaCompra[v.cliente.id] || dataVenda > mapaUltimaCompra[v.cliente.id].data) {
+                    mapaUltimaCompra[v.cliente.id] = { 
+                        data: dataVenda, 
+                        rota: v.rota || 'Desconhecida' 
+                    };
                 }
             });
 
             const hoje = new Date();
             const hojeStr = hoje.toISOString().split('T')[0];
             
-            const listaInativos = clientes.filter(c => {
-                const ultimaData = mapaUltimaCompra[c.id];
-                if (!ultimaData) return false; 
-                const diffTime = Math.abs(hoje - ultimaData);
+            // 2. Filtrar Clientes Inativos
+            let listaInativos = clientes.filter(c => {
+                const info = mapaUltimaCompra[c.id];
+                if (!info) return false; 
+                
+                // Filtro de Rota
+                if (rotaFiltro !== 'todas' && info.rota !== rotaFiltro) return false;
+
+                const diffTime = Math.abs(hoje - info.data);
                 const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+                
                 c.diasSemComprar = diffDays;
+                c.ultimaRota = info.rota; // Guarda para exibir
+                
                 return diffDays >= diasCorte;
             });
 
@@ -613,11 +671,13 @@
             } else {
                 empty.classList.add('hidden');
                 listaInativos.slice(0, 100).forEach(c => {
-                    // Verifica se cliente JÁ tem cupom ativo (data expiracao >= hoje)
+                    // Verifica se cliente JÁ tem cupom ativo
                     const telLimpo = c.telefone.replace(/\D/g, '');
                     const cupomAtivo = cupons.find(cupom => {
                         const cupomTel = cupom.telefone; 
-                        return cupomTel === telLimpo && cupom.expiracao >= hojeStr;
+                        const dataVal = cupom.expiracao || cupom.validade; // Compatibilidade
+                        const dataValISO = dataVal ? dataVal.split('T')[0] : '';
+                        return cupomTel === telLimpo && dataValISO >= hojeStr && !cupom.usado;
                     });
                     
                     const btnClass = cupomAtivo 
@@ -636,18 +696,21 @@
                     tr.innerHTML = `
                         <td class="p-2">
                             <div class="font-bold text-gray-800 truncate max-w-[120px]" title="${c.nome}">${c.nome}</div>
-                            <div class="text-[9px] text-gray-400">${c.telefone || 'Sem tel'}</div>
+                            <div class="flex items-center gap-1 text-[9px] text-gray-400">
+                                <span class="bg-gray-100 px-1 rounded font-bold text-gray-500">${c.ultimaRota.substring(0,3).toUpperCase()}</span>
+                                ${c.telefone || 'S/ Tel'}
+                            </div>
                         </td>
                         <td class="p-2 text-center">
                             <span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-200">${c.diasSemComprar}d</span>
                         </td>
                         <td class="p-2 text-center flex gap-1 justify-center">
-                            <!-- Botão Padrão Resgate (Texto Genérico) -->
+                            <!-- Botão Padrão Resgate -->
                             <button onclick="enviarZap('${c.telefone}', 'resgate', '${c.nome}', null, '${c.diasSemComprar}')" 
                                 class="bg-white hover:bg-gray-50 text-gray-600 border border-gray-200 rounded p-1 shadow-sm transition" title="Msg Genérica">
                                 <i class="fa-regular fa-comment"></i>
                             </button>
-                            <!-- Botão Cupom (Condicional) -->
+                            <!-- Botão Cupom -->
                             <button ${btnClick} 
                                 class="${btnClass} rounded p-1 shadow-sm transition transform" title="${title}">
                                 ${icone}
@@ -674,8 +737,13 @@
             if (view === 'cupons_stats') {
                 const hojeStr = new Date().toISOString().split('T')[0];
                 cupons.forEach(c => {
-                    const status = c.expiracao >= hojeStr ? 'Ativos' : 'Vencidos';
-                    // Chave: "Cupom R$ XX (Status)"
+                    const dataVal = c.expiracao || c.validade;
+                    const dataValISO = dataVal ? dataVal.split('T')[0] : '';
+                    
+                    let status = 'Ativos';
+                    if (c.usado) status = 'Usados';
+                    else if (dataValISO < hojeStr) status = 'Vencidos';
+
                     const key = `Cupom R$ ${c.valor} (${status})`;
                     if (!aggregations[key]) aggregations[key] = { qtd: 0, valor: 0 };
                     aggregations[key].qtd++;
@@ -689,7 +757,6 @@
                 vendasFiltradas.forEach(v => {
                     let value = v.financeiro.total;
                     
-                    // Se não for análise de brindes, somamos totais normais
                     if (view !== 'brindes') {
                         grandTotal += v.financeiro.total;
                         grandQtd++;
@@ -700,7 +767,6 @@
                     switch(view) {
                         case 'tipo_cesta':
                             if (v.itens.length > 0) {
-                                // Concatena Tipo + Marca (se existir e não for 'Padrão')
                                 v.itens.forEach(item => {
                                     let nome = item.tipo;
                                     if (item.marca && item.marca !== 'Padrão') nome += ` (${item.marca})`;
@@ -709,36 +775,28 @@
                             } else {
                                 keys = ['Indefinido'];
                             }
-                            // Em views de itens multiplos, ajustamos o valor? Simplificando: Valor Total vai para cada item (peso)
                             break;
                             
                         case 'brindes':
-                            // Lógica: Procura brinde no objeto venda ou itens do tipo "Brinde"
-                            if (v.brinde) {
+                            if (v.brinde && v.brinde !== 'Nenhum') {
                                 keys.push(v.brinde);
-                                grandQtd++; // Só conta se tiver brinde
+                                grandQtd++;
                             } else if (v.itens.some(i => i.tipo.toLowerCase().includes('brinde'))) {
                                 const brindes = v.itens.filter(i => i.tipo.toLowerCase().includes('brinde'));
                                 brindes.forEach(b => keys.push(b.marca || b.tipo));
                                 grandQtd++;
                             }
-                            value = 0; // Brinde não soma valor financeiro na tabela, ou soma 0
+                            value = 0;
                             break;
 
                         case 'status_cesta':
-                            const temAlteracao = v.itens.some(i => i.marca && i.marca !== 'Padrão');
-                            keys.push(temAlteracao ? 'Alterada' : 'Padrão');
+                            const temAlteracao = v.itens.some(i => i.modo === 'alterada');
+                            keys.push(temAlteracao ? 'Alterada' : 'Normal');
                             break;
                         case 'pagamento': keys.push(v.pagamento.metodo || 'N/A'); break;
                         case 'cidade': keys.push(v.cliente.cidade || 'N/A'); break;
                         case 'bairro': keys.push(v.cliente.bairro || 'N/A'); break;
-                        case 'rota':
-                            const b = (v.cliente.bairro || '').toLowerCase();
-                            if (b.includes('centro') || b.includes('comercial')) keys.push('Central');
-                            else if (b.includes('jardim') || b.includes('parque')) keys.push('Sul/Jardins');
-                            else if (b.includes('vila') || b.includes('nossa')) keys.push('Norte/Vilas');
-                            else keys.push('Outras');
-                            break;
+                        case 'rota': keys.push(v.rota || 'N/A'); break;
                     }
 
                     keys.forEach(k => {
@@ -764,7 +822,6 @@
             
             document.getElementById('footerQtd').innerText = grandQtd;
             
-            // Se for brindes, não mostramos valor monetário total pois é irrelevante/zero
             if (view === 'brindes') {
                 document.getElementById('footerValor').innerText = "-";
             } else {
