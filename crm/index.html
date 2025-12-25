@@ -25,6 +25,13 @@
         .table-strategy th { position: sticky; top: 0; background: #f9fafb; z-index: 10; font-size: 0.75rem; text-transform: uppercase; color: #6b7280; padding: 8px; border-bottom: 2px solid #e5e7eb; }
         .table-strategy td { padding: 8px; font-size: 0.85rem; border-bottom: 1px solid #f3f4f6; color: #374151; }
         .table-strategy tr:hover { background-color: #f8fafc; }
+
+        /* Animação para os Paineis Expansíveis */
+        .panel-expand { animation: slideDown 0.2s ease-out forwards; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -215,7 +222,9 @@
             insta: "Oie {nome}! 😃 Gostaria de te convidar para seguir nosso Instagram. Postamos promoções relâmpago por lá! Segue o link: [SEU_INSTA_AQUI]",
             avaliacao: "Olá {nome}, tudo joia? Poderia nos dar uma forcinha? 🙏 Avalie nossa empresa no Google, ajuda muito! Segue o link: [SEU_LINK_GOOGLE_AQUI]",
             resgate: "Olá {nome}! Sumiu hein? 😉 Faz {dias} dias que não te vemos. Temos cestas fresquinhas chegando. Que tal aproveitar um desconto especial de retorno? Me chama aqui!",
-            feedback: "Oi {nome}, queria saber se deu tudo certo com a entrega da cesta no dia {data}? O arroz estava ok?"
+            feedback: "Oi {nome}, queria saber se deu tudo certo com a entrega da cesta no dia {data}? O arroz estava ok?",
+            sorteio: "Olá {nome}! 🍀 Você está participando do nosso sorteio mensal! Confira seu número da sorte e o regulamento aqui: [LINK_SORTEIO]",
+            cupom: "Olá {nome}! 🎁 Como agradecimento, geramos um cupom de R$ {valor} para sua próxima compra! Válido até {validade}. Aproveite! 🛒"
         };
 
         window.onload = () => {
@@ -303,27 +312,71 @@
             document.getElementById('countPosVenda').innerText = vendasFiltradas.length;
         }
 
-        // --- COLUNA 1: VENDAS (Lista) ---
+        // --- COLUNA 1: VENDAS (Lista Inteligente) ---
+
+        function togglePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            const isHidden = panel.classList.contains('hidden');
+            
+            // Fecha todos os painéis irmãos dentro do mesmo card (opcional, para UI limpa)
+            // Para simplicidade, apenas toggle
+            if (isHidden) {
+                panel.classList.remove('hidden');
+                panel.classList.add('panel-expand');
+            } else {
+                panel.classList.add('hidden');
+                panel.classList.remove('panel-expand');
+            }
+        }
+
+        function calcularValorCupom(itens) {
+            // Lógica para determinar valor do cupom baseado no tipo da cesta
+            // Valores: 5, 10, 15, 20, 25
+            if (!itens || itens.length === 0) return 5;
+            
+            const tipo = itens[0].tipo.toLowerCase(); // Pega o primeiro item como base
+            
+            if (tipo.includes('empresarial') || tipo.includes('familia') || tipo.includes('premium')) return 25;
+            if (tipo.includes('grande')) return 20;
+            if (tipo.includes('media') || tipo.includes('média')) return 15;
+            if (tipo.includes('pequena') || tipo.includes('individual')) return 10;
+            
+            return 5; // Padrão
+        }
 
         function renderizarPosVendaCompacto() {
             const container = document.getElementById('listaPosVenda');
             container.innerHTML = '';
-            const listaExibicao = vendasFiltradas.slice(0, 50); // Mostra as 50 mais recentes para performance
+            const listaExibicao = vendasFiltradas.slice(0, 50);
 
-            listaExibicao.forEach(v => {
+            listaExibicao.forEach((v, index) => {
+                const cardId = `venda-${index}`;
                 const card = document.createElement('div');
                 card.className = "bg-white p-2 rounded border border-gray-200 shadow-sm flex flex-col gap-1 hover:border-blue-300 transition group";
                 
                 const dataObj = new Date(v.data);
                 const dataStr = dataObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
                 const primeiroNome = v.cliente.nome.split(' ')[0];
-                const descItens = v.itens.map(i => i.tipo).join(', ');
+                const valorCupom = calcularValorCupom(v.itens);
+                
+                // Data de validade do cupom (hoje + 30 dias)
+                const dataValidade = new Date();
+                dataValidade.setDate(dataValidade.getDate() + 30);
+                const validadeStr = dataValidade.toLocaleDateString('pt-BR');
+
+                // Itens HTML
+                const itensHtml = v.itens.map(i => 
+                    `<div class="flex justify-between text-[10px] text-gray-600 border-b border-gray-100 py-1">
+                        <span>${i.tipo} (${i.marca || 'Padrão'})</span>
+                        <span class="font-mono">x1</span>
+                    </div>`
+                ).join('');
 
                 card.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div class="overflow-hidden">
                             <div class="font-bold text-xs text-gray-800 truncate" title="${v.cliente.nome}">${v.cliente.nome}</div>
-                            <div class="text-[10px] text-gray-500 truncate">${descItens}</div>
+                            <div class="text-[10px] text-gray-500 font-mono">#${index + 1} • ${v.pagamento.metodo}</div>
                         </div>
                         <div class="text-right whitespace-nowrap ml-2">
                             <div class="font-bold text-xs text-blue-600">R$ ${v.financeiro.total.toFixed(0)}</div>
@@ -331,10 +384,66 @@
                         </div>
                     </div>
                     
-                    <!-- Botões aparecem ao passar o mouse ou sempre visiveis -->
-                    <div class="flex gap-2 mt-1 pt-1 border-t border-gray-50 opacity-100 sm:opacity-60 group-hover:opacity-100 transition-opacity justify-between">
-                        <button onclick="enviarZap('${v.cliente.telefone}', 'agradecimento', '${primeiroNome}', '${dataStr}')" class="text-green-600 hover:text-green-800 text-[10px] flex items-center gap-1"><i class="fa-brands fa-whatsapp"></i> Obrigado</button>
-                        <button onclick="enviarZap('${v.cliente.telefone}', 'feedback', '${primeiroNome}', '${dataStr}')" class="text-blue-600 hover:text-blue-800 text-[10px] flex items-center gap-1"><i class="fa-regular fa-comment-dots"></i> Feedback</button>
+                    <!-- Botões de Ação Principais -->
+                    <div class="grid grid-cols-3 gap-1 mt-2">
+                        <button onclick="togglePanel('${cardId}-pedido')" class="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 text-[10px] py-1 rounded transition">
+                            <i class="fa-solid fa-basket-shopping mr-1"></i> Pedido
+                        </button>
+                        <button onclick="togglePanel('${cardId}-cliente')" class="bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-600 text-[10px] py-1 rounded transition">
+                            <i class="fa-regular fa-user mr-1"></i> Cliente
+                        </button>
+                        <button onclick="togglePanel('${cardId}-posvenda')" class="bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 font-bold text-[10px] py-1 rounded transition">
+                            <i class="fa-brands fa-whatsapp mr-1"></i> Pós Venda
+                        </button>
+                    </div>
+
+                    <!-- PAINEL 1: Detalhes do Pedido -->
+                    <div id="${cardId}-pedido" class="hidden bg-gray-50 rounded p-2 mt-1 border border-gray-100">
+                        <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-1">Itens do Pedido</h4>
+                        ${itensHtml}
+                        <div class="flex justify-between text-[10px] font-bold text-gray-700 mt-1 pt-1">
+                            <span>Total</span>
+                            <span>R$ ${v.financeiro.total.toFixed(2)}</span>
+                        </div>
+                    </div>
+
+                    <!-- PAINEL 2: Detalhes do Cliente -->
+                    <div id="${cardId}-cliente" class="hidden bg-gray-50 rounded p-2 mt-1 border border-gray-100 text-[10px] text-gray-600 space-y-1">
+                        <h4 class="text-[10px] font-bold text-gray-500 uppercase mb-1">Dados Cadastrais</h4>
+                        <div><i class="fa-solid fa-phone w-4"></i> ${v.cliente.telefone}</div>
+                        <div><i class="fa-solid fa-map-pin w-4"></i> ${v.cliente.endereco || 'Endereço não inf.'}</div>
+                        <div><i class="fa-solid fa-city w-4"></i> ${v.cliente.bairro} - ${v.cliente.cidade}</div>
+                    </div>
+
+                    <!-- PAINEL 3: Ações de Pós Venda (Zap) -->
+                    <div id="${cardId}-posvenda" class="hidden bg-blue-50 rounded p-2 mt-1 border border-blue-100">
+                        <h4 class="text-[10px] font-bold text-blue-800 uppercase mb-2 text-center">Ações Rápidas WhatsApp</h4>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="enviarZap('${v.cliente.telefone}', 'agradecimento', '${primeiroNome}', '${dataStr}')" 
+                                class="flex items-center justify-center gap-1 bg-white border border-green-200 text-green-700 hover:bg-green-50 rounded p-1 text-[10px] shadow-sm transition">
+                                <i class="fa-regular fa-thumbs-up"></i> Obrigado
+                            </button>
+                            
+                            <button onclick="enviarZap('${v.cliente.telefone}', 'insta', '${primeiroNome}')" 
+                                class="flex items-center justify-center gap-1 bg-white border border-pink-200 text-pink-700 hover:bg-pink-50 rounded p-1 text-[10px] shadow-sm transition">
+                                <i class="fa-brands fa-instagram"></i> Instagram
+                            </button>
+                            
+                            <button onclick="enviarZap('${v.cliente.telefone}', 'avaliacao', '${primeiroNome}')" 
+                                class="flex items-center justify-center gap-1 bg-white border border-yellow-200 text-yellow-700 hover:bg-yellow-50 rounded p-1 text-[10px] shadow-sm transition">
+                                <i class="fa-solid fa-star"></i> Google
+                            </button>
+                            
+                            <button onclick="enviarZap('${v.cliente.telefone}', 'sorteio', '${primeiroNome}')" 
+                                class="flex items-center justify-center gap-1 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded p-1 text-[10px] shadow-sm transition">
+                                <i class="fa-solid fa-ticket"></i> Sorteio
+                            </button>
+
+                            <button onclick="enviarZap('${v.cliente.telefone}', 'cupom', '${primeiroNome}', null, null, '${valorCupom}', '${validadeStr}')" 
+                                class="col-span-2 flex items-center justify-center gap-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:opacity-90 rounded p-1 text-[10px] shadow-sm transition font-bold">
+                                <i class="fa-solid fa-tag"></i> Cupom R$ ${valorCupom},00
+                            </button>
+                        </div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -528,7 +637,7 @@
         }
 
         // --- UTILITÁRIOS ---
-        function enviarZap(telefone, tipo, nome, dataVenda = '', dias = '') {
+        function enviarZap(telefone, tipo, nome, dataVenda = '', dias = '', valorCupom = '', validade = '') {
             if (!telefone) return alert("Cliente sem telefone.");
             let phone = telefone.replace(/\D/g, '');
             if (phone.length < 10) return alert("Telefone inválido");
@@ -538,6 +647,8 @@
             msg = msg.replace('{nome}', nome.split(' ')[0]);
             if (dataVenda) msg = msg.replace('{data}', dataVenda);
             if (dias) msg = msg.replace('{dias}', dias);
+            if (valorCupom) msg = msg.replace('{valor}', valorCupom);
+            if (validade) msg = msg.replace('{validade}', validade);
 
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
