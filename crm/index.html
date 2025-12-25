@@ -267,9 +267,11 @@
             resgate: "Olá {nome}! Sumiu hein? 😉 Faz {dias} dias que não te vemos. Temos cestas fresquinhas chegando. Que tal aproveitar um desconto especial de retorno? Me chama aqui!",
             feedback: "Oi {nome}, queria saber se deu tudo certo com a entrega da cesta no dia {data}? O arroz estava ok?",
             sorteio: "Olá {nome}! 🍀 Você está participando do nosso sorteio mensal! Confira seu número da sorte e o regulamento aqui: [LINK_SORTEIO]",
-            cupom: "Olá {nome}! 🎁 Como agradecimento, geramos um cupom de R$ {valor} para sua próxima compra! Válido até {validade}. Aproveite! 🛒",
-            cupom_resgate: "Olá {nome}! 🎁 Sentimos sua falta! Aqui está um cupom especial de R$ {valor} para você fazer um pedido nos próximos 10 dias. Válido até {validade}. Vamos aproveitar? 🥗",
-            lembrete_cupom: "Oi {nome}! ⏰ Passando só pra lembrar que seu cupom de desconto de R$ {valor} vence {vencimento}. Não vai perder, hein? 😉"
+            // TEMPLATES DE CUPOM (ATUALIZADOS COM CÓDIGO)
+            cupom: "Olá {nome}! 🎁 Como agradecimento, aqui está seu cupom de R$ {valor} para a próxima compra! Código: *{codigo}*. Válido até {validade}. Aproveite! 🛒",
+            cupom_resgate: "Olá {nome}! 🎁 Sentimos sua falta! Aqui está um cupom especial de R$ {valor}. Use o código *{codigo}* nos próximos 10 dias. Válido até {validade}. Vamos aproveitar? 🥗",
+            cupom_amigo: "Oi {nome}! 🎁 Aqui está o cupom para você presentear um amigo! R$ {valor} de desconto. Código: *{codigo}*. Válido até {validade}.",
+            lembrete_cupom: "Oi {nome}! ⏰ Passando só pra lembrar que seu cupom de desconto de R$ {valor} (Cód: *{codigo}*) vence {vencimento}. Não vai perder, hein? 😉"
         };
 
         window.onload = () => {
@@ -307,7 +309,7 @@
             // Limpa cupons vencidos há mais de 30 dias para não sujar o banco
             const hoje = new Date();
             cupons = cupons.filter(c => {
-                const dataExp = new Date(c.expiracao);
+                const dataExp = new Date(c.expiracao || c.validade);
                 const diff = (hoje - dataExp) / (1000 * 60 * 60 * 24);
                 return diff < 30; 
             });
@@ -381,42 +383,49 @@
             });
         }
 
-        // --- SISTEMA DE CUPONS ---
+        // --- SISTEMA DE CUPONS (COMPATÍVEL VENDAS) ---
 
-        function gerarCupomZap(telefone, nome, valor, diasValidade, tipoTemplate) {
+        // Agora aceita idCliente para vincular ao sistema de vendas
+        function gerarCupomZap(telefone, nome, valor, diasValidade, tipoTemplate, idCliente = null) {
             // 1. Calcula Data
             const dataValidade = new Date();
             dataValidade.setDate(dataValidade.getDate() + parseInt(diasValidade));
             const validadeStr = dataValidade.toLocaleDateString('pt-BR');
-            const validadeISO = dataValidade.toISOString().split('T')[0];
+            const validadeISO = dataValidade.toISOString(); // Formato ISO completo para Vendas
 
             // 2. Registra no "Banco" (Array)
-            // IMPORTANTE: INTEGRACAO - Usa o mesmo formato que a Venda
+            // IMPORTANTE: INTEGRACAO - Usa estrutura compatível com Vendas
+            const codigoGerado = `CRM-${Date.now().toString().slice(-6)}`;
+            
             const novoCupom = {
-                codigo: `CRM-${Date.now().toString().slice(-6)}`,
+                codigo: codigoGerado,
                 tipo: 'pessoal',
-                idCliente: null, // Opcional se gerado no CRM sem ID direto
-                telefone: telefone.replace(/\D/g, ''), // Fallback
+                idCliente: idCliente, // IMPORTANTE: Vincula para aparecer no select de vendas
+                telefone: telefone.replace(/\D/g, ''), // Fallback CRM
                 nome: nome,
                 valor: parseFloat(valor),
-                expiracao: validadeISO, // Legado CRM
-                validade: new Date(validadeISO).toISOString(), // Compatibilidade Venda
+                expiracao: validadeISO.split('T')[0], // Legado CRM (YYYY-MM-DD)
+                validade: validadeISO, // Novo Vendas (ISO Completo)
                 cestaAlvo: 'Cesta Promocional',
                 usado: false,
                 dataGeracao: new Date().toISOString()
             };
 
-            // Remove cupom anterior do mesmo cliente se existir para substituir
-            cupons = cupons.filter(c => c.telefone !== novoCupom.telefone);
+            // Se for cupom pessoal, substitui anterior ativo
+            if (idCliente) {
+                 cupons = cupons.filter(c => !(c.idCliente === idCliente && c.tipo === 'pessoal' && !c.usado));
+            }
+            
             cupons.push(novoCupom);
             localStorage.setItem(KEY_CUPONS, JSON.stringify(cupons));
 
             // 3. Atualiza Telas
             renderizarRadar();
             renderizarCupons('todos'); // Atualiza lista
+            renderizarPosVendaCompacto(); // Atualiza botões
 
             // 4. Envia Zap
-            enviarZap(telefone, tipoTemplate, nome, null, null, valor, validadeStr);
+            enviarZap(telefone, tipoTemplate, nome, null, null, valor, validadeStr, codigoGerado);
         }
 
         function renderizarCupons(filtro) {
@@ -486,7 +495,7 @@
                             <div class="text-[8px] text-gray-400 mt-0.5">${c.codigo || 'S/COD'}</div>
                         </div>
                     </div>
-                    <button onclick="enviarZap('${telExibicao}', 'lembrete_cupom', '${nomeExibicao}', null, null, '${c.valor}', '${textoZap}')" 
+                    <button onclick="enviarZap('${telExibicao}', 'lembrete_cupom', '${nomeExibicao}', null, null, '${c.valor}', '${textoZap}', '${c.codigo}')" 
                         class="mt-1 w-full bg-yellow-100 hover:bg-yellow-200 text-yellow-800 text-[10px] font-bold py-1 rounded flex items-center justify-center gap-1 transition">
                         <i class="fa-regular fa-bell"></i> Lembrar
                     </button>
@@ -526,7 +535,7 @@
             document.getElementById('countPosVenda').innerText = vendasFiltradas.length;
         }
 
-        // --- COLUNA 1: VENDAS ---
+        // --- COLUNA 1: VENDAS (COM LÓGICA DE CUPONS GERADOS) ---
 
         function togglePanel(panelId) {
             const panel = document.getElementById(panelId);
@@ -535,8 +544,8 @@
             else { panel.classList.add('hidden'); panel.classList.remove('panel-expand'); }
         }
 
-        // INTEGRACAO: Lógica igual ao Sistema de Vendas para consistência
-        function calcularValorCupom(itens) {
+        // INTEGRACAO: Lógica para sugerir valor (Fallback se não gerado)
+        function calcularValorSugestao(itens) {
             if (!itens || itens.length === 0) return 5;
             let maiorValor = 5;
             itens.forEach(i => {
@@ -545,7 +554,7 @@
                 else if (nome.includes('média') || nome.includes('media')) maiorValor = Math.max(maiorValor, 12);
                 else if (nome.includes('pequena')) maiorValor = Math.max(maiorValor, 10);
                 else if (nome.includes('mini')) maiorValor = Math.max(maiorValor, 7);
-                else maiorValor = Math.max(maiorValor, 5); // Economica/Default
+                else maiorValor = Math.max(maiorValor, 5);
             });
             return maiorValor;
         }
@@ -563,11 +572,46 @@
                 const dataObj = new Date(v.data);
                 const dataStr = dataObj.toLocaleDateString('pt-BR', {day: '2-digit', month: '2-digit'});
                 const primeiroNome = v.cliente.nome.split(' ')[0];
-                const valorCupom = calcularValorCupom(v.itens);
                 
-                // INTEGRACAO: Visualização da Rota no Card
-                const rotaLabel = v.rota ? v.rota.substring(0,3).toUpperCase() : '???';
+                // INTEGRACAO: Verifica se já existem cupons gerados na venda (NOVA LÓGICA)
+                const temCuponsGerados = v.cuponsGerados && v.cuponsGerados.valor > 0;
+                let valorCupom = 0;
+                let botoesCupomHtml = '';
 
+                if (temCuponsGerados) {
+                    valorCupom = v.cuponsGerados.valor;
+                    // Data validade estimada para template
+                    const validadeEst = new Date(v.data);
+                    validadeEst.setDate(validadeEst.getDate() + 35);
+                    const valStr = validadeEst.toLocaleDateString('pt-BR');
+
+                    botoesCupomHtml = `
+                         <div class="col-span-2 bg-yellow-50 p-1 rounded border border-yellow-200 text-center">
+                            <div class="text-[9px] font-bold text-yellow-800 mb-1">CUPONS GERADOS: R$ ${valorCupom}</div>
+                            <div class="grid grid-cols-2 gap-1">
+                                <button onclick="enviarZap('${v.cliente.telefone}', 'cupom', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}', '${v.cuponsGerados.pessoal}')" 
+                                    class="bg-yellow-500 hover:bg-yellow-600 text-white rounded p-1 text-[9px] font-bold shadow-sm transition">
+                                    <i class="fa-brands fa-whatsapp"></i> Pessoal
+                                </button>
+                                <button onclick="enviarZap('${v.cliente.telefone}', 'cupom_amigo', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}', '${v.cuponsGerados.amigo}')" 
+                                    class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 border border-yellow-300 rounded p-1 text-[9px] font-bold shadow-sm transition">
+                                    <i class="fa-solid fa-gift"></i> Amigo
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Fallback: Sugere gerar novo (Antigo)
+                    valorCupom = calcularValorSugestao(v.itens);
+                    botoesCupomHtml = `
+                        <button onclick="gerarCupomZap('${v.cliente.telefone}', '${v.cliente.nome}', '${valorCupom}', '35', 'cupom', '${v.cliente.id}')" 
+                            class="col-span-2 flex items-center justify-center gap-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:opacity-90 rounded p-1 text-[10px] shadow-sm transition font-bold">
+                            <i class="fa-solid fa-tag"></i> Gerar Cupom R$ ${valorCupom},00
+                        </button>
+                    `;
+                }
+                
+                const rotaLabel = v.rota ? v.rota.substring(0,3).toUpperCase() : '???';
                 const itensHtml = v.itens.map(i => `<div class="flex justify-between text-[10px] text-gray-600 border-b border-gray-100 py-1"><span>${i.tipo} (${i.marca || 'Padrão'})</span><span class="font-mono">x1</span></div>`).join('');
 
                 card.innerHTML = `
@@ -612,8 +656,9 @@
                             <button onclick="enviarZap('${v.cliente.telefone}', 'insta', '${primeiroNome}')" class="flex items-center justify-center gap-1 bg-white border border-pink-200 text-pink-700 hover:bg-pink-50 rounded p-1 text-[10px] shadow-sm transition"><i class="fa-brands fa-instagram"></i> Instagram</button>
                             <button onclick="enviarZap('${v.cliente.telefone}', 'avaliacao', '${primeiroNome}')" class="flex items-center justify-center gap-1 bg-white border border-yellow-200 text-yellow-700 hover:bg-yellow-50 rounded p-1 text-[10px] shadow-sm transition"><i class="fa-solid fa-star"></i> Google</button>
                             <button onclick="enviarZap('${v.cliente.telefone}', 'sorteio', '${primeiroNome}')" class="flex items-center justify-center gap-1 bg-white border border-purple-200 text-purple-700 hover:bg-purple-50 rounded p-1 text-[10px] shadow-sm transition"><i class="fa-solid fa-ticket"></i> Sorteio</button>
-                            <!-- Gera e Salva Cupom -->
-                            <button onclick="gerarCupomZap('${v.cliente.telefone}', '${v.cliente.nome}', '${valorCupom}', '30', 'cupom')" class="col-span-2 flex items-center justify-center gap-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:opacity-90 rounded p-1 text-[10px] shadow-sm transition font-bold"><i class="fa-solid fa-tag"></i> Cupom R$ ${valorCupom},00</button>
+                            
+                            <!-- BOTOES DE CUPOM (DINAMICOS) -->
+                            ${botoesCupomHtml}
                         </div>
                     </div>
                 `;
@@ -671,22 +716,24 @@
             } else {
                 empty.classList.add('hidden');
                 listaInativos.slice(0, 100).forEach(c => {
-                    // Verifica se cliente JÁ tem cupom ativo
-                    const telLimpo = c.telefone.replace(/\D/g, '');
+                    // Verifica se cliente JÁ tem cupom ativo (Compatibilidade)
                     const cupomAtivo = cupons.find(cupom => {
-                        const cupomTel = cupom.telefone; 
-                        const dataVal = cupom.expiracao || cupom.validade; // Compatibilidade
+                        const ehDoCliente = cupom.idCliente === c.id; // Verifica ID primeiro
+                        const ehDoTel = cupom.telefone === c.telefone.replace(/\D/g, ''); // Fallback tel
+                        const dataVal = cupom.expiracao || cupom.validade;
                         const dataValISO = dataVal ? dataVal.split('T')[0] : '';
-                        return cupomTel === telLimpo && dataValISO >= hojeStr && !cupom.usado;
+                        
+                        return (ehDoCliente || ehDoTel) && dataValISO >= hojeStr && !cupom.usado;
                     });
                     
                     const btnClass = cupomAtivo 
                         ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
                         : "bg-green-100 hover:bg-green-200 text-green-700 border border-green-200 hover:scale-110";
                     
+                    // IMPORTANTE: Passa o ID do cliente ao gerar
                     const btnClick = cupomAtivo 
                         ? ""
-                        : `onclick="gerarCupomZap('${c.telefone}', '${c.nome}', '10', '10', 'cupom_resgate')"`;
+                        : `onclick="gerarCupomZap('${c.telefone}', '${c.nome}', '10', '10', 'cupom_resgate', '${c.id}')"`;
                     
                     const icone = cupomAtivo ? '<i class="fa-solid fa-check"></i>' : '<i class="fa-solid fa-tag"></i>';
                     const title = cupomAtivo ? "Cupom já ativo" : "Enviar Cupom Resgate (10d)";
@@ -831,8 +878,8 @@
             if (lista.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-400 text-xs">Sem dados.</td></tr>';
         }
 
-        // --- UTILITÁRIOS ---
-        function enviarZap(telefone, tipo, nome, dataVenda = '', dias = '', valorCupom = '', validade = '') {
+        // --- UTILITÁRIOS (COM SUPORTE A CÓDIGO) ---
+        function enviarZap(telefone, tipo, nome, dataVenda = '', dias = '', valorCupom = '', validade = '', codigo = '') {
             if (!telefone) return alert("Cliente sem telefone.");
             let phone = telefone.replace(/\D/g, '');
             if (phone.length < 10) return alert("Telefone inválido");
@@ -844,6 +891,7 @@
             if (dias) msg = msg.replace('{dias}', dias);
             if (valorCupom) msg = msg.replace('{valor}', valorCupom);
             if (validade) msg = msg.replace('{validade}', validade);
+            if (codigo) msg = msg.replace('{codigo}', codigo);
 
             window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
