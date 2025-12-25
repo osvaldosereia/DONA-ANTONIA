@@ -960,25 +960,50 @@
                 lista = lista.filter(p => p.rota === filtroRotaAtual);
             }
 
-            // Ordena pela rota visual (ordem)
-            lista.sort((a, b) => (a.ordem || 0) - (b.ordem || 0));
-
             if (lista.length === 0) return alert('Nenhum pedido listado para enviar.');
 
-            let msg = `*RELATÓRIO DE ROTA - ${filtroRotaAtual.toUpperCase()}*\n`;
-            msg += `Data: ${filtroData.split('-').reverse().join('/')}\n\n`;
+            // Agrupamento por Rota e Itens
+            const resumoPorRota = {};
 
-            lista.forEach((p, index) => {
-                msg += `*${index+1}ª ENTREGA: ${p.cliente.nome}*\n`;
-                msg += `📍 ${p.cliente.endereco}, ${p.cliente.bairro}\n`;
-                p.itens.forEach(i => {
-                   if(i.modo === 'alterada') {
-                       msg += `   [⚠️ CÓD ${i.identificacao}] - ${i.tipo}\n`;
-                   } else {
-                       msg += `   - ${i.tipo}\n`;
-                   }
+            lista.forEach(p => {
+                const rota = p.rota;
+                if (!resumoPorRota[rota]) {
+                    resumoPorRota[rota] = {};
+                }
+
+                p.itens.forEach(item => {
+                    // Cria uma chave única para o item
+                    let nomeItem = `${item.tipo} ${item.marca}`;
+                    if (item.modo === 'alterada') {
+                        nomeItem += ` - Cód ${item.identificacao}`;
+                    }
+
+                    if (!resumoPorRota[rota][nomeItem]) {
+                        resumoPorRota[rota][nomeItem] = 0;
+                    }
+                    resumoPorRota[rota][nomeItem]++;
                 });
-                msg += `----------------\n`;
+            });
+
+            // Construção da Mensagem
+            const dataFormatada = filtroData.split('-').reverse().join('/');
+            let msg = `*RESUMO DE CARGA - ${dataFormatada}*\n`;
+
+            // Ordenar rotas (alfabética)
+            const rotas = Object.keys(resumoPorRota).sort();
+
+            rotas.forEach(r => {
+                msg += `\n*Rota: ${r}*\n`;
+                
+                // Ordenar itens dentro da rota
+                const itens = Object.keys(resumoPorRota[r]).sort();
+                
+                itens.forEach(itemKey => {
+                    const qtd = resumoPorRota[r][itemKey];
+                    msg += `${qtd}x ${itemKey}\n`;
+                });
+                
+                msg += `-----\n`;
             });
 
             const link = `https://wa.me/?text=${encodeURIComponent(msg)}`;
