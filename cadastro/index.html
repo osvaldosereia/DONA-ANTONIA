@@ -3,329 +3,417 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciador de Cadastros JS</title>
-    <!-- Carrega o Tailwind CSS para estilização -->
+    <title>Sistema V1 - Cadastro de Clientes</title>
+    <!-- Tailwind CSS para estilização profissional e compacta -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        #json-output { white-space: pre-wrap; word-wrap: break-word; }
-        
-        /* Estilo personalizado para a barra de rolagem */
-        .custom-scrollbar::-webkit-scrollbar {
+        /* Estilos específicos para visual desktop compacto */
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .compact-input {
+            padding-top: 0.3rem;
+            padding-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        .table-compact th, .table-compact td {
+            padding: 0.5rem;
+            font-size: 0.85rem;
+        }
+        /* Barra de rolagem personalizada fina */
+        ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #1f2937; /* bg-gray-800 */
+        ::-webkit-scrollbar-track {
+            background: #e5e7eb; 
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #4b5563; /* bg-gray-600 */
+        ::-webkit-scrollbar-thumb {
+            background: #9ca3af; 
             border-radius: 4px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #6b7280; /* bg-gray-500 */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; 
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+<body class="text-gray-800">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-4xl">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Gerenciador de Cadastros (.js)</h1>
-        <p class="text-center text-gray-500 mb-6 text-sm">Sistema de gestão de lista baseada em arquivos JavaScript</p>
+    <div class="app-container p-4">
         
-        <!-- Área de Upload de Banco de Dados -->
-        <div class="mb-8 p-6 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h3 class="text-lg font-bold text-blue-900">1. Carregar Banco de Dados (.js)</h3>
-                    <p class="text-sm text-blue-600">Selecione o arquivo .js que contém a lista de clientes.</p>
+        <!-- Cabeçalho / Navegação entre Módulos -->
+        <header class="bg-white shadow-sm rounded-lg p-3 mb-3 flex justify-between items-center border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-blue-600 text-white p-2 rounded">
+                    <i class="fa-solid fa-building"></i>
                 </div>
-                <div class="text-right">
-                    <span class="block text-xs text-blue-500 uppercase font-bold tracking-wider">Total de Cadastros</span>
-                    <span id="db-count" class="text-3xl font-black text-blue-800">0</span>
-                </div>
+                <h1 class="font-bold text-lg text-gray-700">Módulo 1: Cadastro de Clientes</h1>
             </div>
             
-            <input type="file" id="file-input" accept=".js,.json,.txt" 
-                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer transition-colors">
-            
-            <div id="upload-feedback" class="mt-3 text-sm hidden"></div>
-        </div>
+            <!-- Menu de Navegação (Simulação dos links para os futuros arquivos) -->
+            <nav class="flex gap-2">
+                <button class="bg-blue-600 text-white px-4 py-1 rounded text-sm font-medium shadow-sm">
+                    1. Cadastro
+                </button>
+                <button onclick="alert('Módulo de Vendas será implementado na Etapa 2')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1 rounded text-sm font-medium transition">
+                    2. Vendas
+                </button>
+                <button onclick="alert('Módulo de CRM será implementado na Etapa 3')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1 rounded text-sm font-medium transition">
+                    3. CRM
+                </button>
+            </nav>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            
-            <!-- Coluna da Esquerda: Formulário -->
-            <div>
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-gray-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
-                    Novo Cadastro
-                </h3>
-                <form id="cadastro-form" class="space-y-4 bg-gray-50 p-5 rounded-xl border border-gray-200">
-                    <div>
-                        <label for="nome" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Nome</label>
-                        <input type="text" id="nome" name="nome" required
-                               class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                               placeholder="Ex: 010 Natalia">
-                    </div>
-
-                    <div>
-                        <label for="celular" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Celular <span class="text-xs text-gray-400 font-normal">(Validação de duplicidade)</span></label>
-                        <input type="tel" id="celular" name="celular" required
-                               class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                               placeholder="Ex: 5565984685473">
-                    </div>
-
-                    <div>
-                        <label for="endereco" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Endereço</label>
-                        <input type="text" id="endereco" name="endereco" required
-                               class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                               placeholder="Ex: Rua das Flores">
-                    </div>
-
-                    <div>
-                        <label for="complemento" class="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-1">Complemento</label>
-                        <textarea id="complemento" name="complemento" rows="2" required
-                                  class="w-full p-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none"
-                                  placeholder="Ex: Quadra 20, Casa 01..."></textarea>
-                    </div>
-
-                    <div class="pt-2">
-                        <button type="submit"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-bold shadow-md transform active:scale-95 transition-all duration-200 flex items-center justify-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            Adicionar Cadastro
-                        </button>
-                    </div>
-                </form>
-                
-                <!-- Feedback de Mensagens -->
-                <div id="message-area" class="mt-4 hidden p-3 rounded-lg text-sm font-medium text-center shadow-sm"></div>
+            <!-- Área de Gestão de Arquivos (Drive/Local) -->
+            <div class="flex gap-2">
+                <input type="file" id="fileInput" accept=".json" class="hidden" onchange="importarDados(this)">
+                <button onclick="document.getElementById('fileInput').click()" class="border border-gray-300 text-gray-600 px-3 py-1 rounded text-sm hover:bg-gray-50" title="Carregar arquivo do Drive">
+                    <i class="fa-solid fa-upload mr-1"></i> Importar
+                </button>
+                <button onclick="exportarDados()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 shadow-sm" title="Salvar arquivo para o Drive">
+                    <i class="fa-solid fa-download mr-1"></i> Exportar Tudo
+                </button>
             </div>
+        </header>
 
-            <!-- Coluna da Direita: Visor e Ações -->
-            <div class="flex flex-col h-full">
-                <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                    <span class="bg-gray-800 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">3</span>
-                    Visor de Dados
-                </h3>
-                
-                <!-- Visor do Arquivo (Preview) -->
-                <!-- A altura foi fixada em h-48 (aprox. 192px) e o overflow-hidden no pai garante o estilo arredondado -->
-                <div class="bg-gray-900 rounded-xl overflow-hidden shadow-inner flex flex-col border border-gray-700 h-48">
-                    <div class="bg-gray-800 px-4 py-2 text-xs text-gray-400 flex justify-between items-center border-b border-gray-700 flex-shrink-0">
-                        <span>Previsão do Arquivo (.js)</span>
-                        <span class="text-yellow-500 text-[10px]">Somente Leitura</span>
-                    </div>
-                    <!-- O overflow-auto aqui garante a barra de rolagem -->
-                    <pre id="json-output" class="p-4 text-green-400 text-xs overflow-auto font-mono flex-grow custom-scrollbar">const bancoDados = []; // Lista vazia</pre>
+        <!-- Layout Principal: 2 Colunas (Formulário e Lista) -->
+        <div class="flex flex-1 gap-4 overflow-hidden">
+            
+            <!-- Coluna Esquerda: Formulário de Cadastro -->
+            <div class="w-1/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+                <div class="p-3 border-b border-gray-100 bg-gray-50 rounded-t-lg flex justify-between items-center">
+                    <h2 class="font-bold text-gray-700 text-sm uppercase"><i class="fa-solid fa-user-plus mr-2"></i>Novo Cliente</h2>
+                    <button onclick="limparFormulario()" class="text-xs text-red-500 hover:underline">Limpar</button>
                 </div>
+                
+                <form id="formCliente" onsubmit="salvarCliente(event)" class="p-4 overflow-y-auto flex-1">
+                    <input type="hidden" id="clientId">
+                    
+                    <!-- Dados Pessoais -->
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Nome Completo</label>
+                            <input type="text" id="nome" required class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500" placeholder="Ex: João da Silva">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Apelido</label>
+                            <input type="text" id="apelido" class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Telefone</label>
+                            <input type="tel" id="telefone" required class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500" placeholder="(xx) 9xxxx-xxxx">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Aniversário</label>
+                            <div class="flex gap-1">
+                                <input type="number" id="diaNiver" min="1" max="31" class="w-1/2 border border-gray-300 rounded px-1 py-1 compact-input text-center" placeholder="Dia">
+                                <select id="mesNiver" class="w-1/2 border border-gray-300 rounded px-1 py-1 compact-input text-xs">
+                                    <option value="">Mês</option>
+                                    <option value="01">Jan</option><option value="02">Fev</option>
+                                    <option value="03">Mar</option><option value="04">Abr</option>
+                                    <option value="05">Mai</option><option value="06">Jun</option>
+                                    <option value="07">Jul</option><option value="08">Ago</option>
+                                    <option value="09">Set</option><option value="10">Out</option>
+                                    <option value="11">Nov</option><option value="12">Dez</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
 
-                <!-- Botões de Ação Final -->
-                <div class="mt-6">
-                     <button id="download-btn" disabled
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white py-4 px-6 rounded-xl font-bold shadow-lg transition-all duration-200 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
-                        Baixar Novo Arquivo .js
+                    <hr class="border-gray-100 my-3">
+
+                    <!-- Endereço e Localização -->
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Cidade</label>
+                            <input type="text" id="cidade" class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Bairro</label>
+                            <input type="text" id="bairro" class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Endereço (Rua, Nº)</label>
+                            <input type="text" id="endereco" class="w-full border border-gray-300 rounded px-2 py-1 compact-input focus:outline-none focus:border-blue-500">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Google Maps (Link/Código)</label>
+                            <div class="flex">
+                                <span class="bg-gray-100 border border-r-0 border-gray-300 rounded-l px-2 flex items-center text-gray-500"><i class="fa-solid fa-map-pin text-xs"></i></span>
+                                <input type="text" id="maps" class="w-full border border-gray-300 rounded-r px-2 py-1 compact-input focus:outline-none focus:border-blue-500" placeholder="Cole o link aqui">
+                            </div>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-xs font-bold text-gray-600 mb-1">Descrição Frente Casa</label>
+                            <textarea id="descCasa" rows="3" class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500" placeholder="Ex: Portão branco, muro alto, árvore na frente..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Botão Salvar -->
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded shadow-md transition mt-2">
+                        <i class="fa-solid fa-save mr-2"></i> Salvar Cliente
                     </button>
-                    <p class="text-center text-xs text-gray-400 mt-2">Inclui todos os cadastros anteriores + novos.</p>
+                </form>
+            </div>
+
+            <!-- Coluna Direita: Lista de Clientes -->
+            <div class="w-2/3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+                <div class="p-3 border-b border-gray-100 bg-gray-50 rounded-t-lg flex justify-between items-center">
+                    <h2 class="font-bold text-gray-700 text-sm uppercase"><i class="fa-solid fa-list mr-2"></i>Base de Clientes</h2>
+                    
+                    <!-- Campo de Busca -->
+                    <div class="relative">
+                        <input type="text" id="busca" onkeyup="renderizarTabela()" placeholder="Buscar nome ou telefone..." class="pl-8 pr-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:border-blue-500 w-64">
+                        <i class="fa-solid fa-search absolute left-2 top-2 text-gray-400 text-xs"></i>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-auto p-0">
+                    <table class="w-full text-left border-collapse table-compact">
+                        <thead class="bg-gray-100 text-gray-600 sticky top-0 z-10 shadow-sm">
+                            <tr>
+                                <th class="font-semibold border-b">Nome / Apelido</th>
+                                <th class="font-semibold border-b">Contato</th>
+                                <th class="font-semibold border-b">Localização</th>
+                                <th class="font-semibold border-b text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaClientes" class="divide-y divide-gray-100">
+                            <!-- Linhas inseridas via JS -->
+                        </tbody>
+                    </table>
+                    
+                    <!-- Estado Vazio -->
+                    <div id="emptyState" class="hidden flex-col items-center justify-center h-full text-gray-400 p-10">
+                        <i class="fa-solid fa-users text-4xl mb-3"></i>
+                        <p>Nenhum cliente cadastrado.</p>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-gray-50 border-t border-gray-200 text-right text-xs text-gray-500">
+                    Total: <span id="totalClientes" class="font-bold">0</span> clientes
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Lógica do Sistema -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Variáveis Globais ---
-            let database = []; 
-            const VAR_NAME = "bancoDados"; // Nome da variável que será salva no arquivo JS
+        // --- 1. CONFIGURAÇÃO E ESTADO ---
+        const STORAGE_KEY = 'sistema_empresarial_clientes';
+        let clientes = [];
 
-            // --- Elementos do DOM ---
-            const form = document.getElementById('cadastro-form');
-            const fileInput = document.getElementById('file-input');
-            const dbCount = document.getElementById('db-count');
-            const jsonOutput = document.getElementById('json-output');
-            const downloadBtn = document.getElementById('download-btn');
-            const messageArea = document.getElementById('message-area');
-            const uploadFeedback = document.getElementById('upload-feedback');
+        // Inicialização
+        window.onload = () => {
+            carregarDadosLocais();
+            renderizarTabela();
+        };
 
-            // --- Funções Auxiliares ---
+        // --- 2. MANIPULAÇÃO DE DADOS (CRUD) ---
 
-            function generateRandomId() {
-                // ID curto e único para uso interno
-                return Date.now().toString(36).toUpperCase();
+        function salvarCliente(event) {
+            event.preventDefault();
+
+            // Captura dados do form
+            const id = document.getElementById('clientId').value;
+            const novoCliente = {
+                id: id ? id : Date.now().toString(), // Gera ID único se for novo
+                nome: document.getElementById('nome').value,
+                apelido: document.getElementById('apelido').value,
+                telefone: document.getElementById('telefone').value,
+                diaNiver: document.getElementById('diaNiver').value,
+                mesNiver: document.getElementById('mesNiver').value,
+                cidade: document.getElementById('cidade').value,
+                bairro: document.getElementById('bairro').value,
+                endereco: document.getElementById('endereco').value,
+                maps: document.getElementById('maps').value,
+                descCasa: document.getElementById('descCasa').value,
+                dataCadastro: new Date().toISOString()
+            };
+
+            if (id) {
+                // Edição: encontra e substitui
+                const index = clientes.findIndex(c => c.id === id);
+                if (index !== -1) clientes[index] = novoCliente;
+            } else {
+                // Novo cadastro
+                clientes.push(novoCliente);
             }
 
-            function updateDisplay() {
-                // Atualiza contadores
-                const count = database.length;
-                dbCount.textContent = count;
-                
-                // Formata a saída como código JavaScript válido
-                // Ex: const bancoDados = [ ... ];
-                const jsonContent = JSON.stringify(database, null, 2);
-                const jsContent = `const ${VAR_NAME} = ${jsonContent};`;
-                
-                jsonOutput.textContent = jsContent;
-                
-                // Rola o visor para o final para mostrar o último inserido
-                jsonOutput.scrollTop = jsonOutput.scrollHeight;
+            salvarDadosLocais();
+            limparFormulario();
+            renderizarTabela();
+            alert(id ? 'Cliente atualizado!' : 'Cliente cadastrado com sucesso!');
+        }
 
-                // Habilita/Desabilita botão de download
-                if (count > 0) {
-                    downloadBtn.removeAttribute('disabled');
-                    downloadBtn.classList.remove('opacity-50');
-                } else {
-                    downloadBtn.setAttribute('disabled', 'true');
-                    downloadBtn.classList.add('opacity-50');
-                }
+        function editarCliente(id) {
+            const cliente = clientes.find(c => c.id === id);
+            if (!cliente) return;
+
+            // Preenche o formulário
+            document.getElementById('clientId').value = cliente.id;
+            document.getElementById('nome').value = cliente.nome;
+            document.getElementById('apelido').value = cliente.apelido;
+            document.getElementById('telefone').value = cliente.telefone;
+            document.getElementById('diaNiver').value = cliente.diaNiver;
+            document.getElementById('mesNiver').value = cliente.mesNiver;
+            document.getElementById('cidade').value = cliente.cidade;
+            document.getElementById('bairro').value = cliente.bairro;
+            document.getElementById('endereco').value = cliente.endereco;
+            document.getElementById('maps').value = cliente.maps;
+            document.getElementById('descCasa').value = cliente.descCasa;
+
+            // Foco no primeiro campo
+            document.getElementById('nome').focus();
+        }
+
+        function excluirCliente(id) {
+            if (confirm('Tem certeza que deseja excluir este cliente?')) {
+                clientes = clientes.filter(c => c.id !== id);
+                salvarDadosLocais();
+                renderizarTabela();
+            }
+        }
+
+        function limparFormulario() {
+            document.getElementById('formCliente').reset();
+            document.getElementById('clientId').value = '';
+        }
+
+        // --- 3. PERSISTÊNCIA (IMPORTAR/EXPORTAR/LOCALSTORAGE) ---
+
+        function salvarDadosLocais() {
+            // Salva no navegador para persistência imediata
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(clientes));
+        }
+
+        function carregarDadosLocais() {
+            const dados = localStorage.getItem(STORAGE_KEY);
+            if (dados) {
+                clientes = JSON.parse(dados);
+            }
+        }
+
+        // Exportar para arquivo JSON (O que vai para o Drive)
+        function exportarDados() {
+            if (clientes.length === 0) {
+                alert("Não há dados para exportar.");
+                return;
             }
 
-            function showMessage(msg, type) {
-                messageArea.textContent = msg;
-                messageArea.className = 'mt-4 p-3 rounded-lg text-sm font-bold text-center shadow-sm transition-all duration-500';
-                
-                if (type === 'error') {
-                    messageArea.classList.add('bg-red-100', 'text-red-700', 'border', 'border-red-200');
-                } else {
-                    messageArea.classList.add('bg-green-100', 'text-green-700', 'border', 'border-green-200');
-                }
-                
-                messageArea.classList.remove('hidden');
-                
-                setTimeout(() => {
-                    messageArea.classList.add('hidden');
-                }, 4000);
-            }
-
-            // --- 1. Função de Upload INTELIGENTE (.js) ---
-            fileInput.addEventListener('change', (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                
-                reader.onload = (event) => {
-                    try {
-                        let content = event.target.result;
-                        
-                        // Lógica de Limpeza para arquivos JS
-                        // Se o arquivo começar com "const x =", precisamos remover isso para ler o JSON
-                        // Procuramos o primeiro '[' e o último ']'
-                        const firstBracket = content.indexOf('[');
-                        const lastBracket = content.lastIndexOf(']');
-
-                        if (firstBracket !== -1 && lastBracket !== -1) {
-                            // Extrai apenas a parte do array JSON
-                            const jsonPart = content.substring(firstBracket, lastBracket + 1);
-                            const parsedData = JSON.parse(jsonPart);
-
-                            if (Array.isArray(parsedData)) {
-                                database = parsedData;
-                                showMessage(`Arquivo carregado com sucesso! ${database.length} registros importados.`, 'success');
-                                
-                                // Feedback visual no upload
-                                uploadFeedback.textContent = `Arquivo "${file.name}" carregado.`;
-                                uploadFeedback.className = "mt-3 text-sm text-green-600 font-semibold block";
-                                
-                                updateDisplay();
-                            } else {
-                                throw new Error("O conteúdo não é uma lista válida.");
-                            }
-                        } else {
-                            throw new Error("Não foi possível encontrar uma lista [] no arquivo.");
-                        }
-
-                    } catch (error) {
-                        console.error(error);
-                        showMessage('Erro ao ler o arquivo. Certifique-se que é um arquivo .js ou .json contendo uma lista [].', 'error');
-                        uploadFeedback.textContent = "Erro na leitura do arquivo.";
-                        uploadFeedback.className = "mt-3 text-sm text-red-600 font-semibold block";
-                    }
-                };
-
-                reader.readAsText(file);
-            });
-
-            // --- 2. Função de Adicionar e Validar ---
-            form.addEventListener('submit', (e) => {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                const novoCelular = formData.get('celular').trim();
-                const novoNome = formData.get('nome').trim();
-
-                // Verificação de Duplicados (chave: Celular)
-                const duplicado = database.find(item => item.celular === novoCelular);
-
-                if (duplicado) {
-                    showMessage(`Bloqueado: O celular ${novoCelular} já pertence a "${duplicado.nome}".`, 'error');
-                    // Destaca o campo com erro
-                    document.getElementById('celular').focus();
-                    document.getElementById('celular').classList.add('border-red-500', 'bg-red-50');
-                    setTimeout(() => {
-                        document.getElementById('celular').classList.remove('border-red-500', 'bg-red-50');
-                    }, 3000);
-                    return;
-                }
-
-                // Cria o novo objeto
-                const novoCadastro = {
-                    id: generateRandomId(),
-                    nome: novoNome,
-                    celular: novoCelular,
-                    endereco: formData.get('endereco'),
-                    complemento: formData.get('complemento'),
-                    data_registro: new Date().toLocaleString('pt-BR')
-                };
-
-                // Adiciona à memória
-                database.push(novoCadastro);
-
-                // Feedback
-                updateDisplay();
-                showMessage(`Cadastro de "${novoNome}" adicionado à lista! Não esqueça de baixar o novo arquivo.`, 'success');
-                
-                // Limpeza inteligente
-                form.reset();
-                document.getElementById('nome').focus();
-            });
-
-            // --- 3. Função de Download (.js) ---
-            downloadBtn.addEventListener('click', () => {
-                if (database.length === 0) return;
-
-                // Monta o conteúdo do arquivo JS
-                const jsonContent = JSON.stringify(database, null, 2);
-                // Adiciona a declaração da variável para que o arquivo seja um script JS válido
-                const fileContent = `const ${VAR_NAME} = ${jsonContent};`;
-
-                const blob = new Blob([fileContent], { type: 'text/javascript' });
-                const url = URL.createObjectURL(blob);
-                
-                const a = document.createElement('a');
-                a.href = url;
-                
-                // Nome do arquivo com timestamp
-                const date = new Date();
-                const timestamp = `${date.getFullYear()}${(date.getMonth()+1).toString().padStart(2,'0')}${date.getDate().toString().padStart(2,'0')}_${date.getHours()}${date.getMinutes()}`;
-                a.download = `banco_dados_${timestamp}.js`;
-                
-                document.body.appendChild(a);
-                a.click();
-                
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                
-                showMessage('Download iniciado! Este é seu novo arquivo mestre.', 'success');
-            });
+            const dataStr = JSON.stringify(clientes, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
             
-            // Inicialização
-            updateDisplay();
-        });
+            const exportFileDefaultName = 'clientes_backup_' + new Date().toISOString().slice(0,10) + '.json';
+
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        // Importar arquivo JSON (Vindo do Drive)
+        function importarDados(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    if (Array.isArray(json)) {
+                        clientes = json;
+                        salvarDadosLocais(); // Atualiza o localStorage também
+                        renderizarTabela();
+                        alert('Dados importados com sucesso! Total: ' + clientes.length);
+                    } else {
+                        alert('Formato de arquivo inválido. O arquivo deve conter uma lista de clientes.');
+                    }
+                } catch (error) {
+                    alert('Erro ao ler o arquivo: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+            // Limpa o input para permitir importar o mesmo arquivo novamente se necessário
+            input.value = '';
+        }
+
+        // --- 4. RENDERIZAÇÃO (UI) ---
+
+        function renderizarTabela() {
+            const tbody = document.getElementById('tabelaClientes');
+            const termoBusca = document.getElementById('busca').value.toLowerCase();
+            const emptyState = document.getElementById('emptyState');
+            
+            tbody.innerHTML = '';
+
+            const filtrados = clientes.filter(c => 
+                c.nome.toLowerCase().includes(termoBusca) || 
+                c.apelido.toLowerCase().includes(termoBusca) ||
+                c.telefone.includes(termoBusca)
+            );
+
+            document.getElementById('totalClientes').innerText = clientes.length;
+
+            if (filtrados.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            filtrados.forEach(c => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-blue-50 transition group";
+                
+                const niver = (c.diaNiver && c.mesNiver) ? `${c.diaNiver}/${c.mesNiver}` : '-';
+                const local = `${c.cidade || ''} ${c.bairro ? '- ' + c.bairro : ''}`;
+
+                // Botão Maps: só aparece se tiver link
+                const btnMaps = c.maps ? 
+                    `<a href="${c.maps}" target="_blank" class="text-blue-500 hover:text-blue-700 ml-1" title="Ver no Maps"><i class="fa-solid fa-map-location-dot"></i></a>` : 
+                    '<span class="text-gray-300 ml-1"><i class="fa-solid fa-map-location-dot"></i></span>';
+
+                // Tooltip simples para descrição da casa
+                const descCasaTooltip = c.descCasa ? `title="${c.descCasa}"` : '';
+
+                tr.innerHTML = `
+                    <td class="border-b">
+                        <div class="font-bold text-gray-800">${c.nome}</div>
+                        <div class="text-xs text-gray-500">${c.apelido || ''}</div>
+                    </td>
+                    <td class="border-b">
+                        <div class="text-sm"><i class="fa-solid fa-phone text-xs text-gray-400 mr-1"></i>${c.telefone}</div>
+                        <div class="text-xs text-gray-500"><i class="fa-solid fa-cake-candles text-xs text-gray-400 mr-1"></i>${niver}</div>
+                    </td>
+                    <td class="border-b" ${descCasaTooltip}>
+                        <div class="text-xs text-gray-700">${local}</div>
+                        <div class="text-xs text-gray-500 truncate max-w-[150px]">${c.endereco || ''} ${btnMaps}</div>
+                    </td>
+                    <td class="border-b text-center">
+                        <button onclick="editarCliente('${c.id}')" class="text-blue-600 hover:bg-blue-100 p-1 rounded transition mr-1" title="Editar">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button onclick="excluirCliente('${c.id}')" class="text-red-500 hover:bg-red-100 p-1 rounded transition" title="Excluir">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
     </script>
 </body>
 </html>
