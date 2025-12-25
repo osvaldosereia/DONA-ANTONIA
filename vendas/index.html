@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema V1 - Gestão de Vendas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- Estilo Geral (Desktop Compacto) --- */
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .app-container { max-width: 1400px; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; }
+        .compact-input { padding: 0.3rem; font-size: 0.9rem; }
+        .btn-compact { padding: 0.25rem 0.5rem; font-size: 0.85rem; }
+        
+        /* Scrollbar fina */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #e5e7eb; }
+        ::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+        /* --- Estilo de Impressão (Termica 10x15) --- */
+        @media print {
+            @page { size: 100mm 150mm; margin: 0; }
+            body * { visibility: hidden; }
+            #areaImpressao, #areaImpressao * { visibility: visible; }
+            #areaImpressao {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 100mm;
+                /* height: 150mm;  Deixar altura fluida para rolos contínuos se necessário, ou fixar se for folha */
+                padding: 5mm;
+                background: white;
+                color: black;
+                font-family: 'Courier New', Courier, monospace; /* Fonte monoespaçada para cupom */
+                font-size: 12px;
+                line-height: 1.2;
+                display: block !important;
+            }
+            .no-print { display: none !important; }
+        }
+        #areaImpressao { display: none; } /* Esconde na tela normal */
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="app-container p-4 no-print">
+        
+        <!-- Cabeçalho -->
+        <header class="bg-white shadow-sm rounded-lg p-3 mb-3 flex justify-between items-center border border-gray-200">
+            <div class="flex items-center gap-4">
+                <div class="bg-indigo-600 text-white p-2 rounded">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                </div>
+                <h1 class="font-bold text-lg text-gray-700">Módulo 2: Vendas & Pedidos</h1>
+            </div>
+            
+            <nav class="flex gap-2">
+                <button onclick="window.location.href='cadastro.html'" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1 rounded text-sm font-medium transition">
+                    1. Cadastro
+                </button>
+                <button class="bg-indigo-600 text-white px-4 py-1 rounded text-sm font-medium shadow-sm">
+                    2. Vendas
+                </button>
+                <button onclick="alert('Etapa 3 em breve')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 px-4 py-1 rounded text-sm font-medium transition">
+                    3. CRM
+                </button>
+            </nav>
+
+            <div class="flex gap-2">
+                <div class="flex items-center gap-2 bg-gray-50 px-2 rounded border border-gray-200">
+                    <span class="text-xs font-bold text-gray-500">FILTRAR DATA:</span>
+                    <input type="date" id="filtroData" class="bg-transparent text-sm border-none focus:ring-0 py-1" onchange="renderizarListaPedidos()">
+                </div>
+                <button onclick="exportarPedidosJson()" class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700 shadow-sm" title="Exportar filtrados">
+                    <i class="fa-solid fa-file-export mr-1"></i> Exportar
+                </button>
+            </div>
+        </header>
+
+        <!-- Layout Principal -->
+        <div class="flex flex-1 gap-4 overflow-hidden">
+            
+            <!-- COLUNA ESQUERDA: Criador de Pedidos -->
+            <div class="w-5/12 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+                <div class="p-3 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
+                    <h2 class="font-bold text-indigo-800 text-sm uppercase"><i class="fa-solid fa-plus-circle mr-2"></i>Novo Pedido</h2>
+                    <button onclick="limparPedidoAtual()" class="text-xs text-red-500 hover:underline">Limpar Tela</button>
+                </div>
+
+                <div class="p-4 overflow-y-auto flex-1 custom-scroll">
+                    
+                    <!-- 1. Seleção de Cliente -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-gray-600 mb-1">1. Selecionar Cliente</label>
+                        <div class="flex gap-2">
+                            <select id="selCliente" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500 bg-white">
+                                <option value="">Carregando clientes...</option>
+                            </select>
+                            <button onclick="carregarClientes()" class="bg-gray-200 px-3 rounded hover:bg-gray-300" title="Atualizar lista"><i class="fa-solid fa-sync text-xs"></i></button>
+                        </div>
+                    </div>
+
+                    <hr class="border-dashed border-gray-200 my-3">
+
+                    <!-- 2. Adicionar Itens (Cestas) -->
+                    <div class="bg-gray-50 p-3 rounded border border-gray-200 mb-4">
+                        <label class="block text-xs font-bold text-gray-600 mb-2">2. Adicionar Produto ao Pedido</label>
+                        
+                        <div class="grid grid-cols-2 gap-2 mb-2">
+                            <!-- Tipo Cesta -->
+                            <select id="selTipoCesta" onchange="atualizarOpcoesPreco()" class="col-span-1 border border-gray-300 rounded compact-input">
+                                <option value="economica">Cesta Econômica</option>
+                                <option value="mini">Cesta Mini</option>
+                                <option value="pequena">Cesta Pequena</option>
+                                <option value="media">Cesta Média</option>
+                                <option value="grande">Cesta Grande</option>
+                            </select>
+                            
+                            <!-- Marca/Preço (Dinamico) -->
+                            <select id="selMarcaPreco" class="col-span-1 border border-gray-300 rounded compact-input">
+                                <!-- Preenchido via JS -->
+                            </select>
+                        </div>
+
+                        <!-- Modo: Normal vs Alterada -->
+                        <div class="flex items-center gap-4 mb-2">
+                            <label class="flex items-center text-sm cursor-pointer">
+                                <input type="radio" name="modoCesta" value="normal" checked onchange="toggleModoCesta()" class="mr-1 text-indigo-600"> Normal
+                            </label>
+                            <label class="flex items-center text-sm cursor-pointer">
+                                <input type="radio" name="modoCesta" value="alterada" onchange="toggleModoCesta()" class="mr-1 text-indigo-600"> Alterada
+                            </label>
+                        </div>
+
+                        <!-- Área de Itens (Aparece se Alterada) -->
+                        <div id="areaItensCesta" class="hidden bg-white border border-gray-300 rounded p-2 mb-2 max-h-40 overflow-y-auto text-xs">
+                            <!-- Lista de inputs gerada via JS -->
+                        </div>
+
+                        <button onclick="adicionarItemAoCarrinho()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-1.5 rounded text-sm font-bold shadow-sm">
+                            <i class="fa-solid fa-cart-plus mr-1"></i> Adicionar Cesta
+                        </button>
+                    </div>
+
+                    <!-- 3. Carrinho (Lista de Itens adicionados) -->
+                    <div class="mb-4">
+                        <label class="block text-xs font-bold text-gray-600 mb-1">Itens no Pedido</label>
+                        <div class="border border-gray-200 rounded bg-white min-h-[80px]">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 text-gray-500">
+                                    <tr>
+                                        <th class="p-2">Item</th>
+                                        <th class="p-2 text-right">Valor</th>
+                                        <th class="p-2 text-center">X</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelaCarrinho">
+                                    <!-- Itens do carrinho -->
+                                </tbody>
+                            </table>
+                            <div id="carrinhoVazio" class="text-center text-gray-400 py-4 text-xs italic">Nenhuma cesta adicionada.</div>
+                        </div>
+                        <div class="text-right mt-1 font-bold text-indigo-700 text-sm">
+                            Subtotal: R$ <span id="lblSubtotal">0,00</span>
+                        </div>
+                    </div>
+
+                    <hr class="border-gray-300 my-3">
+
+                    <!-- 4. Fechamento -->
+                    <div class="grid grid-cols-2 gap-3 mb-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Pagamento</label>
+                            <select id="pagMetodo" class="w-full border border-gray-300 rounded compact-input">
+                                <option value="dinheiro">Dinheiro</option>
+                                <option value="pix">Pix</option>
+                                <option value="cartao">Cartão</option>
+                                <option value="fiado">Fiado/Crédito</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Status Pagto</label>
+                            <select id="pagStatus" class="w-full border border-gray-300 rounded compact-input bg-yellow-50 text-yellow-800 font-medium">
+                                <option value="pendente">A Receber</option>
+                                <option value="pago">Pago</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Desconto</label>
+                            <select id="desconto" onchange="calcularTotalFinal()" class="w-full border border-gray-300 rounded compact-input">
+                                <option value="0">Sem desconto</option>
+                                <option value="5">- R$ 5,00</option>
+                                <option value="10">- R$ 10,00</option>
+                                <option value="15">- R$ 15,00</option>
+                                <option value="20">- R$ 20,00</option>
+                                <option value="25">- R$ 25,00</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Brinde</label>
+                            <select id="brinde" class="w-full border border-gray-300 rounded compact-input text-green-700 font-medium">
+                                <option value="Nenhum">Nenhum</option>
+                                <option value="Amaciante">Amaciante</option>
+                                <option value="Cafe">Café</option>
+                                <option value="Sabao Po">Sabão em Pó</option>
+                                <option value="Ovo">Ovo</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Rota</label>
+                            <select id="rota" class="w-full border border-gray-300 rounded compact-input font-bold">
+                                <option value="Coxipó">Coxipó</option>
+                                <option value="VG">Várzea Grande</option>
+                                <option value="Cuiabá">Cuiabá (Centro/Outros)</option>
+                                <option value="CPA">CPA</option>
+                            </select>
+                        </div>
+                        <div class="col-span-2">
+                            <label class="block text-[10px] font-bold text-gray-500 uppercase">Observação</label>
+                            <input type="text" id="obs" class="w-full border border-gray-300 rounded compact-input" placeholder="Ex: Entregar após as 14h...">
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-100 p-2 rounded text-right mb-3 border border-gray-200">
+                        <span class="text-xs text-gray-500 mr-2">TOTAL FINAL:</span>
+                        <span class="text-xl font-bold text-gray-800">R$ <span id="lblTotalFinal">0,00</span></span>
+                    </div>
+
+                    <button onclick="finalizarPedido()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow-lg transition text-lg flex justify-center items-center">
+                        <i class="fa-solid fa-check-circle mr-2"></i> Finalizar Pedido
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA: Lista de Pedidos (Kanban de Rotas ou Lista) -->
+            <div class="w-7/12 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col">
+                <div class="p-3 border-b border-gray-100 bg-gray-50 rounded-t-lg flex justify-between items-center">
+                    <h2 class="font-bold text-gray-700 text-sm uppercase"><i class="fa-solid fa-list-check mr-2"></i>Pedidos do Dia</h2>
+                    <div id="resumoRotas" class="text-xs flex gap-2">
+                        <!-- Contadores preenchidos via JS -->
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-auto bg-gray-100 p-2">
+                    <div id="listaPedidos" class="space-y-3">
+                        <!-- Cards de Pedidos -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ÁREA DE IMPRESSÃO (Invisível na tela) -->
+    <div id="areaImpressao">
+        <!-- Conteúdo injetado via JS na hora de imprimir -->
+    </div>
+
+    <script>
+        // --- DADOS (CESTAS) ---
+        const DADOS_CESTAS = {
+            'economica': {
+                titulo: 'Cesta Econômica',
+                itens: ['<b>Alimentos:</b>', '1 Arroz de 5kg', '1 Açúcar Cristal de 2kg', '1 Óleo de Soja de 900ml', '1 Feijão Dona Dê de 1kg', '1 Café 250g', '1 Espaguete de 400g', '1 Trigo de 1kg', '1 Farinha de Mandioca de 1kg', '1 Sal de 1kg', '1 Molho Tomate 300g', '1 Milho Lata ou sachê de 250g', '1 Bolacha Recheada', '1 Miojo Apti', '1 Suco Pó']
+            },
+            'mini': {
+                titulo: 'Cesta Mini',
+                itens: ['<b>Alimentos:</b>', '1 Arroz de 5kg', '1 Açúcar Cristal de 2kg', '2 Óleo de Soja de 900ml', '2 Feijão Da Casa de 1kg', '1 Café Caboclo de 250g', '1 Espaguete de 500g', '1 Sal de 1kg', '1 Molho Tomate FUGINI', '1 Milho Lata de 250g', '1 Bolacha Recheada My Bit', '1 Miojo Apti', '2 Suco Pó', '<b>Limpeza e Higiene:</b>', '1 Sabão Barra YPE c/ 5 un', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico c/ 4un', '1 Amaciante Ype de 2 Litros', '1 Desinfetante Remmus 2 L', '1 Sabão Pó OMO 800g', '1 Detergente Ype de 500ml', '1 Qboa de 1 Litro', '2 Sabonete Palmolive 90g', '1 Esponja de Aço Assolan', '1 Esponja de Lavar Louça']
+            },
+            'pequena': {
+                titulo: 'Cesta Pequena',
+                itens: ['<b>Alimentos:</b>', '2 Arroz de 5kg', '1 Açúcar Cristal de 2kg', '2 Óleo de Soja de 900ml', '2 Feijão Da Casa de 1kg', '1 Café Caboclo de 250g', '12 Ovos', '1 Mistura para Bolo 400g', '1 Espaguete de 500g', '1 Trigo de 1kg', '1 Sal de 1kg', '1 Molho Tomate Fugini', '1 Milho Lata de 250g', '1 Tempero Pronto de 300g', '2 Bolacha Recheada My Bit', '2 Miojo Yolle', '2 Suco Pó', '<b>Limpeza e Higiene:</b>', '1 Sabão Barra YPE c/ 5 un', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico c/ 4un', '1 Amaciante Ype de 2 Litros', '1 Desinfetante Remmus 2 L', '1 Sabão Pó OMO 800g', '2 Detergente Ype de 500ml', '1 Qboa de 1 Litro', '2 Sabonete Palmolive 90g', '1 Esponja de Aço Assolan', '1 Bucha de lavar louça']
+            },
+            'media': {
+                titulo: 'Cesta Média',
+                itens: ['<b>Alimentos:</b>', '3 Arroz de 5kg', '2 Açúcar Cristal de 2kg', '3 Óleo de Soja de 900ml', '3 Feijão Da Casa de 1kg', '1 Café Caboclo 500g', '12 Ovos', '1 Mistura para Bolo 400g', '2 Espaguete de 500g', '1 Trigo de 1kg', '1 Sal de 1kg', '2 Molho Tomate FUGINI 340g', '1 Milho Lata/sachê de 250g', '1 Tempero Pronto de 300g', '2 Bolacha Recheada My Bit', '2 Miojo Apti', '3 Suco Pó', '<b>Limpeza e Higiene:</b>', '1 Sabão Barra YPE c/ 5 un', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico c/ 4un', '1 Amaciante Ype de 2 Litros', '1 Desinfetante Remmus 2 L', '1 Sabão Pó OMO 800g', '2 Detergente Ype de 500ml', '1 Qboa de 1 Litro', '3 Sabonete Palmolive 90g', '1 Esponja de Aço Assolan', '1 Esponja de Lavar Louça']
+            },
+            'grande': {
+                titulo: 'Cesta Grande',
+                itens: ['<b>Alimentos:</b>', '4 Arroz de 5kg', '3 Açúcar Cristal de 2kg', '4 Óleo de Soja de 900ml', '4 Feijão Da Casa de 1kg', '1 Café Caboclo 500g', '3 Espaguetes de 500g', '12 Ovos', '1 Mistura para Bolo 400g', '1 Trigo de 1kg', '1 Sal de 1kg', '2 Molho Tomate FUGINI 340g', '1 Milho Lata ou sachê de 250g', '1 Tempero Pronto de 300g', '2 Bolacha Recheada My Bit', '2 Miojo Apti', '4 Suco Pó', '<b>Limpeza e Higiene:</b>', '1 Sabão Barra YPE c/ 5 un', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico c/ 4un', '1 Amaciante Ype de 2 Litros', '1 Desinfetante Remmus 2 L', '1 Sabão Pó OMO 800g', '2 Detergente Ype de 500ml', '1 Qboa de 1 Litro', '4 Sabonete Palmolive 90g', '1 Esponja de Aço Assolan', '1 Esponja de Lavar Louça']
+            }
+        };
+
+        const PRECOS = {
+            'economica': { 'padrao': 85 },
+            'mini': { 'alvino': 165, 'koblenz': 170 },
+            'pequena': { 'alvino': 215, 'koblenz': 220 },
+            'media': { 'alvino': 320, 'koblenz': 325 },
+            'grande': { 'alvino': 380, 'koblenz': 390 }
+        };
+
+        // --- ESTADO GLOBAL ---
+        let carrinho = []; // Array de cestas adicionadas
+        let pedidos = []; // Todos os pedidos salvos
+        const KEY_CLIENTES = 'sistema_empresarial_clientes';
+        const KEY_PEDIDOS = 'sistema_empresarial_vendas';
+
+        // --- INICIALIZAÇÃO ---
+        window.onload = () => {
+            carregarClientes();
+            carregarPedidosLocais();
+            atualizarOpcoesPreco();
+            
+            // Define data de hoje no filtro
+            document.getElementById('filtroData').valueAsDate = new Date();
+            renderizarListaPedidos();
+        };
+
+        // --- 1. CARREGAMENTO DE CLIENTES ---
+        function carregarClientes() {
+            const clientesRaw = localStorage.getItem(KEY_CLIENTES);
+            const select = document.getElementById('selCliente');
+            select.innerHTML = '<option value="">-- Selecione o Cliente --</option>';
+
+            if (clientesRaw) {
+                const clientes = JSON.parse(clientesRaw);
+                // Ordena alfabeticamente
+                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
+                
+                clientes.forEach(c => {
+                    const option = document.createElement('option');
+                    option.value = c.id; // Guarda o ID, mas exibe o nome
+                    // Inclui Apelido e Bairro para facilitar
+                    const label = `${c.nome} ${c.apelido ? '('+c.apelido+')' : ''} - ${c.bairro || 'S/ Bairro'}`;
+                    option.innerText = label;
+                    // Armazena dados completos no elemento para uso rápido
+                    option.dataset.json = JSON.stringify(c); 
+                    select.appendChild(option);
+                });
+            } else {
+                select.innerHTML = '<option value="">Nenhum cliente no Módulo 1</option>';
+            }
+        }
+
+        // --- 2. LÓGICA DE PRODUTOS/PREÇOS ---
+        function atualizarOpcoesPreco() {
+            const tipo = document.getElementById('selTipoCesta').value;
+            const selectMarca = document.getElementById('selMarcaPreco');
+            selectMarca.innerHTML = '';
+
+            const opcoes = PRECOS[tipo];
+            
+            if (tipo === 'economica') {
+                const opt = new Option(`Padrão - R$ ${opcoes.padrao},00`, opcoes.padrao);
+                selectMarca.add(opt);
+            } else {
+                const opt1 = new Option(`Arroz Tio Alvino - R$ ${opcoes.alvino},00`, opcoes.alvino);
+                // Adiciona atributo para saber o nome da marca depois
+                opt1.setAttribute('data-marca', 'Tio Alvino');
+                selectMarca.add(opt1);
+
+                const opt2 = new Option(`Arroz Koblenz - R$ ${opcoes.koblenz},00`, opcoes.koblenz);
+                opt2.setAttribute('data-marca', 'Koblenz');
+                selectMarca.add(opt2);
+            }
+            gerarListaItensEditavel();
+        }
+
+        function toggleModoCesta() {
+            const modo = document.querySelector('input[name="modoCesta"]:checked').value;
+            const area = document.getElementById('areaItensCesta');
+            
+            if (modo === 'alterada') {
+                gerarListaItensEditavel();
+                area.classList.remove('hidden');
+            } else {
+                area.classList.add('hidden');
+            }
+        }
+
+        function gerarListaItensEditavel() {
+            const tipo = document.getElementById('selTipoCesta').value;
+            const area = document.getElementById('areaItensCesta');
+            const listaOriginal = DADOS_CESTAS[tipo].itens;
+            
+            area.innerHTML = '';
+
+            listaOriginal.forEach((itemStr, index) => {
+                // Se for título de seção (bold)
+                if (itemStr.startsWith('<b>')) {
+                    const titulo = document.createElement('div');
+                    titulo.className = "font-bold text-gray-500 mt-2 mb-1 border-b border-gray-100";
+                    titulo.innerHTML = itemStr.replace(/<\/?b>/g, '');
+                    area.appendChild(titulo);
+                    return;
+                }
+
+                // Tenta extrair a quantidade inicial (ex: "2 Oleo" -> qtd: 2)
+                const match = itemStr.match(/^(\d+)\s+(.+)$/);
+                let qtd = 1;
+                let desc = itemStr;
+
+                if (match) {
+                    qtd = match[1];
+                    desc = match[2];
+                }
+
+                const row = document.createElement('div');
+                row.className = "flex items-center gap-2 mb-1";
+                row.innerHTML = `
+                    <input type="number" min="0" value="${qtd}" class="w-12 border border-gray-300 rounded text-center px-1 item-qtd">
+                    <input type="text" value="${desc}" class="flex-1 border border-gray-300 rounded px-1 item-desc">
+                `;
+                area.appendChild(row);
+            });
+        }
+
+        // --- 3. CARRINHO (CONSTRUÇÃO DO PEDIDO) ---
+        function adicionarItemAoCarrinho() {
+            const tipoKey = document.getElementById('selTipoCesta').value;
+            const precoVal = parseFloat(document.getElementById('selMarcaPreco').value);
+            const selMarca = document.getElementById('selMarcaPreco');
+            const marcaNome = selMarca.options[selMarca.selectedIndex].getAttribute('data-marca') || 'Padrão';
+            
+            const modo = document.querySelector('input[name="modoCesta"]:checked').value;
+            let itensFinais = [];
+
+            // Define o conteúdo da cesta
+            if (modo === 'normal') {
+                itensFinais = DADOS_CESTAS[tipoKey].itens;
+            } else {
+                // Coleta dados dos inputs
+                const linhas = document.querySelectorAll('#areaItensCesta .flex');
+                linhas.forEach(row => {
+                    const q = row.querySelector('.item-qtd').value;
+                    const d = row.querySelector('.item-desc').value;
+                    if (q > 0) {
+                        itensFinais.push(`${q} ${d}`);
+                    }
+                });
+            }
+
+            const itemCarrinho = {
+                id: Date.now(),
+                tipo: DADOS_CESTAS[tipoKey].titulo,
+                marca: marcaNome,
+                preco: precoVal,
+                modo: modo,
+                conteudo: itensFinais
+            };
+
+            carrinho.push(itemCarrinho);
+            renderizarCarrinho();
+        }
+
+        function removerDoCarrinho(id) {
+            carrinho = carrinho.filter(i => i.id !== id);
+            renderizarCarrinho();
+        }
+
+        function renderizarCarrinho() {
+            const tbody = document.getElementById('tabelaCarrinho');
+            const divVazio = document.getElementById('carrinhoVazio');
+            tbody.innerHTML = '';
+            
+            let subtotal = 0;
+
+            if (carrinho.length === 0) {
+                divVazio.style.display = 'block';
+            } else {
+                divVazio.style.display = 'none';
+                carrinho.forEach(item => {
+                    subtotal += item.preco;
+                    const tr = document.createElement('tr');
+                    tr.className = "border-t border-gray-100";
+                    
+                    const labelModo = item.modo === 'alterada' ? '<span class="text-[10px] bg-yellow-100 text-yellow-700 px-1 rounded">Alt</span>' : '';
+                    
+                    tr.innerHTML = `
+                        <td class="p-2">
+                            <div class="font-bold">${item.tipo}</div>
+                            <div class="text-[10px] text-gray-500">${item.marca} ${labelModo}</div>
+                        </td>
+                        <td class="p-2 text-right font-mono">R$ ${item.preco},00</td>
+                        <td class="p-2 text-center">
+                            <button onclick="removerDoCarrinho(${item.id})" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-times"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            document.getElementById('lblSubtotal').innerText = subtotal.toFixed(2).replace('.', ',');
+            calcularTotalFinal(subtotal);
+        }
+
+        function calcularTotalFinal(subtotalOverride) {
+            // Se não passar valor, pega do texto (gambiarra segura pra UI simples)
+            let sub = subtotalOverride;
+            if (sub === undefined) {
+                 const txt = document.getElementById('lblSubtotal').innerText.replace(',', '.');
+                 sub = parseFloat(txt);
+            }
+
+            const desc = parseFloat(document.getElementById('desconto').value) || 0;
+            const final = Math.max(0, sub - desc);
+            
+            document.getElementById('lblTotalFinal').innerText = final.toFixed(2).replace('.', ',');
+        }
+
+        // --- 4. FINALIZAÇÃO E PERSISTÊNCIA ---
+        function finalizarPedido() {
+            const selCliente = document.getElementById('selCliente');
+            if (!selCliente.value) return alert('Selecione um cliente!');
+            if (carrinho.length === 0) return alert('Adicione pelo menos uma cesta!');
+
+            const clienteDados = JSON.parse(selCliente.options[selCliente.selectedIndex].dataset.json);
+            
+            // Dados financeiros
+            const subtotalText = document.getElementById('lblSubtotal').innerText.replace(',', '.');
+            const totalText = document.getElementById('lblTotalFinal').innerText.replace(',', '.');
+            
+            const novoPedido = {
+                id: Date.now().toString(),
+                data: new Date().toISOString(),
+                cliente: {
+                    id: clienteDados.id,
+                    nome: clienteDados.nome,
+                    endereco: `${clienteDados.endereco || ''}, ${clienteDados.bairro || ''}`,
+                    cidade: clienteDados.cidade,
+                    telefone: clienteDados.telefone,
+                    maps: clienteDados.maps
+                },
+                rota: document.getElementById('rota').value,
+                pagamento: {
+                    metodo: document.getElementById('pagMetodo').value,
+                    status: document.getElementById('pagStatus').value
+                },
+                financeiro: {
+                    subtotal: parseFloat(subtotalText),
+                    desconto: parseFloat(document.getElementById('desconto').value),
+                    total: parseFloat(totalText)
+                },
+                brinde: document.getElementById('brinde').value,
+                obs: document.getElementById('obs').value,
+                itens: carrinho
+            };
+
+            pedidos.push(novoPedido);
+            salvarPedidosLocais();
+            
+            alert('Pedido salvo com sucesso!');
+            limparPedidoAtual();
+            
+            // Renderiza lista atualizada
+            document.getElementById('filtroData').valueAsDate = new Date();
+            renderizarListaPedidos();
+        }
+
+        function salvarPedidosLocais() {
+            localStorage.setItem(KEY_PEDIDOS, JSON.stringify(pedidos));
+        }
+
+        function carregarPedidosLocais() {
+            const dados = localStorage.getItem(KEY_PEDIDOS);
+            if (dados) pedidos = JSON.parse(dados);
+        }
+
+        function limparPedidoAtual() {
+            carrinho = [];
+            renderizarCarrinho();
+            document.getElementById('selCliente').value = "";
+            document.getElementById('obs').value = "";
+            document.getElementById('pagStatus').value = "pendente";
+            document.getElementById('desconto').value = "0";
+            document.getElementById('brinde').value = "Nenhum";
+            calcularTotalFinal(0);
+        }
+
+        // --- 5. VISUALIZAÇÃO DE PEDIDOS (DASHBOARD) ---
+        function renderizarListaPedidos() {
+            const container = document.getElementById('listaPedidos');
+            const filtroData = document.getElementById('filtroData').value;
+            
+            container.innerHTML = '';
+
+            // Filtra por data (compara string YYYY-MM-DD)
+            const pedidosFiltrados = pedidos.filter(p => p.data.startsWith(filtroData));
+            
+            // Ordena por Rota e depois por Nome
+            pedidosFiltrados.sort((a, b) => {
+                if (a.rota === b.rota) return a.cliente.nome.localeCompare(b.cliente.nome);
+                return a.rota.localeCompare(b.rota);
+            });
+
+            // Resumo de Rotas
+            const resumo = {};
+            pedidosFiltrados.forEach(p => {
+                resumo[p.rota] = (resumo[p.rota] || 0) + 1;
+            });
+            const divResumo = document.getElementById('resumoRotas');
+            divResumo.innerHTML = Object.entries(resumo).map(([rota, qtd]) => 
+                `<span class="bg-blue-100 text-blue-800 px-1.5 rounded">${rota}: ${qtd}</span>`
+            ).join('');
+
+            if (pedidosFiltrados.length === 0) {
+                container.innerHTML = '<div class="text-center text-gray-400 mt-10">Nenhum pedido nesta data.</div>';
+                return;
+            }
+
+            pedidosFiltrados.forEach(p => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded border border-gray-200 shadow-sm hover:shadow-md transition relative";
+                
+                // Formata lista de cestas brevemente
+                const resumoItens = p.itens.map(i => `${i.tipo} (${i.marca})`).join(', ');
+
+                // Badge status pagto
+                const statusColor = p.pagamento.status === 'pago' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700';
+                
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-1">
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-500 bg-gray-100 px-1 rounded">${p.rota}</span>
+                            <h3 class="font-bold text-gray-800">${p.cliente.nome}</h3>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-bold text-indigo-600 block">R$ ${p.financeiro.total.toFixed(2)}</span>
+                            <span class="text-[10px] ${statusColor} px-1 rounded uppercase font-bold">${p.pagamento.status}</span>
+                        </div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-600 mb-1 truncate"><i class="fa-solid fa-basket-shopping mr-1"></i>${resumoItens}</p>
+                    <p class="text-xs text-gray-500 mb-2 truncate"><i class="fa-solid fa-location-dot mr-1"></i>${p.cliente.endereco}</p>
+
+                    <div class="flex justify-end gap-2 mt-2 border-t pt-2 border-gray-100">
+                        <button onclick="imprimirPedido('${p.id}')" class="text-gray-600 hover:text-black text-xs border border-gray-300 px-2 py-1 rounded">
+                            <i class="fa-solid fa-print"></i> Imprimir
+                        </button>
+                        <button onclick="exportarUnicoPedido('${p.id}')" class="text-blue-600 hover:text-blue-800 text-xs border border-blue-200 px-2 py-1 rounded">
+                            <i class="fa-solid fa-download"></i> JSON
+                        </button>
+                        <button onclick="excluirPedido('${p.id}')" class="text-red-400 hover:text-red-600 text-xs px-1">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function excluirPedido(id) {
+            if(confirm('Confirmar exclusão deste pedido?')) {
+                pedidos = pedidos.filter(p => p.id !== id);
+                salvarPedidosLocais();
+                renderizarListaPedidos();
+            }
+        }
+
+        // --- 6. EXPORTAÇÃO E IMPRESSÃO ---
+
+        function exportarPedidosJson() {
+            const filtroData = document.getElementById('filtroData').value;
+            const lista = pedidos.filter(p => p.data.startsWith(filtroData));
+            
+            if (lista.length === 0) return alert('Nada para exportar na data selecionada.');
+
+            const dataStr = JSON.stringify(lista, null, 2);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pedidos_${filtroData}.json`;
+            a.click();
+        }
+
+        function exportarUnicoPedido(id) {
+            const pedido = pedidos.find(p => p.id === id);
+            const dataStr = JSON.stringify(pedido, null, 2);
+            const blob = new Blob([dataStr], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `pedido_${pedido.cliente.nome.replace(/\s+/g,'_')}.json`;
+            a.click();
+        }
+
+        function imprimirPedido(id) {
+            const p = pedidos.find(item => item.id === id);
+            if (!p) return;
+
+            const area = document.getElementById('areaImpressao');
+            const dataF = new Date(p.data).toLocaleDateString('pt-BR');
+            const horaF = new Date(p.data).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+            // Monta HTML da impressão
+            let htmlItens = '';
+            p.itens.forEach(item => {
+                const desc = item.modo === 'alterada' ? 
+                    `<br><span style="font-size:10px; margin-left: 5px; display:block; white-space: pre-wrap;">- ${item.conteudo.join('<br>- ')}</span>` : 
+                    '';
+                htmlItens += `
+                    <div style="margin-bottom: 5px; border-bottom: 1px dashed #ccc; padding-bottom: 2px;">
+                        <b>${item.tipo}</b> (${item.marca})
+                        <div style="float:right;">R$ ${item.preco},00</div>
+                        ${desc}
+                    </div>
+                `;
+            });
+
+            const linkMaps = p.cliente.maps ? `<br>Maps: ${p.cliente.maps}` : '';
+            const obsBlock = p.obs ? `<div style="margin-top:5px; font-weight:bold; border: 1px solid #000; padding: 2px;">OBS: ${p.obs}</div>` : '';
+            const brindeBlock = p.brinde !== 'Nenhum' ? `<div style="margin-top:5px;">🎁 BRINDE: <b>${p.brinde}</b></div>` : '';
+
+            area.innerHTML = `
+                <div style="text-align:center; font-weight:bold; margin-bottom: 5px;">
+                    PEDIDO DE VENDA<br>
+                    ${dataF} às ${horaF}
+                </div>
+                <div style="border-bottom: 1px solid #000; margin-bottom: 5px;"></div>
+                
+                <div><b>CLIENTE:</b> ${p.cliente.nome}</div>
+                <div><b>TEL:</b> ${p.cliente.telefone}</div>
+                <div style="margin-top:3px;"><b>ROTA:</b> ${p.rota}</div>
+                <div style="font-size: 11px; margin-top:2px;">
+                    ${p.cliente.endereco} - ${p.cliente.cidade}
+                </div>
+
+                <div style="border-bottom: 1px solid #000; margin: 10px 0;"></div>
+                
+                ${htmlItens}
+
+                <div style="margin-top: 10px; text-align:right;">
+                    Subtotal: R$ ${p.financeiro.subtotal.toFixed(2)}<br>
+                    Desconto: - R$ ${p.financeiro.desconto.toFixed(2)}<br>
+                    <b style="font-size: 14px;">TOTAL: R$ ${p.financeiro.total.toFixed(2)}</b>
+                </div>
+
+                <div style="margin-top: 5px; font-size: 11px;">
+                    Pagamento: <b>${p.pagamento.metodo.toUpperCase()}</b> (${p.pagamento.status.toUpperCase()})
+                </div>
+
+                ${brindeBlock}
+                ${obsBlock}
+                
+                <div style="margin-top: 15px; text-align:center; font-size: 10px;">
+                    *** FIM DO PEDIDO ***
+                </div>
+            `;
+
+            window.print();
+        }
+    </script>
+</body>
+</html>
