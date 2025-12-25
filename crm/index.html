@@ -64,9 +64,17 @@
 
             <div class="flex gap-2">
                 <input type="file" id="importInput" accept=".json" class="hidden" onchange="importarDadosExternos(this)" multiple>
-                <button onclick="document.getElementById('importInput').click()" class="border border-gray-300 text-gray-600 px-3 py-1 rounded text-xs hover:bg-gray-50" title="Importar JSON">
-                    <i class="fa-solid fa-upload mr-1"></i>
+                
+                <!-- Botão de Backup (Exportar) -->
+                <button onclick="exportarBackup()" class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-1 rounded text-xs shadow-sm transition" title="Baixar Backup Completo">
+                    <i class="fa-solid fa-download mr-1"></i> Backup
                 </button>
+
+                <!-- Botão de Importar -->
+                <button onclick="document.getElementById('importInput').click()" class="border border-gray-300 text-gray-600 px-3 py-1 rounded text-xs hover:bg-gray-50" title="Importar JSON ou Backup">
+                    <i class="fa-solid fa-upload mr-1"></i> Importar
+                </button>
+                
                 <button onclick="atualizarDados()" class="bg-blue-600 text-white px-3 py-1 rounded text-xs hover:bg-blue-700 shadow-sm">
                     <i class="fa-solid fa-sync mr-1"></i> Atualizar
                 </button>
@@ -98,7 +106,7 @@
             </div>
         </div>
 
-        <!-- 3. ÁREA PRINCIPAL (GRID 4 COLUNAS) -->
+        <!-- 3. ÁREA PRINCIPAL (GRID 4 COLUNAS EQUILIBRADAS) -->
         <div class="grid grid-cols-12 gap-3 flex-1 overflow-hidden min-h-0">
             
             <!-- COLUNA 1: VENDAS (3/12) -->
@@ -149,8 +157,8 @@
                 </div>
             </div>
 
-            <!-- COLUNA 3: CUPONS ATIVOS (NOVA - 2/12) -->
-            <div class="col-span-2 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+            <!-- COLUNA 3: CUPONS ATIVOS (3/12) - Aumentado para igualar -->
+            <div class="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
                 <div class="p-2 border-b border-gray-100 bg-yellow-50 flex flex-col gap-1 shrink-0">
                     <div class="flex items-center justify-between">
                         <h2 class="font-bold text-yellow-800 text-sm uppercase"><i class="fa-solid fa-ticket mr-2"></i>Cupons</h2>
@@ -162,6 +170,7 @@
                         <button onclick="renderizarCupons('hoje')" class="flex-1 bg-white border border-yellow-200 hover:bg-yellow-100 text-[9px] py-1 rounded text-yellow-800 font-bold transition">HOJE</button>
                         <button onclick="renderizarCupons('amanha')" class="flex-1 bg-white border border-yellow-200 hover:bg-yellow-100 text-[9px] py-1 rounded text-yellow-800 font-bold transition">AMANHÃ</button>
                         <button onclick="renderizarCupons('semana')" class="flex-1 bg-white border border-yellow-200 hover:bg-yellow-100 text-[9px] py-1 rounded text-yellow-800 font-bold transition">7 DIAS</button>
+                        <button onclick="renderizarCupons('todos')" class="flex-1 bg-white border border-yellow-200 hover:bg-yellow-100 text-[9px] py-1 rounded text-yellow-800 font-bold transition">TODOS</button>
                     </div>
                 </div>
                 
@@ -172,8 +181,8 @@
                 </div>
             </div>
 
-            <!-- COLUNA 4: ANÁLISE ESTRATÉGICA (4/12) -->
-            <div class="col-span-4 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
+            <!-- COLUNA 4: ANÁLISE ESTRATÉGICA (3/12) - Reduzido para igualar -->
+            <div class="col-span-3 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col overflow-hidden">
                 <div class="p-3 border-b border-gray-100 bg-purple-50 flex justify-between items-center shrink-0">
                     <div class="flex items-center gap-2">
                         <div class="bg-purple-100 p-1.5 rounded-full text-purple-600">
@@ -188,7 +197,9 @@
                     <div class="relative">
                         <select id="seletorAnalise" onchange="renderizarAnaliseEstrategica()" 
                             class="appearance-none bg-white border border-purple-300 text-purple-900 text-[10px] font-bold rounded pl-2 pr-6 py-1 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer shadow-sm hover:bg-purple-50 transition w-32">
-                            <option value="tipo_cesta">📦 Cestas</option>
+                            <option value="tipo_cesta">📦 Cestas/Arroz</option>
+                            <option value="brindes">🎁 Brindes</option>
+                            <option value="cupons_stats">🏷️ Stats Cupons</option>
                             <option value="status_cesta">✨ Status</option>
                             <option value="pagamento">💳 Pagto</option>
                             <option value="cidade">city Cidade</option>
@@ -291,6 +302,22 @@
             renderizarCupons('semana'); // Default view
         }
 
+        function exportarBackup() {
+            const backup = {
+                data_backup: new Date().toISOString(),
+                clientes: clientes,
+                vendas: vendas,
+                cupons: cupons
+            };
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backup));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "backup_crm_" + new Date().toISOString().split('T')[0] + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
         function importarDadosExternos(input) {
             const files = input.files;
             if (files.length === 0) return;
@@ -301,6 +328,23 @@
                 reader.onload = function(e) {
                     try {
                         const json = JSON.parse(e.target.result);
+                        
+                        // Lógica para detectar se é Backup Completo
+                        if (json.clientes && json.vendas) {
+                            if(confirm("Arquivo de BACKUP COMPLETO detectado. Deseja restaurar tudo? Isso substituirá os dados atuais.")) {
+                                clientes = json.clientes || [];
+                                vendas = json.vendas || [];
+                                cupons = json.cupons || [];
+                                localStorage.setItem(KEY_CLIENTES, JSON.stringify(clientes));
+                                localStorage.setItem(KEY_PEDIDOS, JSON.stringify(vendas));
+                                localStorage.setItem(KEY_CUPONS, JSON.stringify(cupons));
+                                atualizarDados();
+                                alert('Backup restaurado com sucesso!');
+                            }
+                            return; // Sai se for backup
+                        }
+
+                        // Lógica padrão para importação parcial (Legado)
                         if (json.length > 0) {
                             if (json[0].hasOwnProperty('financeiro')) {
                                 vendas = json;
@@ -315,7 +359,7 @@
                             atualizarDados();
                             alert('Dados atualizados com sucesso!');
                         }
-                    } catch (error) { console.error(error); }
+                    } catch (error) { console.error(error); alert("Erro ao ler arquivo."); }
                 };
                 reader.readAsText(file);
             });
@@ -334,7 +378,7 @@
             const novoCupom = {
                 telefone: telefone.replace(/\D/g, ''),
                 nome: nome,
-                valor: valor,
+                valor: parseFloat(valor),
                 expiracao: validadeISO,
                 dataGeracao: new Date().toISOString()
             };
@@ -346,7 +390,7 @@
 
             // 3. Atualiza Telas
             renderizarRadar();
-            renderizarCupons('semana');
+            renderizarCupons('todos'); // Atualiza lista
 
             // 4. Envia Zap
             enviarZap(telefone, tipoTemplate, nome, null, null, valor, validadeStr);
@@ -373,6 +417,7 @@
                 if (filtro === 'hoje') return diffDias === 0;
                 if (filtro === 'amanha') return diffDias === 1;
                 if (filtro === 'semana') return diffDias >= 0 && diffDias <= 7;
+                if (filtro === 'todos') return true;
                 return true;
             });
 
@@ -625,37 +670,84 @@
             let grandTotal = 0;
             let grandQtd = 0;
 
-            vendasFiltradas.forEach(v => {
-                grandTotal += v.financeiro.total;
-                grandQtd++;
-                let keys = []; 
-                let value = v.financeiro.total;
-
-                switch(view) {
-                    case 'tipo_cesta':
-                        if (v.itens.length > 1) keys = ['Mix']; else if (v.itens.length > 0) keys = [v.itens[0].tipo]; else keys = ['Indefinido'];
-                        break;
-                    case 'status_cesta':
-                        const temAlteracao = v.itens.some(i => i.marca && i.marca !== 'Padrão');
-                        keys.push(temAlteracao ? 'Alterada' : 'Padrão');
-                        break;
-                    case 'pagamento': keys.push(v.pagamento.metodo || 'N/A'); break;
-                    case 'cidade': keys.push(v.cliente.cidade || 'N/A'); break;
-                    case 'bairro': keys.push(v.cliente.bairro || 'N/A'); break;
-                    case 'rota':
-                        const b = (v.cliente.bairro || '').toLowerCase();
-                        if (b.includes('centro') || b.includes('comercial')) keys.push('Central');
-                        else if (b.includes('jardim') || b.includes('parque')) keys.push('Sul/Jardins');
-                        else if (b.includes('vila') || b.includes('nossa')) keys.push('Norte/Vilas');
-                        else keys.push('Outras');
-                        break;
-                }
-                keys.forEach(k => {
-                    if (!aggregations[k]) aggregations[k] = { qtd: 0, valor: 0 };
-                    aggregations[k].qtd += 1;
-                    aggregations[k].valor += value;
+            // Se for análise de cupons, usamos o array de cupons, não de vendas
+            if (view === 'cupons_stats') {
+                const hojeStr = new Date().toISOString().split('T')[0];
+                cupons.forEach(c => {
+                    const status = c.expiracao >= hojeStr ? 'Ativos' : 'Vencidos';
+                    // Chave: "Cupom R$ XX (Status)"
+                    const key = `Cupom R$ ${c.valor} (${status})`;
+                    if (!aggregations[key]) aggregations[key] = { qtd: 0, valor: 0 };
+                    aggregations[key].qtd++;
+                    aggregations[key].valor += c.valor;
+                    
+                    grandQtd++;
+                    grandTotal += c.valor;
                 });
-            });
+            } else {
+                // Análises baseadas em Vendas
+                vendasFiltradas.forEach(v => {
+                    let value = v.financeiro.total;
+                    
+                    // Se não for análise de brindes, somamos totais normais
+                    if (view !== 'brindes') {
+                        grandTotal += v.financeiro.total;
+                        grandQtd++;
+                    }
+
+                    let keys = []; 
+
+                    switch(view) {
+                        case 'tipo_cesta':
+                            if (v.itens.length > 0) {
+                                // Concatena Tipo + Marca (se existir e não for 'Padrão')
+                                v.itens.forEach(item => {
+                                    let nome = item.tipo;
+                                    if (item.marca && item.marca !== 'Padrão') nome += ` (${item.marca})`;
+                                    keys.push(nome);
+                                });
+                            } else {
+                                keys = ['Indefinido'];
+                            }
+                            // Em views de itens multiplos, ajustamos o valor? Simplificando: Valor Total vai para cada item (peso)
+                            break;
+                            
+                        case 'brindes':
+                            // Lógica: Procura brinde no objeto venda ou itens do tipo "Brinde"
+                            if (v.brinde) {
+                                keys.push(v.brinde);
+                                grandQtd++; // Só conta se tiver brinde
+                            } else if (v.itens.some(i => i.tipo.toLowerCase().includes('brinde'))) {
+                                const brindes = v.itens.filter(i => i.tipo.toLowerCase().includes('brinde'));
+                                brindes.forEach(b => keys.push(b.marca || b.tipo));
+                                grandQtd++;
+                            }
+                            value = 0; // Brinde não soma valor financeiro na tabela, ou soma 0
+                            break;
+
+                        case 'status_cesta':
+                            const temAlteracao = v.itens.some(i => i.marca && i.marca !== 'Padrão');
+                            keys.push(temAlteracao ? 'Alterada' : 'Padrão');
+                            break;
+                        case 'pagamento': keys.push(v.pagamento.metodo || 'N/A'); break;
+                        case 'cidade': keys.push(v.cliente.cidade || 'N/A'); break;
+                        case 'bairro': keys.push(v.cliente.bairro || 'N/A'); break;
+                        case 'rota':
+                            const b = (v.cliente.bairro || '').toLowerCase();
+                            if (b.includes('centro') || b.includes('comercial')) keys.push('Central');
+                            else if (b.includes('jardim') || b.includes('parque')) keys.push('Sul/Jardins');
+                            else if (b.includes('vila') || b.includes('nossa')) keys.push('Norte/Vilas');
+                            else keys.push('Outras');
+                            break;
+                    }
+
+                    keys.forEach(k => {
+                        if (!aggregations[k]) aggregations[k] = { qtd: 0, valor: 0 };
+                        aggregations[k].qtd += 1;
+                        aggregations[k].valor += value;
+                    });
+                });
+            }
 
             const lista = Object.entries(aggregations).map(([k, val]) => ({ segmento: k, qtd: val.qtd, valor: val.valor }));
             lista.sort((a, b) => b.valor - a.valor);
@@ -663,14 +755,22 @@
             lista.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td class="pl-2 py-1 text-xs text-gray-700 truncate max-w-[100px]" title="${item.segmento}">${item.segmento}</td>
+                    <td class="pl-2 py-1 text-xs text-gray-700 truncate max-w-[140px]" title="${item.segmento}">${item.segmento}</td>
                     <td class="text-center text-xs font-mono text-gray-600">${item.qtd}</td>
                     <td class="text-right text-xs pr-2 text-gray-800">R$ ${item.valor.toLocaleString('pt-BR', {minimumFractionDigits: 0})}</td>
                 `;
                 tbody.appendChild(tr);
             });
+            
             document.getElementById('footerQtd').innerText = grandQtd;
-            document.getElementById('footerValor').innerText = grandTotal.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            
+            // Se for brindes, não mostramos valor monetário total pois é irrelevante/zero
+            if (view === 'brindes') {
+                document.getElementById('footerValor').innerText = "-";
+            } else {
+                document.getElementById('footerValor').innerText = grandTotal.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            }
+
             if (lista.length === 0) tbody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-400 text-xs">Sem dados.</td></tr>';
         }
 
