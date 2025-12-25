@@ -92,7 +92,13 @@
                 <span class="text-gray-400 text-xs">até</span>
                 <input type="date" id="dataFim" class="border border-gray-300 rounded px-2 py-1 text-xs" onchange="aplicarFiltros()">
             </div>
-            <button onclick="definirMesAtual()" class="text-xs text-blue-600 hover:underline font-medium">Este Mês</button>
+            
+            <!-- NOVOS BOTÕES DE FILTRO RÁPIDO -->
+            <div class="flex gap-1 ml-2">
+                <button onclick="definirOntem()" class="text-xs text-gray-600 hover:bg-gray-100 border border-gray-200 px-2 py-0.5 rounded font-medium transition">Ontem</button>
+                <button onclick="definirHoje()" class="text-xs text-gray-600 hover:bg-gray-100 border border-gray-200 px-2 py-0.5 rounded font-medium transition">Hoje</button>
+                <button onclick="definirMesAtual()" class="text-xs text-blue-600 hover:bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-medium transition">Este Mês</button>
+            </div>
             
             <div class="ml-auto flex gap-6 text-sm">
                 <div class="flex flex-col items-end leading-tight">
@@ -267,10 +273,16 @@
             resgate: "Olá {nome}! Sumiu hein? 😉 Faz {dias} dias que não te vemos. Temos cestas fresquinhas chegando. Que tal aproveitar um desconto especial de retorno? Me chama aqui!",
             feedback: "Oi {nome}, queria saber se deu tudo certo com a entrega da cesta no dia {data}? O arroz estava ok?",
             sorteio: "Olá {nome}! 🍀 Você está participando do nosso sorteio mensal! Confira seu número da sorte e o regulamento aqui: [LINK_SORTEIO]",
-            // TEMPLATES DE CUPOM (ATUALIZADOS COM CÓDIGO)
+            
+            // TEMPLATES DE CUPOM (NOVOS)
             cupom: "Olá {nome}! 🎁 Como agradecimento, aqui está seu cupom de R$ {valor} para a próxima compra! Código: *{codigo}*. Válido até {validade}. Aproveite! 🛒",
             cupom_resgate: "Olá {nome}! 🎁 Sentimos sua falta! Aqui está um cupom especial de R$ {valor}. Use o código *{codigo}* nos próximos 10 dias. Válido até {validade}. Vamos aproveitar? 🥗",
             cupom_amigo: "Oi {nome}! 🎁 Aqui está o cupom para você presentear um amigo! R$ {valor} de desconto. Código: *{codigo}*. Válido até {validade}.",
+            
+            // TEMPLATES DE LEMBRETE ATIVO (SEM CÓDIGO)
+            lembrete_ativo_pessoal: "Olá {nome}! 😃 Passando só pra te lembrar que você tem um desconto de R$ {valor} ativo com a gente! É válido até {validade}. Aproveite para garantir sua cesta! 🛒",
+            lembrete_ativo_amigo: "Olá {nome}! 😉 Não esquece que você tem aquele desconto de R$ {valor} pra presentear um amigo, válido até {validade}. Se alguém estiver precisando, é só falar com a gente! 🎁",
+            
             lembrete_cupom: "Oi {nome}! ⏰ Passando só pra lembrar que seu cupom de desconto de R$ {valor} (Cód: *{codigo}*) vence {vencimento}. Não vai perder, hein? 😉"
         };
 
@@ -284,6 +296,23 @@
                 }
             });
         };
+
+        // --- FILTROS RÁPIDOS ---
+        function definirOntem() {
+            const hoje = new Date();
+            const ontem = new Date(hoje);
+            ontem.setDate(hoje.getDate() - 1);
+            document.getElementById('dataInicio').valueAsDate = ontem;
+            document.getElementById('dataFim').valueAsDate = ontem;
+            aplicarFiltros();
+        }
+
+        function definirHoje() {
+            const hoje = new Date();
+            document.getElementById('dataInicio').valueAsDate = hoje;
+            document.getElementById('dataFim').valueAsDate = hoje;
+            aplicarFiltros();
+        }
 
         function definirMesAtual() {
             const date = new Date();
@@ -585,17 +614,18 @@
                     validadeEst.setDate(validadeEst.getDate() + 35);
                     const valStr = validadeEst.toLocaleDateString('pt-BR');
 
+                    // MODIFICADO: MENSAGEM DE REFORÇO APENAS (SEM CÓDIGO)
                     botoesCupomHtml = `
                          <div class="col-span-2 bg-yellow-50 p-1 rounded border border-yellow-200 text-center">
                             <div class="text-[9px] font-bold text-yellow-800 mb-1">CUPONS GERADOS: R$ ${valorCupom}</div>
                             <div class="grid grid-cols-2 gap-1">
-                                <button onclick="enviarZap('${v.cliente.telefone}', 'cupom', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}', '${v.cuponsGerados.pessoal}')" 
+                                <button onclick="enviarZap('${v.cliente.telefone}', 'lembrete_ativo_pessoal', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}')" 
                                     class="bg-yellow-500 hover:bg-yellow-600 text-white rounded p-1 text-[9px] font-bold shadow-sm transition">
-                                    <i class="fa-brands fa-whatsapp"></i> Pessoal
+                                    <i class="fa-brands fa-whatsapp"></i> Pessoal (Lembrete)
                                 </button>
-                                <button onclick="enviarZap('${v.cliente.telefone}', 'cupom_amigo', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}', '${v.cuponsGerados.amigo}')" 
+                                <button onclick="enviarZap('${v.cliente.telefone}', 'lembrete_ativo_amigo', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}')" 
                                     class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 border border-yellow-300 rounded p-1 text-[9px] font-bold shadow-sm transition">
-                                    <i class="fa-solid fa-gift"></i> Amigo
+                                    <i class="fa-solid fa-gift"></i> Amigo (Lembrete)
                                 </button>
                             </div>
                         </div>
