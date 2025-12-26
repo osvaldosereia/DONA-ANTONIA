@@ -283,7 +283,8 @@
             lembrete_ativo_pessoal: "Olá {nome}! 😃 Passando só pra te lembrar que você tem um desconto de R$ {valor} ativo com a gente! É válido até {validade}. Aproveite para garantir sua cesta! 🛒",
             lembrete_ativo_amigo: "Olá {nome}! 😉 Não esquece que você tem aquele desconto de R$ {valor} pra presentear um amigo, válido até {validade}. Se alguém estiver precisando, é só falar com a gente! 🎁",
             
-            lembrete_cupom: "Oi {nome}! ⏰ Passando só pra lembrar que seu cupom de desconto de R$ {valor} (Cód: *{codigo}*) vence {vencimento}. Não vai perder, hein? 😉"
+            // ATUALIZADO: Sem código, apenas nome, valor e vencimento
+            lembrete_cupom: "Oi {nome}! ⏰ Passando só pra lembrar que seu cupom de desconto de R$ {valor} vence {validade}. Não vai perder, hein? 😉"
         };
 
         window.onload = () => {
@@ -440,9 +441,13 @@
                 dataGeracao: new Date().toISOString()
             };
 
-            // Se for cupom pessoal, substitui anterior ativo
+            // ATUALIZADO: Substitui QUALQUER cupom anterior ativo deste cliente
             if (idCliente) {
-                 cupons = cupons.filter(c => !(c.idCliente === idCliente && c.tipo === 'pessoal' && !c.usado));
+                 cupons = cupons.filter(c => !(c.idCliente === idCliente && !c.usado));
+            } else {
+                // Fallback para caso venha sem ID (apenas por telefone)
+                const telClean = telefone.replace(/\D/g, '');
+                cupons = cupons.filter(c => !(c.telefone === telClean && !c.usado));
             }
             
             cupons.push(novoCupom);
@@ -614,10 +619,9 @@
                     validadeEst.setDate(validadeEst.getDate() + 35);
                     const valStr = validadeEst.toLocaleDateString('pt-BR');
 
-                    // MODIFICADO: MENSAGEM DE REFORÇO APENAS (SEM CÓDIGO)
+                    // ATUALIZADO: REMOVIDA A LINHA COM O TEXTO "CUPONS GERADOS: R$ X"
                     botoesCupomHtml = `
                          <div class="col-span-2 bg-yellow-50 p-1 rounded border border-yellow-200 text-center">
-                            <div class="text-[9px] font-bold text-yellow-800 mb-1">CUPONS GERADOS: R$ ${valorCupom}</div>
                             <div class="grid grid-cols-2 gap-1">
                                 <button onclick="enviarZap('${v.cliente.telefone}', 'lembrete_ativo_pessoal', '${primeiroNome}', null, null, '${valorCupom}', '${valStr}')" 
                                     class="bg-yellow-500 hover:bg-yellow-600 text-white rounded p-1 text-[9px] font-bold shadow-sm transition">
