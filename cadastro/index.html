@@ -144,7 +144,7 @@
                             <label class="block text-xs font-bold text-gray-600 mb-1">Google Maps (Link/Código)</label>
                             <div class="flex">
                                 <span class="bg-gray-100 border border-r-0 border-gray-300 rounded-l px-2 flex items-center text-gray-500"><i class="fa-solid fa-map-pin text-xs"></i></span>
-                                <input type="text" id="maps" class="w-full border border-gray-300 rounded-r px-2 py-1 compact-input focus:outline-none focus:border-blue-500" placeholder="Cole o link aqui">
+                                <input type="text" id="maps" class="w-full border border-gray-300 rounded-r px-2 py-1 compact-input focus:outline-none focus:border-blue-500" placeholder="Ex: 7R9W+45 Cuiabá">
                             </div>
                         </div>
                         <div class="col-span-2">
@@ -363,14 +363,23 @@
             window.open(url, '_blank');
         }
 
-        // --- NOVA FUNÇÃO PARA MAPA ---
+        // --- NOVA FUNÇÃO PARA MAPA (COM PESQUISA POR CÓDIGO) ---
         function abrirMapaCliente(id) {
             const c = clientes.find(c => c.id === id);
             if (!c || !c.maps) {
-                alert('Este cliente não possui link do Google Maps cadastrado.');
+                alert('Este cliente não possui código ou link do Google Maps cadastrado.');
                 return;
             }
-            window.open(c.maps, '_blank');
+            
+            // Verifica se é um link completo ou apenas um código
+            let urlDestino = c.maps;
+            if (!c.maps.trim().toLowerCase().startsWith('http')) {
+                // Se não começar com http, assume que é um código/endereço e cria link de pesquisa
+                // encodeURIComponent garante que espaços e caracteres especiais sejam tratados corretamente
+                urlDestino = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.maps)}`;
+            }
+            
+            window.open(urlDestino, '_blank');
         }
 
         function renderizarTabela() {
@@ -402,7 +411,7 @@
                 const niver = (c.diaNiver && c.mesNiver) ? `${c.diaNiver}/${c.mesNiver}` : '-';
                 const local = `${c.cidade || ''} ${c.bairro ? '- ' + c.bairro : ''}`;
                 
-                // Botão de link pequeno na coluna endereço (opcional manter)
+                // Botão de link pequeno na coluna endereço (mantido para visualização)
                 const btnMapsLink = c.maps ? `<span class="text-xs text-blue-400"><i class="fa-solid fa-check"></i></span>` : '';
 
                 tr.innerHTML = `
