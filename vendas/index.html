@@ -110,9 +110,13 @@
 
                 <div class="p-4 overflow-y-auto flex-1 custom-scroll">
                     
-                    <!-- 1. Seleção de Cliente -->
+                    <!-- 1. Seleção de Cliente (ATUALIZADO COM BUSCA) -->
                     <div class="mb-4">
                         <label class="block text-xs font-bold text-gray-600 mb-1">1. Selecionar Cliente</label>
+                        
+                        <!-- Novo Campo de Busca -->
+                        <input type="text" id="inputBuscaCliente" onkeyup="filtrarClientes()" placeholder="🔎 Digite nome ou bairro..." class="w-full border border-indigo-200 bg-indigo-50 rounded px-2 py-1.5 mb-2 text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500 placeholder-gray-400">
+
                         <div class="flex gap-2">
                             <select id="selCliente" onchange="verificarCuponsCliente()" class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-indigo-500 bg-white">
                                 <option value="">Carregando clientes...</option>
@@ -388,6 +392,7 @@
         let pedidos = []; 
         let cupons = []; 
         let cupomSelecionado = null; 
+        let listaClientesCache = []; // Cache para facilitar a busca sem recarregar localStorage
 
         let filtroRotaAtual = 'todos'; 
         let dragSrcEl = null; 
@@ -408,26 +413,68 @@
         };
 
         // --- FUNÇÕES DE NAVEGAÇÃO / DADOS ---
+        
+        // 1. Carrega do localStorage e salva no cache global
         function carregarClientes() {
             const clientesRaw = localStorage.getItem(KEY_CLIENTES);
+            
+            if (clientesRaw) {
+                listaClientesCache = JSON.parse(clientesRaw);
+                listaClientesCache.sort((a, b) => a.nome.localeCompare(b.nome));
+            } else {
+                listaClientesCache = [];
+            }
+            // Renderiza usando o cache
+            renderizarOpcoesClientes(listaClientesCache);
+        }
+
+        // 2. Renderiza as opções no Select (usada na carga inicial e no filtro)
+        function renderizarOpcoesClientes(lista) {
             const select = document.getElementById('selCliente');
+            const valorAtual = select.value; // Tenta manter seleção se possível
+            
             select.innerHTML = '<option value="">-- Selecione o Cliente --</option>';
 
-            if (clientesRaw) {
-                const clientes = JSON.parse(clientesRaw);
-                clientes.sort((a, b) => a.nome.localeCompare(b.nome));
-                
-                clientes.forEach(c => {
-                    const option = document.createElement('option');
-                    option.value = c.id;
-                    const label = `${c.nome} ${c.apelido ? '('+c.apelido+')' : ''} - ${c.bairro || 'S/ Bairro'}`;
-                    option.innerText = label;
-                    option.dataset.json = JSON.stringify(c); 
-                    select.appendChild(option);
-                });
-            } else {
-                select.innerHTML = '<option value="">Nenhum cliente cadastrado</option>';
+            if (lista.length === 0) {
+                // Mensagem muda se for "banco vazio" ou "filtro sem resultado"
+                if (listaClientesCache.length === 0) {
+                    select.innerHTML = '<option value="">Nenhum cliente cadastrado</option>';
+                } else {
+                    select.innerHTML = '<option value="">Nenhum cliente encontrado</option>';
+                }
+                return;
             }
+
+            lista.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                const label = `${c.nome} ${c.apelido ? '('+c.apelido+')' : ''} - ${c.bairro || 'S/ Bairro'}`;
+                option.innerText = label;
+                option.dataset.json = JSON.stringify(c); 
+                select.appendChild(option);
+            });
+
+            // Se o item selecionado ainda existir na lista filtrada, mantém selecionado
+            if (valorAtual) {
+                // Pequena verificação se o ID ainda está nas opções geradas
+                // (O browser faria isso, mas se o valor não existir mais nas options, ele reseta)
+                select.value = valorAtual;
+            }
+        }
+
+        // 3. Função chamada ao digitar no input de busca
+        function filtrarClientes() {
+            const termo = document.getElementById('inputBuscaCliente').value.toLowerCase();
+            
+            const filtrados = listaClientesCache.filter(c => {
+                const nome = c.nome.toLowerCase();
+                const apelido = (c.apelido || '').toLowerCase();
+                const bairro = (c.bairro || '').toLowerCase();
+                
+                return nome.includes(termo) || apelido.includes(termo) || bairro.includes(termo);
+            });
+            
+            renderizarOpcoesClientes(filtrados);
         }
 
         function carregarCuponsLocais() {
@@ -887,6 +934,9 @@
             removerCupom(); 
 
             document.getElementById('selCliente').value = "";
+            document.getElementById('inputBuscaCliente').value = ""; // Limpa a busca
+            carregarClientes(); // Reseta o filtro
+
             document.getElementById('areaCupons').classList.add('hidden'); 
             
             document.getElementById('obs').value = "";
