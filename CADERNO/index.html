@@ -49,7 +49,7 @@
             display: block;
         }
 
-        /* Animação suave para abrir subnota */
+        /* Animação suave */
         .fade-in { animation: fadeIn 0.2s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -143,21 +143,52 @@
         </section>
     </main>
 
-    <!-- Modal Dinâmico -->
+    <!-- Modal Unificado (Criação/Edição) -->
     <div id="inputModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-[500px]">
-            <h3 id="modalTitle" class="font-bold mb-4 text-lg text-slate-800">Nova Subnota</h3>
+        <div class="bg-white p-6 rounded-lg shadow-xl w-[500px] max-h-[90vh] overflow-y-auto">
+            <h3 id="modalTitle" class="font-bold mb-4 text-lg text-slate-800">Gerenciar</h3>
             
-            <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Conteúdo (Texto)</label>
-                <div id="modalInputRich" contenteditable="true" 
-                     class="w-full border p-2 rounded focus:border-slate-800 outline-none min-h-[150px] max-h-[300px] overflow-y-auto bg-gray-50 rich-content"
-                     placeholder="Cole aqui seu texto com formatação..."></div>
+            <!-- CAMPOS PARA SUBNOTA -->
+            <div id="subnoteFields" class="hidden">
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tipo / Título</label>
+                    <select id="modalSubTitleSelect" class="w-full border p-2 rounded focus:border-slate-800 outline-none text-sm bg-white">
+                        <option value="Explica">Explica</option>
+                        <option value="Glossário">Glossário</option>
+                        <option value="Artigo">Artigo</option>
+                        <option value="Lei">Lei</option>
+                        <option value="Youtube">Youtube</option>
+                        <option value="Matéria">Matéria</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Conteúdo (Texto)</label>
+                    <div id="modalInputRich" contenteditable="true" 
+                        class="w-full border p-2 rounded focus:border-slate-800 outline-none min-h-[150px] max-h-[300px] overflow-y-auto bg-gray-50 rich-content"
+                        placeholder="Cole aqui seu texto com formatação..."></div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link Relacionado (Opcional)</label>
+                    <input type="text" id="modalInputSubLink" class="w-full border p-2 rounded focus:border-slate-800 outline-none text-sm" placeholder="https://...">
+                </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link Relacionado (Opcional)</label>
-                <input type="text" id="modalInputSubLink" class="w-full border p-2 rounded focus:border-slate-800 outline-none text-sm" placeholder="https://exemplo.com/artigo-juridico">
+            <!-- CAMPOS PARA NOTA PRINCIPAL -->
+            <div id="mainNoteFields" class="hidden">
+                 <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tag / Matéria</label>
+                    <select id="modalMainTagSelect" class="w-full border p-2 rounded focus:border-slate-800 outline-none text-sm bg-white">
+                        <!-- Preenchido via JS -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Anotação</label>
+                    <textarea id="modalMainContent" rows="6" 
+                        class="w-full border p-3 rounded focus:border-slate-800 outline-none text-sm serif resize-none" 
+                        placeholder="Edite sua anotação..."></textarea>
+                </div>
             </div>
 
             <div class="flex justify-end gap-2 pt-2 border-t border-gray-100">
@@ -169,7 +200,7 @@
 
     <script>
         // --- CONFIG ---
-        const STORE_KEY = 'law_notes_db_v4'; // Atualizando versão do DB
+        const STORE_KEY = 'law_notes_db_v5'; 
         let state = {
             tags: ['Constitucional', 'Penal', 'Civil', 'Processo Civil'],
             notes: [], 
@@ -349,7 +380,6 @@
                 const timeCreated = new Date(note.timestamp).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
                 const promptBase = encodeURIComponent(note.content.substring(0, 100));
                 
-                // Links IA
                 const linkExplain = `https://www.google.com/search?q=Explique+didaticamente+o+conceito+juridico:+${promptBase}&udm=50`;
                 const linkGlossary = `https://www.google.com/search?q=Glossario+juridico+definicao+de:+${promptBase}&udm=50`;
                 const linkArticle = `https://www.google.com/search?q=Artigo+academico+direito+sobre:+${promptBase}&udm=50`;
@@ -366,6 +396,7 @@
                             <span class="text-xs text-gray-400"><i class="fa-regular fa-clock"></i> ${timeCreated}</span>
                         </div>
                         <div class="flex gap-2">
+                            <button onclick="openModal('edit_note', ${note.id})" class="text-gray-300 hover:text-blue-500 transition" title="Editar Nota"><i class="fa-solid fa-pencil"></i></button>
                              <button onclick="toggleReminder(${note.id})" class="text-gray-300 hover:text-amber-500 transition ${note.reminder ? 'text-amber-500' : ''}" title="Destaque no Calendário"><i class="fa-solid fa-bell"></i></button>
                             <button onclick="deleteNote(${note.id})" class="text-gray-300 hover:text-red-500 transition" title="Excluir"><i class="fa-solid fa-trash"></i></button>
                         </div>
@@ -379,11 +410,11 @@
                         <a href="${linkArticle}" target="_blank" class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-100 flex items-center gap-1"><i class="fa-solid fa-pen-nib"></i> Artigo</a>
                     </div>
 
-                    <!-- Rodapé Simplificado -->
+                    <!-- Rodapé -->
                     <div class="mt-auto border-t border-gray-100 pt-3">
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-xs font-bold text-gray-400 uppercase tracking-wide">Subnotas</span>
-                            <button onclick="openModal(${note.id})" class="text-slate-500 hover:bg-slate-100 px-3 py-1.5 rounded text-xs flex items-center gap-1 font-semibold border border-transparent hover:border-gray-200 transition">
+                            <button onclick="openModal('add_subnote', ${note.id})" class="text-slate-500 hover:bg-slate-100 px-3 py-1.5 rounded text-xs flex items-center gap-1 font-semibold border border-transparent hover:border-gray-200 transition">
                                 <i class="fa-solid fa-plus"></i> Nova Subnota
                             </button>
                         </div>
@@ -398,22 +429,27 @@
         function renderSubnoteChips(noteId, subnotes) {
             if (!subnotes || subnotes.length === 0) return '';
 
-            // Renderiza os botões (chips)
+            // Renderiza os botões (chips) com o título escolhido
             const chipsHtml = subnotes.map((sn, idx) => `
                 <button onclick="toggleSubnote(${noteId}, ${sn.id})" 
                     id="chip-${sn.id}"
                     class="chip-btn flex-shrink-0 bg-white border border-gray-200 text-slate-600 px-3 py-1 rounded-full text-xs font-semibold hover:bg-indigo-50 hover:border-indigo-200 transition focus:outline-none whitespace-nowrap">
-                    Subnota ${idx + 1}
+                    ${sn.title || 'Subnota ' + (idx + 1)}
                 </button>
             `).join('');
 
-            // Renderiza os conteúdos (inicialmente ocultos)
+            // Renderiza os conteúdos
             const contentsHtml = subnotes.map((sn) => `
                 <div id="content-${sn.id}" class="hidden mt-3 bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative fade-in">
-                    <button onclick="deleteSubnote(${noteId}, ${sn.id})" class="absolute top-2 right-2 text-gray-300 hover:text-red-400" title="Excluir Subnota">
-                        <i class="fa-solid fa-times"></i>
-                    </button>
-                    <div class="rich-content text-sm text-slate-700 mb-3">${sn.text}</div>
+                    <div class="absolute top-2 right-2 flex gap-2">
+                        <button onclick="openModal('edit_subnote', ${noteId}, ${sn.id})" class="text-gray-300 hover:text-blue-500" title="Editar Subnota">
+                            <i class="fa-solid fa-pencil"></i>
+                        </button>
+                        <button onclick="deleteSubnote(${noteId}, ${sn.id})" class="text-gray-300 hover:text-red-400" title="Excluir Subnota">
+                            <i class="fa-solid fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="rich-content text-sm text-slate-700 mb-3 mt-4">${sn.text}</div>
                     ${sn.link ? `
                         <div class="text-right border-t border-gray-100 pt-2">
                             <a href="${sn.link}" target="_blank" class="inline-flex items-center gap-1 bg-indigo-600 text-white px-3 py-1.5 rounded text-xs font-bold hover:bg-indigo-700 transition">
@@ -435,13 +471,10 @@
             const chip = document.getElementById(`chip-${subId}`);
             const isOpening = content.classList.contains('hidden');
             
-            // 1. Fecha tudo dentro desta nota
             const container = document.getElementById(`subnotes-container-${noteId}`);
             const allContents = container.querySelectorAll('[id^="content-"]');
             allContents.forEach(el => el.classList.add('hidden'));
 
-            // 2. Reseta estilo de todos os chips desta nota
-            // Busca os chips irmãos navegando pelo DOM (container dos chips é irmão anterior do container de conteudo)
             const chipsContainer = container.previousElementSibling;
             const allChips = chipsContainer.querySelectorAll('.chip-btn');
             allChips.forEach(el => {
@@ -449,7 +482,6 @@
                 el.classList.add('bg-white', 'text-slate-600', 'border-gray-200');
             });
 
-            // 3. Se a intenção era abrir, abre o alvo
             if (isOpening) {
                 content.classList.remove('hidden');
                 chip.classList.remove('bg-white', 'text-slate-600', 'border-gray-200');
@@ -458,18 +490,67 @@
         }
 
         // --- MANIPULADORES MODAL ---
+        let currentModalMode = null; // 'edit_note', 'add_subnote', 'edit_subnote'
         let currentNoteId = null;
+        let currentSubId = null;
 
-        function openModal(noteId) {
+        function openModal(mode, noteId, subId = null) {
+            currentModalMode = mode;
             currentNoteId = noteId;
+            currentSubId = subId;
+
             const modal = document.getElementById('inputModal');
-            const inputRich = document.getElementById('modalInputRich');
-            const inputLink = document.getElementById('modalInputSubLink');
+            const modalTitle = document.getElementById('modalTitle');
+            const subnoteFields = document.getElementById('subnoteFields');
+            const mainNoteFields = document.getElementById('mainNoteFields');
             
             modal.classList.remove('hidden');
-            inputRich.innerHTML = '';
-            inputLink.value = '';
-            inputRich.focus();
+
+            if (mode === 'edit_note') {
+                modalTitle.innerText = "Editar Nota Principal";
+                subnoteFields.classList.add('hidden');
+                mainNoteFields.classList.remove('hidden');
+                
+                // Preencher dados
+                const note = state.notes.find(n => n.id === noteId);
+                if(note) {
+                    document.getElementById('modalMainContent').value = note.content;
+                    // Popular Tags e selecionar atual
+                    const tagSelect = document.getElementById('modalMainTagSelect');
+                    tagSelect.innerHTML = '<option value="">Sem Tag</option>';
+                    state.tags.forEach(t => {
+                        const opt = document.createElement('option');
+                        opt.value = t; opt.innerText = t;
+                        if(t === note.tag) opt.selected = true;
+                        tagSelect.appendChild(opt);
+                    });
+                }
+            } 
+            else if (mode === 'add_subnote') {
+                modalTitle.innerText = "Nova Subnota";
+                mainNoteFields.classList.add('hidden');
+                subnoteFields.classList.remove('hidden');
+                
+                // Limpar campos
+                document.getElementById('modalInputRich').innerHTML = '';
+                document.getElementById('modalInputSubLink').value = '';
+                document.getElementById('modalSubTitleSelect').value = 'Explica';
+                document.getElementById('modalInputRich').focus();
+            }
+            else if (mode === 'edit_subnote') {
+                modalTitle.innerText = "Editar Subnota";
+                mainNoteFields.classList.add('hidden');
+                subnoteFields.classList.remove('hidden');
+
+                // Preencher dados
+                const note = state.notes.find(n => n.id === noteId);
+                const subnote = note.subnotes.find(s => s.id === subId);
+                if(subnote) {
+                    document.getElementById('modalInputRich').innerHTML = subnote.text;
+                    document.getElementById('modalInputSubLink').value = subnote.link || '';
+                    document.getElementById('modalSubTitleSelect').value = subnote.title || 'Explica';
+                }
+            }
         }
 
         function closeModal() { document.getElementById('inputModal').classList.add('hidden'); }
@@ -478,18 +559,38 @@
             const note = state.notes.find(n => n.id === currentNoteId);
             if (!note) return;
 
-            const richText = document.getElementById('modalInputRich').innerHTML;
-            const plainText = document.getElementById('modalInputRich').innerText;
-            const link = document.getElementById('modalInputSubLink').value.trim();
+            if (currentModalMode === 'edit_note') {
+                const newContent = document.getElementById('modalMainContent').value.trim();
+                const newTag = document.getElementById('modalMainTagSelect').value;
+                if(newContent) {
+                    note.content = newContent;
+                    note.tag = newTag;
+                }
+            }
+            else if (currentModalMode === 'add_subnote') {
+                const richText = document.getElementById('modalInputRich').innerHTML;
+                const plainText = document.getElementById('modalInputRich').innerText;
+                const link = document.getElementById('modalInputSubLink').value.trim();
+                const title = document.getElementById('modalSubTitleSelect').value;
 
-            if (!plainText.trim() && !richText.includes('<img')) return;
+                if (!plainText.trim() && !richText.includes('<img')) return;
 
-            note.subnotes = note.subnotes || [];
-            note.subnotes.push({ 
-                id: Date.now(), 
-                text: richText,
-                link: link // Salva o link no objeto
-            });
+                note.subnotes = note.subnotes || [];
+                note.subnotes.push({ 
+                    id: Date.now(), 
+                    text: richText,
+                    link: link,
+                    title: title
+                });
+            }
+            else if (currentModalMode === 'edit_subnote') {
+                const subnote = note.subnotes.find(s => s.id === currentSubId);
+                if(subnote) {
+                    subnote.text = document.getElementById('modalInputRich').innerHTML;
+                    subnote.link = document.getElementById('modalInputSubLink').value.trim();
+                    subnote.title = document.getElementById('modalSubTitleSelect').value;
+                }
+            }
 
             saveData(); 
             closeModal();
