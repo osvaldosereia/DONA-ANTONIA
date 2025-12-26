@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law Study Notes - Direito</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Serif para leitura jurídica) -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Open Sans', sans-serif; background-color: #f3f4f6; }
+        h1, h2, h3, .serif { font-family: 'Merriweather', serif; }
+        
+        /* Scrollbar personalizada fina */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c5c5c5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+
+        .calendar-day { transition: all 0.2s; }
+        .calendar-day:hover { background-color: #e5e7eb; }
+        .active-day { background-color: #1e3a8a; color: white; }
+        .has-reminder::after {
+            content: ''; display: block; width: 6px; height: 6px; 
+            background-color: #ef4444; border-radius: 50%; margin: 2px auto 0;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <!-- Header Simples -->
+    <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center shrink-0">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-scale-balanced text-2xl text-amber-500"></i>
+            <h1 class="text-xl font-bold">Caderno de Estudos Jurídicos</h1>
+        </div>
+        <button onclick="clearData()" class="text-xs text-slate-400 hover:text-red-400 transition">
+            <i class="fa-solid fa-trash"></i> Limpar Tudo
+        </button>
+    </header>
+
+    <!-- Layout Principal -->
+    <main class="flex flex-1 overflow-hidden">
+        
+        <!-- Coluna Esquerda: Filtros e Calendário -->
+        <aside class="w-80 bg-white border-r border-gray-200 flex flex-col shadow-sm z-10">
+            
+            <!-- Gerenciador de Tags -->
+            <div class="p-5 border-b border-gray-100 overflow-y-auto flex-1">
+                <h2 class="text-sm font-bold uppercase text-slate-500 mb-3 tracking-wide">Matérias / Tags</h2>
+                
+                <div class="flex gap-2 mb-4">
+                    <input type="text" id="newTagInput" placeholder="Nova tag (ex: Penal)" 
+                           class="w-full px-3 py-1.5 text-sm border rounded focus:outline-none focus:border-slate-600">
+                    <button onclick="addTag()" class="bg-slate-800 text-white px-3 rounded hover:bg-slate-700">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <div id="tagFilterList" class="flex flex-col gap-2">
+                    <!-- Tags inseridas via JS -->
+                </div>
+            </div>
+
+            <!-- Calendário Mensal -->
+            <div class="p-5 bg-slate-50">
+                <div class="flex justify-between items-center mb-4">
+                    <button onclick="changeMonth(-1)" class="text-slate-500 hover:text-slate-800"><i class="fa-solid fa-chevron-left"></i></button>
+                    <h3 id="currentMonthYear" class="font-bold text-slate-700 capitalize"></h3>
+                    <button onclick="changeMonth(1)" class="text-slate-500 hover:text-slate-800"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="grid grid-cols-7 gap-1 text-center text-xs text-slate-500 mb-2">
+                    <div>D</div><div>S</div><div>T</div><div>Q</div><div>Q</div><div>S</div><div>S</div>
+                </div>
+                <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-sm">
+                    <!-- Dias inseridos via JS -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Coluna Direita: Anotações -->
+        <section class="flex-1 flex flex-col bg-gray-50 h-full relative">
+            
+            <!-- Input Area Fixa no Topo -->
+            <div class="p-6 bg-white shadow-sm shrink-0 z-20">
+                <div class="max-w-4xl mx-auto">
+                    <div class="mb-2 flex gap-2">
+                        <select id="noteTagSelect" class="border rounded px-3 py-1 text-sm text-slate-600 focus:outline-none">
+                            <option value="">Sem Tag</option>
+                            <!-- Opções via JS -->
+                        </select>
+                        <span class="text-xs text-gray-400 self-center">Hoje: <span id="displayDate"></span></span>
+                    </div>
+                    <div class="relative">
+                        <textarea id="noteContent" rows="3" 
+                            class="w-full border border-gray-300 rounded-lg p-4 pr-12 text-slate-700 focus:ring-2 focus:ring-slate-200 focus:border-slate-400 outline-none resize-none shadow-sm serif"
+                            placeholder="Escreva sua anotação jurídica aqui..."></textarea>
+                        <button onclick="addNote()" 
+                            class="absolute bottom-3 right-3 bg-amber-600 text-white w-10 h-10 rounded-full hover:bg-amber-700 shadow-lg transition flex items-center justify-center">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Notas (Scrollável) -->
+            <div class="flex-1 overflow-y-auto p-6 scroll-smooth" id="notesContainer">
+                <div class="max-w-4xl mx-auto space-y-6" id="notesList">
+                    <!-- Notas inseridas via JS -->
+                    <div class="text-center text-gray-400 mt-10">
+                        <i class="fa-regular fa-folder-open text-4xl mb-2"></i>
+                        <p>Nenhuma anotação encontrada para os filtros atuais.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para Inputs Extras (Link/Youtube) -->
+    <div id="inputModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+        <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+            <h3 id="modalTitle" class="font-bold mb-4">Adicionar Recurso</h3>
+            <input type="text" id="modalInput" class="w-full border p-2 rounded mb-4" placeholder="Cole o link ou texto aqui...">
+            <div class="flex justify-end gap-2">
+                <button onclick="closeModal()" class="px-4 py-2 text-slate-600 hover:bg-gray-100 rounded">Cancelar</button>
+                <button id="modalConfirmBtn" class="px-4 py-2 bg-slate-800 text-white rounded hover:bg-slate-700">Adicionar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ESTADO E CONFIGURAÇÃO ---
+        const STORE_KEY = 'law_notes_db_v1';
+        let state = {
+            tags: ['Constitucional', 'Penal', 'Civil', 'Processo Civil'],
+            notes: [], // { id, content, tag, date, timestamp, reminder, subnotes: [], links: [] }
+            filterTag: null,
+            currentDate: new Date()
+        };
+
+        // --- INICIALIZAÇÃO ---
+        function init() {
+            loadData();
+            renderTags();
+            renderCalendar();
+            renderNotes();
+            updateDateDisplay();
+            
+            // Atalho Ctrl+Enter para salvar
+            document.getElementById('noteContent').addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'Enter') addNote();
+            });
+        }
+
+        function saveData() {
+            localStorage.setItem(STORE_KEY, JSON.stringify(state));
+            renderTags();
+            renderCalendar(); // Atualiza bolinhas de lembrete
+            renderNotes();
+        }
+
+        function loadData() {
+            const data = localStorage.getItem(STORE_KEY);
+            if (data) {
+                const parsed = JSON.parse(data);
+                state.tags = parsed.tags || [];
+                state.notes = parsed.notes || [];
+            }
+        }
+
+        function updateDateDisplay() {
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('displayDate').textContent = new Date().toLocaleDateString('pt-BR', options);
+        }
+
+        // --- GERENCIAMENTO DE TAGS ---
+        function addTag() {
+            const input = document.getElementById('newTagInput');
+            const val = input.value.trim();
+            if (val && !state.tags.includes(val)) {
+                state.tags.push(val);
+                input.value = '';
+                saveData();
+            }
+        }
+
+        function removeTag(tag) {
+            if (confirm(`Excluir a tag "${tag}"?`)) {
+                state.tags = state.tags.filter(t => t !== tag);
+                // Opcional: remover a tag das notas existentes
+                state.notes.forEach(n => { if (n.tag === tag) n.tag = ''; });
+                if (state.filterTag === tag) state.filterTag = null;
+                saveData();
+            }
+        }
+
+        function toggleFilter(tag) {
+            state.filterTag = state.filterTag === tag ? null : tag;
+            renderTags();
+            renderNotes();
+        }
+
+        function renderTags() {
+            const list = document.getElementById('tagFilterList');
+            const select = document.getElementById('noteTagSelect');
+            
+            list.innerHTML = '';
+            select.innerHTML = '<option value="">Sem Tag</option>';
+
+            state.tags.forEach(tag => {
+                // Filtro Sidebar
+                const isActive = state.filterTag === tag;
+                const div = document.createElement('div');
+                div.className = `flex justify-between items-center px-3 py-2 rounded cursor-pointer text-sm transition ${isActive ? 'bg-slate-200 font-semibold' : 'hover:bg-gray-100'}`;
+                div.innerHTML = `
+                    <span onclick="toggleFilter('${tag}')" class="flex-1 truncate"><i class="fa-solid fa-tag text-xs mr-2 text-slate-400"></i>${tag}</span>
+                    <button onclick="removeTag('${tag}')" class="text-gray-300 hover:text-red-500 ml-2"><i class="fa-solid fa-times"></i></button>
+                `;
+                list.appendChild(div);
+
+                // Select Input
+                const opt = document.createElement('option');
+                opt.value = tag;
+                opt.textContent = tag;
+                select.appendChild(opt);
+            });
+        }
+
+        // --- CALENDÁRIO ---
+        function changeMonth(delta) {
+            state.currentDate.setMonth(state.currentDate.getMonth() + delta);
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const year = state.currentDate.getFullYear();
+            const month = state.currentDate.getMonth();
+            
+            document.getElementById('currentMonthYear').textContent = 
+                state.currentDate.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Dias vazios
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div></div>`;
+            }
+
+            // Dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${year}-${String(month+1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                
+                // Checar se tem lembrete nesse dia
+                const hasReminder = state.notes.some(n => n.reminder && n.date === dateStr);
+                const isToday = new Date().toISOString().split('T')[0] === dateStr;
+
+                const dayDiv = document.createElement('div');
+                dayDiv.className = `calendar-day h-8 w-8 flex flex-col items-center justify-center rounded-full text-xs cursor-pointer mx-auto ${hasReminder ? 'has-reminder' : ''} ${isToday ? 'bg-slate-200 font-bold' : ''}`;
+                dayDiv.textContent = day;
+                
+                // Clique no calendário filtra notas daquele dia
+                dayDiv.onclick = () => {
+                    // Implementação futura: filtrar por data
+                    alert(`Notas do dia ${dateStr}`);
+                };
+
+                grid.appendChild(dayDiv);
+            }
+        }
+
+        // --- NOTAS (CORE) ---
+        function addNote() {
+            const contentInput = document.getElementById('noteContent');
+            const tagSelect = document.getElementById('noteTagSelect');
+            const content = contentInput.value.trim();
+
+            if (!content) return;
+
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
+
+            const newNote = {
+                id: Date.now(),
+                content: content,
+                tag: tagSelect.value,
+                date: dateStr,
+                timestamp: now.getTime(),
+                reminder: false,
+                subnotes: [], // { id, text }
+                resources: [] // { type: 'link'|'video'|'code', value }
+            };
+
+            state.notes.unshift(newNote); // Adiciona no topo
+            contentInput.value = '';
+            saveData();
+        }
+
+        function deleteNote(id) {
+            if (confirm('Tem certeza que deseja apagar esta anotação?')) {
+                state.notes = state.notes.filter(n => n.id !== id);
+                saveData();
+            }
+        }
+
+        function toggleReminder(id) {
+            const note = state.notes.find(n => n.id === id);
+            if (note) {
+                note.reminder = !note.reminder;
+                saveData();
+            }
+        }
+
+        // --- RENDERIZAÇÃO DAS NOTAS ---
+        function renderNotes() {
+            const container = document.getElementById('notesList');
+            container.innerHTML = '';
+
+            const filteredNotes = state.notes.filter(n => {
+                if (state.filterTag && n.tag !== state.filterTag) return false;
+                return true;
+            });
+
+            if (filteredNotes.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center text-gray-400 mt-10">
+                        <i class="fa-solid fa-book-open text-4xl mb-4 opacity-30"></i>
+                        <p>Nenhuma anotação encontrada.</p>
+                    </div>`;
+                return;
+            }
+
+            filteredNotes.forEach(note => {
+                const dateFormatted = new Date(note.timestamp).toLocaleString('pt-BR');
+                
+                // Links de IA (Google Search com Prompt)
+                const promptBase = encodeURIComponent(note.content.substring(0, 100)); // Pega os primeiros 100 caracteres
+                const linkExplain = `https://www.google.com/search?q=Explique+didaticamente+o+conceito+juridico:+${promptBase}`;
+                const linkGlossary = `https://www.google.com/search?q=Glossario+juridico+definicao+de:+${promptBase}`;
+                const linkArticle = `https://www.google.com/search?q=Artigo+academico+direito+sobre:+${promptBase}`;
+
+                const el = document.createElement('div');
+                el.className = "bg-white border border-gray-200 rounded-lg shadow-sm p-5 hover:shadow-md transition group";
+                
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            ${note.tag ? `<span class="bg-slate-100 text-slate-600 text-xs px-2 py-1 rounded font-semibold uppercase tracking-wider mr-2">${note.tag}</span>` : ''}
+                            <span class="text-xs text-gray-400">${dateFormatted}</span>
+                        </div>
+                        <div class="flex gap-2">
+                             <button onclick="toggleReminder(${note.id})" class="text-gray-300 hover:text-amber-500 transition ${note.reminder ? 'text-amber-500' : ''}" title="Lembrete no Calendário">
+                                <i class="fa-solid fa-bell"></i>
+                            </button>
+                            <button onclick="deleteNote(${note.id})" class="text-gray-300 hover:text-red-500 transition" title="Excluir">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="serif text-gray-800 whitespace-pre-wrap mb-4 text-lg leading-relaxed">${note.content}</div>
+
+                    <!-- Recursos Anexados -->
+                    ${renderResources(note)}
+                    
+                    <!-- Subnotas -->
+                    <div class="ml-4 pl-4 border-l-2 border-gray-100 mt-3 space-y-2 text-sm text-gray-600">
+                        ${note.subnotes.map(sn => `<div class="flex justify-between bg-gray-50 p-2 rounded"><span>• ${sn.text}</span> <button onclick="deleteSubnote(${note.id}, ${sn.id})" class="text-xs text-red-300 hover:text-red-500"><i class="fa-solid fa-times"></i></button></div>`).join('')}
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-gray-100 flex flex-wrap gap-2 items-center">
+                        <!-- Barra de Ferramentas -->
+                        <div class="flex gap-1 mr-4 border-r border-gray-200 pr-4">
+                            <button onclick="openModal('subnote', ${note.id})" class="btn-tool text-slate-500 hover:bg-slate-100 px-2 py-1 rounded text-xs flex items-center gap-1" title="Adicionar Subnota">
+                                <i class="fa-solid fa-list-ul"></i> Sub
+                            </button>
+                            <button onclick="openModal('link', ${note.id})" class="btn-tool text-blue-500 hover:bg-blue-50 px-2 py-1 rounded text-xs flex items-center gap-1" title="Adicionar Link">
+                                <i class="fa-solid fa-link"></i> Link
+                            </button>
+                            <button onclick="openModal('video', ${note.id})" class="btn-tool text-red-500 hover:bg-red-50 px-2 py-1 rounded text-xs flex items-center gap-1" title="Vídeo Youtube">
+                                <i class="fa-brands fa-youtube"></i> Vídeo
+                            </button>
+                             <button onclick="openModal('code', ${note.id})" class="btn-tool text-green-600 hover:bg-green-50 px-2 py-1 rounded text-xs flex items-center gap-1" title="Artigo de Código/Lei">
+                                <i class="fa-solid fa-code"></i> Lei
+                            </button>
+                        </div>
+
+                        <!-- Ações AI -->
+                        <div class="flex gap-2">
+                            <a href="${linkExplain}" target="_blank" class="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-indigo-100 flex items-center gap-1">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> Explicar
+                            </a>
+                            <a href="${linkGlossary}" target="_blank" class="bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-teal-100 flex items-center gap-1">
+                                <i class="fa-solid fa-book"></i> Glossário
+                            </a>
+                            <a href="${linkArticle}" target="_blank" class="bg-purple-50 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold hover:bg-purple-100 flex items-center gap-1">
+                                <i class="fa-solid fa-pen-nib"></i> Artigo
+                            </a>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        function renderResources(note) {
+            if (!note.resources || note.resources.length === 0) return '';
+            
+            return `<div class="grid gap-2 mb-3">
+                ${note.resources.map((res, idx) => {
+                    if (res.type === 'video') {
+                        // Tenta extrair ID do youtube simples
+                        let vId = res.value.split('v=')[1];
+                        if (!vId) vId = res.value.split('/').pop(); 
+                        const ampersandPosition = vId.indexOf('&');
+                        if(ampersandPosition != -1) vId = vId.substring(0, ampersandPosition);
+                        
+                        return `<div class="bg-black rounded overflow-hidden aspect-video relative group/vid">
+                                    <iframe class="w-full h-full" src="https://www.youtube.com/embed/${vId}" frameborder="0" allowfullscreen></iframe>
+                                    <button onclick="deleteResource(${note.id}, ${idx})" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-xs hidden group-hover/vid:block">X</button>
+                                </div>`;
+                    } else if (res.type === 'link') {
+                        return `<div class="flex items-center gap-2 bg-blue-50 p-2 rounded text-sm text-blue-700 truncate">
+                                    <i class="fa-solid fa-link"></i> <a href="${res.value}" target="_blank" class="hover:underline truncate flex-1">${res.value}</a>
+                                    <button onclick="deleteResource(${note.id}, ${idx})" class="text-red-400 hover:text-red-600"><i class="fa-solid fa-times"></i></button>
+                                </div>`;
+                    } else if (res.type === 'code') {
+                         return `<div class="bg-gray-800 text-gray-200 p-3 rounded font-mono text-xs relative group/code">
+                                    <pre>${res.value}</pre>
+                                    <button onclick="deleteResource(${note.id}, ${idx})" class="absolute top-1 right-1 text-gray-400 hover:text-white hidden group-hover/code:block"><i class="fa-solid fa-times"></i></button>
+                                </div>`;
+                    }
+                }).join('')}
+            </div>`;
+        }
+
+        // --- MODAL E ADIÇÃO DE RECURSOS ---
+        let currentModalAction = null;
+        let currentNoteId = null;
+
+        function openModal(action, noteId) {
+            currentModalAction = action;
+            currentNoteId = noteId;
+            const modal = document.getElementById('inputModal');
+            const title = document.getElementById('modalTitle');
+            const input = document.getElementById('modalInput');
+
+            modal.classList.remove('hidden');
+            input.value = '';
+            input.focus();
+
+            if (action === 'subnote') {
+                title.innerText = 'Nova Subnota';
+                input.placeholder = 'Digite o texto da subnota...';
+            } else if (action === 'link') {
+                title.innerText = 'Adicionar Link';
+                input.placeholder = 'https://...';
+            } else if (action === 'video') {
+                title.innerText = 'Adicionar Vídeo do YouTube';
+                input.placeholder = 'Cole a URL do vídeo...';
+            } else if (action === 'code') {
+                title.innerText = 'Artigo de Lei / Código';
+                input.placeholder = 'Art. 5º Todos são iguais perante a lei...';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('inputModal').classList.add('hidden');
+            currentModalAction = null;
+            currentNoteId = null;
+        }
+
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+            const val = document.getElementById('modalInput').value.trim();
+            if (!val) return;
+
+            const note = state.notes.find(n => n.id === currentNoteId);
+            if (!note) return;
+
+            if (currentModalAction === 'subnote') {
+                note.subnotes.push({ id: Date.now(), text: val });
+            } else {
+                note.resources = note.resources || [];
+                note.resources.push({ type: currentModalAction, value: val });
+            }
+
+            saveData();
+            closeModal();
+        });
+
+        function deleteResource(noteId, resIndex) {
+            if(confirm('Remover este anexo?')) {
+                const note = state.notes.find(n => n.id === noteId);
+                note.resources.splice(resIndex, 1);
+                saveData();
+            }
+        }
+
+        function deleteSubnote(noteId, subId) {
+            const note = state.notes.find(n => n.id === noteId);
+            note.subnotes = note.subnotes.filter(s => s.id !== subId);
+            saveData();
+        }
+
+        function clearData() {
+            if(confirm('ATENÇÃO: Isso apagará todas as suas anotações e tags. Deseja continuar?')) {
+                localStorage.removeItem(STORE_KEY);
+                location.reload();
+            }
+        }
+
+        // Iniciar App
+        init();
+
+    </script>
+</body>
+</html>
