@@ -123,7 +123,7 @@
             --cor-entrega: #ff9800; 
             
             --altura-header: 80px; 
-            --altura-banner-top: 54px;
+            --altura-banner-top: 36px; /* Mais estreito */
             --largura-logo: 85px; 
         }
 
@@ -150,6 +150,7 @@
             line-height: 1.5; 
         }
 
+        /* BANNER FIXO ROTATIVO */
         .top-banner-fixed {
             position: fixed;
             top: 0;
@@ -159,18 +160,40 @@
             background: linear-gradient(90deg, #1565C0 0%, #0D47A1 100%);
             color: white;
             z-index: 1005;
+            overflow: hidden; /* Importante para esconder o texto fora */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .banner-track {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            animation: slideVertical 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .banner-msg {
+            height: var(--altura-banner-top); /* Ocupa toda a altura do banner */
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             font-size: 0.85rem;
-            line-height: 1.2;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-            padding: 5px;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 100%;
+            padding: 0 10px;
         }
-        .top-banner-fixed strong {
+
+        .banner-msg strong {
             color: #FFD700;
             text-transform: uppercase;
+            margin-left: 5px;
+        }
+
+        @keyframes slideVertical {
+            0%, 45% { transform: translateY(0); } /* Mostra msg 1 */
+            50%, 95% { transform: translateY(-100%); } /* Mostra msg 2 */
+            100% { transform: translateY(0); } /* Volta pro começo */
         }
 
         header {
@@ -238,7 +261,15 @@
             text-transform: uppercase;
         }
         .btn-header-action i { font-size: 1.1rem; }
-        .btn-header-insta { color: #E1306C; border-color: rgba(225, 48, 108, 0.3); }
+        
+        /* BOTÃO INSTAGRAM MAIS VISÍVEL */
+        .btn-header-insta { 
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
+            color: white; 
+            border: none;
+            box-shadow: 0 2px 8px rgba(220, 39, 67, 0.4);
+        }
+        
         .btn-header-call { color: var(--cor-info); border-color: rgba(33, 150, 243, 0.3); }
 
         h1, h2, h3, h4, h5, h6 {
@@ -370,8 +401,8 @@
             min-height: 140px;
         }
         .card-img-side {
-            width: 140px;
-            min-width: 140px;
+            width: 170px; /* AUMENTADO PARA O MOBILE (era 140px) */
+            min-width: 170px;
             height: 100%;
             object-fit: cover;
         }
@@ -630,16 +661,65 @@
                 gap: 15px; padding: 15px; flex-wrap: nowrap; display: flex !important;
                 overflow-x: auto; -webkit-overflow-scrolling: touch;
             }
-            .top-banner-fixed { flex-direction: row; gap: 10px; font-size: 1rem; }
-            .top-banner-fixed br { display: none; }
+            .top-banner-fixed { height: var(--altura-banner-top); } /* Mantem altura fixa */
             
-            .card-cesta-new { flex-direction: row; flex-wrap: wrap; }
-            .card-header-visual { width: 40%; min-height: 250px; border-right: 1px solid var(--cor-borda); }
-            .card-img-side { width: 100%; }
-            .card-title-side { display: none; } /* No desktop pode mudar layout se quiser, mas mantendo simples */
-            .card-control-row { width: 60%; flex-direction: column; border-top: none; }
-            .btn-card-toggle { border-right: none; border-bottom: 1px solid var(--cor-borda); height: 50%; }
-            .card-expand-section { width: 100%; order: 3; }
+            /* Ajuste de layout para Tablet/Desktop Pequeno: Grid de 2 Colunas */
+            .cesta-cards-grid { 
+                display: grid; 
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+                gap: 20px; 
+            }
+
+            /* Estilo dos Cards no Tablet/Desktop */
+            .card-cesta-new { 
+                flex-direction: column; /* Manter vertical como mobile */
+                height: auto; /* Altura automática */
+            }
+            .card-header-visual { 
+                width: 100%; 
+                min-height: auto; /* Altura flexível */
+                height: 220px; /* Altura fixa para a imagem não estourar */
+                border-right: none; 
+            }
+            .card-img-side { 
+                width: 100%; 
+                height: 100%; 
+                object-fit: cover; /* Garante que a imagem preencha sem distorcer */
+            }
+            .card-title-side { 
+                display: flex; /* Mostrar título de volta no desktop */
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: linear-gradient(to top, rgba(15, 37, 70, 0.95), transparent);
+                padding: 20px 15px 10px;
+                text-align: left;
+                align-items: flex-end;
+                justify-content: flex-start;
+            }
+            .card-title-side h2 {
+                color: white;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+                font-size: 1.5rem;
+            }
+            
+            /* Controles e Expansão */
+            .card-control-row { 
+                width: 100%; 
+                flex-direction: row; 
+                border-top: 1px solid var(--cor-borda); 
+            }
+            .btn-card-toggle { 
+                height: auto; 
+                border-right: 1px solid var(--cor-borda); 
+                border-bottom: none;
+                padding: 18px 10px; /* Botões mais clicáveis */
+            }
+            .card-expand-section { 
+                width: 100%; 
+                order: initial; /* Resetar ordem */
+            }
         }
         
         @media (min-width: 1024px) {
@@ -663,12 +743,11 @@
             }
             .seo-text-block { grid-column: 1 / -1; margin-top: 40px; background: var(--cor-fundo-card); border-radius: 12px; padding: 30px; border: 1px solid var(--cor-borda); }
             #pag-cestas { grid-column: 2; grid-row: 1; background: transparent; } 
-            .cesta-cards-grid { display: flex; flex-direction: column; gap: 30px; max-width: 100%; margin: 0 auto; }
             
-            .card-cesta-new { flex-direction: column; } /* Reset para layout vertical interno no grid desktop */
-            .card-header-visual { width: 100%; min-height: 180px; border-right: none; }
-            .card-control-row { width: 100%; flex-direction: row; border-top: 1px solid var(--cor-borda); }
-            .btn-card-toggle { height: auto; border-bottom: none; border-right: 1px solid var(--cor-borda); }
+            /* Ajuste específico para 3 colunas em telas grandes */
+            .cesta-cards-grid { 
+                grid-template-columns: repeat(3, 1fr); 
+            }
             
             .menu-ancoras-cestas { display: none !important; }
             .secoes-extras-grid { 
@@ -739,9 +818,12 @@
     
     <div id="toast-container"></div> 
 
-    <!-- NOVO BANNER FIXO -->
+    <!-- NOVO BANNER FIXO COM SLIDE -->
     <div class="top-banner-fixed">
-        Faça seu pedido pelo WhatsApp<br><strong>&nbsp;e pague só na Entrega!</strong>
+        <div class="banner-track">
+            <div class="banner-msg">Faça seu pedido pelo WhatsApp</div>
+            <div class="banner-msg">E PAGUE SÓ NA <strong>ENTREGA!</strong></div>
+        </div>
     </div>
 
     <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" width="80" height="80" fetchpriority="high" id="logo-principal" onerror="this.src='https://placehold.co/80x80?text=LOGO'" alt="Logo Dona Antônia" class="logo-pequ">
