@@ -1,215 +1,382 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Cestas Dona Antônia - Link na Bio</title>
-    <!-- Tailwind CSS para estilização rápida e responsiva -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para ícones -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <!-- === SEO IDÊNTICO AO SITE ORIGINAL === -->
+    <link rel="canonical" href="https://donaantonia.com.br/links" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Dona Antônia Links">
+    
+    <!-- Imagens Oficiais -->
+    <link rel="apple-touch-icon" href="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
+    <link rel="shortcut icon" href="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
+
+    <title>Links | Super Cestas Básicas Dona Antônia</title>
+    
+    <meta name="description" content="Peça sua Cesta Básica com entrega grátis em Cuiabá e VG. Atacado e Varejo. Dona Antônia Alimentos.">
+    <meta name="keywords" content="cesta básica cuiabá, link bio, whatsapp dona antonia, comprar alimentos">
+    
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fale Conosco | Dona Antônia Alimentos" />
+    <meta property="og:description" content="Toque para pedir no WhatsApp ou ver nossos preços. Entrega Grátis Cuiabá e VG." />
+    <meta property="og:url" content="https://donaantonia.com.br/links" />
+    <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" />
+    <meta property="og:site_name" content="Dona Antônia Alimentos" />
+    
+    <meta name="theme-color" content="#081221">
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* === IDENTIDADE VISUAL DO SITE ORIGINAL === */
+        :root {
+            --cor-primaria: #0F2546; 
+            --cor-fundo-site: #081221; 
+            --cor-fundo-card: #0F2546; 
+            --cor-texto: #e0e0e0; 
+            --cor-texto-destaque: #ffffff; 
+            --cor-texto-secundario: #b0bec5; 
+            --cor-borda: #1c355e; 
+            --cor-destaque-vermelho: #ff5252; 
+            --cor-destaque-dourado: #ffb300; 
+            --cor-whatsapp: #25D366; 
+            --cor-instagram: #E1306C;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f3f4f6;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--cor-fundo-site);
+            color: var(--cor-texto);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(circle at top, #1c355e 0%, var(--cor-fundo-site) 60%);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #166534 0%, #15803d 100%);
+
+        /* Container Principal Estreito (Foco no Mobile) */
+        .bio-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
         }
-        .basket-card {
-            transition: transform 0.2s;
+
+        /* Cabeçalho do Perfil */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 10px;
+            animation: fadeInDown 0.8s ease;
         }
-        .basket-card:hover {
-            transform: translateY(-5px);
+
+        .profile-img-wrapper {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 15px;
         }
-        .btn-pulse {
-            animation: pulse-animation 2s infinite;
+
+        .profile-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid var(--cor-destaque-dourado);
+            box-shadow: 0 0 20px rgba(255, 179, 0, 0.3);
+            object-fit: cover;
+            background: #fff;
         }
-        @keyframes pulse-animation {
+
+        .verified-badge {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: var(--cor-whatsapp);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--cor-fundo-site);
+            font-size: 0.8rem;
+        }
+
+        .profile-header h1 {
+            font-size: 1.4rem;
+            color: var(--cor-texto-destaque);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .profile-header p {
+            color: var(--cor-texto-secundario);
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .location-tag {
+            display: inline-block;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: var(--cor-destaque-dourado);
+            background: rgba(255, 179, 0, 0.1);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 179, 0, 0.3);
+        }
+
+        /* Botões de Links */
+        .links-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .link-btn {
+            position: relative;
+            background: var(--cor-fundo-card);
+            color: var(--cor-texto-destaque);
+            text-decoration: none;
+            padding: 16px 20px; /* Mais espaço para toque */
+            border-radius: 50px; /* Bordas bem arredondadas estilo Linktree */
+            border: 1px solid var(--cor-borda);
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Centralizado */
+            font-weight: 600;
+            font-size: 1rem;
+            transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .link-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+            border-color: var(--cor-texto-secundario);
+            background: #152e52;
+        }
+        
+        .link-btn:active {
+            transform: scale(0.98);
+        }
+
+        .link-btn i {
+            font-size: 1.4rem;
+            margin-right: 12px;
+            position: absolute; /* Ícone fixo na esquerda */
+            left: 20px;
+        }
+
+        /* Estilos Especiais para Botões Importantes */
+        .btn-destaque {
+            background: var(--cor-whatsapp);
+            color: white;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            animation: pulse 2s infinite;
+        }
+        .btn-destaque:hover { background: #1ebc57; }
+        
+        .btn-site {
+            background: linear-gradient(90deg, #1565C0 0%, #0D47A1 100%);
+            border: none;
+        }
+
+        .btn-instagram {
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            border: none;
+        }
+
+        /* Lista de Cestas (Mini Cards) */
+        .cestas-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .cesta-link {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.03);
+            padding: 8px 12px;
+            border-radius: 12px;
+            text-decoration: none;
+            border: 1px solid var(--cor-borda);
+            transition: all 0.2s;
+        }
+        .cesta-link:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--cor-destaque-dourado);
+        }
+        
+        .cesta-thumb {
+            width: 45px;
+            height: 45px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-right: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .cesta-info {
+            flex: 1;
+        }
+        .cesta-nome {
+            display: block;
+            color: var(--cor-texto-destaque);
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .cesta-desc {
+            display: block;
+            color: var(--cor-texto-secundario);
+            font-size: 0.8rem;
+        }
+        .cesta-arrow {
+            color: var(--cor-destaque-dourado);
+        }
+
+        /* Rodapé */
+        .footer-bio {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--cor-texto-secundario);
+            opacity: 0.7;
+        }
+
+        @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
             100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
         }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex justify-center">
+<body oncontextmenu="return false">
 
-    <!-- Container Mobile (limita a largura para parecer um app) -->
-    <div class="w-full max-w-md bg-white shadow-xl min-h-screen flex flex-col relative">
+    <div class="bio-container">
         
-        <!-- Cabeçalho / Hero -->
-        <header class="gradient-bg text-white p-6 rounded-b-3xl text-center relative z-10">
-            <div class="mb-4 flex justify-center">
-                <div class="bg-white p-1 rounded-full shadow-lg">
-                    <!-- Logo Redonda -->
-                    <img src="img/logo.png" alt="Logo Dona Antônia" class="w-24 h-24 rounded-full object-cover">
-                </div>
+        <!-- Cabeçalho -->
+        <header class="profile-header">
+            <div class="profile-img-wrapper">
+                <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" alt="Dona Antônia" class="profile-img" onerror="this.src='https://placehold.co/110x110?text=Logo'">
+                <div class="verified-badge"><i class="fas fa-check"></i></div>
             </div>
-            <h1 class="text-2xl font-bold mb-1">Super Cestas Dona Antônia</h1>
-            <p class="text-green-100 text-sm mb-4">Qualidade e Confiança há 8 anos</p>
-            
-            <!-- Badges de Confiança -->
-            <div class="flex flex-wrap justify-center gap-2 text-xs font-semibold">
-                <span class="bg-white text-green-800 px-3 py-1 rounded-full shadow-sm">
-                    <i class="fa-solid fa-truck"></i> Entrega Grátis Cuiabá/VG
-                </span>
-                <span class="bg-white text-green-800 px-3 py-1 rounded-full shadow-sm">
-                    <i class="fa-solid fa-wallet"></i> Pague na Entrega
-                </span>
-            </div>
+            <h1>Dona Antônia Alimentos</h1>
+            <p>Super Cestas Básicas com Entrega Grátis em Cuiabá e Várzea Grande 🚚</p>
+            <div class="location-tag"><i class="fas fa-map-marker-alt"></i> Cuiabá - MT</div>
         </header>
 
-        <!-- Aviso Importante (Segurança) -->
-        <div class="px-4 -mt-5 relative z-20">
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg shadow-md">
-                <h3 class="font-bold text-red-700 text-sm mb-1"><i class="fa-solid fa-shield-halved"></i> Compra Segura</h3>
-                <ul class="text-xs text-red-800 space-y-1">
-                    <li>❌ <span class="font-semibold">NÃO</span> pedimos PIX adiantado.</li>
-                    <li>✅ Você só paga com a cesta na mão!</li>
-                </ul>
-            </div>
-        </div>
+        <!-- Lista de Links Principais -->
+        <div class="links-list">
+            
+            <!-- WhatsApp Principal -->
+            <a href="https://wa.me/5565998150975?text=Ol%C3%A1!%20Vim%20pelo%20Link%20na%20Bio%20e%20quero%20fazer%20um%20pedido." target="_blank" class="link-btn btn-destaque">
+                <i class="fab fa-whatsapp"></i>
+                Falar no WhatsApp
+            </a>
 
-        <!-- Links Principais -->
-        <section class="p-4 space-y-3">
-            <a href="#" class="block bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold py-3 px-4 rounded-xl text-center shadow transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-star"></i> ENTRAR NO GRUPO VIP DE DESCONTOS
+            <!-- Site Oficial -->
+            <a href="https://donaantonia.com.br" target="_blank" class="link-btn btn-site">
+                <i class="fas fa-globe"></i>
+                Visitar Site Oficial
+            </a>
+
+            <div style="width: 100%; border-bottom: 1px dashed var(--cor-borda); margin: 5px 0; position: relative;">
+                <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--cor-fundo-site); padding: 0 10px; color: var(--cor-texto-secundario); font-size: 0.8rem;">NOSSAS CESTAS</span>
+            </div>
+
+            <!-- Links Diretos para Cestas (Ancoras do Site) -->
+            <div class="cestas-grid">
+                
+                <a href="https://donaantonia.com.br/#cestaeconomica" target="_blank" class="cesta-link">
+                    <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif" class="cesta-thumb" alt="Econômica">
+                    <div class="cesta-info">
+                        <span class="cesta-nome">Cesta Econômica</span>
+                        <span class="cesta-desc">A mais vendida!</span>
+                    </div>
+                    <i class="fas fa-chevron-right cesta-arrow"></i>
+                </a>
+
+                <a href="https://donaantonia.com.br/#cestamini" target="_blank" class="cesta-link">
+                    <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif" class="cesta-thumb" alt="Mini">
+                    <div class="cesta-info">
+                        <span class="cesta-nome">Cesta Mini</span>
+                        <span class="cesta-desc">Com itens de limpeza</span>
+                    </div>
+                    <i class="fas fa-chevron-right cesta-arrow"></i>
+                </a>
+
+                <a href="https://donaantonia.com.br/#cestapequena" target="_blank" class="cesta-link">
+                    <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif" class="cesta-thumb" alt="Pequena">
+                    <div class="cesta-info">
+                        <span class="cesta-nome">Cesta Pequena</span>
+                        <span class="cesta-desc">Ideal para casais</span>
+                    </div>
+                    <i class="fas fa-chevron-right cesta-arrow"></i>
+                </a>
+
+                <a href="https://donaantonia.com.br/#cestamedia" target="_blank" class="cesta-link">
+                    <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif" class="cesta-thumb" alt="Média">
+                    <div class="cesta-info">
+                        <span class="cesta-nome">Cesta Média</span>
+                        <span class="cesta-desc">Família média</span>
+                    </div>
+                    <i class="fas fa-chevron-right cesta-arrow"></i>
+                </a>
+
+                <a href="https://donaantonia.com.br/#cestagrande" target="_blank" class="cesta-link">
+                    <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif" class="cesta-thumb" alt="Grande">
+                    <div class="cesta-info">
+                        <span class="cesta-nome">Cesta Grande</span>
+                        <span class="cesta-desc">A mais completa</span>
+                    </div>
+                    <i class="fas fa-chevron-right cesta-arrow"></i>
+                </a>
+
+            </div>
+
+            <!-- Outras Redes e Info -->
+            <a href="https://www.instagram.com/super.cestas.dona.antonia/" target="_blank" class="link-btn btn-instagram">
+                <i class="fab fa-instagram"></i>
+                Instagram
+            </a>
+
+            <a href="https://goo.gl/maps/seu-link-aqui" target="_blank" class="link-btn">
+                <i class="fas fa-map-marked-alt"></i>
+                Localização
             </a>
             
-            <div class="grid grid-cols-2 gap-3">
-                <a href="https://wa.me/5565996813588" target="_blank" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-2 rounded-xl text-center text-sm border border-gray-300 flex flex-col items-center justify-center">
-                    <i class="fa-brands fa-whatsapp text-green-600 text-xl mb-1"></i>
-                    Atendimento 1<br><span class="text-xs">(65) 99681-3588</span>
-                </a>
-                <a href="https://wa.me/5565998150975" target="_blank" class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-2 rounded-xl text-center text-sm border border-gray-300 flex flex-col items-center justify-center">
-                    <i class="fa-brands fa-whatsapp text-green-600 text-xl mb-1"></i>
-                    Atendimento 2<br><span class="text-xs">(65) 99815-0975</span>
-                </a>
-            </div>
-        </section>
+        </div>
 
-        <!-- Catálogo de Cestas -->
-        <section class="flex-1 bg-gray-50 rounded-t-3xl p-4 mt-2">
-            <h2 class="text-center font-bold text-gray-800 text-lg mb-4 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-list-check text-green-600"></i> Escolha sua Cesta
-            </h2>
-            
-            <div id="products-container" class="space-y-4 pb-20">
-                <!-- Os produtos serão inseridos aqui via JavaScript -->
-            </div>
-        </section>
-
-        <!-- Botão Flutuante do WhatsApp -->
-        <a href="https://wa.me/5565998150975?text=Olá! Vim pelo Link da Bio e tenho uma dúvida." target="_blank" class="fixed bottom-4 right-4 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-2xl btn-pulse z-50 flex items-center justify-center w-14 h-14">
-            <i class="fa-brands fa-whatsapp text-3xl"></i>
-        </a>
-
-        <!-- Rodapé -->
-        <footer class="bg-gray-800 text-gray-400 text-center py-6 text-xs mt-auto">
-            <p>© 2024 Super Cestas Dona Antônia</p>
-            <p>Atendendo mais de 700 famílias todo mês.</p>
+        <footer class="footer-bio">
+            <p>© 2025 Dona Antônia Alimentos</p>
+            <p>Cuiabá e Várzea Grande - MT</p>
         </footer>
+
     </div>
 
-    <!-- Script de Lógica -->
-    <script>
-        // Configuração dos Números de WhatsApp
-        // O sistema vai alternar ou usar o principal para pedidos
-        const mainPhone = "5565998150975"; 
-
-        // Dados das Cestas (Fácil de editar)
-        const products = [
-            {
-                id: 'economica',
-                name: 'Cesta Econômica',
-                price: 85.00,
-                image: 'img/cestaeconomica.png',
-                items: ['Ideal para solteiros', 'Itens essenciais', 'Melhor custo-benefício'],
-                color: 'blue'
-            },
-            {
-                id: 'mini',
-                name: 'Cesta Mini',
-                price: 165.00,
-                image: 'img/cestamini.png',
-                items: ['Para consumo rápido', 'Variedade básica', 'Sem carregar peso'],
-                color: 'teal'
-            },
-            {
-                id: 'pequena',
-                name: 'Cesta Pequena',
-                price: 215.00,
-                image: 'img/cestapequena.png',
-                items: ['Ideal para casais', 'Marcas de qualidade', 'Entrega Rápida'],
-                color: 'green'
-            },
-            {
-                id: 'media',
-                name: 'Cesta Média',
-                price: 320.00,
-                image: 'img/cestamedia.png',
-                items: ['Famílias até 3 pessoas', 'Completa', 'Frete Grátis'],
-                color: 'orange'
-            },
-            {
-                id: 'grande',
-                name: 'Cesta Grande',
-                price: 380.00,
-                image: 'img/cestagrande.png',
-                items: ['Família grande', 'Muita variedade', 'O melhor preço'],
-                color: 'red'
-            }
-        ];
-
-        // Função para formatar moeda
-        const formatMoney = (value) => {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        };
-
-        // Função para gerar o link do WhatsApp
-        const getWhatsappLink = (productName, price) => {
-            const message = `Olá Dona Antônia! 👋\n\nVi no link da bio e gostaria de encomendar a *${productName}* no valor de *${formatMoney(price)}*.\n\nComo funciona a entrega?`;
-            return `https://wa.me/${mainPhone}?text=${encodeURIComponent(message)}`;
-        };
-
-        // Renderizar Produtos
-        const container = document.getElementById('products-container');
-
-        products.forEach(product => {
-            const card = document.createElement('div');
-            card.className = 'basket-card bg-white rounded-2xl p-4 shadow-sm border border-gray-100 flex flex-col sm:flex-row gap-4 items-center sm:items-start';
-            
-            // HTML do Card
-            card.innerHTML = `
-                <div class="w-full sm:w-1/3 relative">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-40 object-cover rounded-xl shadow-inner bg-gray-200">
-                    <div class="absolute top-2 left-2 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded-md shadow">
-                        Entrega Grátis
-                    </div>
-                </div>
-                
-                <div class="flex-1 w-full text-center sm:text-left">
-                    <h3 class="font-bold text-gray-800 text-lg leading-tight">${product.name}</h3>
-                    <div class="text-2xl font-bold text-green-700 my-1">${formatMoney(product.price)}</div>
-                    
-                    <ul class="text-xs text-gray-500 mb-3 space-y-1 inline-block text-left">
-                        ${product.items.map(item => `<li><i class="fa-solid fa-check text-green-500 mr-1"></i> ${item}</li>`).join('')}
-                    </ul>
-
-                    <a href="${getWhatsappLink(product.name, product.price)}" target="_blank" 
-                       class="block w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
-                        <span>Encomendar Agora</span>
-                        <i class="fa-brands fa-whatsapp text-xl"></i>
-                    </a>
-                </div>
-            `;
-            
-            container.appendChild(card);
-        });
-
-    </script>
 </body>
 </html>
