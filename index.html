@@ -3,24 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    
+    <!-- === PILLAR 3: SEGURANÇA (Anti-Clickjacking & XSS Protection) === -->
+    <!-- Define políticas de segurança de conteúdo permitindo apenas fontes conhecidas (Google, Facebook, FontAwesome) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://connect.facebook.net https://www.google-analytics.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com; frame-src 'self' https://maps.google.com https://www.facebook.com;">
+    <meta http-equiv="X-Frame-Options" content="DENY">
 
-     <!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1181052626789326');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    // Inicialização com Advanced Matching Automático habilitado
+    fbq('init', '1181052626789326'); 
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
     
     <!-- === CAMADA 1: Ocultar tudo por padrão === -->
     <style id="security-lock">html{display:none !important;}</style>
@@ -73,6 +80,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link rel="preconnect" href="https://maps.google.com">
+    <link rel="preconnect" href="https://connect.facebook.net">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -277,6 +285,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
             font-size: 0.8rem;
             font-weight: 600;
             text-transform: uppercase;
+            cursor: pointer;
         }
         .btn-header-action i { font-size: 1.1rem; }
         
@@ -861,10 +870,10 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
 
             <!-- NOVOS BOTÕES NO HEADER -->
             <div class="header-actions">
-                <a href="https://www.instagram.com/super.cestas.dona.antonia/" target="_blank" class="btn-header-action btn-header-insta">
+                <a href="https://www.instagram.com/super.cestas.dona.antonia/" target="_blank" class="btn-header-action btn-header-insta" rel="noopener noreferrer" onclick="trackMetaEvent('Contact', {content_name: 'Instagram Profile'})">
                     <i class="fab fa-instagram"></i> Instagram
                 </a>
-                <a href="tel:65998150975" class="btn-header-action btn-header-call">
+                <a href="tel:65998150975" class="btn-header-action btn-header-call" onclick="trackMetaEvent('Contact', {content_name: 'Phone Call'})">
                     <i class="fas fa-phone-alt"></i> Salvar Contato
                 </a>
             </div>
@@ -950,7 +959,8 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                                     <div class="radio-circle"></div>
                                 </div>
                             </div>
-                            <button class="btn-encomendar-card enabled" onclick="encomendarDireto('Cesta Econômica', '85,00')">
+                            <!-- PILLAR 2: Enhanced Tracking -->
+                            <button class="btn-encomendar-card enabled" onclick="encomendarDireto('Cesta Econômica', '85,00', 'cesta_economica')">
                                 <i class="fab fa-whatsapp"></i> Encomendar
                             </button>
                         </div>
@@ -1021,7 +1031,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                                     <div class="radio-circle"></div>
                                 </div>
                             </div>
-                            <button id="btn-pedir-mini" class="btn-encomendar-card" onclick="encomendarSelecionado('mini', 'Cesta Mini')">
+                            <button id="btn-pedir-mini" class="btn-encomendar-card" onclick="encomendarSelecionado('mini', 'Cesta Mini', 'cesta_mini')">
                                 <i class="fab fa-whatsapp"></i> Pedir no WhatsApp
                             </button>
                         </div>
@@ -1094,7 +1104,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                                     <div class="radio-circle"></div>
                                 </div>
                             </div>
-                            <button id="btn-pedir-pequena" class="btn-encomendar-card" onclick="encomendarSelecionado('pequena', 'Cesta Pequena')">
+                            <button id="btn-pedir-pequena" class="btn-encomendar-card" onclick="encomendarSelecionado('pequena', 'Cesta Pequena', 'cesta_pequena')">
                                 <i class="fab fa-whatsapp"></i> Pedir no WhatsApp
                             </button>
                         </div>
@@ -1167,7 +1177,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                                     <div class="radio-circle"></div>
                                 </div>
                             </div>
-                            <button id="btn-pedir-media" class="btn-encomendar-card" onclick="encomendarSelecionado('media', 'Cesta Média')">
+                            <button id="btn-pedir-media" class="btn-encomendar-card" onclick="encomendarSelecionado('media', 'Cesta Média', 'cesta_media')">
                                 <i class="fab fa-whatsapp"></i> Pedir no WhatsApp
                             </button>
                         </div>
@@ -1240,7 +1250,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                                     <div class="radio-circle"></div>
                                 </div>
                             </div>
-                            <button id="btn-pedir-grande" class="btn-encomendar-card" onclick="encomendarSelecionado('grande', 'Cesta Grande')">
+                            <button id="btn-pedir-grande" class="btn-encomendar-card" onclick="encomendarSelecionado('grande', 'Cesta Grande', 'cesta_grande')">
                                 <i class="fab fa-whatsapp"></i> Pedir no WhatsApp
                             </button>
                         </div>
@@ -1302,7 +1312,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
 
         <!-- === DICA 5: BOTÃO GRUPO VIP === -->
         <div style="padding: 0 15px;">
-            <a href="https://wa.me/65998150975?text=Quero%20entrar%20no%20grupo%20VIP%20de%20ofertas" target="_blank" class="btn-vip-group">
+            <a href="https://wa.me/65998150975?text=Quero%20entrar%20no%20grupo%20VIP%20de%20ofertas" target="_blank" class="btn-vip-group" rel="noopener noreferrer" onclick="trackMetaEvent('Contact', {content_name: 'VIP Group'})">
                 <i class="fas fa-star"></i> Entre no Grupo VIP de Ofertas
             </a>
         </div>
@@ -1335,6 +1345,29 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
     </div>
 
     <script>
+        // === PILLAR 2: ADVANCED TRACKING LOGIC ===
+        
+        /**
+         * Dispara eventos para Meta Pixel e Data Layer simultaneamente
+         * @param {string} eventName - Nome do evento (Ex: 'AddToCart', 'ViewContent')
+         * @param {object} params - Parâmetros JSON do evento
+         */
+        function trackMetaEvent(eventName, params) {
+            // Meta Pixel Standard
+            if(typeof fbq !== 'undefined') {
+                fbq('track', eventName, params);
+            }
+            
+            // Data Layer Push (Padrão Google Tag Manager)
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': eventName,
+                ...params
+            });
+            
+            console.log(`[TRACKING] ${eventName} fired`, params);
+        }
+
         // Estado das seleções por cesta
         let selecoesCesta = {
             'mini': { marca: null, preco: null },
@@ -1362,11 +1395,19 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                     sectionProdutos.style.display = 'none';
                     btnProdutos.classList.remove('active');
                 } else {
-                    // Abrir e fechar o outro
+                    // Abrir
                     sectionProdutos.style.display = 'block';
                     sectionValor.style.display = 'none';
                     btnProdutos.classList.add('active');
                     btnValor.classList.remove('active-valor');
+                    
+                    // TRACKING: ViewContent
+                    // Dispara quando o usuário se interessa pelos detalhes do produto
+                    trackMetaEvent('ViewContent', {
+                        content_ids: [`cesta_${cestaId}`],
+                        content_type: 'product',
+                        content_name: `Cesta ${cestaId.charAt(0).toUpperCase() + cestaId.slice(1)}`
+                    });
                 }
             } else if (tipo === 'valor') {
                 if (sectionValor.style.display === 'block') {
@@ -1374,7 +1415,7 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
                     sectionValor.style.display = 'none';
                     btnValor.classList.remove('active-valor');
                 } else {
-                    // Abrir e fechar o outro
+                    // Abrir
                     sectionValor.style.display = 'block';
                     sectionProdutos.style.display = 'none';
                     btnValor.classList.add('active-valor');
@@ -1388,12 +1429,10 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
             selecoesCesta[cestaId] = { marca: marca, preco: preco };
             
             // Atualizar visual (Radio)
-            // Remover selecionado de todos irmãos
             const container = elementoOption.parentElement;
             const options = container.querySelectorAll('.radio-arroz-option');
             options.forEach(opt => opt.classList.remove('selected'));
             
-            // Adicionar selecionado ao clicado
             elementoOption.classList.add('selected');
             
             // Habilitar botão
@@ -1401,19 +1440,48 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
             if(btn) btn.classList.add('enabled');
         }
 
-        function encomendarSelecionado(cestaId, nomeCesta) {
+        function encomendarSelecionado(cestaId, nomeCesta, productId) {
             const selecao = selecoesCesta[cestaId];
-            if (!selecao.marca) return; // Segurança extra
+            if (!selecao.marca) return; 
+
+            // TRACKING: AddToCart
+            // Converter preço "165,00" para float 165.00
+            const valorFloat = parseFloat(selecao.preco.replace(',', '.'));
+            
+            trackMetaEvent('AddToCart', {
+                content_ids: [productId],
+                content_type: 'product',
+                value: valorFloat,
+                currency: 'BRL',
+                content_name: nomeCesta
+            });
 
             const marcaNome = selecao.marca === 'Alvino' ? 'Arroz Tio Alvino' : 'Arroz Koblenz';
             const texto = `Olá! Gostaria de encomendar a *${nomeCesta}* com *${marcaNome}* no valor de *R$ ${selecao.preco}*.`;
             
-            window.open(`https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`, '_blank');
+            // Pequeno delay para garantir disparo do pixel antes de sair da página
+            setTimeout(() => {
+                window.open(`https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`, '_blank');
+            }, 300);
         }
 
-        function encomendarDireto(nome, preco) {
+        function encomendarDireto(nome, preco, productId) {
+            // TRACKING: AddToCart
+            const valorFloat = parseFloat(preco.replace(',', '.'));
+            
+            trackMetaEvent('AddToCart', {
+                content_ids: [productId],
+                content_type: 'product',
+                value: valorFloat,
+                currency: 'BRL',
+                content_name: nome
+            });
+
             const texto = `Olá! Gostaria de encomendar a *${nome}* no valor de *R$ ${preco}*.`;
-            window.open(`https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`, '_blank');
+            
+            setTimeout(() => {
+                window.open(`https://wa.me/${getWhatsNumber()}?text=${encodeURIComponent(texto)}`, '_blank');
+            }, 300);
         }
 
         function getWhatsNumber() {
@@ -1425,6 +1493,12 @@ src="https://www.facebook.com/tr?id=1181052626789326&ev=PageView&noscript=1"
             document.getElementById('imgZoomTarget').src = src;
             document.getElementById('captionZoom').innerText = alt;
             document.getElementById('modalZoomImagem').style.display = 'flex';
+            
+            // TRACKING: Visualizar Zoom também conta como interesse forte
+            trackMetaEvent('ViewContent', {
+                content_name: alt,
+                content_category: 'Zoom Image'
+            });
         }
         function fecharZoom() { document.getElementById('modalZoomImagem').style.display = 'none'; }
         
