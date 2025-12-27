@@ -672,6 +672,25 @@
                 `;
                 area.appendChild(row);
             });
+
+            // --- NOVO: Item Manual ---
+            const divDivisor = document.createElement('div');
+            divDivisor.className = "border-t border-dashed border-gray-300 my-2 pt-1";
+            area.appendChild(divDivisor);
+
+            const labelManual = document.createElement('div');
+            labelManual.className = "text-[10px] font-bold text-blue-600 mb-1";
+            labelManual.innerText = "Adicionar Item Extra/Manual:";
+            area.appendChild(labelManual);
+
+            const rowManual = document.createElement('div');
+            rowManual.className = "flex items-center gap-2 mb-1";
+            // As classes 'item-qtd' e 'item-desc' garantem que a função adicionarItemAoCarrinho capture esses valores
+            rowManual.innerHTML = `
+                <input type="number" min="0" value="0" class="w-12 border border-blue-300 bg-blue-50 rounded text-center px-1 item-qtd font-bold text-blue-800">
+                <input type="text" placeholder="Nome do produto extra..." class="flex-1 border border-blue-300 bg-blue-50 rounded px-1 item-desc text-blue-800 placeholder-blue-300">
+            `;
+            area.appendChild(rowManual);
         }
 
         // --- CARRINHO ---
@@ -1141,13 +1160,21 @@
 
                 const localizacao = `${p.cliente.endereco || ''}, ${p.cliente.bairro || ''}`;
 
-                // --- NOVO: LÓGICA DE BOTÕES MAPA E FOTO ---
+                // --- NOVO: LÓGICA DE BOTÕES MAPA E FOTO (DESATIVADOS SE NÃO TIVER LINK) ---
                 const linkMap = p.cliente.maps ? p.cliente.maps : '';
-                const linkFoto = p.cliente.foto ? p.cliente.foto : ''; // Campo novo do cadastro
+                const linkFoto = p.cliente.foto ? p.cliente.foto : ''; 
                 
                 // Botões Mini (Usam stopPropagation para não abrir o card inteiro)
-                const btnMapHTML = linkMap ? `<button onclick="event.stopPropagation(); window.open('${linkMap}', '_blank')" class="ml-2 text-orange-500 hover:text-orange-600 transition" title="Abrir Mapa"><i class="fa-solid fa-map-location-dot"></i></button>` : '';
-                const btnFotoHTML = linkFoto ? `<button onclick="event.stopPropagation(); window.open('${linkFoto}', '_blank')" class="ml-1 text-purple-500 hover:text-purple-600 transition" title="Ver Foto"><i class="fa-solid fa-image"></i></button>` : '';
+                // Se existir o link: colorido e clicável. 
+                // Se NÃO existir: cinza e cursor 'não permitido'.
+                const btnMapHTML = linkMap ? 
+                    `<button onclick="event.stopPropagation(); window.open('${linkMap}', '_blank')" class="ml-2 text-orange-500 hover:text-orange-600 transition" title="Abrir Mapa"><i class="fa-solid fa-map-location-dot"></i></button>` : 
+                    `<button onclick="event.stopPropagation();" class="ml-2 text-gray-300 cursor-not-allowed" title="Sem Mapa"><i class="fa-solid fa-map-location-dot"></i></button>`;
+
+                const btnFotoHTML = linkFoto ? 
+                    `<button onclick="event.stopPropagation(); window.open('${linkFoto}', '_blank')" class="ml-1 text-purple-500 hover:text-purple-600 transition" title="Ver Foto"><i class="fa-solid fa-image"></i></button>` : 
+                    `<button onclick="event.stopPropagation();" class="ml-1 text-gray-300 cursor-not-allowed" title="Sem Foto"><i class="fa-solid fa-image"></i></button>`;
+                
                 // ------------------------------------------
                 
                 const botoesOrdem = pedidosFiltrados.length > 1 ? `
