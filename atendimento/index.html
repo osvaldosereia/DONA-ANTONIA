@@ -778,7 +778,7 @@
                             <li><b>Cartão de Débito</b></li>
                             <li><b>PIX</b> ou <b>Dinheiro</b> na entrega</li>
                             <li><b>Vale Alimentação/Refeição:</b> Alelo, Sodexo, Pluxee, Caju, Flash, iFood...</li>
-                            <li><b>Não vendemos pra 30 dias</b></li>
+                            <li class="text-red-500 font-bold">Não vendemos pra 30 dias</li>
                         </ul>`;
                     await addMessage(listaPagamento);
                     await addMessage('Aqui você só paga quando recebe a cesta na sua casa.', 'bot');
@@ -818,6 +818,7 @@
                     
                     const listaCestas = CESTAS.map((c, i) => ({
                         text: c.nome,
+                        subtext: `(${c.arrozQtd} pacote${c.arrozQtd > 1 ? 's' : ''} de arroz)`,
                         value: `select_cesta_${i}`,
                         nextStep: 2
                     }));
