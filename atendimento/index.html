@@ -13,7 +13,7 @@
       "@context": "https://schema.org",
       "@type": "GroceryStore",
       "name": "Dona Antônia Alimentos",
-      "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
+      "image": "https://donaantonia.com.br/img/logo.png",
       "telephone": "+5565998150975",
       "url": "https://donaantonia.com.br",
       "address": {
@@ -111,8 +111,8 @@
         .card-msg-container { width: 100%; max-width: 340px; margin-bottom: 5px; }
 
         .card-cesta-new {
-            background: #fff; border-radius: 12px; border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;
+            background: #fff; border-radius: 16px; border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column;
             position: relative;
         }
 
@@ -208,12 +208,31 @@
         .radio-discount.selected .radio-circle { border-color: #166534; }
         .radio-discount.selected .radio-circle::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: #166534; border-radius: 50%; }
 
-        /* Card Empresa */
-        .company-social-section { background: #f9f9f9; padding: 10px; border-top: 1px solid #eee; text-align: center; }
-        .company-follow-text { font-size: 0.8rem; font-weight: 700; color: #555; margin-bottom: 5px; display: inline-flex; align-items: center; gap: 4px; }
-        .company-social-row { display: flex; justify-content: center; gap: 20px; }
-        .company-social-btn { color: #666; font-size: 1.6rem; transition: all 0.2s; }
-        .company-social-btn:hover { color: #008069; transform: scale(1.1); }
+        /* Card Empresa (REDESENHADO) */
+        .company-header {
+            padding: 20px 15px; display: flex; flex-direction: row; align-items: center;
+            background: #fff; border-bottom: 1px solid #f0f0f0; gap: 15px;
+        }
+        .company-logo { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #fff; }
+        .company-info h2 { font-size: 1.1rem; font-weight: 800; color: #0F2546; line-height: 1.2; margin-bottom: 2px; }
+        .company-info p { font-size: 0.85rem; color: #666; font-weight: 400; }
+
+        .company-social-section { 
+            background: #fdfdfd; padding: 15px; border-top: 1px solid #eee; 
+            display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 12px;
+        }
+        .company-follow-text { 
+            font-size: 0.85rem; font-weight: 700; color: #444; 
+            display: flex; align-items: center; gap: 4px;
+            margin: 0;
+        }
+        .company-social-row { display: flex; gap: 15px; }
+        .company-social-btn { 
+            color: #555; font-size: 1.6rem; transition: all 0.2s; 
+            background: #fff; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #eee;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .company-social-btn:hover { color: #008069; transform: scale(1.05); border-color: #008069; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="h-[100dvh] flex flex-col overflow-hidden" oncontextmenu="return false;">
@@ -221,7 +240,7 @@
     <!-- HEADER -->
     <header class="wa-header text-white p-3 flex items-center shadow-md z-30 shrink-0">
         <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3 border border-white/30 relative shrink-0">
-            <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo" class="w-full h-full object-cover protected-img">
+            <img src="img/logo.png" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo" class="w-full h-full object-cover protected-img">
             <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
         </div>
         <div class="flex-1 min-w-0">
@@ -667,14 +686,15 @@
             return `
             <div class="card-msg-container">
                 <div class="card-cesta-new">
-                    <div class="card-header-visual" style="flex-direction:row;">
-                        <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" style="width:70px; height:70px; border-radius:50%;" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo'">
-                        <div class="card-title-right">
-                            <h2 style="font-size:1.1rem">Dona Antônia Alimentos</h2>
-                            <p style="font-size:0.8rem; color:#666;">Desde 2016 em Cuiabá & VG</p>
+                    <div class="company-header">
+                        <img src="img/logo.png" class="company-logo" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo'">
+                        <div class="company-info">
+                            <h2>Dona Antônia Alimentos</h2>
+                            <p>Desde 2016 em Cuiabá & VG</p>
                         </div>
                     </div>
-                    <div class="product-slider-container" style="padding: 10px 0;">
+                    
+                    <div class="product-slider-container" style="padding: 15px 0;">
                         <div class="slider-wrapper">
                             <div class="product-slider">
                                 ${slidesHTML}
@@ -682,8 +702,9 @@
                             </div>
                         </div>
                     </div>
+                    
                     <div class="company-social-section">
-                        <div class="company-follow-text">Siga <i class="ph-bold ph-arrow-down-right"></i></div>
+                        <div class="company-follow-text">Siga <i class="ph-bold ph-caret-right"></i></div>
                         <div class="company-social-row">
                             <a href="https://instagram.com" target="_blank" class="company-social-btn"><i class="ph ph-instagram-logo"></i></a>
                             <a href="https://facebook.com" target="_blank" class="company-social-btn"><i class="ph ph-facebook-logo"></i></a>
@@ -768,23 +789,37 @@
                 case 2: // Mostra Empresa
                     await addMessage(generateCompanyCardHTML());
                     await addMessage(`Somos de Cuiabá, com 8 anos de tradição entregando qualidade na sua mesa.`);
-                    setTimeout(() => { state.step = 3; nextStepFlow(); }, 4000);
+                    // MUDANÇA: AGORA PERGUNTA ANTES DE MOSTRAR AS CESTAS
+                    setTimeout(() => { 
+                        state.step = 4; // Passo intermediário para perguntar
+                        nextStepFlow('ask_show_products'); 
+                    }, 4000);
                     break;
 
-                case 3: // Intro Showcase
-                    await addMessage(`Vou te mostrar as nossas cestas. Você pode navegar entre elas aqui mesmo 👇`);
-                    // Chama direto o Card Unificado
-                    setTimeout(() => { state.step = 5; nextStepFlow(); }, 1500);
+                // PASSO NOVO: PERGUNTA DIDÁTICA
+                case 4: 
+                    if(triggerValue === 'ask_show_products') {
+                        await addMessage(`Posso te apresentar nossas opções de cestas agora?`);
+                        showOptions([
+                            { text: "Sim, quero ver ✅", value: "show_baskets", nextStep: 5 }
+                        ]);
+                    }
                     break;
+
+                case 3: // Fallback caso venha do "Sim" direto do passo 1
+                     // Redireciona para o passo 5 (Mostrar Cestas) com uma msg antes
+                     await addMessage(`Combinado! Vou te mostrar as opções.`);
+                     setTimeout(() => { state.step = 5; nextStepFlow(); }, 1000);
+                     break;
 
                 case 5: // Exibe Card UNIFICADO
                     state.currentBasketIndex = 0; // Começa na Grande
+                    await addMessage(`Você pode navegar entre elas aqui mesmo 👇`);
                     await addMessage(generateUnifiedCardFrame(CESTAS[0]));
                     
                     trackEvent('ViewContent', { content_name: CESTAS[0].nome });
 
                     // TIMER DE RETENÇÃO (30s)
-                    // Se o usuário não fizer nada em 30s, o bot puxa assunto sobre pagamento
                     state.timerRef = setTimeout(() => {
                         state.step = 6;
                         nextStepFlow('timer_trigger');
@@ -813,14 +848,20 @@
                     
                     // Pitch Final Separado em 2 partes
                     setTimeout(async () => {
-                        await addMessage(`🎁 <b>PROMOÇÃO RELÂMPAGO</b>`);
-                        // 1. Mostra Tabela
-                        await addMessage(generateDiscountTableOnly());
+                        // MENSAGEM HUMANA DE TRANSIÇÃO
+                        await addMessage(`Olha, pra te ajudar a fechar a sua primeira compra com a gente...`);
+                        await addMessage(`Preparei algo especial 👇`);
                         
                         setTimeout(async () => {
-                             // 2. Convite para Ação
-                             await addMessage(`Você quer garantir esse desconto por 15 dias sem compromisso?`);
-                             await addMessage(generateDiscountSelector()); 
+                            await addMessage(`🎁 <b>PROMOÇÃO RELÂMPAGO</b>`);
+                            // 1. Mostra Tabela
+                            await addMessage(generateDiscountTableOnly());
+                            
+                            setTimeout(async () => {
+                                 // 2. Convite para Ação
+                                 await addMessage(`Você quer garantir esse desconto por 15 dias sem compromisso?`);
+                                 await addMessage(generateDiscountSelector()); 
+                            }, 1500);
                         }, 1500);
 
                     }, 2000);
