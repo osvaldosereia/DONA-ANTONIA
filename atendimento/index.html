@@ -254,15 +254,34 @@
         }
         .company-social-btn:hover { color: #008069; transform: scale(1.05); border-color: #008069; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Company Stats Slides */
-        .stat-slide {
-            flex: 0 0 200px; height: 120px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 12px; padding: 15px; text-align: center; color: white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        /* Company Stats List (Vertical) */
+        .company-stats-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 10px 15px;
         }
-        .stat-text { font-weight: 800; font-size: 1.1rem; line-height: 1.2; margin-bottom: 5px; }
-        .stat-sub { font-size: 0.85rem; opacity: 0.9; }
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 8px 12px;
+            border-radius: 8px;
+            color: white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .stat-row-text {
+            font-size: 0.9rem;
+            font-weight: 500;
+            line-height: 1.2;
+            flex: 1;
+            text-align: left;
+        }
+        .stat-row-icon {
+            font-size: 1.2rem;
+            margin-right: 10px;
+            opacity: 0.9;
+        }
 
     </style>
 </head>
@@ -333,14 +352,14 @@
         const CESTAS = [
             {
                 id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', desconto: 5, arrozQtd: 1, brindeNome: '1 Trigo 1kg',
-                brindeImg: 'img/alimento/trigo vitoriosa.webp',
+                brindeImg: 'img/alimentos/trigo vitoriosa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
                 items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo de Soja Liza 900ml', '1 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Farinha Mandioca', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '1 Suco Frisco'],
                 opcoes: [{ arroz: 'Valor Único', preco: '85,00', valor_num: 85.00 }]
             },
             {
                 id: 'mini', nome: 'Cesta Mini', desconto: 10, arrozQtd: 1, brindeNome: '1 Feijão 1kg',
-                brindeImg: 'img/alimento/feijão da casa.webp',
+                brindeImg: 'img/alimentos/feijão da casa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
                 items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '1 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
                 opcoes: [{ arroz: 'Tio Alvino', preco: '165,00', valor_num: 165.00 }, { arroz: 'Koblenz', preco: '170,00', valor_num: 170.00 }]
@@ -354,7 +373,7 @@
             },
             {
                 id: 'media', nome: 'Cesta Média', desconto: 20, arrozQtd: 3, brindeNome: '1 Café 250g',
-                brindeImg: 'img/alimento/cafe caboclo 250g.webp',
+                brindeImg: 'img/alimentos/cafe caboclo 250g.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
                 items: ['3 Arroz Koblenz 5kg', '2 Açúcar Doce Dia 2kg', '3 Óleo de Soja Liza 900ml', '3 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '2 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '3 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '3 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
                 opcoes: [{ arroz: 'Tio Alvino', preco: '320,00', valor_num: 320.00 }, { arroz: 'Koblenz', preco: '325,00', valor_num: 325.00 }]
@@ -529,7 +548,7 @@
         function getProductImage(text) {
             const lowerText = text.toLowerCase();
             let imgName = 'outros.png';
-            let folder = 'img/alimento/'; // Default folder
+            let folder = 'img/alimentos/'; // Default folder
 
             // LOGICA DE MAPEAMENTO CORRIGIDA PARA NOMES DE ARQUIVO EXATOS
 
@@ -546,7 +565,7 @@
             else if(lowerText.includes('sabão barra')) { imgName = 'sabão barra ype 900g.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('sabão pó') || lowerText.includes('sabão em pó') || lowerText.includes('omo')) { imgName = 'sabão em pó omo 800g.webp'; folder = 'img/limpeza/'; }
             
-            // === ALIMENTOS (img/alimento/) ===
+            // === ALIMENTOS (img/alimentos/) ===
             else if(lowerText.includes('arroz')) imgName = 'Arroz Koblenz 5kg.webp';
             else if(lowerText.includes('açúcar') || lowerText.includes('acucar')) imgName = 'açucar doce dia 2 kg.webp';
             else if(lowerText.includes('bolacha')) imgName = 'bolacha mybit.webp';
@@ -689,16 +708,16 @@
         function generateCompanyCardHTML() {
             // SLIDES COM TEXTO COLORIDO
             const slidesData = [
-                { text: "8 anos em Cuiabá e VG", bg: "linear-gradient(135deg, #10b981, #059669)" },
-                { text: "Mais de 30 mil Cestas Entregues", bg: "linear-gradient(135deg, #3b82f6, #2563eb)" },
-                { text: "6 mil seguidores no Facebook", bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)" },
-                { text: "1900 seguidores do Instagram", bg: "linear-gradient(135deg, #f43f5e, #e11d48)" }
+                { text: "8 anos em Cuiabá e VG", bg: "linear-gradient(135deg, #10b981, #059669)", icon: "ph-clock" },
+                { text: "Mais de 30 mil Cestas Entregues", bg: "linear-gradient(135deg, #3b82f6, #2563eb)", icon: "ph-truck" },
+                { text: "6 mil seguidores no Facebook", bg: "linear-gradient(135deg, #8b5cf6, #7c3aed)", icon: "ph-thumbs-up" },
+                { text: "1900 seguidores do Instagram", bg: "linear-gradient(135deg, #f43f5e, #e11d48)", icon: "ph-instagram-logo" }
             ];
 
-            const slidesHTML = slidesData.map(s => `
-                <div class="stat-slide" style="background: ${s.bg};">
-                    <div class="stat-text">${s.text}</div>
-                    <div class="stat-sub"><i class="ph-fill ph-check-circle"></i> Verificado</div>
+            const statsHTML = slidesData.map(s => `
+                <div class="stat-row" style="background: ${s.bg};">
+                    <i class="ph-fill ${s.icon || 'ph-check-circle'} stat-row-icon"></i>
+                    <span class="stat-row-text">${s.text}</span>
                 </div>`).join('');
 
             return `
@@ -713,13 +732,8 @@
                             </div>
                         </div>
                         
-                        <div class="product-slider-container" style="padding: 15px 0;">
-                            <div class="slider-wrapper">
-                                <div class="product-slider">
-                                    ${slidesHTML}
-                                    <div style="min-width: 15px;"></div>
-                                </div>
-                            </div>
+                        <div class="company-stats-list">
+                            ${statsHTML}
                         </div>
                         
                         <div class="company-social-section">
