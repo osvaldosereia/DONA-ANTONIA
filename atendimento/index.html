@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cesta Econômica | Dona Antônia Alimentos - Cuiabá e VG</title>
+    <title>Cesta Econômica | Super Cestas Dona Antônia - Cuiabá e VG</title>
     <meta name="description" content="Encomende cestas básicas em Cuiabá e Várzea Grande. Qualidade, preço justo e entrega rápida. Fale com o Osvaldo!">
     <meta name="theme-color" content="#008069">
     
@@ -12,8 +12,8 @@
     {
       "@context": "https://schema.org",
       "@type": "GroceryStore",
-      "name": "Dona Antônia Alimentos",
-      "image": "https://donaantonia.com.br/img/logo.png",
+      "name": "Super Cestas Dona Antônia",
+      "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
       "telephone": "+5565998150975",
       "url": "https://donaantonia.com.br",
       "address": {
@@ -298,7 +298,7 @@
     <!-- HEADER -->
     <header class="wa-header text-white p-3 flex items-center shadow-md z-30 shrink-0">
         <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3 border border-white/30 relative shrink-0">
-            <img src="img/logo.png" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo" class="w-full h-full object-cover protected-img">
+            <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo" class="w-full h-full object-cover protected-img">
             <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
         </div>
         <div class="flex-1 min-w-0">
@@ -735,7 +735,7 @@
                         <div class="company-header">
                             <img src="img/logo.png" class="company-logo" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo'">
                             <div class="company-info">
-                                <h2>Dona Antônia Alimentos</h2>
+                                <h3>Super Cestas Dona Antônia</h3>
                                 <p>Desde 2016 em Cuiabá & VG</p>
                             </div>
                         </div>
@@ -789,8 +789,8 @@
             trackEvent('PageView');
             setTimeout(async () => {
                 await addMessage(`${getGreeting()}! Tudo bem? 👋`, 'bot', 1000);
-                await addMessage(`Aqui é o <b>${CONFIG.ownerName}</b>, da Cesta Básica Econômica.`, 'bot', 1500);
-                await addMessage(`Qual é o seu primeiro nome?`, 'bot', 1200);
+                await addMessage(`Aqui é o <b>${CONFIG.ownerName}</b>, da Cesta Básica Dona Antônia.`, 'bot', 1500);
+                await addMessage(`Qual é o seu nome?`, 'bot', 1200);
                 userInput.focus();
             }, 500);
         };
@@ -843,7 +843,7 @@
             switch (state.step) {
                 case 1: 
                     await addMessage(`Prazer, ${name}! 😀`);
-                    await addMessage(`Você já conhece a Dona Antônia Alimentos?`);
+                    await addMessage(`Você já conhece a Super Cestas Dona Antônia?`);
                     showOptions([
                         { text: "Sim, já conheço 👍", value: "sim", nextStep: 3 },
                         { text: "Não conheço 🤔", value: "nao", nextStep: 2 }
@@ -901,8 +901,9 @@
                     const listaPagamento = `
                         <ul class="list-disc pl-5 space-y-1">
                             <li>Cartão de Crédito e Débito</li>
+                            <li>Parcelamos em 3x sem juros no Cartão de Crédito</li>
                             <li>PIX ou Dinheiro na entrega</li>
-                            <li>Vale Alimentação (Alelo, Sodexo, Pluxee, Caju, etc)</li>
+                            <li>Vale Alimentação e Refeição (Alelo, Sodexo, Pluxee, Caju, Flash e Ifood)</li>
                         </ul>`;
                     await addMessage(listaPagamento);
                     
@@ -914,8 +915,8 @@
                     break;
 
                 case 8: // Retenção - Hook
-                    await addMessage(`${name}, quero que você se torne nosso cliente.`);
-                    await addMessage(`Posso te oferecer um desconto pra sua primeira compra?`);
+                    await addMessage(`⭐ ${name}, quero muito que você se torne nosso cliente.`);
+                    await addMessage(`🚀 Posso te oferecer um desconto pra sua primeira compra?`);
                     
                     showOptions([
                         { text: "Pode sim 👍", value: "accept_offer", nextStep: 9 }
