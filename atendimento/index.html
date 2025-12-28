@@ -6,23 +6,23 @@
     <title>Cesta Econômica | Fale com o Osvaldo</title>
     <meta name="theme-color" content="#008069">
 
-    <!-- PILLAR 1: SEO & PERFORMANCE -->
+    <!-- OTIMIZAÇÃO: Preload de recursos críticos -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- PILLAR 3: SECURITY HEADERS -->
+    <!-- SEGURANÇA -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https: data:;">
     <meta http-equiv="X-Frame-Options" content="DENY">
 
     <style>
-        /* WhatsApp Specific Styles */
+        /* === ESTILOS GERAIS DO WHATSAPP === */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #E5DDD5; }
         
         .wa-header { background-color: #008069; }
         
-        /* BACKGROUND PERSONALIZADO */
+        /* Background Pattern SVG Otimizado */
         .wa-bg { 
             background-color: #E5DDD5;
             background-image: url("data:image/svg+xml,%3Csvg width='320' height='180' viewBox='0 0 320 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239CAFA3' fill-opacity='0.20' fill-rule='evenodd'%3E%3Ctext x='20' y='70' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 20 70)'%3Ewww.donaantonia.com.br%3C/text%3E%3Ctext x='80' y='150' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 80 150)'%3E65 99815-0975%3C/text%3E%3C/g%3E%3C/svg%3E");
@@ -32,91 +32,69 @@
         .msg-in { background-color: #FFFFFF; border-radius: 0 8px 8px 8px; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
         .msg-out { background-color: #E7FFDB; border-radius: 8px 0 8px 8px; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
         
-        /* Botões Estilo Menu WhatsApp */
+        /* === BOTÕES INTERATIVOS === */
         .msg-options { background-color: transparent; padding: 0; box-shadow: none; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; width: 85%; }
         .wa-btn {
-            background-color: white;
-            color: #008069;
-            padding: 12px 16px;
-            border-radius: 8px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
-            transition: all 0.2s;
-            border: 1px solid #f0f0f0;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background-color: white; color: #008069; padding: 12px 16px; border-radius: 8px; width: 100%;
+            text-align: center; box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: all 0.2s; border: 1px solid #f0f0f0;
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .wa-btn:active { background-color: #f0f2f5; transform: scale(0.98); }
-        
         .wa-btn-title { font-weight: 600; font-size: 15px; line-height: 1.2; }
         .wa-btn-subtitle { font-weight: 400; font-size: 11px; color: #667781; margin-top: 4px; line-height: 1.2; }
 
-        /* Animation */
+        /* === ANIMAÇÕES === */
         .typing-dot { animation: typing 1.4s infinite ease-in-out both; }
         .typing-dot:nth-child(1) { animation-delay: -0.32s; }
         .typing-dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes typing { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+        
+        @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        @keyframes bounceRight { 0%, 100% { transform: translate(0, -50%); } 50% { transform: translate(6px, -50%); } }
 
+        /* === UTILITÁRIOS === */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .protected-img, .protected-msg { user-select: none; -webkit-user-select: none; }
 
-        .protected-img, .protected-msg {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        /* === ESTILOS DOS CARDS === */
+        /* === ESTILOS DOS CARDS DE PRODUTO === */
         :root {
             --cor-destaque-dourado: #ffb300;
             --cor-texto-destaque: #0F2546;
-            --cor-texto: #333;
-            --cor-borda: #e0e0e0;
             --cor-whatsapp: #25D366;
             --cor-destaque-vermelho: #ff5252;
         }
 
-        .card-msg-container { width: 100%; max-width: 340px; }
+        .card-msg-container { width: 100%; max-width: 340px; margin-bottom: 5px; }
 
         .card-cesta-new {
-            background: #fff; border-radius: 12px; margin-bottom: 5px;
-            border: 1px solid var(--cor-borda); box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            overflow: hidden; display: flex; flex-direction: column;
+            background: #fff; border-radius: 12px; border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;
         }
 
-        /* Cabeçalho Horizontal */
+        /* Header do Card (Foto + Título) */
         .card-header-visual {
             display: flex; flex-direction: row; align-items: center;
             background: #fff; padding: 10px; border-bottom: 1px solid #f0f0f0; position: relative;
         }
-        
         .card-img-left {
-            width: 135px; height: 135px; object-fit: cover;
-            border-radius: 8px; flex-shrink: 0; border: 1px solid #eee;
+            width: 135px; height: 135px; object-fit: cover; border-radius: 8px; flex-shrink: 0; border: 1px solid #eee;
         }
-
         .card-title-right {
-            flex-grow: 1; padding-left: 15px; display: flex;
-            flex-direction: column; justify-content: center;
+            flex-grow: 1; padding-left: 15px; display: flex; flex-direction: column; justify-content: center;
         }
-
         .card-title-right h2 {
-            font-size: 1.2rem; margin: 0; color: var(--cor-texto-destaque);
-            font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; line-height: 1.2;
+            font-size: 1.2rem; margin: 0; color: #0F2546; font-weight: 800; text-transform: uppercase; letter-spacing: -0.5px; line-height: 1.2;
         }
-
         .selo-destaque {
             position: absolute; top: -5px; right: 10px;
-            background: linear-gradient(135deg, var(--cor-destaque-dourado), #FFB300);
+            background: linear-gradient(135deg, #ffb300, #FFB300);
             color: #0F2546; padding: 4px 10px; border-radius: 0 0 10px 10px;
-            font-weight: 800; font-size: 0.65rem; text-transform: uppercase;
-            z-index: 10; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-weight: 800; font-size: 0.65rem; text-transform: uppercase; z-index: 10;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Slider Horizontal */
+        /* Slider de Produtos */
         .product-slider-container { background: #f9fafb; padding: 15px 0; position: relative; }
         .product-slider {
             display: flex; overflow-x: auto; gap: 12px; padding: 0 15px;
@@ -126,81 +104,63 @@
         .product-slider::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
         .product-slide {
-            flex: 0 0 110px; display: flex; flex-direction: column;
-            align-items: center; background: #fff; border: 1px solid #e5e7eb;
-            border-radius: 10px; padding: 10px 5px; text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex: 0 0 110px; display: flex; flex-direction: column; align-items: center;
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 10px 5px;
+            text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .product-slide img {
-            width: 65px; height: 65px; object-fit: contain; margin-bottom: 8px;
-        }
+        .product-slide img { width: 65px; height: 65px; object-fit: contain; margin-bottom: 8px; }
         .product-info { display: flex; flex-direction: column; line-height: 1.1; }
-        .product-qty { 
-            font-size: 0.85rem; font-weight: 800; color: var(--cor-whatsapp); margin-bottom: 3px;
+        .product-qty { font-size: 0.85rem; font-weight: 800; color: #25D366; margin-bottom: 3px; }
+        .product-name { font-size: 0.75rem; color: #444; font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+        /* Indicadores de Scroll */
+        .scroll-hint {
+            background-color: #fff8dc; color: #b45309; font-size: 0.75rem; font-weight: 800;
+            text-align: center; padding: 8px; margin: 0 10px 8px 10px; border-radius: 6px;
+            border: 1px dashed #fcd34d; display: flex; align-items: center; justify-content: center;
+            gap: 6px; animation: pulseHint 2s infinite;
         }
-        .product-name {
-            font-size: 0.75rem; color: #444; font-weight: 600;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        .slider-arrow-indicator {
+            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.9); border: 2px solid #25D366; border-radius: 50%;
+            width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 20; animation: bounceRight 1.2s infinite;
+            pointer-events: none; transition: opacity 0.3s;
         }
 
-        /* Lista de Preços */
+        /* Lista de Preços (Visualização) */
         .card-price-display-only { padding: 10px 15px; background: #fff; border-top: 1px solid #eee; }
-        .price-item-row {
-            display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; color: #555;
-        }
-        .price-item-row strong { color: var(--cor-destaque-vermelho); }
+        .price-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; color: #555; }
+        .price-item-row strong { color: #ff5252; }
 
-        /* WIDGET DE ENCOMENDA */
+        /* Widget de Encomenda (Opções de Arroz) */
         .order-widget {
-            background: #fff; border-radius: 12px; padding: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); border: 1px solid var(--cor-whatsapp); margin-top: 5px;
+            background: #fff; border-radius: 12px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #25D366; margin-top: 5px;
         }
-        .order-widget h3 {
-            font-size: 1rem; font-weight: 700; color: var(--cor-texto-destaque); margin-bottom: 10px; text-align: center;
-        }
+        .order-widget h3 { font-size: 1rem; font-weight: 700; color: #0F2546; margin-bottom: 10px; text-align: center; }
 
         .radio-arroz-option {
             display: flex; flex-direction: row; align-items: center; justify-content: space-between;
-            padding: 12px 15px; border: 2px solid #eee; border-radius: 8px;
-            margin-bottom: 8px; cursor: pointer; background: white; transition: all 0.2s;
+            padding: 12px 15px; border: 2px solid #eee; border-radius: 8px; margin-bottom: 8px;
+            cursor: pointer; background: white; transition: all 0.2s;
         }
         .radio-arroz-option:active { transform: scale(0.98); }
-        .radio-arroz-option.selected { border-color: var(--cor-whatsapp); background: #f0fff4; }
+        .radio-arroz-option.selected { border-color: #25D366; background: #f0fff4; }
         
-        .radio-arroz-info { 
-            display: flex; flex-direction: row; justify-content: space-between; align-items: center;
-            width: 100%; padding-right: 15px;
-        }
+        .radio-arroz-info { display: flex; flex-direction: row; justify-content: space-between; align-items: center; width: 100%; padding-right: 15px; }
         .radio-arroz-name { font-weight: 600; font-size: 0.9rem; color: #333; }
-        .radio-arroz-price { color: var(--cor-destaque-vermelho); font-weight: 800; font-size: 1rem; }
+        .radio-arroz-price { color: #ff5252; font-weight: 800; font-size: 1rem; }
         
         .btn-encomendar-card {
-            width: 100%; background-color: var(--cor-whatsapp); color: white;
-            border: none; padding: 14px; border-radius: 8px;
-            font-size: 1rem; font-weight: 800; text-transform: uppercase;
+            width: 100%; background-color: #25D366; color: white; border: none; padding: 14px;
+            border-radius: 8px; font-size: 1rem; font-weight: 800; text-transform: uppercase;
             cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
             margin-top: 10px; box-shadow: 0 3px 0 #189d4b; transition: transform 0.1s;
         }
         .btn-encomendar-card:active { transform: translateY(3px); box-shadow: none; }
-        
-        .scroll-hint {
-            background-color: #fff8dc; color: #b45309; font-size: 0.75rem;
-            font-weight: 800; text-align: center; padding: 8px; margin: 0 10px 8px 10px;
-            border-radius: 6px; border: 1px dashed #fcd34d; display: flex;
-            align-items: center; justify-content: center; gap: 6px; animation: pulseHint 2s infinite;
-        }
-        @keyframes pulseHint { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
 
-        .slider-arrow-indicator {
-            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.9); border: 2px solid #25D366;
-            border-radius: 50%; width: 36px; height: 36px; display: flex;
-            align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 20; animation: bounceRight 1.2s infinite; pointer-events: none; transition: opacity 0.3s;
-        }
-        @keyframes bounceRight { 0%, 100% { transform: translate(0, -50%); } 50% { transform: translate(6px, -50%); } }
-
-        /* Estilo Card Empresa */
+        /* Card Empresa */
         .company-social-row { display: flex; justify-content: center; gap: 15px; padding: 10px; background: #f9f9f9; border-top: 1px solid #eee; }
         .company-social-btn { color: #555; font-size: 1.5rem; transition: color 0.2s; }
         .company-social-btn:hover { color: #008069; }
@@ -235,13 +195,13 @@
         <div class="flex-1 bg-white rounded-full px-4 py-2 shadow-sm flex items-center">
             <input type="text" id="user-input" placeholder="Digite seu nome..." class="w-full outline-none text-base bg-transparent text-gray-800" autocomplete="off">
         </div>
-
         <div id="send-btn" class="bg-[#008069] text-white rounded-full p-3 shadow-md cursor-pointer transition active:scale-95 flex items-center justify-center">
             <i class="ph-fill ph-paper-plane-right text-xl"></i>
         </div>
     </footer>
 
     <script>
+        // CONFIGURAÇÃO GERAL
         const CONFIG = {
             ownerName: "Osvaldo",
             whatsAppGroupLink: "https://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1",
@@ -250,93 +210,42 @@
 
         if (window.self !== window.top) window.top.location.href = window.self.location.href;
 
-        // --- DADOS DAS CESTAS ---
+        // BASE DE DADOS
         const CESTAS = [
             {
-                id: 'grande',
-                nome: 'Cesta Grande',
-                arrozQtd: 4,
-                brindeNome: '1 OMO 800g',
+                id: 'grande', nome: 'Cesta Grande', arrozQtd: 4, brindeNome: '1 OMO 800g',
                 brindeImg: 'img/limpezaehigiente/sabão em pó omo 800g.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif',
-                items: [
-                    '4 Arroz Koblenz 5kg', '3 Açúcar Doce Dia 2kg', '4 Óleo de Soja Liza 900ml', 
-                    '4 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '3 Espaguete QDelicia 500g', '12 Ovos',
-                    '1 Bolo Apti Chocolate 400g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g',
-                    '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '4 Suco Frisco',
-                    '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L',
-                    '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro',
-                    '4 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'
-                ],
-                opcoes: [ { arroz: 'Tio Alvino', preco: '380,00' }, { arroz: 'Koblenz', preco: '390,00' } ]
+                items: ['4 Arroz Koblenz 5kg', '3 Açúcar Doce Dia 2kg', '4 Óleo de Soja Liza 900ml', '4 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '3 Espaguete QDelicia 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '4 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '4 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '380,00' }, { arroz: 'Koblenz', preco: '390,00' }]
             },
             {
-                id: 'media',
-                nome: 'Cesta Média',
-                arrozQtd: 3,
-                brindeNome: '1 Café 250g',
+                id: 'media', nome: 'Cesta Média', arrozQtd: 3, brindeNome: '1 Café 250g',
                 brindeImg: 'img/alimento/cafe caboclo 250g.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
-                items: [
-                    '3 Arroz Koblenz 5kg', '2 Açúcar Doce Dia 2kg', '3 Óleo de Soja Liza 900ml', '3 Feijão Da Casa 1kg', 
-                    '1 Café Caboclo 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '2 Espaguete QDelicia 500g',
-                    '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas',
-                    '2 Bolacha MyBit Recheada', '2 Miojo Apti', '3 Suco Frisco', 
-                    '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L',
-                    '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro',
-                    '3 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'
-                ],
-                opcoes: [ { arroz: 'Tio Alvino', preco: '320,00' }, { arroz: 'Koblenz', preco: '325,00' } ]
+                items: ['3 Arroz Koblenz 5kg', '2 Açúcar Doce Dia 2kg', '3 Óleo de Soja Liza 900ml', '3 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '2 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '3 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '3 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '320,00' }, { arroz: 'Koblenz', preco: '325,00' }]
             },
             {
-                id: 'pequena',
-                nome: 'Cesta Pequena',
-                arrozQtd: 2,
-                brindeNome: '1 Amaciante 2L',
+                id: 'pequena', nome: 'Cesta Pequena', arrozQtd: 2, brindeNome: '1 Amaciante 2L',
                 brindeImg: 'img/limpezaehigiente/amaciante ype 2L.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif',
-                items: [
-                    '2 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', 
-                    '1 Café Caboclo 250g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '1 Espaguete QDelicia 500g',
-                    '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas',
-                    '2 Bolacha MyBit Recheada', '2 Miojo Apti', '2 Suco Frisco', 
-                    '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L',
-                    '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro',
-                    '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'
-                ],
-                opcoes: [ { arroz: 'Tio Alvino', preco: '215,00' }, { arroz: 'Koblenz', preco: '220,00' } ]
+                items: ['2 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '215,00' }, { arroz: 'Koblenz', preco: '220,00' }]
             },
             {
-                id: 'mini',
-                nome: 'Cesta Mini',
-                arrozQtd: 1,
-                brindeNome: '1 Feijão 1kg',
+                id: 'mini', nome: 'Cesta Mini', arrozQtd: 1, brindeNome: '1 Feijão 1kg',
                 brindeImg: 'img/alimento/feijão da casa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
-                items: [
-                    '1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', 
-                    '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta',
-                    '1 Bolacha MyBit Recheada', '1 Miojo Apti', '2 Suco Frisco', 
-                    '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L',
-                    '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '1 Detergente Ype 500ml', '1 Qboa 1 Litro',
-                    '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'
-                ],
-                opcoes: [ { arroz: 'Tio Alvino', preco: '165,00' }, { arroz: 'Koblenz', preco: '170,00' } ]
+                items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '1 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '165,00' }, { arroz: 'Koblenz', preco: '170,00' }]
             },
             {
-                id: 'economica',
-                nome: 'Cesta Econômica',
-                destaque: 'Mais Vendida',
-                arrozQtd: 1,
-                brindeNome: '1 Trigo 1kg',
+                id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', arrozQtd: 1, brindeNome: '1 Trigo 1kg',
                 brindeImg: 'img/alimento/trigo vitoriosa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
-                items: [
-                    '1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo de Soja Liza 900ml', '1 Feijão Da Casa 1kg', 
-                    '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Farinha Mandioca', 
-                    '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '1 Suco Frisco'
-                ],
-                opcoes: [ { arroz: 'Valor Único', preco: '85,00' } ]
+                items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo de Soja Liza 900ml', '1 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Farinha Mandioca', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '1 Suco Frisco'],
+                opcoes: [{ arroz: 'Valor Único', preco: '85,00' }]
             }
         ];
 
@@ -353,7 +262,7 @@
             clientDisplayName: '', 
             viewedBaskets: [],
             timerRef: null,
-            lastViewedBasketId: null,
+            currentBasketId: null,
             giftShown: false
         };
 
@@ -376,6 +285,7 @@
             return Math.min(baseDelay + (text.length * charDelay), 4000);
         }
 
+        // Adiciona mensagens ao chat
         function addMessage(text, sender = 'bot', forceDelay = null) {
             return new Promise(resolve => {
                 const typingTime = forceDelay !== null ? forceDelay : calculateTypingTime(text);
@@ -459,6 +369,7 @@
             }, 800);
         }
 
+        // Funções para manipulação dos Cards
         window.selectRice = function(id, nome, preco) {
             const btn = document.getElementById(`btn-pedir-${id}`);
             const allOpts = document.querySelectorAll(`#widget-${id} .radio-arroz-option`);
@@ -498,7 +409,7 @@
 
             const opcoes = [
                 { text: `Encomendar a ${nomeCesta} ✅`, value: "encomendar_atual", nextStep: 6 },
-                { text: "Ver outras cestas 🔄", value: "ver_outra", nextStep: 5 },
+                { text: "Ver outras cestas 🔄", value: "ver_outra", nextStep: 4 }, // Volta para o menu (lista)
                 { text: "Quem somos nós? 🏢", value: "quem_somos", nextStep: 7 },
                 { text: "Ver formas de pagamento 💳", value: "pagamento", nextStep: 6 }
             ];
@@ -506,6 +417,7 @@
             showOptions(opcoes);
         }
 
+        // Lógica de mapeamento de imagens
         function getProductImage(text) {
             const lowerText = text.toLowerCase();
             let imgName = 'outros.png';
@@ -524,10 +436,7 @@
                 imgName = 'lã de aço assolan.webp';
                 folder = 'img/limpezaehigiente/';
             }
-            else if(lowerText.includes('esponja')) { 
-                imgName = 'esponja de lavar louça.webp';
-                folder = 'img/limpezaehigiente/';
-            }
+            else if(lowerText.includes('esponja')) { imgName = 'esponja de lavar louça.webp'; folder = 'img/limpezaehigiente/'; }
             else if(lowerText.includes('feijão') || lowerText.includes('feijao')) imgName = 'feijão da casa.webp';
             else if(lowerText.includes('milho')) imgName = 'milho verde predileta.webp';
             else if(lowerText.includes('miojo')) imgName = 'miojo apti.webp';
@@ -652,14 +561,9 @@
             </div>`;
         }
 
-        // --- NEW GIFT CAROUSEL ---
+        // Carrossel de Brindes
         function generateGiftCarouselHTML() {
-            const gifts = CESTAS.map(c => ({
-                cesta: c.nome,
-                nome: c.brindeNome, // e.g. "1 OMO 800g"
-                img: c.brindeImg
-            }));
-
+            const gifts = CESTAS.map(c => ({ cesta: c.nome, nome: c.brindeNome, img: c.brindeImg }));
             const slidesHTML = gifts.map(gift => {
                 const fallbackImg = `https://placehold.co/120x120/eee/999?text=${gift.nome.split(' ')[1]}`;
                 return `
@@ -716,6 +620,7 @@
             </div>`;
         }
 
+        // --- LÓGICA DO ROTEIRO (MAQUINA DE ESTADOS) ---
         window.onload = async () => {
             setTimeout(async () => {
                 await addMessage(`${getGreeting()}! Tudo bem? 👋`, 'bot', 1000);
@@ -750,17 +655,25 @@
             await addMessage(text, 'user');
             state.step = nextStep;
 
-            if (state.step === 4 && value.startsWith('select_cesta_')) {
+            // Se for seleção de cesta da lista
+            if (state.step === 5 && value.startsWith('select_cesta_')) {
                 const index = parseInt(value.split('_')[2]);
-                state.suggestedIndex = index;
+                // Armazena ID para lógica futura
+                state.suggestedIndex = index; // Usa variavel generica para guardar indice
             }
 
-            // Lógica para o passo 6 (Decisão Brinde)
-            if (state.step === 6) {
-                if (value === 'salvar_brinde') {
-                    window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=Olá! Salvei seu contato e quero garantir meu brinde!`, '_blank');
-                    state.step = 3; 
-                }
+            // Se for botão "Ver Cestas" do menu final ou intermediario
+            if (value === 'menu_cestas' || value === 'ver_outra') {
+                state.step = 4; // Força ida para a Lista (Step 4)
+                nextStepFlow('loop_cestas'); // Trigger para mensagem customizada
+                return; 
+            }
+
+            // Se for decisão de brinde
+            if (value === 'salvar_brinde') {
+                window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=Olá! Salvei seu contato e quero garantir meu brinde!`, '_blank');
+                // Assume intenção de compra futura ou imediata
+                state.step = 99; // Finaliza ou mantem
             }
 
             nextStepFlow(value);
@@ -768,7 +681,6 @@
 
         async function nextStepFlow(triggerValue) {
             const name = state.userName;
-
             if(state.timerRef) clearTimeout(state.timerRef);
 
             switch (state.step) {
@@ -781,30 +693,24 @@
                     ]);
                     break;
 
-                case 2: 
+                case 2: // Mostra Empresa
                     await addMessage(generateCompanyCardHTML());
-                    // Corrigido: Agora esta mensagem é tratada como mensagem normal pelo addMessage, recebendo balão
                     await addMessage(`Somos de Cuiabá, com 8 anos de tradição entregando qualidade na sua mesa.`);
-                    setTimeout(() => {
-                        state.step = 3; 
-                        nextStepFlow();
-                    }, 4000);
+                    setTimeout(() => { state.step = 3; nextStepFlow(); }, 4000);
                     break;
 
-                case 3: 
+                case 3: // Intro Showcase
                     await addMessage(`Vou te mostrar as nossas cestas pra você conhecer.`);
-                    showOptions([
-                        { text: "OK, mostrar cestas", value: "ok", nextStep: 4 }
-                    ]);
+                    showOptions([{ text: "OK, mostrar cestas", value: "ok", nextStep: 4 }]);
                     break;
 
-                case 4: 
-                    if (triggerValue === 'loop_cestas') {
-                        await addMessage(`Dá uma olhada nas outras opções 👇`);
-                    }
+                case 4: // Menu de Cestas (Lista)
+                    if (triggerValue === 'loop_cestas') await addMessage(`Dá uma olhada nas outras opções 👇`);
                     
                     let opcoesCestas = [];
                     CESTAS.forEach((c, i) => {
+                        // Filtra se já viu, mas se viu todas reseta a lógica visual apenas se necessário
+                        // Requisito: "manda novamente a lista menos a que ja foi vista"
                         if (!state.viewedBaskets.includes(c.id)) {
                             opcoesCestas.push({
                                 text: c.nome,
@@ -815,8 +721,9 @@
                         }
                     });
 
+                    // Se já viu todas, mostra todas novamente
                     if (opcoesCestas.length === 0) {
-                        state.viewedBaskets = [];
+                        state.viewedBaskets = []; 
                         CESTAS.forEach((c, i) => {
                             opcoesCestas.push({
                                 text: c.nome,
@@ -827,36 +734,32 @@
                         });
                     }
 
-                    opcoesCestas.push({ 
-                        text: "Formas de Pagamento 💳", 
-                        subtext: "Ver como pagar e brindes",
-                        value: "pagamento", 
-                        nextStep: 6 
-                    });
-
+                    opcoesCestas.push({ text: "Formas de Pagamento 💳", subtext: "Ver como pagar e brindes", value: "pagamento", nextStep: 6 });
                     showOptions(opcoesCestas);
                     break;
 
-                case 5: 
-                    const index = state.suggestedIndex;
+                case 5: // Exibe Card da Cesta
+                    // Indice veio do handleOptionClick via state.suggestedIndex
+                    const index = state.suggestedIndex !== null ? state.suggestedIndex : 0; 
                     const cesta = CESTAS[index];
                     
                     state.currentBasketId = cesta.id;
-                    state.viewedBaskets.push(cesta.id); 
+                    if(!state.viewedBaskets.includes(cesta.id)) state.viewedBaskets.push(cesta.id);
 
                     await addMessage(`Essa é a <b>${cesta.nome}</b>:`);
                     await addMessage(generateCardHTML(cesta));
 
+                    // Timer de 15 segundos
                     state.timerRef = setTimeout(() => {
                         state.step = 4;
                         nextStepFlow('loop_cestas');
                     }, 15000); 
                     break;
 
-                case 6: 
+                case 6: // Pagamento e Brinde
                     if (state.giftShown) {
                         if (triggerValue === 'encomendar_atual') { state.step = 3; nextStepFlow(); return; }
-                        if (triggerValue === 'pagamento') { state.step = 4; nextStepFlow(); return; }
+                        if (triggerValue === 'pagamento') { state.step = 6; /* Fica aqui */ }
                     }
                     state.giftShown = true;
 
@@ -871,86 +774,38 @@
                         </ul>`;
                     await addMessage(listaPagamento);
                     
-                    // Alerta em Amarelo Claro
                     const alertMsg = `<div style="background-color:#fef9c3; color:#854d0e; padding:10px; border-radius:8px; text-align:center; font-weight:600; border:1px solid #fde047;">Aqui você só paga quando recebe a cesta na sua casa.</div>`;
                     await addMessage(alertMsg);
 
                     setTimeout(async () => {
                         await addMessage(`${name}, eu vou garantir um brinde pra quando você fizer a sua primeira compra.`);
-                        
-                        // Carrossel de Brindes
                         await addMessage(generateGiftCarouselHTML());
 
                         showOptions([
-                            { 
-                                text: "Salvar contato e garantir brinde 🎁", 
-                                subtext: "Clique para confirmar no WhatsApp",
-                                value: "salvar_brinde", 
-                                nextStep: 6 
-                            }, 
-                            { 
-                                text: "Ver as Cestas 🛒", 
-                                subtext: "Escolher outra opção",
-                                value: "menu_cestas", 
-                                nextStep: 5 // Redireciona para o loop de cestas, mas precisa ajustar index
-                            },
-                            { 
-                                text: "Formas de pagamento 💳", 
-                                subtext: "Rever condições",
-                                value: "pagamento", 
-                                nextStep: 6 
-                            }
+                            { text: "Salvar contato e garantir brinde 🎁", subtext: "Clique para confirmar no WhatsApp", value: "salvar_brinde", nextStep: 6 }, 
+                            { text: "Ver as Cestas 🛒", subtext: "Escolher outra opção", value: "menu_cestas", nextStep: 4 }, // Vai pro menu
+                            { text: "Entrar no Grupo VIP 🚀", subtext: "Ofertas relâmpago", value: "vip", nextStep: 99 }
                         ]);
-                        
-                        // Ajuste para botão "Ver as Cestas" funcionar corretamente voltando ao menu
-                        // O nextStep 5 espera um indice, mas aqui queremos ir para a lista (step 4).
-                        // Vamos interceptar no handleOptionClick se necessário, ou mudar aqui.
-                        // Mudar para step 4 é melhor.
-                        
                     }, 2000);
                     break;
 
-                case 7: // QUEM SOMOS
+                case 7: // Quem Somos (Menu Extra se necessário)
                     await addMessage(`Que bom que você quer saber mais sobre a gente! 🤝`);
                     await addMessage(generateCompanyCardHTML());
                     await addMessage(`Somos de Cuiabá, com 8 anos de tradição entregando qualidade na sua mesa.`);
-                    await addMessage(`Pode confiar, a entrega é garantida e o produto é de primeira.`);
-                    
                     await addMessage(`E aí, vamos aproveitar?`, 'bot', 2000);
                     showOptions([
                         { text: "Ganhar meu Brinde 🎁", value: "salvar_brinde", nextStep: 6 },
-                        { text: "Ver as Cestas novamente 🛒", value: "menu_cestas", nextStep: 4 } // Vai para lista
+                        { text: "Ver as Cestas novamente 🛒", value: "menu_cestas", nextStep: 4 }
                     ]);
                     break;
                     
-                case 99:
-                    if(triggerValue === 'salvar') {
-                        window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=Olá! Aqui é o ${state.clientDisplayName}. Salvei o contato e quero garantir meu brinde!`, '_blank');
-                    } else if(triggerValue === 'vip') {
-                        window.open(CONFIG.whatsAppGroupLink, '_blank');
-                    }
-                    state.step = 5; 
-                    nextStepFlow();
+                case 99: // Ações Finais
+                    if(triggerValue === 'salvar') window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=Olá! Aqui é o ${state.clientDisplayName}. Salvei o contato!`, '_blank');
+                    if(triggerValue === 'vip') window.open(CONFIG.whatsAppGroupLink, '_blank');
                     break;
             }
         }
-        
-        // Pequena correção: botão "Ver as Cestas" no case 6 estava indo pro 5 sem indice. 
-        // No case 6, mudei visualmente, mas o nextStep precisa ser 4 (lista)
-        // Vou garantir que o clique no botão "menu_cestas" leve ao passo 4.
-        // Adicionando override no handleOptionClick para 'menu_cestas'
-        const originalHandleOptionClick = handleOptionClick;
-        handleOptionClick = async (text, value, nextStep, containerId) => {
-            if (value === 'menu_cestas') {
-                const container = document.getElementById(containerId);
-                if(container) container.remove();
-                await addMessage(text, 'user');
-                state.step = 4; // Força ir para lista
-                nextStepFlow();
-                return;
-            }
-            originalHandleOptionClick(text, value, nextStep, containerId);
-        };
 
         sendBtn.addEventListener('click', handleInput);
         userInput.addEventListener('keypress', (e) => {
