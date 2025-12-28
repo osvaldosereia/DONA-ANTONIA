@@ -108,31 +108,53 @@
             --cor-destaque-vermelho: #ff5252;
         }
 
-        /* CARD WIDE AJUSTADO */
-        .card-msg-container { width: 100%; max-width: 95%; margin-bottom: 5px; } /* Largo */
+        /* CARD NOVO LAYOUT */
+        .card-msg-container { width: 100%; max-width: 95%; margin-bottom: 5px; }
 
         .card-cesta-new {
             background: #fff; border-radius: 16px; border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: row;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column;
             position: relative;
         }
 
-        /* SIDEBAR DE CHIPS */
-        .card-sidebar {
-            width: 90px;
+        /* ÁREA SUPERIOR: FOTO + CHIPS */
+        .card-top-row {
+            display: flex;
+            flex-direction: row;
+            height: 160px; /* Altura fixa para estabilidade */
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .card-img-area {
+            flex: 1;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .card-img-large {
+            width: 140px; height: 140px; object-fit: cover; border-radius: 8px; 
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+
+        /* SIDEBAR DE CHIPS (Direita) */
+        .card-chips-area {
+            width: 95px;
             background: #f8f9fa;
             border-left: 1px solid #eee;
+            padding: 8px 5px;
             display: flex;
             flex-direction: column;
             gap: 6px;
-            padding: 8px;
-            justify-content: center;
             overflow-y: auto;
+            justify-content: center;
         }
-        
+
         .chip-nav {
             font-size: 0.65rem;
-            padding: 8px 4px;
+            padding: 6px 4px;
             border-radius: 6px;
             text-align: center;
             cursor: pointer;
@@ -142,6 +164,7 @@
             font-weight: 700;
             transition: all 0.2s;
             text-transform: uppercase;
+            line-height: 1.1;
         }
         
         .chip-nav:active { transform: scale(0.95); }
@@ -152,36 +175,16 @@
             box-shadow: 0 2px 4px rgba(0,128,105,0.3);
         }
 
-        /* CONTEÚDO PRINCIPAL (ESQUERDA) */
-        .card-main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .card-header-visual {
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            background: #fff; padding: 0; border-bottom: 1px solid #f0f0f0; position: relative;
-        }
-        
-        .card-img-container { width: 100%; padding: 10px; display: flex; justify-content: center; transition: opacity 0.3s; }
-        .card-img-large {
-            width: 140px; height: 140px; object-fit: cover; border-radius: 8px; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
-        }
-
         .selo-destaque {
-            position: absolute; top: 10px; left: 10px; /* Movido para esquerda */
+            position: absolute; top: 10px; left: 10px;
             background: linear-gradient(135deg, #ffb300, #FFB300);
             color: #0F2546; padding: 3px 8px; border-radius: 20px;
             font-weight: 800; font-size: 0.65rem; text-transform: uppercase; z-index: 10;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Slider de Produtos */
-        .product-slider-container { background: #f9fafb; padding: 10px 0; position: relative; transition: opacity 0.3s; }
+        /* Slider de Produtos (LARGURA TOTAL) */
+        .product-slider-container { background: #f9fafb; padding: 10px 0; position: relative; transition: opacity 0.3s; width: 100%; border-bottom: 1px solid #eee; }
         .product-slider {
             display: flex; overflow-x: auto; gap: 8px; padding: 0 10px;
             scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
@@ -209,12 +212,12 @@
         }
 
         /* Preços */
-        .card-price-display-only { padding: 8px 10px; background: #fff; border-top: 1px solid #eee; transition: opacity 0.3s; }
-        .price-item-row { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 2px; color: #555; }
+        .card-price-display-only { padding: 8px 10px; background: #fff; transition: opacity 0.3s; }
+        .price-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; color: #555; }
         .price-item-row strong { color: #ff5252; }
 
         /* Discount Widget */
-        .discount-container { background: #fff; border-radius: 8px; padding: 12px; border: 1px solid #e0e0e0; max-width: 320px; } /* Widget normal */
+        .discount-container { background: #fff; border-radius: 8px; padding: 12px; border: 1px solid #e0e0e0; max-width: 320px; }
         .discount-table { width: 100%; font-size: 0.9rem; margin-bottom: 0; }
         .discount-table td { padding: 6px 0; border-bottom: 1px dashed #eee; }
         .discount-table td:last-child { text-align: right; font-weight: bold; color: #166534; }
@@ -330,14 +333,14 @@
         const CESTAS = [
             {
                 id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', desconto: 5, arrozQtd: 1, brindeNome: '1 Trigo 1kg',
-                brindeImg: 'img/alimentos/trigo vitoriosa.webp',
+                brindeImg: 'img/alimento/trigo vitoriosa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
                 items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo de Soja Liza 900ml', '1 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Farinha Mandioca', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '1 Suco Frisco'],
                 opcoes: [{ arroz: 'Valor Único', preco: '85,00', valor_num: 85.00 }]
             },
             {
                 id: 'mini', nome: 'Cesta Mini', desconto: 10, arrozQtd: 1, brindeNome: '1 Feijão 1kg',
-                brindeImg: 'img/alimentos/feijão da casa.webp',
+                brindeImg: 'img/alimento/feijão da casa.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
                 items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '1 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
                 opcoes: [{ arroz: 'Tio Alvino', preco: '165,00', valor_num: 165.00 }, { arroz: 'Koblenz', preco: '170,00', valor_num: 170.00 }]
@@ -351,7 +354,7 @@
             },
             {
                 id: 'media', nome: 'Cesta Média', desconto: 20, arrozQtd: 3, brindeNome: '1 Café 250g',
-                brindeImg: 'img/alimentos/cafe caboclo 250g.webp',
+                brindeImg: 'img/alimento/cafe caboclo 250g.webp',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
                 items: ['3 Arroz Koblenz 5kg', '2 Açúcar Doce Dia 2kg', '3 Óleo de Soja Liza 900ml', '3 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '2 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '3 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '3 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
                 opcoes: [{ arroz: 'Tio Alvino', preco: '320,00', valor_num: 320.00 }, { arroz: 'Koblenz', preco: '325,00', valor_num: 325.00 }]
@@ -497,11 +500,6 @@
              const container = document.getElementById('unified-card-content');
              if(!container) return;
              
-             // Update Chip UI
-             const chips = document.querySelectorAll('.chip-nav');
-             chips.forEach(c => c.classList.remove('selected'));
-             document.getElementById(`chip-${index}`).classList.add('selected');
- 
              // Reset scroll
              state.scrollTriggered = false;
  
@@ -516,7 +514,7 @@
                  // Track interaction
                  trackEvent('ViewContent', { content_name: cesta.nome });
  
-                 // Regenerate content
+                 // Regenerate content (INCLUDES CHIPS NOW)
                  container.innerHTML = generateUnifiedInnerContent(cesta);
                  
                  // Fade in
@@ -531,7 +529,7 @@
         function getProductImage(text) {
             const lowerText = text.toLowerCase();
             let imgName = 'outros.png';
-            let folder = 'img/alimentos/'; // Default folder
+            let folder = 'img/alimento/'; // Default folder
 
             // LOGICA DE MAPEAMENTO CORRIGIDA PARA NOMES DE ARQUIVO EXATOS
 
@@ -548,7 +546,7 @@
             else if(lowerText.includes('sabão barra')) { imgName = 'sabão barra ype 900g.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('sabão pó') || lowerText.includes('sabão em pó') || lowerText.includes('omo')) { imgName = 'sabão em pó omo 800g.webp'; folder = 'img/limpeza/'; }
             
-            // === ALIMENTOS (img/alimentos/) ===
+            // === ALIMENTOS (img/alimento/) ===
             else if(lowerText.includes('arroz')) imgName = 'Arroz Koblenz 5kg.webp';
             else if(lowerText.includes('açúcar') || lowerText.includes('acucar')) imgName = 'açucar doce dia 2 kg.webp';
             else if(lowerText.includes('bolacha')) imgName = 'bolacha mybit.webp';
@@ -585,6 +583,13 @@
         }
 
         function generateUnifiedInnerContent(cesta) {
+            // Gera os chips aqui dentro para que o estado "selected" seja atualizado
+            const chipsHTML = CESTAS.map((c, i) => {
+                const shortName = c.nome.replace('Cesta ', '');
+                const isSelected = cesta.id === c.id ? 'selected' : '';
+                return `<div id="chip-${i}" class="chip-nav ${isSelected}" onclick="selectBasketChip(${i})">${shortName}</div>`;
+            }).join('');
+
             const slidesHTML = cesta.items.map(item => {
                 const parsed = parseProductItem(item);
                 const fallbackImg = `https://placehold.co/80x80/eee/999?text=${parsed.name.substring(0,3).toUpperCase()}`;
@@ -606,10 +611,13 @@
             `).join('');
 
             return `
-                <div class="card-header-visual">
-                    ${cesta.destaque ? `<div class="selo-destaque fade-in">${cesta.destaque}</div>` : ''}
-                    <div class="card-img-container fade-in">
+                <div class="card-top-row">
+                    <div class="card-img-area fade-in">
+                        ${cesta.destaque ? `<div class="selo-destaque">${cesta.destaque}</div>` : ''}
                         <img src="${cesta.img}" class="card-img-large" alt="${cesta.nome}" loading="lazy">
+                    </div>
+                    <div class="card-chips-area no-scrollbar">
+                        ${chipsHTML}
                     </div>
                 </div>
                 
@@ -632,23 +640,11 @@
         }
 
         function generateUnifiedCardFrame(initialCesta) {
-            const chipsHTML = CESTAS.map((c, i) => {
-                // Short name for chip if too long
-                const shortName = c.nome.replace('Cesta ', '');
-                const isSelected = initialCesta.id === c.id ? 'selected' : '';
-                return `<div id="chip-${i}" class="chip-nav ${isSelected}" onclick="selectBasketChip(${i})">${shortName}</div>`;
-            }).join('');
-
             return `
             <div class="card-msg-container">
                 <div class="card-cesta-new">
-                    <div class="card-main-content">
-                        <div id="unified-card-content">
-                            ${generateUnifiedInnerContent(initialCesta)}
-                        </div>
-                    </div>
-                    <div class="card-sidebar no-scrollbar">
-                        ${chipsHTML}
+                    <div id="unified-card-content">
+                        ${generateUnifiedInnerContent(initialCesta)}
                     </div>
                 </div>
             </div>`;
@@ -904,6 +900,7 @@
                     // Gera opções baseadas nas cestas
                     const basketOptions = CESTAS.map((c, i) => ({
                         text: c.nome.replace('Cesta ', ''),
+                        subtext: `(${c.arrozQtd} pacote${c.arrozQtd > 1 ? 's' : ''} de arroz)`,
                         value: `discount_basket_${i}`,
                         nextStep: 10
                     }));
@@ -925,11 +922,17 @@
                     await addMessage(`Siga a gente no Instagram:`);
                     
                     const instaBtn = `
-                        <div class="flex justify-center w-full mt-2 mb-4">
-                            <a href="${CONFIG.instagramLink}" target="_blank" onclick="trackEvent('SocialClick')"
-                               class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 hover:opacity-90 transition transform hover:scale-105 no-underline">
+                        <div class="flex flex-col justify-center w-full mt-2 mb-4 gap-3">
+                            <a href="${CONFIG.instagramLink}" target="_blank" onclick="trackEvent('SocialClick', { type: 'Instagram' })"
+                               class="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition transform hover:scale-105 no-underline">
                                 <i class="ph-bold ph-instagram-logo text-2xl"></i>
                                 Seguir no Instagram
+                            </a>
+                            
+                            <a href="${CONFIG.whatsAppGroupLink}" target="_blank" onclick="trackEvent('SocialClick', { type: 'VIPGroup' })"
+                               class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition transform hover:scale-105 no-underline border-2 border-white/20">
+                                <i class="ph-bold ph-star text-2xl"></i>
+                                Entrar no Grupo VIP
                             </a>
                         </div>`;
                     chatContainer.insertAdjacentHTML('beforeend', instaBtn);
