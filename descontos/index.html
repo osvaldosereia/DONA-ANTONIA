@@ -64,8 +64,8 @@
     }
     </script>
 
+    <!-- Performance: Removed FontAwesome (Heavy/Unused) -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
@@ -89,13 +89,27 @@
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        body, html {
-            height: 100%; margin: 0; padding: 0;
+        /* PERFORMANCE & LAYOUT FIX: Mobile View on Desktop */
+        html {
+            background-color: #cbd5e1; /* Cor de fundo fora do app (Desktop) */
+            height: 100%;
+        }
+
+        body {
+            height: 100%; 
+            margin: 0 auto; /* Centraliza */
+            padding: 0;
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-color); /* Cor de fundo do app */
             color: var(--text-main);
             overflow: hidden;
             display: flex; flex-direction: column;
+            
+            /* Limite de Largura Mobile */
+            max-width: 480px; 
+            width: 100%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1); /* Sombra para destacar no desktop */
         }
 
         /* HEADER CLEAN */
@@ -138,6 +152,7 @@
         }
         .msg-start { justify-content: flex-start; }
         .msg-end { justify-content: flex-end; }
+        .msg-center { justify-content: center; margin-bottom: 12px; } /* Novo para botões soltos */
 
         .msg-bubble {
             padding: 14px 18px;
@@ -315,14 +330,16 @@
         .modern-slider::-webkit-scrollbar { display: none; }
         
         .slide-item {
-            flex: 0 0 100px;
+            flex: 0 0 130px; /* AUMENTADO: Card mais largo */
             background: #F8FAFC; border-radius: 16px;
-            padding: 12px 8px; text-align: center;
+            padding: 16px 8px; /* Mais padding */
+            text-align: center;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             border: 1px solid transparent;
         }
         .slide-item img { 
-            width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; 
+            width: 90px; height: 90px; /* AUMENTADO: Imagem maior */
+            object-fit: contain; margin-bottom: 8px; 
             mix-blend-mode: multiply;
         }
         .slide-qty { font-size: 11px; font-weight: 700; color: var(--primary); }
@@ -330,9 +347,12 @@
 
         .nav-arrow {
             position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-            width: 32px; height: 32px; background: white; border-radius: 50%;
+            width: 36px; height: 36px; 
+            background: #F59E0B; /* DESTAQUE LARANJA */
+            color: white; /* Ícone branco */
+            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: var(--shadow-md); color: var(--primary); font-size: 18px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); /* Sombra laranja */
             cursor: pointer; z-index: 10;
         }
 
@@ -390,15 +410,33 @@
             font-size: 16px; color: white;
         }
 
-        .social-links { padding: 20px; text-align: center; background: white; }
-        .social-pill {
-            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
-            border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 14px;
-            margin: 4px; transition: transform 0.2s;
+        /* NEW: FREESTANDING SOCIAL BUTTONS */
+        .social-buttons-container {
+            display: flex; flex-direction: column; gap: 12px;
+            padding: 10px 20px;
+            width: 100%;
         }
-        .pill-insta { background: #FDF2F8; color: #BE185D; }
-        .pill-vip { background: #FEFCE8; color: #A16207; }
-        .social-pill:active { transform: scale(0.95); }
+        .social-btn-lg {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            width: 100%; padding: 16px;
+            border-radius: 50px;
+            font-size: 16px; font-weight: 700;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .social-btn-lg:active { transform: scale(0.96); }
+        
+        .btn-insta {
+            /* Gradiente Oficial Instagram */
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+            color: white;
+        }
+        .btn-vip {
+            /* Verde WhatsApp */
+            background: #25D366;
+            color: white;
+        }
 
     </style>
 </head>
@@ -450,7 +488,7 @@
             whatsAppGroupLink: "https://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1",
             whatsAppNumber: "5565998150975", 
             whatsAppSaveNumber: "5565998150975",
-            instagramLink: "https://instagram.com/cestas.dona.antonia.cuiaba.vg"
+            instagramLink: "https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" // Link atualizado
         };
 
         const CESTAS = [
@@ -600,7 +638,18 @@
                             scrollToBottom();
                             resolve();
                         }, typingTime);
-                    } else {
+                    } 
+                    // NOVO: Mensagem do sistema (sem balão)
+                    else if (type === 'system') {
+                        chatContainer.insertAdjacentHTML('beforeend', `
+                            <div class="msg-row msg-center">
+                                ${text}
+                            </div>
+                        `);
+                        scrollToBottom();
+                        resolve();
+                    }
+                    else {
                         chatContainer.insertAdjacentHTML('beforeend', `
                             <div class="msg-row msg-end">
                                 <div class="msg-bubble msg-out">
@@ -908,14 +957,23 @@
             await addMessage("Muito obrigado pela preferência! 🙏", 'bot', 1000);
             await addMessage("Somos uma empresa familiar que trabalha com muito amor para entregar a melhor cesta básica de Mato Grosso.", 'bot', 1500);
             
-            // 3. Botões Sociais
+            // 3. Botões Sociais e Mensagem Final
+            await addMessage("Enquanto isso, acompanhe nossas novidades: 👇", 'bot', 1000);
+            
+            // Renderiza botões sem balão (tipo system)
             const socialHTML = `
-                <div class="social-links" style="background:transparent;">
-                    <a href="${CONFIG.instagramLink}" target="_blank" class="social-pill pill-insta"><i class="ph-bold ph-instagram-logo"></i> Instagram</a>
-                    <a href="${CONFIG.whatsAppGroupLink}" target="_blank" class="social-pill pill-vip"><i class="ph-bold ph-star"></i> Grupo VIP</a>
+                <div class="social-buttons-container">
+                    <a href="${CONFIG.instagramLink}" target="_blank" class="social-btn-lg btn-insta">
+                        <i class="ph-bold ph-instagram-logo" style="font-size:24px"></i> 
+                        Siga no Instagram
+                    </a>
+                    <a href="${CONFIG.whatsAppGroupLink}" target="_blank" class="social-btn-lg btn-vip">
+                        <i class="ph-bold ph-star" style="font-size:24px"></i> 
+                        Entre no Grupo VIP
+                    </a>
                 </div>
             `;
-            await addMessage(socialHTML, 'bot', 1000);
+            await addMessage(socialHTML, 'system', 1000);
         }
 
         sendBtn.onclick = handleInput;
