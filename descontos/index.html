@@ -85,6 +85,7 @@
             --bubble-bot: #ffffff;
             --bubble-user: #2563EB;
             --text-user: #ffffff;
+            --gold: #F59E0B;
             --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1);
             --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
             --radius-bubble: 18px;
@@ -164,8 +165,8 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        .msg-bubble:has(.card-container) {
-            max-width: 95%;
+        .msg-bubble:has(.card-container), .msg-bubble:has(.basket-grid) {
+            max-width: 98%;
             width: 100%;
             padding: 0;
             background: transparent;
@@ -244,6 +245,23 @@
         .modern-btn:active { background: #F8FAFC; transform: scale(0.98); }
         .btn-sub { font-size: 12px; color: var(--text-sub); font-weight: 400; margin-top: 4px; }
 
+        /* === PAYMENT METHODS CARD (NEW) === */
+        .payment-card {
+            background: white; border-radius: 16px; padding: 16px;
+            border: 1px solid #E2E8F0; box-shadow: var(--shadow-sm);
+        }
+        .pay-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 0; border-bottom: 1px solid #F1F5F9;
+        }
+        .pay-item:last-child { border-bottom: none; }
+        .pay-icon {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: #EFF6FF; color: var(--primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; flex-shrink: 0;
+        }
+
         /* === MODERN CARDS === */
         .card-container { 
             width: 100%; 
@@ -257,6 +275,13 @@
             box-shadow: var(--shadow-md);
             overflow: hidden;
             border: 1px solid #CBD5E1;
+            transition: all 0.3s ease;
+        }
+
+        /* VIP MODE STYLES */
+        .modern-card.vip-active {
+            border: 2px solid var(--gold);
+            box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.3), 0 8px 10px -6px rgba(245, 158, 11, 0.1);
         }
 
         .card-header-img {
@@ -291,6 +316,19 @@
             z-index: 2; 
         }
 
+        .selo-vip {
+            position: absolute; top: 16px; left: 16px;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white; border: none;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+            animation: pulse-soft 2s infinite;
+        }
+        @keyframes pulse-soft {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
         /* CHIPS NAVIGATION */
         .chips-float {
             position: absolute; right: 16px; top: 50%; 
@@ -310,6 +348,10 @@
         .chip-modern.active {
             background: var(--primary); color: white; border-color: var(--primary);
             box-shadow: 0 4px 10px rgba(37,99,235,0.25);
+        }
+        .chip-modern.vip-active-chip {
+            background: var(--gold); border-color: var(--gold); color: white;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
         }
 
         /* PRODUCT SLIDER */
@@ -358,6 +400,19 @@
         }
         .price-val { font-weight: 700; color: var(--text-main); font-size: 16px; }
 
+        .price-old {
+            text-decoration: line-through;
+            color: #ef4444; /* Vermelho */
+            font-size: 13px;
+            margin-right: 8px;
+            font-weight: 400;
+        }
+        .price-new {
+            color: #059669; /* Verde */
+            font-weight: 800;
+            font-size: 18px;
+        }
+
         /* DISCOUNT WIDGET */
         .modern-discount {
             background: white; border-radius: var(--radius-card); border: 1px solid #E2E8F0;
@@ -375,6 +430,7 @@
             background: var(--primary); color: white; font-weight: 700; border: none;
             font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(37,99,235,0.3); transition: transform 0.2s;
+            text-decoration: none;
         }
         .btn-claim:active { transform: scale(0.97); }
 
@@ -535,7 +591,8 @@
         const statusText = document.getElementById('status-text');
         const inputFooter = document.getElementById('input-footer');
 
-        let state = { step: 0, userName: '', selectedDiscountId: null, timerRef: null };
+        // Adicionei 'vipMode' e 'currentBasketIdx' no estado
+        let state = { step: 0, userName: '', currentBasketIdx: 0, vipMode: false, timerRef: null };
         let appInitialized = false;
 
         function scrollToBottom() {
@@ -546,7 +603,7 @@
             return new Promise(resolve => {
                 let delay = 1200; 
                 if (type === 'bot') {
-                    const isCard = text.includes('modern-card') || text.includes('modern-discount') || text.includes('company-modern');
+                    const isCard = text.includes('modern-card') || text.includes('modern-discount') || text.includes('basket-grid') || text.includes('payment-card');
                     if (isCard) { delay = 1500; } 
                     else { delay = Math.min(text.length * 40 + 600, 3500); }
                 } else { delay = 0; }
@@ -572,7 +629,7 @@
                             const el = document.getElementById(id);
                             if(el) el.remove();
                             
-                            const isComplex = text.includes('card-container') || text.includes('modern-discount');
+                            const isComplex = text.includes('card-container') || text.includes('modern-discount') || text.includes('basket-grid');
                             const bubbleStyle = isComplex ? 'padding:0; background:transparent; box-shadow:none; max-width:100%; width:100%;' : '';
 
                             chatContainer.insertAdjacentHTML('beforeend', `
@@ -630,28 +687,28 @@
         }
 
         window.handleOpt = async function(val, next, id, text) {
-            document.getElementById(id).remove();
+            const el = document.getElementById(id);
+            if(el) el.remove();
             
-            // Se o usuário interagiu, cancela o timer automático de 15s
             if(state.timerRef) clearTimeout(state.timerRef);
             
             await addMessage(text, 'user');
-            
-            if (val.startsWith('basket_')) {
-                const idx = parseInt(val.split('_')[1]);
-                state.selectedDiscountId = CESTAS[idx].id;
-            }
-            
             state.step = next;
             nextStep();
         };
 
-        window.selectBasketChip = function(idx) {
-            const container = document.getElementById('unified-card-content');
+        window.selectBasketChip = function(idx, containerId) {
+            state.currentBasketIdx = idx; // Rastreia o índice atual para o link do whats
+            
+            // Se não passar containerId (compatibilidade), tenta achar um padrão, mas ideal é passar
+            const targetId = containerId || 'unified-card-content';
+            const container = document.getElementById(targetId);
             if(!container) return;
+            
             container.style.opacity = '0.5';
             setTimeout(() => {
-                container.innerHTML = getCardContent(CESTAS[idx]);
+                // Passa o mesmo containerId para manter a referência nos próximos cliques
+                container.innerHTML = getCardContent(CESTAS[idx], targetId);
                 container.style.opacity = '1';
             }, 150);
         };
@@ -664,9 +721,15 @@
             }
         };
 
-        function getCardContent(cesta) {
+        function getCardContent(cesta, containerId) {
+            // Verifica se está no modo VIP para alterar renderização
+            const isVip = state.vipMode;
+            // Usa o containerId passado ou um default para evitar erro
+            const cId = containerId || 'unified-card-content';
+            
             const chips = CESTAS.map((c, i) => `
-                <div class="chip-modern ${c.id === cesta.id ? 'active' : ''}" onclick="selectBasketChip(${i})">
+                <div class="chip-modern ${c.id === cesta.id ? (isVip ? 'vip-active-chip' : 'active') : ''}" 
+                     onclick="selectBasketChip(${i}, '${cId}')">
                     ${c.nome.replace('Cesta ', '')}
                 </div>
             `).join('');
@@ -675,9 +738,7 @@
                 const match = item.match(/^(\d+)\s+(.*)$/);
                 let qty = "1 un", nome = item;
                 if(match) { qty = match[1] + (parseInt(match[1]) > 1 ? ' un' : ' un'); nome = match[2]; }
-                
                 const imgPath = getProductImage(nome);
-                
                 return `
                 <div class="slide-item">
                     <img src="${imgPath}" loading="lazy" alt="${nome}" onerror="this.src='https://placehold.co/60x60/f1f5f9/94a3b8?text=IMG'">
@@ -686,19 +747,40 @@
                 </div>`;
             }).join('');
 
-            const precos = cesta.opcoes.map(o => `
-                <div class="price-row">
-                    <span>${o.arroz.includes('Valor') ? 'Valor Único' : 'Com ' + o.arroz}</span>
-                    <span class="price-val">R$ ${o.preco}</span>
-                </div>
-            `).join('');
+            // Renderização condicional de preço (Standard vs VIP)
+            const precos = cesta.opcoes.map(o => {
+                if (isVip) {
+                    // CÁLCULO DE PREÇO VIP
+                    const oldPrice = o.valor_num;
+                    const newPrice = oldPrice - cesta.desconto;
+                    return `
+                    <div class="price-row">
+                        <span>${o.arroz.includes('Valor') ? 'Valor Único' : 'Com ' + o.arroz}</span>
+                        <div>
+                            <span class="price-old">R$ ${o.preco}</span>
+                            <span class="price-new">R$ ${newPrice.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>`;
+                } else {
+                    return `
+                    <div class="price-row">
+                        <span>${o.arroz.includes('Valor') ? 'Valor Único' : 'Com ' + o.arroz}</span>
+                        <span class="price-val">R$ ${o.preco}</span>
+                    </div>`;
+                }
+            }).join('');
 
             const absoluteUrl = cesta.img;
             const localFallback = 'img/' + absoluteUrl.split('/').pop();
+            
+            // Destaque VIP no cabeçalho
+            const seloHtml = isVip 
+                ? `<div class="selo-vip"><i class="ph-fill ph-ticket"></i> OFERTA ATIVA -R$ ${cesta.desconto}</div>`
+                : (cesta.destaque ? `<div class="selo-modern"><i class="ph-fill ph-star"></i> ${cesta.destaque}</div>` : '');
 
             return `
                 <div class="card-header-img">
-                    ${cesta.destaque ? `<div class="selo-modern"><i class="ph-fill ph-star"></i> ${cesta.destaque}</div>` : ''}
+                    ${seloHtml}
                     <img src="${absoluteUrl}" 
                          class="card-img-main" 
                          alt="${cesta.nome}" 
@@ -732,7 +814,7 @@
             await addMessage(`Conheça nossas Cestas: 👇`, 'bot', 1200);
 
             // 2. Mostrar Card Imediatamente
-            state.step = 5; // Pula direto para passo de exibição
+            state.step = 5; 
             nextStep();
         }
 
@@ -745,11 +827,9 @@
             if (!text) return;
             userInput.value = '';
             await addMessage(text, 'user');
-            // Fluxo genérico se usuário digitar algo fora dos botões
             if(state.step === 5) {
-                // Se ele digitar enquanto vê as cestas, podemos direcionar para o desconto
                 await addMessage("Entendi! Mas antes, veja essa oportunidade:", 'bot', 1000);
-                triggerDiscountOffer();
+                triggerPaymentOffer();
             }
         }
 
@@ -757,12 +837,13 @@
             if(state.timerRef) clearTimeout(state.timerRef);
 
             switch (state.step) {
-                case 5: // Card Cesta Moderno (Exibição Imediata)
+                case 5: // Card Normal (Exibição Imediata)
+                    const uniqueIdNormal = 'card-normal-' + Date.now(); // ID ÚNICO
                     const cardHTML = `
                         <div class="card-container">
                             <div class="modern-card">
-                                <div id="unified-card-content">
-                                    ${getCardContent(CESTAS[0])}
+                                <div id="${uniqueIdNormal}">
+                                    ${getCardContent(CESTAS[0], uniqueIdNormal)}
                                 </div>
                             </div>
                         </div>`;
@@ -770,66 +851,95 @@
                     await addMessage(cardHTML, 'bot');
                     trackEvent('ViewContent', { content_name: 'Catalogo', content_type: 'product_group' });
                     
-                    // 3. TIMER DE 15 SEGUNDOS (Gatilho de Retenção)
+                    // 3. TIMER DE 15 SEGUNDOS (Agora pergunta Pagamento em vez de Desconto direto)
                     state.timerRef = setTimeout(() => { 
-                        triggerDiscountOffer();
+                        triggerPaymentOffer();
                     }, 15000); 
                     break;
                 
-                // Passo intermediário criado pelo botão do Timer
-                case 8: // Oferecer Desconto
-                    triggerDiscountOffer(true); // true = chamado via botão se houvesse, mas aqui é fluxo direto
-                    break;
-
-                case 9: // Seleção da Cesta para o Desconto
-                    await addMessage(`Legal! Pra qual cesta você quer aplicar o Desconto?`, 'bot', 1000);
-                    const opts = CESTAS.map((c, i) => ({
-                        text: c.nome.replace('Cesta ', ''),
-                        sub: `(${c.arrozQtd} Arroz)`,
-                        val: `basket_${i}`,
-                        next: 10
-                    }));
-                    showOptions(opts);
-                    break;
-
-                case 10: // Exibir Cupom e Link WhatsApp
-                    const selected = CESTAS.find(c => c.id === state.selectedDiscountId) || CESTAS[0];
-                    await addMessage(`Boa escolha! Para a <b>${selected.nome}</b>, liberei isso:`, 'bot', 1200);
+                case 7: // Exibir Formas de Pagamento (NOVO)
+                    await addMessage(`Trabalhamos com diversas formas para facilitar:`, 'bot', 1000);
                     
-                    const discountHTML = `
+                    const payHTML = `
                         <div class="card-container">
-                            <div class="modern-discount">
-                                <div class="discount-highlight">
-                                    <span class="discount-label">DESCONTO EXCLUSIVO</span>
-                                    <span class="discount-big">- R$ ${selected.desconto},00</span>
-                                    <span style="font-size:11px; color:#059669; opacity:0.8">Válido por 30 dias</span>
+                            <div class="payment-card">
+                                <div class="pay-item">
+                                    <div class="pay-icon"><i class="ph-bold ph-pix-logo"></i></div>
+                                    <div><strong>Pix</strong> <span style="font-size:12px; color:#64748B">(Aprovação imediata)</span></div>
                                 </div>
-                                <button class="btn-claim" onclick="openWa('${selected.nome}', ${selected.desconto})">
-                                    GARANTIR AGORA <i class="ph-bold ph-whatsapp-logo"></i>
-                                </button>
-                                <p style="font-size:11px; color:#94A3B8; margin-top:12px">Sem compromisso de compra hoje.</p>
+                                <div class="pay-item">
+                                    <div class="pay-icon"><i class="ph-bold ph-credit-card"></i></div>
+                                    <div><strong>Cartões</strong> <span style="font-size:12px; color:#64748B">(Débito e Crédito)</span></div>
+                                </div>
+                                <div class="pay-item">
+                                    <div class="pay-icon"><i class="ph-bold ph-money"></i></div>
+                                    <div><strong>Dinheiro</strong> <span style="font-size:12px; color:#64748B">(No ato da entrega)</span></div>
+                                </div>
+                                <div class="pay-item">
+                                    <div class="pay-icon"><i class="ph-bold ph-ticket"></i></div>
+                                    <div><strong>Vale Alimentação</strong> <span style="font-size:12px; color:#64748B">(Verificar bandeiras)</span></div>
+                                </div>
+                                <div class="pay-item" style="justify-content: center; color: #ef4444; font-weight: 600; font-size: 13px; border:none; padding-top:16px;">
+                                    ⚠️ Não vendemos "pra 30 dias"
+                                </div>
                             </div>
                         </div>
                     `;
-                    await addMessage(discountHTML, 'bot');
-                    await addMessage("Clique acima para garantir o desconto no WhatsApp. 👆", 'bot', 1200);
+                    await addMessage(payHTML, 'bot', 1500);
+
+                    // Gancho para o desconto
+                    setTimeout(async () => {
+                        await addMessage(`Ah, e tenho uma surpresa para você! 🎁`, 'bot', 1000);
+                        await addMessage(`Consegui um <b>desconto especial</b> nas cestas. Quer aproveitar?`, 'bot', 1200);
+                        showOptions([{ text: "Quero o Desconto 🎁", val: "quero_desc", next: 9 }]);
+                    }, 2500);
+                    break;
+
+                case 9: // MODO VIP ATIVADO
+                    state.vipMode = true; // Ativa visual especial
+                    
+                    await addMessage(`Liberado! 🎉 Apliquei o desconto em <b>todas</b> as cestas para você. Veja os novos valores:`, 'bot', 1200);
+
+                    // Re-renderiza o card, agora com estado VIP ativo
+                    const uniqueIdVip = 'card-vip-' + Date.now(); // ID ÚNICO
+                    const vipCardHTML = `
+                        <div class="card-container">
+                            <div class="modern-card vip-active">
+                                <div id="${uniqueIdVip}">
+                                    ${getCardContent(CESTAS[0], uniqueIdVip)}
+                                </div>
+                            </div>
+                        </div>`;
+                    await addMessage(vipCardHTML, 'bot', 1000);
+
+                    await addMessage(`📝 Coloque seu nome na lista de clientes com desconto.`, 'bot', 1500);
+                    
+                    // Botão Final - Garantir Desconto
+                    const finalBtnHTML = `
+                        <div class="card-container" style="margin-top:10px">
+                             <a href="javascript:void(0)" onclick="openWaGeneric()" class="btn-claim" style="background:#10B981;">
+                                GARANTIR DESCONTO <i class="ph-bold ph-whatsapp-logo" style="font-size:20px"></i>
+                            </a>
+                        </div>
+                    `;
+                    await addMessage(finalBtnHTML, 'bot', 500);
                     break;
             }
         }
 
-        // Função separada para o gatilho de 15s
-        async function triggerDiscountOffer(instant = false) {
+        // Nova função de Gatilho de Pagamento
+        async function triggerPaymentOffer(instant = false) {
             // Se o usuário já passou do passo 5 (já clicou em algo), não mostra
-            if (state.step > 8) return;
+            if (state.step > 5) return;
 
-            state.step = 8; // Atualiza estado para evitar loops
+            state.step = 6; 
             
             if(!instant) {
-                await addMessage(`🙏 Espero que tenha gostado.`, 'bot', 1000);
+                await addMessage(`👋 Ainda por aí?`, 'bot', 1000);
             }
-            await addMessage(`🎁 Tenho um **desconto especial** para você fazer!`, 'bot', 1200);
+            await addMessage(`Gostaria de Ver as Formas de Pagamento?`, 'bot', 1200);
             
-            showOptions([{ text: "Quero meu Desconto 🎁", val: "quero_desc", next: 9 }]);
+            showOptions([{ text: "Sim", val: "ver_pagto", next: 7 }]);
         }
 
         const getGreeting = () => {
@@ -837,27 +947,34 @@
             return h < 12 ? "Bom dia" : h < 18 ? "Boa tarde" : "Boa noite";
         };
 
-        window.openWa = async function(cesta, desconto) {
-            // Mensagem simplificada (sem nome do usuário, pois não capturamos)
-            const msg = `Olá! Tenho interesse na *${cesta}* e quero garantir meu desconto de *R$ ${desconto},00*.`;
+        // Função genérica para o botão final
+        window.openWaGeneric = async function() {
+            let text = "Olá! Vim pelo site e quero garantir os descontos da Lista VIP:\n\n";
             
-            window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-            trackEvent('Lead', { currency: 'BRL', value: desconto, content_name: cesta });
+            CESTAS.forEach(c => {
+                text += `🛒 *${c.nome}*\n`;
+                
+                c.opcoes.forEach(opt => {
+                     const precoFinal = (opt.valor_num - c.desconto).toFixed(2).replace('.', ',');
+                     const label = opt.arroz.includes('Valor') ? 'Valor Único' : `Com ${opt.arroz}`;
+                     text += `💰 ${label}: *R$ ${precoFinal}*\n`;
+                });
 
-            await addMessage("Muito obrigado! 🙏", 'bot', 1000);
-            await addMessage("Somos uma empresa familiar que trabalha com muito amor para entregar a melhor cesta básica de Mato Grosso.", 'bot', 1500);
+                text += `------------------------------\n`;
+            });
+
+            text += "\nQual a disponibilidade?";
             
-            await addMessage("Acompanhe nossas novidades: 👇", 'bot', 1000);
+            window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=${encodeURIComponent(text)}`, '_blank');
+            trackEvent('Lead', { currency: 'BRL', value: 0, content_name: 'Lista VIP Completa' });
+
+            await addMessage("Perfeito! Aguardamos você no WhatsApp.", 'bot', 1000);
             
             const socialHTML = `
                 <div class="social-buttons-container">
                     <a href="${CONFIG.instagramLink}" target="_blank" class="social-btn-lg btn-insta">
                         <i class="ph-bold ph-instagram-logo" style="font-size:24px"></i> 
                         Siga no Instagram
-                    </a>
-                    <a href="${CONFIG.whatsAppGroupLink}" target="_blank" class="social-btn-lg btn-vip">
-                        <i class="ph-bold ph-star" style="font-size:24px"></i> 
-                        Entre no Grupo VIP
                     </a>
                 </div>
             `;
