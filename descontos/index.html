@@ -895,22 +895,43 @@
                     }, 2500);
                     break;
 
-                case 9: // MODO VIP ATIVADO
-                    state.vipMode = true; // Ativa visual especial
-                    
-                    await addMessage(`Liberado! 🎉 Apliquei o desconto em <b>todas</b> as cestas para você. Veja os novos valores:`, 'bot', 1200);
+                case 9: // LISTA DE PREÇOS VIP
+                    state.vipMode = true; 
+                    await addMessage(`Liberado! 🎉 Apliquei o desconto em <b>todas</b> as cestas. Confira a tabela oficial:`, 'bot', 1200);
 
-                    // Re-renderiza o card, agora com estado VIP ativo
-                    const uniqueIdVip = 'card-vip-' + Date.now(); // ID ÚNICO
-                    const vipCardHTML = `
+                    let tableRows = '';
+                    CESTAS.forEach((c, i) => {
+                        c.opcoes.forEach(opt => {
+                             const oldP = opt.valor_num.toFixed(2).replace('.', ',');
+                             const newP = (opt.valor_num - c.desconto).toFixed(2).replace('.', ',');
+                             const nome = c.opcoes.length > 1 ? `${c.nome} (${opt.arroz})` : c.nome;
+                             
+                             tableRows += `
+                                <tr style="border-bottom: 1px solid #F1F5F9;">
+                                    <td style="padding: 12px 16px; color: #1E293B; font-weight:500">${nome}</td>
+                                    <td style="padding: 12px 16px; text-align: right; color: #ef4444; text-decoration: line-through; font-size: 12px;">R$ ${oldP}</td>
+                                    <td style="padding: 12px 16px; text-align: right; color: #059669; font-weight: 700;">R$ ${newP}</td>
+                                </tr>
+                             `;
+                        });
+                    });
+
+                    const tableHTML = `
                         <div class="card-container">
-                            <div class="modern-card vip-active">
-                                <div id="${uniqueIdVip}">
-                                    ${getCardContent(CESTAS[0], uniqueIdVip)}
+                            <div class="modern-card" style="border: 2px solid #F59E0B; overflow: hidden;">
+                                <div style="background:#FEF3C7; padding:8px; text-align:center; font-size:11px; font-weight:700; color:#B45309; text-transform:uppercase;">
+                                    <i class="ph-fill ph-ticket"></i> Tabela VIP Ativa
                                 </div>
+                                <table style="width:100%; border-collapse: collapse; font-size: 13px;">
+                                    <tbody>
+                                        ${tableRows}
+                                    </tbody>
+                                </table>
                             </div>
-                        </div>`;
-                    await addMessage(vipCardHTML, 'bot', 1000);
+                        </div>
+                    `;
+                    
+                    await addMessage(tableHTML, 'bot', 1000);
 
                     await addMessage(`📝 Coloque seu nome na lista de clientes com desconto.`, 'bot', 1500);
                     
