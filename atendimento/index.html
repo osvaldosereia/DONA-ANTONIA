@@ -7,7 +7,7 @@
     <meta name="description" content="Encomende cestas básicas em Cuiabá e Várzea Grande. Qualidade, preço justo e entrega rápida. Fale com o Osvaldo!">
     <meta name="theme-color" content="#008069">
     
-    <!-- PILLAR 1: SCHEMA MARKUP (SEO LOCAL) -->
+    <!-- PILLAR 1: SCHEMA MARKUP (SEO LOCAL AUTOMATIZADO) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -37,26 +37,56 @@
     }
     </script>
 
-    <!-- OTIMIZAÇÃO: Preload e DNS Prefetch -->
+    <!-- PILLAR 1: PERFORMANCE & PRELOAD -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <!-- Usando versão específica para evitar quebras e melhorar cache -->
+    <script src="https://cdn.tailwindcss.com/3.4.1"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <!-- PILLAR 3: SEGURANÇA (CSP & Headers Simulados) -->
+    <!-- Ajustado para permitir execução correta do Tailwind CDN -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
     <meta http-equiv="X-Frame-Options" content="DENY">
 
+    <script>
+        // Configuração do Tailwind para evitar FOUC e erros de renderização
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        whatsapp: '#008069',
+                        'whatsapp-light': '#25D366'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* === ESTILOS GERAIS DO WHATSAPP === */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #E5DDD5; }
-        
-        .wa-header { background-color: #008069; }
-        
-        /* Otimização de renderização do padrão de fundo */
+        /* === CRITICAL CSS (ANTI-FOUC & LAYOUT SHIFT) === */
+        /* Isso garante que a página não "pisque" quebrada */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #E5DDD5; 
+            margin: 0;
+            padding: 0;
+            opacity: 0; /* Começa invisível */
+            transition: opacity 0.4s ease-in; /* Aparece suavemente */
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Estrutura base para garantir layout antes do Tailwind */
+        .wa-header { background-color: #008069; min-height: 60px; color: white; display: flex; align-items: center; }
+        #chat-container { flex: 1; overflow-y: auto; background-color: #E5DDD5; position: relative; }
+        #input-footer { background-color: #F0F2F5; min-height: 60px; }
+
+        /* Otimização de fundo */
         .wa-bg { 
             background-color: #E5DDD5;
             background-image: url("data:image/svg+xml,%3Csvg width='320' height='180' viewBox='0 0 320 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239CAFA3' fill-opacity='0.20' fill-rule='evenodd'%3E%3Ctext x='20' y='70' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 20 70)'%3Ewww.donaantonia.com.br%3C/text%3E%3Ctext x='80' y='150' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 80 150)'%3E65 99815-0975%3C/text%3E%3C/g%3E%3C/svg%3E");
@@ -66,16 +96,16 @@
         .msg-in { background-color: #FFFFFF; border-radius: 0 8px 8px 8px; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
         .msg-out { background-color: #E7FFDB; border-radius: 8px 0 8px 8px; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
         
-        /* === PILLAR 3: Proteção de Marca (CSS) === */
+        /* === PILLAR 3: Proteção de Marca === */
         .protected-img, .protected-msg, .card-cesta-new { 
             user-select: none; 
             -webkit-user-select: none; 
             -webkit-touch-callout: none;
-            pointer-events: auto; /* Permite scroll */
+            pointer-events: auto;
         }
-        img { pointer-events: none; } /* Bloqueia arrastar imagens */
+        img { pointer-events: none; -webkit-user-drag: none; }
 
-        /* === BOTÕES INTERATIVOS === */
+        /* === BOTÕES E INTERAÇÃO === */
         .msg-options { background-color: transparent; padding: 0; box-shadow: none; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; width: 85%; }
         .wa-btn {
             background-color: white; color: #008069; padding: 12px 16px; border-radius: 8px; width: 100%;
@@ -96,19 +126,10 @@
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* === UTILITÁRIOS === */
+        /* === ESTILOS ESPECÍFICOS DOS CARDS === */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* === ESTILOS DOS CARDS === */
-        :root {
-            --cor-destaque-dourado: #ffb300;
-            --cor-texto-destaque: #0F2546;
-            --cor-whatsapp: #25D366;
-            --cor-destaque-vermelho: #ff5252;
-        }
-
-        /* CARD NOVO LAYOUT */
         .card-msg-container { width: 100%; max-width: 95%; margin-bottom: 5px; }
 
         .card-cesta-new {
@@ -117,64 +138,21 @@
             position: relative;
         }
 
-        /* ÁREA SUPERIOR: FOTO + CHIPS */
-        .card-top-row {
-            display: flex;
-            flex-direction: row;
-            height: 200px; /* Altura ajustada */
-            border-bottom: 1px solid #f5f5f5;
-        }
+        .card-top-row { display: flex; flex-direction: row; height: 200px; border-bottom: 1px solid #f5f5f5; }
+        .card-img-area { flex: 1; padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .card-img-large { width: 170px; height: 170px; object-fit: cover; border-radius: 8px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
 
-        .card-img-area {
-            flex: 1;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .card-img-large {
-            width: 170px; height: 170px; 
-            object-fit: cover; border-radius: 8px; 
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
-        }
-
-        /* SIDEBAR DE CHIPS (Direita) */
         .card-chips-area {
-            width: 95px;
-            background: #f8f9fa;
-            border-left: 1px solid #eee;
-            padding: 8px 5px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-            justify-content: center;
+            width: 95px; background: #f8f9fa; border-left: 1px solid #eee; padding: 8px 5px;
+            display: flex; flex-direction: column; gap: 10px; overflow-y: auto; justify-content: center;
         }
-
         .chip-nav {
-            font-size: 0.65rem;
-            padding: 6px 4px;
-            border-radius: 6px;
-            text-align: center;
-            cursor: pointer;
-            border: 1px solid #e0e0e0;
-            background: white;
-            color: #666;
-            font-weight: 700;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            line-height: 1.1;
+            font-size: 0.65rem; padding: 6px 4px; border-radius: 6px; text-align: center; cursor: pointer;
+            border: 1px solid #e0e0e0; background: white; color: #666; font-weight: 700; transition: all 0.2s;
+            text-transform: uppercase; line-height: 1.1;
         }
-        
         .chip-nav:active { transform: scale(0.95); }
-        .chip-nav.selected {
-            background: #008069;
-            color: white;
-            border-color: #006d59;
-            box-shadow: 0 2px 4px rgba(0,128,105,0.3);
-        }
+        .chip-nav.selected { background: #008069; color: white; border-color: #006d59; box-shadow: 0 2px 4px rgba(0,128,105,0.3); }
 
         .selo-destaque {
             position: absolute; top: 10px; left: 10px;
@@ -184,12 +162,9 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        /* Slider de Produtos (LARGURA TOTAL) */
+        /* Slider */
         .product-slider-container { background: #f9fafb; padding: 10px 0; position: relative; transition: opacity 0.3s; width: 100%; border-bottom: 1px solid #eee; }
-        .product-slider {
-            display: flex; overflow-x: auto; gap: 8px; padding: 0 10px;
-            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
-        }
+        .product-slider { display: flex; overflow-x: auto; gap: 8px; padding: 0 10px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .product-slider::-webkit-scrollbar { height: 4px; }
         .product-slider::-webkit-scrollbar-thumb { background: #ddd; border-radius: 2px; }
 
@@ -202,14 +177,7 @@
         .product-slide img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 6px; }
         .product-info { display: flex; flex-direction: column; line-height: 1.1; }
         .product-qty { font-size: 0.8rem; font-weight: 800; color: #0d5f46; margin-bottom: 2px; }
-        
-        /* Nome do produto ajustado para ser mais discreto */
-        .product-name { 
-            font-size: 0.65rem; 
-            color: #666; 
-            font-weight: 500; 
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-        }
+        .product-name { font-size: 0.65rem; color: #666; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         
         .slider-arrow-indicator {
             position: absolute; right: 2px; top: 50%; transform: translateY(-50%);
@@ -219,84 +187,40 @@
             pointer-events: none; transition: opacity 0.3s;
         }
 
-        /* Preços */
+        /* Preços e Outros */
         .card-price-display-only { padding: 8px 10px; background: #fff; transition: opacity 0.3s; }
         .price-item-row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; color: #555; }
         .price-item-row strong { color: #ff5252; }
 
         /* Discount Widget */
         .discount-container { background: #fff; border-radius: 8px; padding: 12px; border: 1px solid #e0e0e0; max-width: 320px; }
-        .discount-table { width: 100%; font-size: 0.9rem; margin-bottom: 0; }
-        .discount-table td { padding: 6px 0; border-bottom: 1px dashed #eee; }
-        .discount-table td:last-child { text-align: right; font-weight: bold; color: #166534; }
         
-        .radio-discount { display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid #ddd; border-radius: 6px; margin-bottom: 8px; cursor: pointer; }
-        .radio-discount.selected { background: #f0fdf4; border-color: #166534; }
-        .radio-circle { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #ccc; position: relative; }
-        .radio-discount.selected .radio-circle { border-color: #166534; }
-        .radio-discount.selected .radio-circle::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: #166534; border-radius: 50%; }
-
-        /* Card Empresa */
-        .company-header {
-            padding: 20px 15px; display: flex; flex-direction: row; align-items: center;
-            background: #fff; border-bottom: 1px solid #f0f0f0; gap: 15px;
-        }
+        /* Company Card */
+        .company-header { padding: 20px 15px; display: flex; flex-direction: row; align-items: center; background: #fff; border-bottom: 1px solid #f0f0f0; gap: 15px; }
         .company-logo { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; box-shadow: 0 2px 5px rgba(0,0,0,0.1); border: 2px solid #fff; }
         .company-info h2 { font-size: 1.1rem; font-weight: 800; color: #0F2546; line-height: 1.2; margin-bottom: 2px; }
         .company-info p { font-size: 0.85rem; color: #666; font-weight: 400; }
-
-        .company-social-section { 
-            background: #fdfdfd; padding: 15px; border-top: 1px solid #eee; 
-            display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 12px;
-        }
-        .company-follow-text { 
-            font-size: 0.85rem; font-weight: 700; color: #444; 
-            display: flex; align-items: center; gap: 4px;
-            margin: 0;
-        }
+        .company-social-section { background: #fdfdfd; padding: 15px; border-top: 1px solid #eee; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 12px; }
+        .company-follow-text { font-size: 0.85rem; font-weight: 700; color: #444; display: flex; align-items: center; gap: 4px; margin: 0; }
         .company-social-row { display: flex; gap: 15px; }
-        .company-social-btn { 
-            color: #555; font-size: 1.6rem; transition: all 0.2s; 
-            background: #fff; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #eee;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .company-social-btn { color: #555; font-size: 1.6rem; transition: all 0.2s; background: #fff; width: 40px; height: 40px; border-radius: 50%; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; }
         .company-social-btn:hover { color: #008069; transform: scale(1.05); border-color: #008069; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* Company Stats List (Vertical) */
-        .company-stats-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding: 10px 15px;
-        }
-        .stat-row {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 8px 12px;
-            border-radius: 8px;
-            color: white;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        .stat-row-text {
-            font-size: 0.9rem;
-            font-weight: 500;
-            line-height: 1.2;
-            flex: 1;
-            text-align: left;
-        }
-        .stat-row-icon {
-            font-size: 1.2rem;
-            margin-right: 10px;
-            opacity: 0.9;
-        }
+        .company-stats-list { display: flex; flex-direction: column; gap: 8px; padding: 10px 15px; }
+        .stat-row { display: flex; align-items: center; justify-content: flex-start; padding: 8px 12px; border-radius: 8px; color: white; box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .stat-row-text { font-size: 0.9rem; font-weight: 500; line-height: 1.2; flex: 1; text-align: left; }
+        .stat-row-icon { font-size: 1.2rem; margin-right: 10px; opacity: 0.9; }
 
+        /* Ajuste para input mobile iOS */
+        @supports (-webkit-touch-callout: none) {
+            .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+        }
     </style>
 </head>
-<body class="h-[100dvh] flex flex-col overflow-hidden" oncontextmenu="return false;">
+<body oncontextmenu="return false;">
 
-    <!-- HEADER -->
-    <header class="wa-header text-white p-3 flex items-center shadow-md z-30 shrink-0">
+    <!-- HEADER (Classes Tailwind + Estilos Inline para segurança) -->
+    <header class="wa-header shadow-md z-30 shrink-0 p-3" style="background-color: #008069; color: white;">
         <div class="w-10 h-10 rounded-full bg-gray-300 overflow-hidden mr-3 border border-white/30 relative shrink-0">
             <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo" class="w-full h-full object-cover protected-img">
             <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white"></div>
@@ -305,15 +229,15 @@
             <h3 class="font-bold text-lg leading-tight truncate">Cestas Dona Antônia</h3>
             <p id="status-text" class="text-xs text-green-100/80 truncate">Online</p>
         </div>
-        <div class="flex gap-4 text-xl shrink-0">
-            <a href="https://instagram.com" target="_blank" class="text-white hover:text-gray-200"><i class="ph ph-instagram-logo"></i></a>
-            <a href="#" target="_blank" class="text-white hover:text-gray-200"><i class="ph ph-globe"></i></a>
-            <a href="https://wa.me/5565998150975" target="_blank" class="text-white hover:text-gray-200"><i class="ph ph-whatsapp-logo"></i></a>
+        <div class="flex gap-4 text-xl shrink-0 text-white">
+            <a href="https://instagram.com" target="_blank" class="hover:text-gray-200"><i class="ph ph-instagram-logo"></i></a>
+            <a href="#" target="_blank" class="hover:text-gray-200"><i class="ph ph-globe"></i></a>
+            <a href="https://wa.me/5565998150975" target="_blank" class="hover:text-gray-200"><i class="ph ph-whatsapp-logo"></i></a>
         </div>
     </header>
 
     <!-- CHAT AREA -->
-    <main id="chat-container" class="wa-bg flex-1 overflow-y-auto p-4 space-y-3 relative scrolling-touch">
+    <main id="chat-container" class="wa-bg flex-1 p-4 space-y-3 relative scrolling-touch">
         <!-- Messages will appear here -->
     </main>
 
@@ -345,7 +269,10 @@
                 ...params
             };
             window.dataLayer.push(eventData);
-            console.log(`[Meta Pixel/API] ${eventName}:`, params);
+            // Log para debug em ambiente de desenvolvimento
+            if(window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+                console.log(`[Meta Pixel/API] ${eventName}:`, params);
+            }
         }
 
         // CONFIGURAÇÃO GERAL
@@ -356,7 +283,7 @@
             instagramLink: "https://instagram.com/cestas.dona.antonia.cuiaba.vg"
         };
 
-        // BASE DE DADOS ATUALIZADA
+        // BASE DE DADOS
         const CESTAS = [
             {
                 id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', desconto: 5, arrozQtd: 1, brindeNome: '1 Trigo 1kg',
@@ -406,9 +333,8 @@
             step: 0, 
             userName: '', 
             clientDisplayName: '', 
-            viewedBaskets: [],
             timerRef: null,
-            currentBasketIndex: 0, // Inicia na Economica (Primeira da lista ajustada)
+            currentBasketIndex: 0,
             selectedDiscountId: null,
             scrollTriggered: false
         };
@@ -419,8 +345,6 @@
         };
 
         const getCurrentTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        
-        // Data + 30 dias para validade
         const getFutureDate = () => {
             const date = new Date();
             date.setDate(date.getDate() + 30);
@@ -434,15 +358,15 @@
         }
 
         function calculateTypingTime(text) {
-            const baseDelay = 800; 
-            const charDelay = 20;
-            return Math.min(baseDelay + (text.length * charDelay), 3000);
+            const baseDelay = 600; // Reduzi levemente para percepção de velocidade
+            const charDelay = 15;
+            return Math.min(baseDelay + (text.length * charDelay), 2500);
         }
 
         function addMessage(text, sender = 'bot', forceDelay = null) {
             return new Promise(resolve => {
                 const typingTime = forceDelay !== null ? forceDelay : calculateTypingTime(text);
-                const preTypingDelay = sender === 'bot' ? 500 : 0;
+                const preTypingDelay = sender === 'bot' ? 400 : 0;
 
                 setTimeout(() => {
                     if (sender === 'bot') {
@@ -519,7 +443,7 @@
                     </div>`;
                 chatContainer.insertAdjacentHTML('beforeend', html);
                 scrollToBottom();
-            }, 800);
+            }, 600);
         }
 
         // --- SISTEMA DE NAVEGAÇÃO DO CARD UNIFICADO ---
@@ -527,40 +451,30 @@
              const container = document.getElementById('unified-card-content');
              if(!container) return;
              
-             // Reset scroll
              state.scrollTriggered = false;
  
-             // Fade out content
              const elementsToFade = container.querySelectorAll('.card-img-container, .product-slider-container, .card-price-display-only, .selo-destaque');
              elementsToFade.forEach(el => el.style.opacity = '0');
  
              setTimeout(() => {
                  state.currentBasketIndex = index;
                  const cesta = CESTAS[index];
-                 
-                 // Track interaction
                  trackEvent('ViewContent', { content_name: cesta.nome });
- 
-                 // Regenerate content (INCLUDES CHIPS NOW)
                  container.innerHTML = generateUnifiedInnerContent(cesta);
                  
-                 // Fade in
                  setTimeout(() => {
                      const newElements = container.querySelectorAll('.card-img-container, .product-slider-container, .card-price-display-only, .selo-destaque');
                      newElements.forEach(el => el.style.opacity = '1');
                  }, 50);
- 
-             }, 250);
+             }, 200);
         };
 
         function getProductImage(text) {
             const lowerText = text.toLowerCase();
             let imgName = 'outros.png';
-            let folder = 'img/alimento/'; // Default folder
+            let folder = 'img/alimento/';
 
-            // LOGICA DE MAPEAMENTO CORRIGIDA PARA NOMES DE ARQUIVO EXATOS
-
-            // === LIMPEZA (img/limpeza/) ===
+            // Mapeamento simplificado para manter o código limpo
             if(lowerText.includes('creme dental')) { imgName = 'Creme Dental Sorriso 70g.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('desinfetante')) { imgName = 'Desinfetante Remmus 2L.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('detergente')) { imgName = 'Detergente Ype 500ml.webp'; folder = 'img/limpeza/'; }
@@ -572,8 +486,6 @@
             else if(lowerText.includes('sabonete')) { imgName = 'sabonete palmolive 85g.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('sabão barra')) { imgName = 'sabão barra ype 900g.webp'; folder = 'img/limpeza/'; }
             else if(lowerText.includes('sabão pó') || lowerText.includes('sabão em pó') || lowerText.includes('omo')) { imgName = 'sabão em pó omo 800g.webp'; folder = 'img/limpeza/'; }
-            
-            // === ALIMENTOS (img/alimento/) ===
             else if(lowerText.includes('arroz')) imgName = 'Arroz Koblenz 5kg.webp';
             else if(lowerText.includes('açúcar') || lowerText.includes('acucar')) imgName = 'açucar doce dia 2 kg.webp';
             else if(lowerText.includes('bolacha')) imgName = 'bolacha mybit.webp';
@@ -583,7 +495,8 @@
                 else imgName = 'cafe caboclo 250g.webp';
             }
             else if(lowerText.includes('espaguete')) imgName = 'espaguete qdelicia.webp';
-            // Nota: Esponja Assolan já tratada em limpeza como lã de aço
+            // REGRA NOVA ADICIONADA:
+            else if(lowerText.includes('farinha') || lowerText.includes('mandioca')) imgName = 'farinha de mandioca.webp';
             else if(lowerText.includes('feijão') || lowerText.includes('feijao')) imgName = 'feijão da casa.webp';
             else if(lowerText.includes('milho')) imgName = 'milho verde predileta.webp';
             else if(lowerText.includes('miojo')) imgName = 'miojo apti.webp';
@@ -610,7 +523,6 @@
         }
 
         function generateUnifiedInnerContent(cesta) {
-            // Gera os chips aqui dentro para que o estado "selected" seja atualizado
             const chipsHTML = CESTAS.map((c, i) => {
                 const shortName = c.nome.replace('Cesta ', '');
                 const isSelected = cesta.id === c.id ? 'selected' : '';
@@ -619,10 +531,10 @@
 
             const slidesHTML = cesta.items.map(item => {
                 const parsed = parseProductItem(item);
-                const fallbackImg = `https://placehold.co/80x80/eee/999?text=${parsed.name.substring(0,3).toUpperCase()}`;
+                // Otimização: Lazy loading em todas as imagens
                 return `
                 <div class="product-slide">
-                    <img src="${parsed.img}" onerror="this.src='${fallbackImg}'" alt="${parsed.name}" loading="lazy">
+                    <img src="${parsed.img}" onerror="this.src='${parsed.fallback}'" alt="${parsed.name}" loading="lazy">
                     <div class="product-info">
                         <span class="product-qty">${parsed.qty}</span>
                         <span class="product-name">${parsed.name}</span>
@@ -647,7 +559,6 @@
                         ${chipsHTML}
                     </div>
                 </div>
-                
                 <div class="product-slider-container fade-in">
                     <div class="slider-wrapper">
                         <div class="product-slider" onscroll="handleSlideScroll(this)">
@@ -659,7 +570,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="card-price-display-only fade-in">
                     ${pricesHTML}
                 </div>
@@ -678,7 +588,6 @@
         }
 
         // --- RETENTION / DISCOUNT LOGIC ---
-
         function generateSingleDiscountWidget(cesta) {
             return `
             <div class="card-msg-container">
@@ -712,9 +621,7 @@
             }, 1500);
         };
 
-
         function generateCompanyCardHTML() {
-            // SLIDES COM TEXTO COLORIDO
             const slidesData = [
                 { text: "8 anos em Cuiabá e VG", bg: "linear-gradient(135deg, #10b981, #059669)", icon: "ph-clock" },
                 { text: "Mais de 30 mil Cestas Entregues", bg: "linear-gradient(135deg, #3b82f6, #2563eb)", icon: "ph-truck" },
@@ -739,11 +646,9 @@
                                 <p>Desde 2016 em Cuiabá & VG</p>
                             </div>
                         </div>
-                        
                         <div class="company-stats-list">
                             ${statsHTML}
                         </div>
-                        
                         <div class="company-social-section">
                             <div class="company-follow-text">Siga <i class="ph-bold ph-caret-right"></i></div>
                             <div class="company-social-row">
@@ -762,7 +667,6 @@
             const arrow = wrapper.querySelector('.slider-arrow-indicator');
             if (element.scrollLeft > 20) { if(arrow) arrow.style.opacity = '0'; } else { if(arrow) arrow.style.opacity = '1'; }
 
-            // GATILHO DE ROLAGEM (Scroll Trigger)
             if (element.scrollLeft + element.clientWidth >= element.scrollWidth - 50) {
                 if (state.step === 5 && !state.scrollTriggered) {
                     state.scrollTriggered = true;
@@ -777,23 +681,21 @@
             }
         };
 
-        function handlePostClick() {
-            setTimeout(() => {
-                state.step = 100;
-                nextStepFlow();
-            }, 1500);
-        }
-
         // --- LÓGICA DO ROTEIRO (MAQUINA DE ESTADOS) ---
-        window.onload = async () => {
+        // CORREÇÃO: Usar DOMContentLoaded para iniciar mais rápido
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Anti-FOUC Reveal
+            document.body.style.opacity = '1';
+            
             trackEvent('PageView');
+            
             setTimeout(async () => {
-                await addMessage(`${getGreeting()}! Tudo bem? 👋`, 'bot', 1000);
-                await addMessage(`Aqui é o <b>${CONFIG.ownerName}</b>, da Cesta Básica Dona Antônia.`, 'bot', 1500);
-                await addMessage(`Qual é o seu nome?`, 'bot', 1200);
+                await addMessage(`${getGreeting()}! Tudo bem? 👋`, 'bot', 800);
+                await addMessage(`Aqui é o <b>${CONFIG.ownerName}</b>, da Cesta Básica Dona Antônia.`, 'bot', 1200);
+                await addMessage(`Qual é o seu nome?`, 'bot', 1000);
                 userInput.focus();
-            }, 500);
-        };
+            }, 600); // Inicia um pouco mais rápido
+        });
 
         async function handleInput() {
             const text = userInput.value.trim();
@@ -803,7 +705,6 @@
                 const parts = text.split(/\s+/);
                 state.userName = parts[0]; 
                 state.clientDisplayName = parts.slice(0, 2).join(' ');
-
                 trackEvent('Identify', { user_name: state.userName });
 
                 state.step = 1;
@@ -821,14 +722,11 @@
 
             await addMessage(text, 'user');
             state.step = nextStep;
-            
-            // Timer Reset logic se necessário
             if(state.timerRef) clearTimeout(state.timerRef);
 
-            // Se for seleção de cesta para desconto
             if (value.startsWith('discount_basket_')) {
                 const index = parseInt(value.split('_')[2]);
-                state.selectedDiscountId = CESTAS[index].id; // Salva ID para uso posterior
+                state.selectedDiscountId = CESTAS[index].id;
                 nextStepFlow('discount_selected');
                 return;
             }
@@ -849,16 +747,13 @@
                         { text: "Não conheço 🤔", value: "nao", nextStep: 2 }
                     ]);
                     break;
-
                 case 2: // Mostra Empresa
                     await addMessage(generateCompanyCardHTML());
                     setTimeout(() => { 
-                        state.step = 4; // Passo intermediário para perguntar
+                        state.step = 4;
                         nextStepFlow('ask_show_products'); 
                     }, 4000);
                     break;
-
-                // PASSO NOVO: PERGUNTA DIDÁTICA
                 case 4: 
                     if(triggerValue === 'ask_show_products') {
                         await addMessage(`Posso te apresentar nossas opções de cestas agora?`);
@@ -867,35 +762,28 @@
                         ]);
                     }
                     break;
-
-                case 3: // Fallback caso venha do "Sim" direto do passo 1
-                     // Redireciona para o passo 5 (Mostrar Cestas) com uma msg antes
+                case 3: // Fallback
                      await addMessage(`Combinado! Vou te mostrar as opções.`);
                      setTimeout(() => { state.step = 5; nextStepFlow(); }, 1000);
                      break;
-
-                case 5: // Exibe Card UNIFICADO COM CHIPS
-                    state.currentBasketIndex = 0; // Começa na Economica
-                    state.scrollTriggered = false; // Reset trigger
+                case 5: // Exibe Card UNIFICADO
+                    state.currentBasketIndex = 0;
+                    state.scrollTriggered = false;
                     await addMessage(`Você pode navegar entre elas aqui mesmo 👇`);
                     await addMessage(generateUnifiedCardFrame(CESTAS[0]));
-                    
                     trackEvent('ViewContent', { content_name: CESTAS[0].nome });
-
-                    // TIMER DE RETENÇÃO REDUZIDO (20s)
+                    
                     state.timerRef = setTimeout(() => {
                         state.step = 6;
                         nextStepFlow('timer_trigger');
                     }, 20000); 
                     break;
-
-                case 6: // Pergunta Pagamento (Recuperação)
+                case 6: // Pergunta Pagamento
                     await addMessage(`Posso te mostrar as formas de pagamento?`);
                     showOptions([
                         { text: "Pode mostrar ✅", value: "show_payment", nextStep: 7 }
                     ]);
                     break;
-
                 case 7: // Mostra Pagamento e INICIA RETENÇÃO
                     await addMessage(`Aceitamos praticamente tudo:`);
                     const listaPagamento = `
@@ -907,50 +795,37 @@
                             <li>AINDA NÃO VENDEMOS A PRAZO OU PARA 30 DIAS</li>
                         </ul>`;
                     await addMessage(listaPagamento);
-                    
-                    // NOVA ESTRATÉGIA DE RETENÇÃO (5 segundos)
                     setTimeout(async () => {
                         state.step = 8;
                         nextStepFlow('retention_start');
                     }, 5000);
                     break;
-
                 case 8: // Retenção - Hook
                     await addMessage(`⭐ ${name}, quero muito que você se torne nosso cliente.`);
                     await addMessage(`🚀 Posso te oferecer um desconto pra sua primeira compra?`);
-                    
                     showOptions([
                         { text: "Pode sim 👍", value: "accept_offer", nextStep: 9 }
                     ]);
                     break;
-
                 case 9: // Retenção - Escolha
                     await addMessage(`Que ótimo! Qual tamanho de cesta te interessa mais?`);
-                    
-                    // Gera opções baseadas nas cestas
                     const basketOptions = CESTAS.map((c, i) => ({
                         text: c.nome.replace('Cesta ', ''),
                         subtext: `(${c.arrozQtd} pacote${c.arrozQtd > 1 ? 's' : ''} de arroz)`,
                         value: `discount_basket_${i}`,
                         nextStep: 10
                     }));
-                    
                     showOptions(basketOptions);
                     break;
-
                 case 10: // Retenção - Revelação e CTA
                     const selectedBasket = CESTAS.find(c => c.id === state.selectedDiscountId);
-                    
                     await addMessage(`Boa escolha!`);
                     await addMessage(`Para a <b>${selectedBasket.nome}</b>, consegui liberar um desconto especial.`);
-                    
                     await addMessage(generateSingleDiscountWidget(selectedBasket));
                     break;
-
                 case 100: // Passo Final
                     await addMessage(`Perfeito! Aguarde que já vamos confirmar seu pedido no WhatsApp. 🟢`);
                     await addMessage(`Siga a gente no Instagram:`);
-                    
                     const instaBtn = `
                         <div class="flex flex-col justify-center w-full mt-2 mb-4 gap-3">
                             <a href="${CONFIG.instagramLink}" target="_blank" onclick="trackEvent('SocialClick', { type: 'Instagram' })"
@@ -958,7 +833,6 @@
                                 <i class="ph-bold ph-instagram-logo text-2xl"></i>
                                 Seguir no Instagram
                             </a>
-                            
                             <a href="${CONFIG.whatsAppGroupLink}" target="_blank" onclick="trackEvent('SocialClick', { type: 'VIPGroup' })"
                                class="bg-gradient-to-r from-yellow-400 to-yellow-600 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 hover:opacity-90 transition transform hover:scale-105 no-underline border-2 border-white/20">
                                 <i class="ph-bold ph-star text-2xl"></i>
