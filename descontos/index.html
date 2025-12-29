@@ -3,11 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cesta Econômica | Super Cestas Dona Antônia - Cuiabá e VG</title>
-    <meta name="description" content="Encomende cestas básicas em Cuiabá e Várzea Grande. Qualidade, preço justo e entrega rápida. Fale com o Osvaldo!">
-    <meta name="theme-color" content="#008069">
+    <title>Cesta Econômica | Super Cestas Dona Antônia</title>
+    <meta name="description" content="Cestas básicas com qualidade e preço justo em Cuiabá e Várzea Grande. Peça pelo WhatsApp!">
+    <meta name="theme-color" content="#2563EB">
     
-    <!-- PILLAR 1: SCHEMA MARKUP -->
+    <!-- OPEN GRAPH (Pilar 2: Taxa de Clique no WhatsApp) -->
+    <meta property="og:title" content="Super Cestas Dona Antônia">
+    <meta property="og:description" content="Garanta sua cesta básica com o melhor preço da região.">
+    <meta property="og:type" content="website">
+    <meta property="og:locale" content="pt_BR">
+    <!-- Imagem de compartilhamento apontando para a logo oficial -->
+    <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif">
+
+    <!-- PILLAR 3: SECURITY PROTOCOL -->
+    <script>
+        (function() {
+            // Lista de domínios permitidos (Allowlist)
+            const allowedDomains = [
+                'www.donaantonia.com.br', 
+                'donaantonia.com.br', 
+                'localhost', 
+                '127.0.0.1'
+            ];
+            
+            // Detecção flexível para ambientes de preview
+            const currentDomain = window.location.hostname;
+            const isPreviewEnv = currentDomain.includes('google') || currentDomain.includes('sandbox') || currentDomain.includes('content');
+            
+            const isAllowed = allowedDomains.some(d => currentDomain === d || currentDomain.endsWith('.' + d)) || isPreviewEnv;
+
+            if (!isAllowed) {
+                console.warn(`⚠️ [SECURITY] Domínio não autorizado detectado: ${currentDomain}.`);
+                // Em produção real, descomente:
+                // window.location.href = 'https://www.donaantonia.com.br';
+            }
+        })();
+    </script>
+
+    <!-- SCHEMA MARKUP (Pilar 1: Google Local SEO) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -15,11 +48,13 @@
       "name": "Super Cestas Dona Antônia",
       "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
       "telephone": "+5565998150975",
-      "url": "https://donaantonia.com.br",
+      "priceRange": "$$",
       "address": {
         "@type": "PostalAddress",
+        "streetAddress": "Av. Principal do Coxipó",
         "addressLocality": "Cuiabá",
         "addressRegion": "MT",
+        "postalCode": "78000-000",
         "addressCountry": "BR"
       },
       "geo": {
@@ -27,326 +62,470 @@
         "latitude": -15.6014, 
         "longitude": -56.0979
       },
-      "priceRange": "$$"
+      "openingHoursSpecification": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": [
+          "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+        ],
+        "opens": "08:00",
+        "closes": "18:00"
+      },
+      "sameAs": [
+        "https://instagram.com/cestas.dona.antonia.cuiaba.vg",
+        "https://facebook.com/cestas.dona.antonia"
+      ]
     }
     </script>
 
-    <!-- FONTS & ICONS -->
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
-    <!-- PILLAR 3: SECURITY HEADERS -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data: blob:;">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-
     <style>
-        /* === CSS NATIVO (BLINDADO E RICO) === */
-        
+        /* === MODERN MINIMALIST THEME (Core Web Vitals Friendly) === */
+        :root {
+            --primary: #2563EB;
+            --primary-dark: #1d4ed8;
+            --primary-light: #EFF6FF;
+            /* Fundo escurecido conforme solicitado (Slate 200) para melhor contraste */
+            --bg-color: #E2E8F0; 
+            --text-main: #1E293B;
+            --text-sub: #64748B;
+            --white: #ffffff;
+            --bubble-bot: #ffffff;
+            --bubble-user: #2563EB;
+            --text-user: #ffffff;
+            --shadow-sm: 0 1px 3px 0 rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            --radius-bubble: 18px;
+            --radius-card: 24px;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body, html {
             height: 100%; margin: 0; padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #E5DDD5;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             overflow: hidden;
             display: flex; flex-direction: column;
         }
 
-        /* HEADER */
-        .wa-header {
-            background-color: #008069; color: white; height: 60px; padding: 0 10px;
-            display: flex; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        /* HEADER CLEAN */
+        .modern-header {
+            background-color: var(--white);
+            height: 70px;
+            padding: 0 20px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #CBD5E1;
             z-index: 100; flex-shrink: 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .header-avatar {
-            width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; position: relative;
-            background: #ccc; border: 1px solid rgba(255,255,255,0.3);
+        .brand-area { display: flex; align-items: center; gap: 12px; }
+        .brand-logo { 
+            width: 42px; height: 42px; border-radius: 12px; 
+            object-fit: cover; box-shadow: var(--shadow-sm); 
         }
-        .header-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .header-status-dot {
-            position: absolute; bottom: 0; right: 0; width: 12px; height: 12px;
-            background-color: #4ade80; border: 2px solid white; border-radius: 50%;
+        .brand-info h1 { font-size: 16px; font-weight: 700; margin: 0; color: var(--text-main); }
+        .status-badge { 
+            display: inline-flex; align-items: center; gap: 6px; 
+            font-size: 12px; color: #10B981; font-weight: 500; 
+            background: #D1FAE5; padding: 4px 8px; border-radius: 20px; 
         }
-        .header-info { flex: 1; overflow: hidden; }
-        .header-title { font-weight: bold; font-size: 17px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .header-subtitle { font-size: 12px; color: rgba(255,255,255,0.85); }
-        .header-actions { display: flex; gap: 15px; font-size: 20px; }
-        .header-actions a { color: white; text-decoration: none; }
+        .status-dot { width: 8px; height: 8px; background: #10B981; border-radius: 50%; }
 
         /* CHAT AREA */
         #chat-container {
-            flex: 1; overflow-y: auto; padding: 15px; background-color: #E5DDD5;
-            background-image: url("data:image/svg+xml,%3Csvg width='320' height='180' viewBox='0 0 320 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%239CAFA3' fill-opacity='0.20' fill-rule='evenodd'%3E%3Ctext x='20' y='70' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 20 70)'%3Ewww.donaantonia.com.br%3C/text%3E%3Ctext x='80' y='150' font-family='Arial, sans-serif' font-size='24' font-weight='bold' transform='rotate(-8 80 150)'%3E65 99815-0975%3C/text%3E%3C/g%3E%3C/svg%3E");
+            flex: 1; overflow-y: auto; padding: 20px;
+            background-color: var(--bg-color);
+            scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
 
-        .msg-row { display: flex; width: 100%; margin-bottom: 8px; animation: fadeIn 0.3s ease; }
+        /* MESSAGES */
+        .msg-row { 
+            display: flex; width: 100%; margin-bottom: 16px; 
+            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
         .msg-start { justify-content: flex-start; }
         .msg-end { justify-content: flex-end; }
 
         .msg-bubble {
-            padding: 8px 12px; border-radius: 7.5px; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13);
-            max-width: 90%; /* Aumentado para dar mais largura */
-            font-size: 15px; line-height: 19px; position: relative; color: #111b21;
+            padding: 14px 18px;
+            max-width: 88%;
+            font-size: 15px; line-height: 1.5;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .msg-in { background-color: #fff; border-top-left-radius: 0; }
-        .msg-out { background-color: #d9fdd3; border-top-right-radius: 0; }
-        .msg-time { float: right; font-size: 11px; color: #667781; margin-top: 5px; margin-left: 10px; display: flex; align-items: center; }
 
-        /* FOOTER */
-        #input-footer {
-            background-color: #f0f2f5; padding: 8px 10px; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
-            padding-bottom: env(safe-area-inset-bottom, 10px);
+        .msg-in { 
+            background-color: var(--bubble-bot); 
+            color: var(--text-main);
+            border-radius: var(--radius-bubble);
+            border-bottom-left-radius: 4px;
         }
-        .input-box { flex: 1; background: white; border-radius: 20px; padding: 9px 15px; display: flex; align-items: center; box-shadow: inset 0 0 0 1px #fff; }
-        .input-box input { border: none; outline: none; width: 100%; font-size: 16px; background: transparent; }
-        .send-btn {
-            width: 45px; height: 45px; background-color: #008069; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;
-            cursor: pointer; border: none; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        }
-        .send-btn:active { transform: scale(0.95); }
-
-        /* OPTIONS */
-        .msg-options { display: flex; flex-direction: column; gap: 8px; width: 90%; margin-bottom: 10px; }
-        .wa-btn {
-            background: white; color: #008069; border: 1px solid #f0f0f0; padding: 12px;
-            border-radius: 8px; text-align: center; font-size: 15px; font-weight: 600; cursor: pointer;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        .wa-btn-subtitle { display: block; font-size: 11px; font-weight: 400; color: #54656f; margin-top: 2px; }
-
-        /* CARD UNIFICADO */
-        .card-msg-container { width: 100%; max-width: 100%; margin-bottom: 5px; } /* Largura máxima */
-        .card-cesta-new {
-            background: #fff; border-radius: 16px; border: 1px solid #e0e0e0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08); overflow: hidden; display: flex; flex-direction: column; position: relative;
-        }
-        /* AJUSTE: Altura aumentada para 280px (mais 50px sobre os 230px anteriores) */
-        .card-top-row { display: flex; height: 280px; border-bottom: 1px solid #f5f5f5; }
-        .card-img-area { flex: 1; padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
-        /* AJUSTE: Imagem maior proporcionalmente (240px) */
-        .card-img-large { width: 240px; height: 240px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15)); }
         
-        .card-chips-area {
-            width: 95px; background: #f8f9fa; border-left: 1px solid #eee; 
-            padding: 12px 8px; /* Mais respiro lateral e vertical */
-            display: flex; flex-direction: column; gap: 10px; /* Mais espaço entre chips */
-            overflow-y: auto; justify-content: center;
-        }
-        .chip-nav {
-            font-size: 11px; padding: 8px 4px; border-radius: 6px; text-align: center; cursor: pointer;
-            border: 1px solid #e0e0e0; background: white; color: #666; font-weight: bold; text-transform: uppercase;
-            line-height: 1.1;
-        }
-        .chip-nav.selected { background: #008069; color: white; border-color: #006d59; box-shadow: 0 2px 4px rgba(0,128,105,0.2); }
-
-        .selo-destaque {
-            position: absolute; top: 10px; left: 10px;
-            background: linear-gradient(135deg, #ffb300, #FFB300); color: #0F2546; padding: 3px 8px;
-            border-radius: 20px; font-weight: 800; font-size: 10px; text-transform: uppercase; z-index: 10;
+        .msg-out { 
+            background-color: var(--bubble-user); 
+            color: var(--text-user);
+            border-radius: var(--radius-bubble);
+            border-bottom-right-radius: 4px;
         }
 
-        /* SLIDER */
-        .product-slider-container { background: #f9fafb; padding: 10px 0; width: 100%; border-bottom: 1px solid #eee; position: relative; }
-        .slider-wrapper { position: relative; }
-        .product-slider { display: flex; overflow-x: auto; gap: 8px; padding: 0 10px; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
-        .product-slider::-webkit-scrollbar { display: none; }
-        
-        .product-slide {
-            flex: 0 0 100px; min-height: 130px;
-            background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 4px;
-            text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .product-slide img { width: 70px; height: 70px; object-fit: contain; margin-bottom: 6px; }
-        .product-qty { font-size: 12px; font-weight: 800; color: #0d5f46; margin-bottom: 2px; }
-        .product-name { font-size: 10px; color: #666; font-weight: 500; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.1; }
-
-        .slider-arrow-indicator {
-            position: absolute; right: 2px; top: 50%; transform: translateY(-50%);
-            background: rgba(255,255,255,0.9); border: 2px solid #25D366; border-radius: 50%;
-            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-            animation: bounceRight 1.5s infinite;
-            cursor: pointer; pointer-events: auto; /* Habilitado click */
-            z-index: 20;
-        }
-        .slider-arrow-indicator:active { transform: translateY(-50%) scale(0.9); }
-
-        /* PRICES */
-        .card-price-display-only { padding: 10px; background: #fff; }
-        .price-item-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; color: #555; }
-        .price-item-row strong { color: #ff5252; }
-
-        /* DISCOUNT */
-        .discount-container { background: #fff; border-radius: 8px; padding: 15px; border: 1px solid #e0e0e0; text-align: center; margin-bottom: 10px; }
-        .discount-box { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 10px; margin-bottom: 10px; }
-        .discount-val { font-size: 32px; font-weight: bold; color: #166534; display: block; margin: 5px 0; }
-        .cta-btn {
-            width: 100%; background: #008069; color: white; font-weight: bold; font-size: 16px;
-            padding: 14px; border: none; border-radius: 8px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .cta-btn:active { transform: scale(0.98); }
-
-        /* COMPANY CARD */
-        .company-header { padding: 15px; display: flex; align-items: center; border-bottom: 1px solid #eee; gap: 15px; }
-        .company-logo { width: 65px; height: 65px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .company-stats-list { display: flex; flex-direction: column; gap: 8px; padding: 12px; }
-        .stat-row { display: flex; align-items: center; padding: 10px; border-radius: 8px; color: white; font-size: 13px; font-weight: 500; }
-        
-        .social-container { padding: 10px; text-align: center; }
-        .social-btn {
-            background: linear-gradient(to right, #a855f7, #ec4899);
-            color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            font-weight: bold; margin: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .group-btn {
-            background: linear-gradient(to right, #eab308, #ca8a04);
-            color: white; padding: 12px 20px; border-radius: 50px; text-decoration: none;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-            font-weight: bold; margin: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .msg-time { 
+            display: block; text-align: right; 
+            font-size: 10px; margin-top: 4px; opacity: 0.7; 
         }
 
-        /* UTILS */
-        .hidden { display: none; }
-        .typing-dot { width: 6px; height: 6px; background: #999; border-radius: 50%; display: inline-block; animation: typing 1.4s infinite; margin: 0 2px; }
+        /* ANIMATIONS */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-dot { 
+            width: 6px; height: 6px; background: #94A3B8; 
+            border-radius: 50%; display: inline-block; 
+            animation: typing 1.4s infinite; margin: 0 2px; 
+        }
         @keyframes typing { 0%,100%{transform:scale(0.8);opacity:0.5} 50%{transform:scale(1.2);opacity:1} }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes bounceRight { 0%,100%{transform:translate(0,-50%)} 50%{transform:translate(5px,-50%)} }
-        .text-link { color: #008069; font-weight: bold; text-decoration: none; }
-        .text-link:hover { text-decoration: underline; }
-        .list-disc { padding-left: 20px; margin: 0; text-align: left; font-size: 14px; line-height: 1.5; color: #444; }
+
+        /* INPUT AREA */
+        #input-footer {
+            background-color: var(--white);
+            padding: 16px 20px;
+            border-top: 1px solid #CBD5E1;
+            display: flex; align-items: center; gap: 12px;
+            flex-shrink: 0; padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+
+        .modern-input {
+            flex: 1; background: #F1F5F9; border-radius: 30px;
+            padding: 14px 20px; border: 1px solid #CBD5E1;
+            font-size: 16px; color: var(--text-main); outline: none;
+            transition: all 0.2s;
+        }
+        .modern-input:focus { background: var(--white); border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+        .send-btn-modern {
+            width: 48px; height: 48px; border-radius: 50%;
+            background: var(--primary); color: white; border: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; transition: transform 0.2s;
+            box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+        }
+        .send-btn-modern:active { transform: scale(0.92); }
+
+        /* OPTIONS BUTTONS */
+        .msg-options { display: flex; flex-direction: column; gap: 10px; width: 100%; margin-top: 5px; }
+        
+        .modern-btn {
+            background: var(--white); border: 1px solid #CBD5E1;
+            color: var(--primary); font-weight: 600; font-size: 15px;
+            padding: 16px; border-radius: 16px; cursor: pointer;
+            text-align: left; width: 100%; transition: all 0.2s;
+            display: flex; flex-direction: column;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .modern-btn:active { background: #F8FAFC; transform: scale(0.98); }
+        .btn-sub { font-size: 12px; color: var(--text-sub); font-weight: 400; margin-top: 4px; }
+
+        /* === MODERN CARDS === */
+        .card-container { width: 100%; max-width: 380px; margin-bottom: 10px; }
+        
+        .modern-card {
+            background: var(--white);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            border: 1px solid #CBD5E1;
+        }
+
+        /* HEADER CARD */
+        .card-header-img {
+            position: relative;
+            height: 280px; 
+            background: #F8FAFC;
+            display: flex; justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .card-img-main {
+            width: 240px; height: 240px; 
+            object-fit: contain; 
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+            pointer-events: none; 
+            -webkit-user-select: none;
+        }
+        .selo-modern {
+            position: absolute; top: 16px; left: 16px;
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(4px);
+            padding: 6px 12px; border-radius: 20px;
+            font-size: 11px; font-weight: 700; color: #B45309;
+            box-shadow: var(--shadow-sm); border: 1px solid #FEF3C7;
+        }
+
+        /* CHIPS NAVIGATION (Floating Right) */
+        .chips-float {
+            position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 8px;
+            max-height: 90%; overflow-y: auto; padding: 4px;
+        }
+        .chip-modern {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            padding: 8px 12px; background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(4px); border-radius: 12px;
+            border: 1px solid #E2E8F0; color: var(--text-sub);
+            cursor: pointer; text-align: center; min-width: 70px;
+            transition: all 0.2s; box-shadow: var(--shadow-sm);
+        }
+        .chip-modern.active {
+            background: var(--primary); color: white; border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37,99,235,0.25);
+        }
+
+        /* PRODUCT SLIDER (Modern) */
+        .slider-section {
+            padding: 16px 0; background: #fff;
+            border-bottom: 1px solid #F1F5F9;
+            position: relative;
+        }
+        .modern-slider {
+            display: flex; gap: 12px; overflow-x: auto; padding: 0 20px;
+            scroll-behavior: smooth; -webkit-overflow-scrolling: touch;
+        }
+        .modern-slider::-webkit-scrollbar { display: none; }
+        
+        .slide-item {
+            flex: 0 0 100px;
+            background: #F8FAFC; border-radius: 16px;
+            padding: 12px 8px; text-align: center;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border: 1px solid transparent;
+        }
+        .slide-item img { 
+            width: 64px; height: 64px; object-fit: contain; margin-bottom: 8px; 
+            mix-blend-mode: multiply;
+        }
+        .slide-qty { font-size: 11px; font-weight: 700; color: var(--primary); }
+        .slide-name { font-size: 11px; color: var(--text-sub); line-height: 1.3; }
+
+        .nav-arrow {
+            position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+            width: 32px; height: 32px; background: white; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md); color: var(--primary); font-size: 18px;
+            cursor: pointer; z-index: 10;
+        }
+
+        /* PRICE SECTION */
+        .price-section { padding: 20px; background: white; }
+        .price-row { 
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 8px; font-size: 14px; color: var(--text-sub);
+        }
+        .price-val { font-weight: 700; color: var(--text-main); font-size: 16px; }
+
+        /* DISCOUNT WIDGET */
+        .modern-discount {
+            background: white; border-radius: var(--radius-card); border: 1px solid #E2E8F0;
+            padding: 24px; text-align: center; box-shadow: var(--shadow-sm);
+        }
+        .discount-highlight {
+            background: #ECFDF5; border: 1px dashed #10B981; border-radius: 16px;
+            padding: 16px; margin-bottom: 16px;
+        }
+        .discount-big { font-size: 36px; font-weight: 800; color: #059669; display: block; margin: 4px 0; }
+        .discount-label { font-size: 12px; color: #059669; font-weight: 600; text-transform: uppercase; }
+        
+        .btn-claim {
+            width: 100%; padding: 16px; border-radius: 16px;
+            background: var(--primary); color: white; font-weight: 700; border: none;
+            font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3); transition: transform 0.2s;
+        }
+        .btn-claim:active { transform: scale(0.97); }
+
+        /* COMPANY CARD MODERN */
+        .company-modern { padding: 0; }
+        .company-hero {
+            padding: 24px; background: var(--white);
+            display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #F1F5F9;
+        }
+        .company-logo-lg { width: 72px; height: 72px; border-radius: 20px; object-fit: cover; box-shadow: var(--shadow-sm); }
+        .company-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0 0 4px 0; line-height: 1.2; }
+        .company-sub { font-size: 13px; color: var(--text-sub); margin: 0; }
+        
+        .stats-grid { display: grid; grid-template-columns: 1fr; gap: 8px; padding: 16px; background: #F8FAFC; }
+        .stat-modern { 
+            background: white; padding: 12px 16px; border-radius: 12px;
+            display: flex; align-items: center; gap: 12px; border: 1px solid #E2E8F0;
+        }
+        .icon-box { 
+            width: 32px; height: 32px; border-radius: 8px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 16px; color: white;
+        }
+
+        .social-links { padding: 20px; text-align: center; background: white; }
+        .social-pill {
+            display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px;
+            border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 14px;
+            margin: 4px; transition: transform 0.2s;
+        }
+        .pill-insta { background: #FDF2F8; color: #BE185D; }
+        .pill-vip { background: #FEFCE8; color: #A16207; }
+        .social-pill:active { transform: scale(0.95); }
 
     </style>
 </head>
 <body>
-    <header class="wa-header">
-        <div class="header-avatar">
-            <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo&backgroundColor=c0aede'" alt="Osvaldo">
-            <div class="header-status-dot"></div>
+
+    <!-- HEADER -->
+    <header class="modern-header">
+        <div class="brand-area">
+            <!-- Usa a logo oficial do arquivo listado -->
+            <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
+                 class="brand-logo" 
+                 alt="Logo Dona Antonia"
+                 onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=DA&backgroundColor=2563EB&textColor=ffffff'">
+            <div class="brand-info">
+                <h1>Dona Antônia</h1>
+                <div class="status-badge">
+                    <div class="status-dot"></div> <span id="status-text">Online</span>
+                </div>
+            </div>
         </div>
-        <div class="header-info">
-            <div class="header-title">Cesta Básica Dona Antônia</div>
-            <div id="status-text" class="header-subtitle">Online</div>
-        </div>
-        <div class="header-actions">
-            <a href="https://instagram.com" target="_blank"><i class="fa-brands fa-instagram"></i></a>
-            <a href="https://wa.me/5565998150975" target="_blank"><i class="fa-brands fa-whatsapp"></i></a>
+        <div style="display:flex; gap:16px; color:var(--text-sub); font-size:22px;">
+            <i class="ph ph-dots-three-vertical"></i>
         </div>
     </header>
 
+    <!-- CHAT -->
     <main id="chat-container">
-        <!-- JS injeta mensagens aqui -->
+        <!-- Messages will appear here -->
     </main>
 
+    <!-- FOOTER -->
     <footer id="input-footer">
-        <div class="input-box">
-            <input type="text" id="user-input" placeholder="Digite seu nome..." autocomplete="off">
-        </div>
-        <button id="send-btn" class="send-btn">
-            <i class="fa-solid fa-paper-plane"></i>
+        <input type="text" id="user-input" class="modern-input" placeholder="Escreva uma mensagem..." autocomplete="off">
+        <button id="send-btn" class="send-btn-modern" aria-label="Enviar">
+            <i class="ph-fill ph-paper-plane-right"></i>
         </button>
     </footer>
 
     <script>
-        // === LÓGICA DE NEGÓCIO RESTAURADA ===
+        // === LÓGICA DE NEGÓCIO & TRACKING ===
         
         window.dataLayer = window.dataLayer || [];
         function trackEvent(eventName, params = {}) {
             window.dataLayer.push({ 'event': eventName, ...params });
+            console.log(`%c[MARKETING PIXEL] Event: ${eventName}`, "background: #22c55e; color: #fff; padding: 2px 5px; border-radius: 3px;", params);
         }
 
         const CONFIG = {
             ownerName: "Osvaldo",
             whatsAppGroupLink: "https://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1",
-            whatsAppNumber: "5565998150975",
-            whatsAppSaveNumber: "5565998150975",
+            whatsAppNumber: "5565998150975", // Oficial Final 0975
+            whatsAppSaveNumber: "5565998150975", // Corrigido para Final 0975
             instagramLink: "https://instagram.com/cestas.dona.antonia.cuiaba.vg"
         };
 
         const CESTAS = [
             {
-                id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', desconto: 5, arrozQtd: 1, brindeNome: '1 Trigo 1kg',
-                brindeImg: 'img/alimento/trigo vitoriosa.webp',
-                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
-                items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo de Soja Liza 900ml', '1 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Farinha de Mandioca Dona De 1Kg', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '1 Suco Frisco'],
-                opcoes: [{ arroz: 'Valor Único', preco: '85,00', valor_num: 85.00 }]
+                id: 'economica', nome: 'Cesta Econômica', destaque: 'Mais Vendida', desconto: 5, arrozQtd: 1, 
+                img: 'img/cesta-basica-cuiaba-varzea-grande-economica.avif', 
+                // Fallback para preview
+                backupImg: 'https://placehold.co/400x400/2563EB/ffffff?text=Cesta+Economica',
+                items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '1 Óleo 900ml', '1 Feijão 1kg', '1 Café 250g', '1 Espaguete 500g', '1 Trigo 1kg', '1 Farinha Mandioca 1Kg', '1 Sal 1kg', '1 Molho 340g', '1 Milho', '1 Bolacha', '1 Miojo', '1 Suco'],
+                opcoes: [{ arroz: 'Valor Único', preco: '85,00' }]
             },
             {
-                id: 'mini', nome: 'Cesta Mini', desconto: 10, arrozQtd: 1, brindeNome: '1 Feijão 1kg',
-                brindeImg: 'img/alimento/feijão da casa.webp',
-                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
-                items: ['1 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '1 Espaguete QDelicia 500g', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Bolacha MyBit Recheada', '1 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '1 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
-                opcoes: [{ arroz: 'Tio Alvino', preco: '165,00', valor_num: 165.00 }, { arroz: 'Koblenz', preco: '170,00', valor_num: 170.00 }]
+                id: 'mini', nome: 'Cesta Mini', desconto: 10, arrozQtd: 1,
+                img: 'img/cesta-basica-cuiaba-varzea-grande-mini.avif',
+                backupImg: 'https://placehold.co/400x400/10B981/ffffff?text=Cesta+Mini',
+                items: ['1 Arroz 5kg', '1 Açúcar 2kg', '2 Óleo', '2 Feijão', '1 Café', '1 Macarrão', '1 Sal', '1 Molho', '1 Milho', '1 Bolacha', '1 Miojo', '2 Suco', 'Itens de Limpeza Básicos'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '165,00' }, { arroz: 'Koblenz', preco: '170,00' }]
             },
             {
-                id: 'pequena', nome: 'Cesta Pequena', desconto: 15, arrozQtd: 2, brindeNome: '1 Amaciante 2L',
-                brindeImg: 'img/limpeza/amaciante ype 2L.webp',
-                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif',
-                items: ['2 Arroz Koblenz 5kg', '1 Açúcar Doce Dia 2kg', '2 Óleo de Soja Liza 900ml', '2 Feijão Da Casa 1kg', '1 Café Caboclo 250g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '1 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '1 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '2 Suco Frisco', '1 Sabão Barra Ype 900g', '1 Creme Dental Sorriso 70g', '1 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '2 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
-                opcoes: [{ arroz: 'Tio Alvino', preco: '215,00', valor_num: 215.00 }, { arroz: 'Koblenz', preco: '220,00', valor_num: 220.00 }]
+                id: 'pequena', nome: 'Cesta Pequena', desconto: 15, arrozQtd: 2,
+                img: 'img/cesta-basica-cuiaba-varzea-grande-pequena.avif',
+                backupImg: 'https://placehold.co/400x400/F59E0B/ffffff?text=Cesta+Pequena',
+                items: ['2 Arroz 5kg', '1 Açúcar', '2 Óleo', '2 Feijão', '1 Café', '12 Ovos', '1 Bolo', 'Itens Variados...'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '215,00' }, { arroz: 'Koblenz', preco: '220,00' }]
             },
             {
-                id: 'media', nome: 'Cesta Média', desconto: 20, arrozQtd: 3, brindeNome: '1 Café 250g',
-                brindeImg: 'img/alimento/cafe caboclo 250g.webp',
-                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
-                items: ['3 Arroz Koblenz 5kg', '2 Açúcar Doce Dia 2kg', '3 Óleo de Soja Liza 900ml', '3 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '2 Espaguete QDelicia 500g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '3 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '3 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
-                opcoes: [{ arroz: 'Tio Alvino', preco: '320,00', valor_num: 320.00 }, { arroz: 'Koblenz', preco: '325,00', valor_num: 325.00 }]
+                id: 'media', nome: 'Cesta Média', desconto: 20, arrozQtd: 3,
+                img: 'img/cesta-basica-cuiaba-varzea-grande-media.avif',
+                backupImg: 'https://placehold.co/400x400/8B5CF6/ffffff?text=Cesta+Media',
+                items: ['3 Arroz 5kg', '2 Açúcar', '3 Óleo', '3 Feijão', '1 Café 500g', '12 Ovos', 'Muitos itens...'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '320,00' }, { arroz: 'Koblenz', preco: '325,00' }]
             },
             {
-                id: 'grande', nome: 'Cesta Grande', desconto: 25, arrozQtd: 4, brindeNome: '1 OMO 800g',
-                brindeImg: 'img/limpeza/sabão em pó omo 800g.webp',
-                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif',
-                items: ['4 Arroz Koblenz 5kg', '3 Açúcar Doce Dia 2kg', '4 Óleo de Soja Liza 900ml', '4 Feijão Da Casa 1kg', '1 Café Caboclo 500g', '3 Espaguete QDelicia 500g', '12 Ovos', '1 Bolo Apti Chocolate 400g', '1 Trigo Vitoriosa 1kg', '1 Sal 1kg', '2 Molho Fugini 340g', '1 Milho Verde Predileta', '1 Tempero Tio Jonas', '2 Bolacha MyBit Recheada', '2 Miojo Apti', '4 Suco Frisco', '1 Sabão Barra Ype 900g', '2 Creme Dental Sorriso 70g', '2 Papel Higiênico', '1 Amaciante Ype 2L', '1 Desinfetante Remmus 2L', '1 Sabão em Pó OMO 800g', '2 Detergente Ype 500ml', '1 Qboa 1 Litro', '4 Sabonete Palmolive 85g', '1 Lã de Aço Assolan', '1 Esponja de Lavar Louça'],
-                opcoes: [{ arroz: 'Tio Alvino', preco: '380,00', valor_num: 380.00 }, { arroz: 'Koblenz', preco: '390,00', valor_num: 390.00 }]
+                id: 'grande', nome: 'Cesta Grande', desconto: 25, arrozQtd: 4,
+                img: 'img/cesta-basica-cuiaba-varzea-grande-grande.avif',
+                backupImg: 'https://placehold.co/400x400/EC4899/ffffff?text=Cesta+Grande',
+                items: ['4 Arroz 5kg', '3 Açúcar', '4 Óleo', '4 Feijão', '1 Café 500g', '12 Ovos', 'Completa...'],
+                opcoes: [{ arroz: 'Tio Alvino', preco: '380,00' }, { arroz: 'Koblenz', preco: '390,00' }]
             }
         ];
 
+        // --- SISTEMA DE IMAGENS (PILLAR 1: Performance & Accuracy) ---
+        // Mapeia os nomes genéricos dos itens para os arquivos exatos enviados
         function getProductImage(text) {
-            const lowerText = text.toLowerCase();
-            let imgName = 'outros.png';
-            let folder = 'img/alimento/';
+            const t = text.toLowerCase();
+            const folderAlimento = 'img/alimento/';
+            const folderLimpeza = 'img/limpeza/';
+            
+            // Placeholder base para preview
+            const placeholder = `https://placehold.co/100x100/f1f5f9/334155?text=${text.split(' ')[0]}`;
 
-            if(lowerText.includes('creme dental')) { imgName = 'Creme Dental Sorriso 70g.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('desinfetante')) { imgName = 'Desinfetante Remmus 2L.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('detergente')) { imgName = 'Detergente Ype 500ml.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('qboa')) { imgName = 'Qboa 1 Litro.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('amaciante')) { imgName = 'amaciante ype 2L.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('esponja de lavar louça')) { imgName = 'esponja de lavar louça.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('lã de aço') || lowerText.includes('assolan')) { imgName = 'lã de aço assolan.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('papel higiênico') || lowerText.includes('papel higienico')) { imgName = 'papel higienico.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('sabonete')) { imgName = 'sabonete palmolive 85g.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('sabão barra')) { imgName = 'sabão barra ype 900g.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('sabão pó') || lowerText.includes('sabão em pó') || lowerText.includes('omo')) { imgName = 'sabão em pó omo 800g.webp'; folder = 'img/limpeza/'; }
-            else if(lowerText.includes('arroz')) imgName = 'Arroz Koblenz 5kg.webp';
-            else if(lowerText.includes('açúcar') || lowerText.includes('acucar')) imgName = 'açucar doce dia 2 kg.webp';
-            else if(lowerText.includes('bolacha')) imgName = 'bolacha mybit.webp';
-            else if(lowerText.includes('bolo')) imgName = 'bolo apti chocolate.webp';
-            else if(lowerText.includes('café') || lowerText.includes('cafe')) {
-                if(lowerText.includes('500g')) imgName = 'cafe caboclo 500g.webp';
-                else imgName = 'cafe caboclo 250g.webp';
+            // Mapeamento Exato dos Arquivos
+            if(t.includes('arroz')) return folderAlimento + 'Arroz Koblenz 5kg.webp';
+            if(t.includes('açúcar') || t.includes('acucar')) return folderAlimento + 'açucar doce dia 2 kg.webp';
+            if(t.includes('bolacha')) return folderAlimento + 'bolacha mybit.webp';
+            if(t.includes('bolo')) return folderAlimento + 'bolo apti chocolate.webp';
+            
+            if(t.includes('café') || t.includes('cafe')) {
+                if(t.includes('500g')) return folderAlimento + 'cafe caboclo 500g.webp';
+                return folderAlimento + 'cafe caboclo 250g.webp';
             }
-            else if(lowerText.includes('espaguete')) imgName = 'espaguete qdelicia.webp';
-            else if(lowerText.includes('farinha') || lowerText.includes('mandioca')) imgName = 'farinha de mandioca.webp';
-            else if(lowerText.includes('feijão') || lowerText.includes('feijao')) imgName = 'feijão da casa.webp';
-            else if(lowerText.includes('milho')) imgName = 'milho verde predileta.webp';
-            else if(lowerText.includes('miojo')) imgName = 'miojo apti.webp';
-            else if(lowerText.includes('molho')) imgName = 'molho fugini.webp';
-            else if(lowerText.includes('oleo') || lowerText.includes('óleo')) imgName = 'oleo de soja liza.webp';
-            else if(lowerText.includes('ovo')) imgName = 'ovo duzia.jpg';
-            else if(lowerText.includes('sal')) imgName = 'sal.webp';
-            else if(lowerText.includes('suco')) imgName = 'suco frisco.webp';
-            else if(lowerText.includes('tempero')) imgName = 'tempero tio jonas.jpg';
-            else if(lowerText.includes('trigo')) imgName = 'trigo vitoriosa.webp';
+            
+            if(t.includes('espaguete') || t.includes('macarrão')) return folderAlimento + 'espaguete qdelicia.webp';
+            if(t.includes('farinha')) return folderAlimento + 'farinha de mandioca.webp';
+            if(t.includes('feijão') || t.includes('feijao')) return folderAlimento + 'feijão da casa.webp';
+            if(t.includes('milho')) return folderAlimento + 'milho verde predileta.webp';
+            if(t.includes('miojo')) return folderAlimento + 'miojo apti.webp';
+            if(t.includes('molho')) return folderAlimento + 'molho fugini.webp';
+            if(t.includes('oleo') || t.includes('óleo')) return folderAlimento + 'oleo de soja liza.webp';
+            if(t.includes('ovo')) return folderAlimento + 'ovo duzia.jpg';
+            if(t.includes('sal')) return folderAlimento + 'sal.webp';
+            if(t.includes('suco')) return folderAlimento + 'suco frisco.webp';
+            if(t.includes('tempero')) return folderAlimento + 'tempero tio jonas.jpg';
+            if(t.includes('trigo')) return folderAlimento + 'trigo vitoriosa.webp';
 
-            return `${folder}${imgName}`;
+            // Limpeza
+            if(t.includes('creme dental')) return folderLimpeza + 'Creme Dental Sorriso 70g.webp';
+            if(t.includes('desinfetante')) return folderLimpeza + 'Desinfetante Remmus 2L.webp';
+            if(t.includes('detergente')) return folderLimpeza + 'Detergente Ype 500ml.webp';
+            if(t.includes('qboa') || t.includes('sanitária')) return folderLimpeza + 'Qboa 1 Litro.webp';
+            if(t.includes('amaciante')) return folderLimpeza + 'amaciante ype 2L.webp';
+            if(t.includes('papel hig')) return folderLimpeza + 'papel higienico.webp';
+            if(t.includes('sabonete')) return folderLimpeza + 'sabonete palmolive 85g.webp';
+            
+            if(t.includes('sabão')) {
+                if(t.includes('barra')) return folderLimpeza + 'sabão barra ype 900g.webp';
+                if(t.includes('pó') || t.includes('omo')) return folderLimpeza + 'sabão em pó omo 800g.webp';
+            }
+
+            if(t.includes('esponja')) return folderLimpeza + 'esponja de lavar louça.webp';
+            if(t.includes('lã') || t.includes('aco') || t.includes('aço')) return folderLimpeza + 'lã de aço assolan.webp';
+
+            return placeholder;
         }
 
+        // --- SISTEMA DE CHAT ---
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
@@ -362,19 +541,12 @@
 
         function addMessage(text, type = 'bot', delayOverride = null) {
             return new Promise(resolve => {
-                // AJUSTE: Tempo base aumentado para 1.2s para leitura mais lenta
                 let delay = 1200; 
                 if (type === 'bot') {
-                    const isCard = text.includes('card-cesta') || text.includes('discount-container') || text.includes('company-header');
-                    if (isCard) {
-                        delay = 1500; // Cards demoram um pouco mais para "preparar"
-                    } else {
-                        // Cálculo mais lento: 40ms por letra + 600ms base, teto de 3.5s
-                        delay = Math.min(text.length * 40 + 600, 3500);
-                    }
-                } else {
-                    delay = 0;
-                }
+                    const isCard = text.includes('modern-card') || text.includes('modern-discount') || text.includes('company-modern');
+                    if (isCard) { delay = 1500; } 
+                    else { delay = Math.min(text.length * 40 + 600, 3500); }
+                } else { delay = 0; }
 
                 if (delayOverride !== null) delay = delayOverride;
                 
@@ -391,13 +563,13 @@
                         `);
                         scrollToBottom();
 
-                        const typingTime = (text.includes('card-cesta') || text.includes('discount-container')) ? 1500 : delay; 
+                        const typingTime = (text.includes('modern-card')) ? 1500 : delay; 
                         
                         setTimeout(() => {
                             const el = document.getElementById(id);
                             if(el) el.remove();
                             
-                            const isComplex = text.includes('card-cesta') || text.includes('discount-container') || text.includes('company-header');
+                            const isComplex = text.includes('card-container') || text.includes('modern-discount');
                             const bubbleStyle = isComplex ? 'padding:0; background:transparent; box-shadow:none; max-width:100%;' : '';
 
                             chatContainer.insertAdjacentHTML('beforeend', `
@@ -417,14 +589,13 @@
                             <div class="msg-row msg-end">
                                 <div class="msg-bubble msg-out">
                                     ${text}
-                                    <span class="msg-time">${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} <i class="fa-solid fa-check-double" style="color:#53bdeb; margin-left:3px;"></i></span>
                                 </div>
                             </div>
                         `);
                         scrollToBottom();
                         resolve();
                     }
-                }, type === 'user' ? 0 : 500); // Delay inicial de 0.5s
+                }, type === 'user' ? 0 : 500);
             });
         }
 
@@ -432,19 +603,17 @@
             setTimeout(() => {
                 const id = 'opts-' + Date.now();
                 const btns = opts.map(o => `
-                    <button class="wa-btn" onclick="handleOpt('${o.val}', ${o.next}, '${id}', '${o.text}')">
+                    <button class="modern-btn" onclick="handleOpt('${o.val}', ${o.next}, '${id}', '${o.text}')">
                         ${o.text}
-                        ${o.sub ? `<span class="wa-btn-subtitle">${o.sub}</span>` : ''}
+                        ${o.sub ? `<span class="btn-sub">${o.sub}</span>` : ''}
                     </button>
                 `).join('');
                 
                 chatContainer.insertAdjacentHTML('beforeend', `
-                    <div id="${id}" class="msg-row msg-start">
-                        <div class="msg-options">${btns}</div>
-                    </div>
+                    <div id="${id}" class="msg-options">${btns}</div>
                 `);
                 scrollToBottom();
-            }, 800); // Opções aparecem com calma
+            }, 800);
         }
 
         window.handleOpt = async function(val, next, id, text) {
@@ -470,18 +639,17 @@
             }, 150);
         };
 
-        // Função de scroll da seta
         window.scrollSlider = function(btn) {
             const wrapper = btn.parentElement;
-            const slider = wrapper.querySelector('.product-slider');
+            const slider = wrapper.querySelector('.modern-slider');
             if(slider) {
-                slider.scrollBy({ left: 220, behavior: 'smooth' }); // Move aprox 2 cards
+                slider.scrollBy({ left: 220, behavior: 'smooth' });
             }
         };
 
         function getCardContent(cesta) {
             const chips = CESTAS.map((c, i) => `
-                <div class="chip-nav ${c.id === cesta.id ? 'selected' : ''}" onclick="selectBasketChip(${i})">
+                <div class="chip-modern ${c.id === cesta.id ? 'active' : ''}" onclick="selectBasketChip(${i})">
                     ${c.nome.replace('Cesta ', '')}
                 </div>
             `).join('');
@@ -490,53 +658,53 @@
                 const match = item.match(/^(\d+)\s+(.*)$/);
                 let qty = "1 un", nome = item;
                 if(match) { qty = match[1] + (parseInt(match[1]) > 1 ? ' un' : ' un'); nome = match[2]; }
-                const img = getProductImage(nome);
                 
+                const imgPath = getProductImage(nome);
+                
+                // Onerror garante que se a imagem local não existir, usa placeholder
                 return `
-                <div class="product-slide">
-                    <img src="${img}" onerror="this.src='https://placehold.co/60x60/f3f4f6/999?text=IMG'" loading="lazy">
-                    <span class="product-qty">${qty}</span>
-                    <span class="product-name">${nome}</span>
+                <div class="slide-item">
+                    <img src="${imgPath}" loading="lazy" alt="${nome}" onerror="this.src='https://placehold.co/60x60/f1f5f9/94a3b8?text=IMG'">
+                    <span class="slide-qty">${qty}</span>
+                    <span class="slide-name">${nome}</span>
                 </div>`;
             }).join('');
 
             const precos = cesta.opcoes.map(o => `
-                <div class="price-item-row">
+                <div class="price-row">
                     <span>${o.arroz.includes('Valor') ? 'Valor Único' : 'Com ' + o.arroz}</span>
-                    <strong>R$ ${o.preco}</strong>
+                    <span class="price-val">R$ ${o.preco}</span>
                 </div>
             `).join('');
 
             return `
-                <div class="card-top-row">
-                    <div class="card-img-area">
-                        ${cesta.destaque ? `<div class="selo-destaque">${cesta.destaque}</div>` : ''}
-                        <img src="${cesta.img}" class="card-img-large" alt="${cesta.nome}">
-                    </div>
-                    <div class="card-chips-area">${chips}</div>
+                <div class="card-header-img">
+                    ${cesta.destaque ? `<div class="selo-modern"><i class="ph-fill ph-star"></i> ${cesta.destaque}</div>` : ''}
+                    <img src="${cesta.img}" 
+                         class="card-img-main" 
+                         alt="${cesta.nome}" 
+                         onerror="this.src='${cesta.backupImg}';">
+                    <div class="chips-float">${chips}</div>
                 </div>
-                <div class="product-slider-container">
-                    <div class="slider-wrapper">
-                        <div class="product-slider">
-                            ${slides}
-                            <div style="min-width:10px"></div>
-                        </div>
-                        <div class="slider-arrow-indicator" onclick="scrollSlider(this)"><i class="fa-solid fa-chevron-right text-green-600"></i></div>
+                
+                <div class="slider-section">
+                    <div class="modern-slider">
+                        ${slides}
+                        <div style="min-width:10px"></div>
                     </div>
+                    <div class="nav-arrow" onclick="scrollSlider(this)"><i class="ph-bold ph-caret-right"></i></div>
                 </div>
-                <div class="card-price-display-only">
+
+                <div class="price-section">
                     ${precos}
                 </div>
             `;
         }
 
-        // --- FLUXO PRINCIPAL RESTAURADO ---
+        // --- FLUXO PRINCIPAL ---
         async function initApp() {
             if (appInitialized) return;
             appInitialized = true;
-            // REMOVED HIDING STYLES
-            // document.body.style.visibility = 'visible';
-            // document.body.style.opacity = '1';
             trackEvent('PageView');
             
             await addMessage(`${getGreeting()}! Tudo bem? 👋`, 'bot', 800);
@@ -544,14 +712,9 @@
             await addMessage(`Qual é o seu nome?`, 'bot', 1000);
         }
 
-        // Trigger faster
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-        
-        setTimeout(initApp, 1500); // Fail-safe
+        document.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('load', initApp);
+        setTimeout(initApp, 1500); 
 
         async function handleInput() {
             const text = userInput.value.trim();
@@ -581,36 +744,37 @@
                     ]);
                     break;
                 
-                case 2: // Mostra Empresa
-                    // Correção dos ícones: fa-solid para ícones sólidos e fa-brands para marcas
+                case 2: // Card Empresa Moderno
                     const stats = [
-                        {icon: 'fa-clock', type: 'fa-solid', txt: '8 anos em Cuiabá e VG', color: '#10b981'},
-                        {icon: 'fa-truck', type: 'fa-solid', txt: '+30 mil Entregas', color: '#3b82f6'},
-                        {icon: 'fa-thumbs-up', type: 'fa-solid', txt: '6 mil seguidores (Face)', color: '#8b5cf6'},
-                        {icon: 'fa-instagram', type: 'fa-brands', txt: '1.9k seguidores (Insta)', color: '#E1306C'}
+                        {icon: 'ph-clock', color: '#10b981', txt: '8 anos em Cuiabá e VG'},
+                        {icon: 'ph-truck', color: '#3b82f6', txt: '+30 mil Entregas'},
+                        {icon: 'ph-thumbs-up', color: '#8b5cf6', txt: '6 mil seguidores (Face)'},
+                        {icon: 'ph-instagram-logo', color: '#E1306C', txt: '1.9k seguidores (Insta)'}
                     ].map(s => `
-                        <div class="stat-row" style="background:${s.color}">
-                            <i class="${s.type} ${s.icon}" style="margin-right:8px"></i> ${s.txt}
+                        <div class="stat-modern">
+                            <div class="icon-box" style="background:${s.color}"><i class="ph-fill ${s.icon}"></i></div>
+                            <span style="font-size:13px; font-weight:500; color:#334155">${s.txt}</span>
                         </div>
                     `).join('');
                     
                     const companyHTML = `
-                        <div class="card-msg-container">
-                        <div class="card-cesta-new">
-                            <div class="company-header">
-                                <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="company-logo" onerror="this.src='https://api.dicebear.com/7.x/avataaars/svg?seed=Osvaldo'">
+                        <div class="card-container company-modern">
+                        <div class="modern-card">
+                            <div class="company-hero">
+                                <img src="img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
+                                     class="company-logo-lg" 
+                                     onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=DA&backgroundColor=2563EB&textColor=ffffff'">
                                 <div>
-                                    <h3 style="margin:0; font-size:16px; color:#0f2546;">Cesta Básica Dona Antônia</h3>
-                                    <p style="margin:0; font-size:13px; color:#666;">Estamos localizados em Cuiabá no Coxipó </p>
+                                    <h3 class="company-title">Cesta Básica Dona Antônia</h3>
+                                    <p class="company-sub">Desde 2016 em Cuiabá no Coxipó</p>
                                 </div>
                             </div>
-                            <div class="company-stats-list">${stats}</div>
+                            <div class="stats-grid">${stats}</div>
                         </div>
                         </div>
                     `;
                     await addMessage(companyHTML, 'bot', 1500);
-                    // AJUSTE: Tempo aumentado de 4s para 6s para ler o card da empresa
-                    setTimeout(() => { state.step = 4; nextStep(); }, 4000);
+                    setTimeout(() => { state.step = 4; nextStep(); }, 6000);
                     break;
 
                 case 3: 
@@ -619,11 +783,11 @@
                     showOptions([{ text: "Ver Cestas ✅", val: "ok", next: 5 }]);
                     break;
 
-                case 5: // Card Interativo
+                case 5: // Card Cesta Moderno
                     await addMessage(`Navegue pelas opções abaixo 👇`, 'bot', 1000);
                     const cardHTML = `
-                        <div class="card-msg-container">
-                            <div class="card-cesta-new">
+                        <div class="card-container">
+                            <div class="modern-card">
                                 <div id="unified-card-content">
                                     ${getCardContent(CESTAS[0])}
                                 </div>
@@ -631,9 +795,8 @@
                         </div>`;
                     
                     await addMessage(cardHTML, 'bot');
-                    trackEvent('ViewContent', { content_name: 'Catalogo' });
+                    trackEvent('ViewContent', { content_name: 'Catalogo', content_type: 'product_group' });
                     
-                    // AJUSTE: Tempo aumentado para 25 segundos para navegação tranquila
                     state.timerRef = setTimeout(() => { 
                         if(state.step === 5) {
                             state.step = 6; 
@@ -642,35 +805,38 @@
                     }, 12000); 
                     break;
 
-                case 6: // Pergunta Pagamento
-                    await addMessage(`Posso te mostrar como funciona o pagamento?`, 'bot', 1200);
+                case 6: 
+                    await addMessage(`Gostou de alguma? Posso te mostrar como funciona o pagamento?`, 'bot', 1200);
                     showOptions([{ text: "Pode mostrar 👍", val: "pay", next: 7 }]);
                     break;
                 
-                case 7: // Mostra Pagamento
+                case 7:
                     await addMessage(`Aceitamos praticamente tudo:`, 'bot', 1000);
                     const payHTML = `
-                        <ul class="list-disc" style="background:#fff; padding:15px 15px 15px 35px; border-radius:8px; box-shadow:0 1px 1px rgba(0,0,0,0.1);">
-                            <li>Cartão de Débito</li>
-                            <li>Cartão de Crédito em até 3x sem juros</li>
-                            <li>PIX ou Dinheiro</li>
-                            <li>Vale Alimentação e Refeição (Alelo, Sodexo, Pluxee, Caju, Flash e Ifood)</li>
-                            <li style="font-weight:bold; color:#d32f2f; margin-top:5px;">AINDA NÃO VENDEMOS A PRAZO</li>
-                        </ul>
+                        <div style="background:white; padding:20px; border-radius:16px; border:1px solid #E2E8F0; box-shadow:var(--shadow-sm);">
+                            <ul style="padding-left:20px; margin:0; font-size:14px; color:#334155; line-height:1.6;">
+                                <li>Cartão de Débito</li>
+                                <li>Cartão de Crédito em até 3x sem juros</li>
+                                <li>PIX ou Dinheiro</li>
+                                <li>Vale Alimentação e Refeição (Alelo, Sodexo, Pluxee, Caju, Flash e Ifood)</li>
+                            </ul>
+                            <div style="margin-top:10px; padding-top:10px; border-top:1px dashed #E2E8F0; color:#EF4444; font-weight:700; font-size:13px; text-align:center;">
+                                ⚠️ AINDA NÃO VENDEMOS A PRAZO
+                            </div>
+                        </div>
                     `;
                     await addMessage(payHTML, 'bot');
-                    // AJUSTE: Tempo aumentado para 7s para ler a lista de pagamento
                     setTimeout(() => { state.step = 8; nextStep(); }, 3500);
                     break;
 
-                case 8: // Hook
+                case 8:
                     await addMessage(`⭐ ${name}, quero muito que você se torne nosso cliente.`, 'bot', 1200);
                     await addMessage(`🚀 Posso te oferecer um desconto pra sua primeira compra?`, 'bot', 1200);
                     showOptions([{ text: "Quero Desconto 🎁", val: "sim", next: 9 }]);
                     break;
 
                 case 9:
-                    await addMessage(`Que ótimo! Qual tamanho de cesta te interessa mais?`, 'bot', 1000);
+                    await addMessage(`Legal! Pra qual cesta você quer o Desconto?`, 'bot', 1000);
                     const opts = CESTAS.map((c, i) => ({
                         text: c.nome.replace('Cesta ', ''),
                         sub: `(${c.arrozQtd} Arroz)`,
@@ -680,22 +846,22 @@
                     showOptions(opts);
                     break;
 
-                case 10: // Desconto
+                case 10: // Desconto Moderno
                     const selected = CESTAS.find(c => c.id === state.selectedDiscountId);
                     await addMessage(`Boa escolha! Para a <b>${selected.nome}</b>, liberei isso:`, 'bot', 1200);
                     
                     const discountHTML = `
-                        <div class="card-msg-container">
-                            <div class="discount-container">
-                                <h3 style="color:#0F2546; margin-bottom:5px;">Desconto Liberado</h3>
-                                <div class="discount-box">
-                                    <span class="discount-val">- R$ ${selected.desconto},00</span>
-                                    <small style="color:#d32f2f; font-weight:bold">Válido 30 dias</small>
+                        <div class="card-container">
+                            <div class="modern-discount">
+                                <div class="discount-highlight">
+                                    <span class="discount-label">DESCONTO EXCLUSIVO</span>
+                                    <span class="discount-big">- R$ ${selected.desconto},00</span>
+                                    <span style="font-size:11px; color:#059669; opacity:0.8">Válido por 30 dias</span>
                                 </div>
-                                <button class="cta-btn" onclick="openWa('${selected.nome}', ${selected.desconto})">
-                                    GARANTIR DESCONTO AGORA <i class="fa-solid fa-check-circle"></i>
+                                <button class="btn-claim" onclick="openWa('${selected.nome}', ${selected.desconto})">
+                                    GARANTIR AGORA <i class="ph-bold ph-whatsapp-logo"></i>
                                 </button>
-                                <p style="font-size:10px; color:#999; margin-top:5px">Sem compromisso.</p>
+                                <p style="font-size:11px; color:#94A3B8; margin-top:12px">Sem compromisso de compra hoje.</p>
                             </div>
                         </div>
                     `;
@@ -703,7 +869,7 @@
                     await addMessage("Clique acima para garantir. 👆", 'bot', 1200);
                     
                     const textSave = encodeURIComponent("Estou salvando seu contato");
-                    await addMessage(`Não esqueça de salvar nosso contato: <a href="https://wa.me/${CONFIG.whatsAppSaveNumber}?text=${textSave}" target="_blank" class="text-link">65 99815-0975</a>`, 'bot', 1500);
+                    await addMessage(`Não esqueça de salvar nosso contato: <a href="https://wa.me/${CONFIG.whatsAppSaveNumber}?text=${textSave}" target="_blank" class="text-link" style="color:var(--primary)">65 99815-0975</a>`, 'bot', 1500);
                     break;
             }
         }
@@ -716,14 +882,18 @@
         window.openWa = function(cesta, desconto) {
             const msg = `Olá! Sou ${state.userName}. Tenho interesse na *${cesta}* e quero garantir meu desconto de *R$ ${desconto},00*.`;
             window.open(`https://wa.me/${CONFIG.whatsAppNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-            trackEvent('Lead');
             
-            // AJUSTE: Tempo aumentado para 2.5s antes de mandar os links sociais
+            trackEvent('Lead', {
+                currency: 'BRL',
+                value: desconto,
+                content_name: cesta
+            });
+            
             setTimeout(() => {
                 const socialHTML = `
-                    <div class="social-container">
-                        <a href="${CONFIG.instagramLink}" target="_blank" class="social-btn"><i class="fa-brands fa-instagram"></i> Seguir Instagram</a>
-                        <a href="${CONFIG.whatsAppGroupLink}" target="_blank" class="group-btn"><i class="fa-solid fa-star"></i> Entrar Grupo VIP</a>
+                    <div class="social-links" style="background:transparent;">
+                        <a href="${CONFIG.instagramLink}" target="_blank" class="social-pill pill-insta"><i class="ph-bold ph-instagram-logo"></i> Instagram</a>
+                        <a href="${CONFIG.whatsAppGroupLink}" target="_blank" class="social-pill pill-vip"><i class="ph-bold ph-star"></i> Grupo VIP</a>
                     </div>
                 `;
                 addMessage(socialHTML, 'bot', 1000);
