@@ -84,7 +84,8 @@
 
         /* CHAT AREA */
         #chat-container {
-            flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px;
+            flex: 1; overflow-y: auto; padding: 20px; 
+            padding-bottom: 140px; /* Espaço extra para o Dock Flutuante */
             background-color: var(--bg-color); scroll-behavior: smooth;
         }
 
@@ -99,62 +100,32 @@
         .msg-in { background: var(--white); color: var(--text-main); border-radius: 18px 18px 18px 4px; }
         .msg-out { background: var(--primary); color: white; border-radius: 18px 18px 4px 18px; }
 
-        /* FULL WIDTH BUBBLE (For Grid & Big Image) */
         .msg-bubble.full-width {
-            max-width: 100%;
-            width: 100%;
-            padding: 0;
-            background: transparent;
-            box-shadow: none;
+            max-width: 100%; width: 100%; padding: 0;
+            background: transparent; box-shadow: none;
         }
 
-        /* IMAGE MESSAGE */
         .msg-image-full {
-            width: 100%; 
-            display: block; 
-            border-radius: 12px;
-            box-shadow: var(--shadow-md);
-            pointer-events: none; /* Anti-Copy */
+            width: 100%; display: block; border-radius: 12px;
+            box-shadow: var(--shadow-md); pointer-events: none;
         }
 
-        /* PRODUCT GRID (UNBOXING EFFECT) */
+        /* GRID ANIMATION */
         .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px; /* Gap um pouco maior para respiro */
-            width: 100%;
-            margin-top: 10px;
-            padding: 0 4px; /* Pequeno padding lateral */
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 8px; width: 100%; margin-top: 10px; padding: 0 4px;
         }
-
         .mini-card {
-            background: #F8FAFC; border: 1px solid #E2E8F0;
-            border-radius: 8px; 
-            padding: 6px; 
-            text-align: center;
+            background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 8px; 
+            padding: 6px; text-align: center;
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            animation: fadeInScale 1.2s cubic-bezier(0.16, 1, 0.3, 1); /* Fade mais lento */
-            height: 130px; /* Um pouco mais alto */
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            animation: fadeInScale 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            height: 130px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
-
-        @keyframes fadeInScale {
-            0% { opacity: 0; transform: scale(0.9); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
-        .mini-card img {
-            width: 100%; 
-            height: 85px; 
-            object-fit: contain;
-            mix-blend-mode: multiply;
-            flex-shrink: 0;
-        }
-        
+        @keyframes fadeInScale { 0% { opacity: 0; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+        .mini-card img { width: 100%; height: 85px; object-fit: contain; mix-blend-mode: multiply; flex-shrink: 0; }
         .mini-card span { 
-            font-size: 11px; line-height: 1.1; 
-            color: var(--text-sub); font-weight: 600; 
+            font-size: 11px; line-height: 1.1; color: var(--text-sub); font-weight: 600; 
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
             margin-top: 4px;
         }
@@ -169,24 +140,78 @@
         .action-btn:active { transform: scale(0.96); background: #F1F5F9; }
         .action-btn.primary { background: var(--primary); color: white; border: none; }
 
-        /* TYPING INDICATOR */
+        /* FLOATING DOCK (NEW) */
+        .floating-dock {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            display: flex; align-items: center; gap: 12px; z-index: 1000;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            padding: 8px 12px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.6);
+            width: max-content;
+            max-width: 95%;
+        }
+
+        .dock-socials { display: flex; gap: 8px; padding-right: 12px; border-right: 1px solid #E2E8F0; }
+        
+        .dock-btn {
+            width: 42px; height: 42px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: none; cursor: pointer; text-decoration: none;
+            font-size: 20px; transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .dock-btn:active { transform: scale(0.9); }
+        
+        .btn-wa { background: #25D366; color: white; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3); }
+        .btn-fb { background: #1877F2; color: white; }
+        .btn-ig { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; }
+        
+        .btn-info {
+            width: auto; height: 42px; padding: 0 20px;
+            background: var(--text-main); color: white;
+            font-size: 13px; font-weight: 600; 
+            border-radius: 21px; /* Pill shape */
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(30, 41, 59, 0.2);
+        }
+
+        /* MODAL (RESTORED) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6); z-index: 2000;
+            display: none; align-items: center; justify-content: center;
+            padding: 20px; backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: white; width: 100%; max-width: 340px;
+            border-radius: 24px; padding: 24px; position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            animation: modalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPop {
+            from { opacity: 0; transform: scale(0.95) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .close-modal {
+            position: absolute; top: 16px; right: 16px;
+            background: #F1F5F9; border: none; width: 32px; height: 32px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-sub);
+        }
+        .modal-body ul { list-style: none; padding: 0; margin: 0 0 20px 0; }
+        .modal-body li { margin-bottom: 12px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-main); }
+        .modal-body li i { color: var(--primary); font-size: 18px; }
+
+        /* TYPING */
         .typing { display: flex; gap: 4px; padding: 10px; }
         .dot { width: 6px; height: 6px; background: #94A3B8; border-radius: 50%; animation: bounce 1.4s infinite; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* FOOTER INPUT */
-        #input-footer {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: white; padding: 16px; border-top: 1px solid #E2E8F0;
-            display: flex; gap: 10px; max-width: 480px; margin: 0 auto;
-        }
-        .modern-input {
-            flex: 1; background: #F1F5F9; border: 1px solid #CBD5E1;
-            padding: 12px; border-radius: 24px; outline: none;
-        }
     </style>
 </head>
 <body oncontextmenu="return false;">
@@ -208,15 +233,69 @@
         <!-- Chat Flow Starts Here -->
     </main>
 
-    <footer id="input-footer">
-        <input type="text" class="modern-input" placeholder="Responder..." disabled>
-        <button style="background:var(--primary); color:white; border:none; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;">
-            <i class="ph-fill ph-paper-plane-right" style="font-size:20px;"></i>
+    <!-- FLOATING DOCK -->
+    <div class="floating-dock">
+        <div class="dock-socials">
+            <a href="https://wa.me/5565998150975" target="_blank" class="dock-btn btn-wa" aria-label="WhatsApp">
+                <i class="ph-fill ph-whatsapp-logo"></i>
+            </a>
+            <a href="https://facebook.com/cestas.dona.antonia" target="_blank" class="dock-btn btn-fb" aria-label="Facebook">
+                <i class="ph-fill ph-facebook-logo"></i>
+            </a>
+            <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="dock-btn btn-ig" aria-label="Instagram">
+                <i class="ph-fill ph-instagram-logo"></i>
+            </a>
+        </div>
+        <button onclick="toggleModal(true)" class="dock-btn btn-info">
+            <i class="ph-bold ph-storefront"></i> Quem Somos
         </button>
-    </footer>
+    </div>
+
+    <!-- INFO MODAL -->
+    <div id="infoModal" class="modal-overlay" onclick="if(event.target === this) toggleModal(false)">
+        <div class="modal-content">
+            <button class="close-modal" onclick="toggleModal(false)"><i class="ph-bold ph-x"></i></button>
+            
+            <div style="display:flex; align-items:center; gap:12px; margin-bottom:20px; border-bottom:1px solid #F1F5F9; padding-bottom:16px;">
+                <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
+                     class="brand-logo" style="width:50px; height:50px;"
+                     onerror="this.src='https://placehold.co/50x50/2563EB/ffffff?text=DA'">
+                <div>
+                    <h3 style="margin:0; font-size:15px; font-weight:700; color:var(--text-main);">Dona Antônia</h3>
+                    <span style="font-size:11px; color:var(--text-sub); display:block;">CNPJ: 51.385.335.0001.06</span>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <ul>
+                    <li><i class="ph-fill ph-check-circle"></i> 8 anos em Cuiabá e VG</li>
+                    <li><i class="ph-fill ph-package"></i> Mais de 30 mil cestas entregues</li>
+                    <li><i class="ph-fill ph-users"></i> +8.000 Seguidores nas redes</li>
+                </ul>
+
+                <div style="font-size:12px; color:var(--text-sub); background:#F8FAFC; padding:12px; border-radius:12px; margin-bottom:16px; border:1px solid #F1F5F9;">
+                    <a href="https://maps.google.com/?q=R.+Trinta,+105+-+Jardim+Nossa+Sra.+Aparecida,+Cuiabá+-+MT,+78090-660" target="_blank" style="color:inherit; text-decoration:none; display:flex; gap:10px; align-items:start">
+                        <i class="ph-fill ph-map-pin" style="color:#ef4444; flex-shrink:0; margin-top:2px; font-size:16px;"></i>
+                        <span>R. Trinta, 105 - Jardim Nossa Sra. Aparecida, Cuiabá - MT</span>
+                    </a>
+                </div>
+
+                <div style="text-align:center; font-size:12px; font-weight:600; color:var(--text-main);">
+                    <p style="margin:0">📞 (65) 99815-0975</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- DATA & LOGIC ---
+
+        // Modal Function
+        window.toggleModal = function(show) {
+            const modal = document.getElementById('infoModal');
+            modal.style.display = show ? 'flex' : 'none';
+            if(show) trackMarketingEvent('ViewContent', { content_name: 'Modal Quem Somos' });
+        }
 
         const CESTA_PEQUENA_ITEMS = [
             { name: "Arroz Koblenz 5kg", qtd: 2, type: "alimento" },
@@ -334,7 +413,6 @@
         function addAction(text, callbackId) {
             const btnId = 'btn-' + Date.now();
             const html = `<button id="${btnId}" class="action-btn" onclick="handleAction('${btnId}', '${text}', ${callbackId})">${text}</button>`;
-            // Procura o último bubble (seja full ou normal) para adicionar o botão abaixo
             const lastBubble = chatContainer.lastElementChild.querySelector('.msg-bubble');
             if(lastBubble) {
                 lastBubble.insertAdjacentHTML('beforeend', html);
@@ -394,14 +472,13 @@
             let index = 0;
             function showNextItem() {
                 if (index >= flatItems.length) {
-                    setTimeout(flowOfferDiscount, 2000); // Pausa maior antes de começar a ofertar
+                    setTimeout(flowOfferDiscount, 2000); 
                     return;
                 }
 
                 const item = flatItems[index];
                 const img = getProductImage(item.name);
                 
-                // Card SEM BADGE
                 const card = `
                     <div class="mini-card">
                         <img src="${img}" alt="${item.name}">
@@ -413,7 +490,6 @@
                 chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
 
                 index++;
-                // MAIS LENTO (CHARME)
                 setTimeout(showNextItem, 1100); 
             }
 
@@ -423,9 +499,7 @@
         async function flowOfferDiscount() {
             await addMessage(`Gostou? Bastante coisa né? 😍`);
             await addMessage(`Essa cesta é a que mais vendemos e custa <b>R$ 220,00</b> entregue na sua casa.`);
-            
             await addMessage(`Pra você se tornar nosso cliente vamos te fazer por <b>R$ 205,00</b>, quer?`);
-            
             addAction("Sim 🎁", 3);
         }
 
