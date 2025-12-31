@@ -67,7 +67,9 @@
     </script>
 
     <!-- LIBS -->
-    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- ADICIONADO 'defer' PARA NÃO BLOQUEAR A RENDERIZAÇÃO -->
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <!-- ADICIONADO 'display=swap' PARA NÃO BLOQUEAR TEXTO -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
@@ -86,7 +88,6 @@
             --danger: #EF4444; 
             
             --header-h: 60px;
-            /* Reduzido para footer mais compacto (era 160px) */
             --footer-h: 130px; 
             
             --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
@@ -97,11 +98,10 @@
             margin: 0; padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--background); color: var(--text-main);
-            /* Padding bottom ajustado para o footer compacto */
             padding-bottom: calc(var(--footer-h) + 10px); 
         }
 
-        /* --- HEADER (Standard Static) --- */
+        /* --- HEADER --- */
         .app-header {
             height: var(--header-h);
             background: white;
@@ -115,7 +115,7 @@
         .intro-text {
             text-align: center;
             padding: 20px 16px 0;
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-sec);
             line-height: 1.4;
@@ -136,8 +136,9 @@
             box-shadow: var(--shadow-card);
             overflow: hidden;
             margin-bottom: 0;
+            /* MODERN RENDER OPTIMIZATION */
             content-visibility: auto; 
-            contain-intrinsic-size: 1px 1000px;
+            contain-intrinsic-size: 1px 600px; /* Estimated height to prevent scrollbar jumps */
         }
 
         /* HEADER BLOCK */
@@ -151,7 +152,10 @@
         .p-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin: 0; letter-spacing: -0.5px; }
         
         .basket-hero-img {
-            width: 100%; height: auto; max-height: 220px;
+            width: 100%; height: auto; 
+            /* Enforce aspect ratio space reservation */
+            aspect-ratio: 16/9; 
+            max-height: 220px;
             object-fit: cover; border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 16px;
@@ -193,7 +197,7 @@
         /* BUTTONS */
         .btn-action-main {
             width: 100%; background: var(--primary); color: white;
-            padding: 20px; /* Aumentado para 20px para maior destaque vertical */
+            padding: 20px; 
             border: none; border-radius: 12px;
             font-size: 14px; font-weight: 800; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -245,6 +249,8 @@
         }
         .item-img {
             width: 100%; height: 90px;
+            /* CLS Prevention */
+            aspect-ratio: 1/1; 
             object-fit: contain; margin-bottom: 2px;
             mix-blend-mode: multiply;
         }
@@ -276,21 +282,20 @@
         /* --- FOOTER & MODALS --- */
         .app-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #F1F5F9; /* Fundo Cinza Claro para diferenciar */
+            background: #F1F5F9; 
             backdrop-filter: blur(12px); border-top: 1px solid #E2E8F0;
             display: flex; flex-direction: column; justify-content: flex-end; 
-            padding: 10px 12px 16px; gap: 8px; /* Padding reduzido */
+            padding: 10px 12px 16px; gap: 8px; 
             z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
         }
         .footer-label { 
-            font-size: 11px; font-weight: 800; color: var(--text-sec); 
+            font-size: 11px; font-weight: 800; color: var(--text-main); /* Contraste aumentado */
             text-align: center; text-transform: uppercase; margin-bottom: 2px; 
         }
         
-        /* BOTÕES SOCIAIS COMPACTOS */
         .btn-social {
             width: 100%;
-            padding: 10px; /* Mais compacto */
+            padding: 10px;
             border-radius: 10px;
             font-size: 13px;
             font-weight: 700;
@@ -308,7 +313,7 @@
         }
         
         .btn-offers {
-            background: #25D366; /* WhatsApp Green */
+            background: #25D366; 
             color: white;
             box-shadow: 0 3px 10px rgba(37, 211, 102, 0.25);
         }
@@ -332,6 +337,8 @@
 
         .inp { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: #F8FAFC; }
         .lbl { font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: block; text-transform: uppercase; }
+        
+        /* Close btn accessibility */
         .close-btn { position: absolute; top: 16px; right: 16px; background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-sec); cursor: pointer; }
 
         .company-header { text-align: center; padding: 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
@@ -387,7 +394,7 @@
     <!-- MODALS -->
     <div id="modal-lead" class="modal-wrap" onclick="if(event.target===this) closeModal('lead')">
         <div class="modal-box" style="padding-top: 16px;">
-            <button class="close-btn" onclick="closeModal('lead')"><i class="ph-bold ph-x"></i></button>
+            <button class="close-btn" onclick="closeModal('lead')" aria-label="Fechar Modal"><i class="ph-bold ph-x"></i></button>
             
             <!-- PAGAMENTO INFO -->
             <div style="text-align: left; margin-bottom: 24px;">
@@ -425,7 +432,7 @@
     <!-- ... existing modals ... -->
     <div id="modal-info" class="modal-wrap center" onclick="if(event.target===this) closeModal('info')">
         <div class="modal-box" style="text-align:center; max-height: 85vh; overflow-y: auto;">
-            <button class="close-btn" onclick="closeModal('info')" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
+            <button class="close-btn" onclick="closeModal('info')" aria-label="Fechar Modal" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
             <div class="company-header">
                 <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="company-logo-lg" onerror="this.src='https://placehold.co/100x100'">
                 <h3 style="margin:0; font-size:18px; color:var(--text-main);">Dona Antônia</h3>
@@ -460,7 +467,7 @@
     
     <div id="modal-contact" class="modal-wrap center" onclick="if(event.target===this) closeModal('contact')">
         <div class="modal-box">
-            <button class="close-btn" onclick="closeModal('contact')" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
+            <button class="close-btn" onclick="closeModal('contact')" aria-label="Fechar Modal" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
             <div style="padding:24px 24px 10px;"><h3 class="modal-title" style="margin:0; font-size:18px;">Fale Conosco</h3><p style="margin:4px 0 16px; color:var(--text-sec); font-size:14px;">Clique para chamar:</p></div>
             <a href="tel:65996813588" class="contact-row"><div class="contact-icon"><i class="ph-phone"></i></div><span>(65) 99681-3588</span></a>
             <a href="https://wa.me/5565998150975" class="contact-row"><div class="contact-icon" style="color:#16A34A; background:#DCFCE7;"><i class="ph-whatsapp-logo"></i></div><span>(65) 99815-0975</span></a>
@@ -638,7 +645,7 @@
                 const qtd = i.q === 1 ? '1 unidade' : `${i.q} unidades`;
                 return `
                 <div class="item-card">
-                    <img src="${getImg(i.n)}" class="item-img" loading="lazy" decoding="async">
+                    <img src="${getImg(i.n)}" class="item-img" loading="lazy" decoding="async" width="100" height="90">
                     <div class="item-qty">${qtd}</div>
                     <div class="item-name">${i.n}</div>
                 </div>`;
@@ -663,7 +670,8 @@
                             class="basket-hero-img" 
                             alt="${data.name}"
                             loading="${imgLoading}"
-                            fetchpriority="${fetchPriority}">
+                            fetchpriority="${fetchPriority}"
+                            width="600" height="337">
 
                     <div class="p-options ${isRevealed ? 'revealed' : ''}">${optionsHtml}</div>
                     
