@@ -86,8 +86,8 @@
             --danger: #EF4444; 
             
             --header-h: 60px;
-            /* Aumentado para caber 2 botões grandes + label */
-            --footer-h: 160px; 
+            /* Reduzido para footer mais compacto (era 160px) */
+            --footer-h: 130px; 
             
             --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
         }
@@ -97,8 +97,8 @@
             margin: 0; padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--background); color: var(--text-main);
-            /* Padding bottom ajustado para o footer maior */
-            padding-bottom: calc(var(--footer-h) + 20px); 
+            /* Padding bottom ajustado para o footer compacto */
+            padding-bottom: calc(var(--footer-h) + 10px); 
         }
 
         /* --- HEADER (Standard Static) --- */
@@ -110,6 +110,16 @@
         }
         .logo { width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border); object-fit: cover; }
         .brand h1 { font-size: 16px; font-weight: 800; line-height: 1.2; margin: 0; color: var(--text-main); }
+
+        /* --- INTRO TEXT --- */
+        .intro-text {
+            text-align: center;
+            padding: 20px 16px 0;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-sec);
+            line-height: 1.4;
+        }
 
         /* --- CATALOG CONTAINER --- */
         .catalog-container { 
@@ -265,23 +275,23 @@
         /* --- FOOTER & MODALS --- */
         .app-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #F8FAFC; 
-            backdrop-filter: blur(12px); border-top: 1px solid var(--border);
+            background: #F1F5F9; /* Fundo Cinza Claro para diferenciar */
+            backdrop-filter: blur(12px); border-top: 1px solid #E2E8F0;
             display: flex; flex-direction: column; justify-content: flex-end; 
-            padding: 16px 16px 24px; gap: 8px;
+            padding: 10px 12px 16px; gap: 8px; /* Padding reduzido */
             z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
         }
         .footer-label { 
-            font-size: 13px; font-weight: 800; color: var(--text-sec); 
-            text-align: center; text-transform: uppercase; margin-bottom: 6px; 
+            font-size: 11px; font-weight: 800; color: var(--text-sec); 
+            text-align: center; text-transform: uppercase; margin-bottom: 2px; 
         }
         
-        /* BOTÕES SOCIAIS PADRONIZADOS */
+        /* BOTÕES SOCIAIS COMPACTOS */
         .btn-social {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 14px;
+            padding: 10px; /* Mais compacto */
+            border-radius: 10px;
+            font-size: 13px;
             font-weight: 700;
             text-decoration: none;
             display: flex; align-items: center; justify-content: center; gap: 8px;
@@ -293,13 +303,13 @@
         .btn-insta {
             background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); 
             color: white;
-            box-shadow: 0 4px 15px rgba(220, 39, 67, 0.3);
+            box-shadow: 0 3px 10px rgba(220, 39, 67, 0.25);
         }
         
         .btn-offers {
             background: #25D366; /* WhatsApp Green */
             color: white;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            box-shadow: 0 3px 10px rgba(37, 211, 102, 0.25);
         }
 
         .modal-wrap {
@@ -346,6 +356,11 @@
              class="logo" alt="DA" onerror="this.src='https://placehold.co/100x100'">
         <div class="brand"><h1>Super Cestas Dona Antônia</h1></div>
     </header>
+
+    <!-- INTRO TITLE -->
+    <div class="intro-text">
+        Olá, temos 5 tamanhos de cestas básicas. Veja abaixo 👇
+    </div>
 
     <!-- CATALOG FEED -->
     <main id="catalog-mount" class="catalog-container">
@@ -452,6 +467,7 @@
     </div>
 
     <script>
+        // ... existing script ...
         // --- DATA ---
         const BASKETS = {
             'GRANDE': {
@@ -733,14 +749,17 @@
 
         // --- OFFERS ---
         function sendOffers() {
-            let msg = "Olá! Gostaria de receber as ofertas de *JANEIRO* 📅\n\n";
+            let msg = "Estou salvando as ofertas de janeiro. 📅\n\n";
             const keys = ['GRANDE', 'MEDIA', 'PEQUENA', 'MINI', 'ECONOMICA'];
             
             keys.forEach(k => {
                 const b = BASKETS[k];
-                // Use the first option (usually the most attractive/default)
-                const opt = b.opts[0];
-                msg += `*${b.name.replace('<br>', ' ')}*\nPor: *${opt.desc}* (${opt.n})\n\n`;
+                // Loop through all options to show both Alvino and Koblenz prices if available
+                msg += `*${b.name.replace('<br>', ' ')}*\n`;
+                b.opts.forEach(opt => {
+                     msg += `- ${opt.n}: *${opt.desc}*\n`;
+                });
+                msg += `\n`;
             });
             
             msg += "✅ *Validade:* Todo o mês de Janeiro.";
