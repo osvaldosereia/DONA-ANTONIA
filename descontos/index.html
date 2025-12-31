@@ -262,7 +262,7 @@
             background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
             padding: 4px; text-align: center; /* Compact Padding */
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            height: 100%; /* Changed from auto to 100% to fill row */
+            height: 110%; /* Changed from auto to 100% to fill row */
             /* Removed min-height to fix whitespace issue */
         }
         .item-img {
@@ -429,7 +429,7 @@
                 <input type="text" id="leadBairro" class="inp" placeholder="Ex: Pedra 90">
             </div>
             <input type="hidden" id="leadContext">
-            <button onclick="sendLead()" class="btn-buy-modal"><i class="ph-bold ph-whatsapp-logo"></i> Enviar Pedido</button>
+            <button onclick="sendLead()" class="btn-buy-modal"><i class="ph-bold ph-whatsapp-logo"></i> Garantir Preço com Desconto</button>
         </div>
     </div>
 
@@ -751,7 +751,7 @@
             const ctx = document.getElementById('leadContext').value;
             if(!name) return alert('Por favor, informe seu nome.');
             
-            const msg = `Olá! Me chamo *${name}*, sou de *${city}* (${bairro}).\nTenho interesse em: *${ctx}*.\nGostaria de garantir meu desconto!`;
+            const msg = `Olá! Me chamo *${name}*, sou de *${city}*, do bairro ${bairro}.\nQuero Garantir o preço com desconto para a cesta: *${ctx}*.\n pelos próximos 30 dias. Confirmado?`;
             window.location.href = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
             trackEvent('Lead', { value: 0 });
             closeModal('lead');
