@@ -256,26 +256,26 @@
         }
         .p-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-        /* Grid de Itens VERTICAL */
-        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        /* Grid de Itens VERTICAL - COMPACTO (UPDATED) */
+        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .item-card {
             background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
-            padding: 8px 4px; text-align: center;
+            padding: 4px; text-align: center; /* Compact Padding */
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            height: 190px; 
+            height: auto; min-height: 165px; /* Compact Height */
         }
         .item-img {
-            width: 100%; height: 100px;
-            object-fit: contain; margin-bottom: 4px;
+            width: 100%; height: 90px; /* Reduced Height */
+            object-fit: contain; margin-bottom: 2px; /* Reduced Margin */
             mix-blend-mode: multiply;
         }
         .item-qty {
             background: var(--primary-light); color: var(--primary-dark);
-            font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: 4px;
+            font-size: 10px; font-weight: 800; padding: 1px 4px; border-radius: 4px;
             margin-bottom: 2px; width: 100%;
         }
         .item-name {
-            font-size: 11px; font-weight: 600; color: var(--text-main); line-height: 1.1;
+            font-size: 10px; font-weight: 600; color: var(--text-main); line-height: 1.1;
             margin-bottom: 0;
             display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
         }
@@ -340,7 +340,7 @@
             font-size: 18px; color: var(--text-muted); cursor: pointer;
         }
         
-        /* Modal Infos */
+        /* Modal Infos (UPDATED) */
         .company-header { text-align: center; padding: 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
         .company-logo-lg { width: 72px; height: 72px; border-radius: 50%; border: 4px solid white; box-shadow: var(--shadow-sm); margin-bottom: 12px; }
         .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 20px; }
@@ -350,6 +350,12 @@
 
         .contact-row { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #E2E8F0; border-radius: var(--radius-md); text-decoration: none; color: var(--text-heading); font-weight: 600; margin: 0 20px 12px; }
         .contact-icon { width: 40px; height: 40px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; }
+
+        .info-block { padding: 0 24px 24px; text-align: left; font-size: 13px; color: var(--text-main); }
+        .info-section { margin-bottom: 16px; }
+        .info-title { font-weight: 800; text-transform: uppercase; font-size: 11px; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .social-links { display: flex; gap: 12px; margin-top: 8px; }
+        .social-btn { flex: 1; padding: 8px; border-radius: 8px; background: #F1F5F9; text-align: center; text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 12px; }
 
         .btn-buy-modal { width: 100%; background: var(--success); color: white; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
 
@@ -395,8 +401,8 @@
         <div class="footer-actions">
             <button onclick="openModal('info')" class="f-chip fc-info"><i class="ph-bold ph-storefront"></i> Sobre</button>
             <button onclick="openModal('contact')" class="f-chip fc-zap"><i class="ph-bold ph-whatsapp-logo"></i> Contato</button>
-            <a href="https://instagram.com" target="_blank" class="f-chip fc-insta"><i class="ph-bold ph-instagram-logo"></i> Insta</a>
-            <a href="https://facebook.com" target="_blank" class="f-chip fc-face"><i class="ph-bold ph-facebook-logo"></i> Face</a>
+            <a href="https://instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="f-chip fc-insta"><i class="ph-bold ph-instagram-logo"></i> Insta</a>
+            <a href="https://facebook.com/super.cestas.cuiaba" target="_blank" class="f-chip fc-face"><i class="ph-bold ph-facebook-logo"></i> Face</a>
         </div>
     </footer>
 
@@ -426,22 +432,51 @@
         </div>
     </div>
 
-    <!-- INFO MODAL -->
+    <!-- INFO MODAL (UPDATED) -->
     <div id="modal-info" class="modal-wrap center" onclick="if(event.target===this) closeModal('info')">
-        <div class="modal-box" style="text-align:center;">
+        <div class="modal-box" style="text-align:center; max-height: 85vh; overflow-y: auto;">
             <button class="close-btn" onclick="closeModal('info')" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
             <div class="company-header">
                 <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="company-logo-lg" onerror="this.src='https://placehold.co/100x100'">
                 <h3 style="margin:0; font-size:18px; color:var(--text-heading);">Dona Antônia</h3>
                 <p style="margin:4px 0 0; font-size:12px; color:var(--text-muted);">CNPJ: 51.385.335.0001-06</p>
             </div>
-            <div class="stats-row">
-                <div class="stat-tile"><span class="stat-val">+30 Mil</span><span class="stat-lbl">Entregas</span></div>
-                <div class="stat-tile"><span class="stat-val">8 Anos</span><span class="stat-lbl">Tradição</span></div>
+
+            <div class="info-block">
+                 <div class="info-section">
+                    <span class="info-title">Sobre Nós</span>
+                    <p style="margin:0;">🔸️Cesta Básica em Cuiabá e Várzea Grande.<br>
+                    ⭐ 99681-3588 | 99815-0975<br>
+                    💸 Pague só na entrega na sua casa.<br>
+                    👇 Pedidos Somente por Whatsapp</p>
+                </div>
+
+                <div class="info-section">
+                    <span class="info-title">Endereço</span>
+                    <p style="margin:0;">R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>Cuiabá - MT, 78090-660</p>
+                </div>
+
+                <div class="info-section">
+                    <span class="info-title">Horário de Funcionamento</span>
+                    <p style="margin:0; font-size:12px; line-height:1.6;">
+                        Segunda a Sexta: 08:00–12:00<br>
+                        Sábado: 08:00–12:00<br>
+                        Domingo: Fechado<br>
+                        <em style="color:var(--text-muted);">Feriados: Fechado</em>
+                    </p>
+                </div>
+
+                <div class="info-section">
+                    <span class="info-title">Redes Sociais</span>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/super.cestas.cuiaba" target="_blank" class="social-btn" style="background:#EFF6FF; color:#1877F2;">Facebook</a>
+                        <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="social-btn" style="background:#FFF0F5; color:#E1306C;">Instagram</a>
+                    </div>
+                </div>
             </div>
+            
             <div style="padding: 0 24px 24px; text-align: center;">
-                <p style="font-size:13px; line-height:1.5;">Qualidade garantida e entrega rápida em toda a região.</p>
-                <div style="background:#ECFDF5; color:#065F46; padding:10px; border-radius:8px; font-size:12px; font-weight:700; margin-top:12px;"><i class="ph-money"></i> Pague só na entrega</div>
+                <div style="background:#ECFDF5; color:#065F46; padding:10px; border-radius:8px; font-size:12px; font-weight:700;"><i class="ph-money"></i> Pague só na entrega</div>
             </div>
         </div>
     </div>
@@ -459,12 +494,14 @@
 
     <script>
         // --- DATA LAYER (PRICING STRATEGY) ---
+        // PRICES UPDATED: Norm is Anchor (Higher), Desc is the requested "Correct Value"
         const BASKETS = {
             'GRANDE': {
                 name: 'Cesta<br>Grande',
                 img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif',
                 opts: [
-                    { n: 'Com Arroz Tio Alvino', norm: 'R$ 405,00', desc: 'R$ 380,00', sel: true }
+                    { n: 'Com Arroz Tio Alvino', norm: 'R$ 405,00', desc: 'R$ 380,00', sel: true },
+                    { n: 'Com Arroz Koblenz', norm: 'R$ 415,00', desc: 'R$ 390,00' }
                 ],
                 items: [
                     {q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'},
@@ -630,7 +667,7 @@
             const totalItems = data.items.reduce((acc, item) => acc + item.q, 0);
 
             const itemsHtml = data.items.map(i => {
-                const qtd = i.q === 1 ? '1 UNIDADE' : `${i.q} UNIDADES`;
+                const qtd = i.q === 1 ? '1 UN' : `${i.q} UN`; // Compact Qty Text
                 return `
                 <div class="item-card">
                     <img src="${getImg(i.n)}" class="item-img" loading="lazy">
