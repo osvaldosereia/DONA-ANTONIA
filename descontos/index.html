@@ -262,7 +262,8 @@
             background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
             padding: 4px; text-align: center; /* Compact Padding */
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            height: auto; min-height: 165px; /* Compact Height */
+            height: 100%; /* Changed from auto to 100% to fill row */
+            /* Removed min-height to fix whitespace issue */
         }
         .item-img {
             width: 100%; height: 90px; /* Reduced Height */
