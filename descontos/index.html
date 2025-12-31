@@ -30,8 +30,15 @@
     <script>
         window.dataLayer = window.dataLayer || [];
         function trackEvent(eventName, params = {}) {
-            window.dataLayer.push({ 'event': eventName, 'eventID': 'evt_' + Date.now(), ...params });
-            if(typeof fbq === 'function') fbq('track', eventName, params);
+            const eventData = {
+                'event': eventName,
+                'eventID': 'evt_' + Date.now(),
+                'timestamp': new Date().toISOString(),
+                ...params
+            };
+            window.dataLayer.push(eventData);
+            if(typeof fbq === 'function') fbq('track', eventName, params, {eventID: eventData.eventID});
+            console.log(`🚀 [TRACKING] ${eventName}`, eventData);
         }
     </script>
 
@@ -98,21 +105,14 @@
         }
         .hero-btn:active { transform: scale(0.96); }
 
-        /* --- STICKY BASKET SLIDER (CONSTRAINED WIDTH) --- */
-        .nav-sticky-wrapper {
+        /* --- STICKY BASKET SLIDER (VERTICAL NAV) --- */
+        .nav-slider-container {
             position: sticky; top: 0; z-index: 40;
             background: rgba(248, 250, 252, 0.98);
             backdrop-filter: blur(10px);
+            padding: 12px 0;
             border-bottom: 1px solid var(--border);
             transition: top 0.3s ease;
-            width: 100%;
-        }
-
-        /* Container Limitado ao Box Grande */
-        .nav-slider-box {
-            max-width: 600px; margin: 0 auto;
-            padding: 12px 0;
-            position: relative;
         }
         
         .slider-wrapper {
@@ -138,7 +138,7 @@
         }
         .basket-scroller::-webkit-scrollbar { display: none; }
 
-        /* NAV CARD - HYPER VERTICAL */
+        /* NAV CARD - AJUSTADO HEIGHT */
         .nav-card {
             flex: 0 0 28%; /* ~3.5 itens na tela mobile */
             scroll-snap-align: start;
@@ -150,12 +150,12 @@
             cursor: pointer; transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
             box-shadow: var(--shadow-card);
             position: relative;
-            height: 280px; /* Aumentado para ser bem vertical */
+            height: 210px; /* Reduzido de 280px para 210px */
         }
         
         .nav-card-img {
             width: 100%; 
-            height: 220px; /* Imagem ocupando a maior parte */
+            height: 150px; /* Reduzido de 220px para 150px */
             object-fit: cover;
             background: #f1f5f9;
         }
@@ -198,7 +198,17 @@
         }
         @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 
-        /* REMOVIDO .p-image-container PARA TIRAR A FOTO GRANDE */
+        /* 1. Imagem Imersiva VERTICAL */
+        .p-image-container { 
+            position: relative; width: 100%; 
+            background: #F1F5F9;
+            aspect-ratio: 3/4; /* Força proporção vertical */
+        }
+        .p-image { 
+            width: 100%; height: 100%; 
+            object-fit: cover; display: block;
+        }
+        .p-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 80px; background: linear-gradient(to top, rgba(0,0,0,0.1), transparent); }
 
         /* 2. Info & Compra */
         .p-content { padding: 20px; }
@@ -375,7 +385,7 @@
     </section>
 
     <!-- STICKY NAV SLIDER (Vertical Cards) -->
-    <nav id="app-nav" class="nav-sticky-wrapper">
+    <nav id="app-nav" class="nav-slider-container">
         <div class="nav-slider-box">
             <div class="slider-wrapper">
                 <div class="scroll-btn left" onclick="scrollNav(-120)"><i class="ph-bold ph-caret-left"></i></div>
@@ -579,7 +589,7 @@
             if(low.includes('papel')) return c + 'papel higienico.webp';
             if(low.includes('sabonete')) return c + 'sabonete palmolive 85g.webp';
             if(low.includes('barra')) return c + 'sabão barra ype 900g.webp';
-            if(low.includes('sabão pó') || low.includes('omo')) return `https://placehold.co/150x150/f1f5f9/94a3b8?text=OMO`;
+            if(low.includes('sabão pó') || low.includes('omo')) return c + 'sabão em pó omo 800g.webp';
 
             return `https://placehold.co/150x150/f1f5f9/94a3b8?text=${n.substr(0,3)}`;
         }
