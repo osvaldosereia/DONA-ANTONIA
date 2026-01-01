@@ -180,12 +180,11 @@
             transition: all 0.3s ease;
         }
         
+        /* Always show discount style */
         .option-card.discount-active {
             border-color: var(--success);
             background: #F0FDF4; /* Light Green Bg */
-            animation: pulse-card 0.5s ease;
         }
-        @keyframes pulse-card { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
 
         .option-name { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
         
@@ -317,49 +316,12 @@
             font-size: 13px;
         }
         
-        /* Botão Mágico Principal */
+        /* Botão Principal */
         .btn-offers {
-            background: linear-gradient(90deg, #25D366, #128C7E); 
+            background: #25D366; 
             color: white;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
             font-size: 15px;
-            animation: pulse-green 1.5s infinite;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Efeito de brilho passando */
-        .btn-offers::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shine 3s infinite;
-        }
-        @keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
-
-        @keyframes pulse-green { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
-
-        /* GAMIFICATION OVERLAY */
-        #gamification-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s;
-        }
-        #gamification-overlay.active { opacity: 1; pointer-events: auto; }
-        
-        .countdown-text {
-            color: white; font-size: 24px; font-weight: 800; text-align: center; margin-top: 20px;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .countdown-number {
-            font-size: 80px; font-weight: 900; color: #22C55E; 
-            text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
-            animation: popIn 0.8s infinite alternate;
-        }
-        @keyframes popIn { from { transform: scale(0.8); } to { transform: scale(1.1); } }
-
-        #confetti-canvas {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
         }
 
         /* MODALS & INPUTS */
@@ -425,9 +387,9 @@
         <div class="footer-label">CONHEÇA NOSSA EMPRESA</div>
         
         <div class="footer-actions-col">
-            <!-- MAIN ACTION BUTTON (CHANGES STATE) -->
-            <button id="btn-activate-discounts" onclick="handleFooterAction()" class="btn-social btn-offers">
-                <i class="ph-bold ph-magic-wand"></i> ATIVAR DESCONTOS
+            <!-- MAIN ACTION BUTTON -->
+            <button onclick="sendDirectOffers()" class="btn-social btn-offers">
+                <i class="ph-bold ph-whatsapp-logo"></i> FALAR COM ATENDENTE
             </button>
 
             <!-- INSTAGRAM BUTTON (SECONDARY) -->
@@ -436,13 +398,6 @@
             </a>
         </div>
     </footer>
-
-    <!-- GAMIFICATION OVERLAY -->
-    <div id="gamification-overlay">
-        <canvas id="confetti-canvas"></canvas>
-        <div class="countdown-number" id="countdown-display">3</div>
-        <div class="countdown-text">Ativando o Desconto<br>em todas as cestas...</div>
-    </div>
 
     <!-- MODAL: DIRECT ORDER -->
     <div id="modal-lead" class="modal-wrap" onclick="if(event.target===this) closeModal('lead')">
@@ -600,7 +555,7 @@
         // --- STATE MANAGEMENT ---
         const STATE = {
             revealed: {}, // Stores 'key': boolean
-            discountsActive: false // New state for gamification
+            discountsActive: true // ALWAY ACTIVE BY DEFAULT (NO FRICTION)
         };
 
         function getImg(n) {
@@ -743,6 +698,11 @@
                     </div>
 
                     <div class="items-grid">${itemsHtml}</div>
+                    
+                    <!-- BOTÃO PEDIR ESTA CESTA (NOVO) -->
+                    <button onclick="orderDirect('${key}')" class="btn-action-main" style="background: #25D366; margin-top: 15px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);">
+                        <i class="ph-bold ph-whatsapp-logo"></i> PEDIR ESTA CESTA NO ZAP
+                    </button>
                 </div>
             `;
         }
@@ -812,132 +772,15 @@
             closeModal('lead');
         }
 
-        // --- FOOTER BUTTON LOGIC (GAMIFICATION START) ---
-        function handleFooterAction() {
-            if (STATE.discountsActive) {
-                // If discounts are already active, just go to WhatsApp directly
-                sendDirectOffers();
-            } else {
-                // Start Gamification
-                activateDiscounts();
-            }
-        }
-
-        function activateDiscounts() {
-            // Show Overlay
-            const overlay = document.getElementById('gamification-overlay');
-            const counter = document.getElementById('countdown-display');
-            overlay.classList.add('active');
-            
-            // Start Confetti
-            startConfetti();
-
-            // Countdown Logic
-            let count = 3;
-            counter.innerText = count;
-            
-            const timer = setInterval(() => {
-                count--;
-                if (count > 0) {
-                    counter.innerText = count;
-                } else {
-                    clearInterval(timer);
-                    // Finish Gamification
-                    applyDiscounts();
-                    overlay.classList.remove('active');
-                    stopConfetti();
-                }
-            }, 1000);
-            
-            trackEvent('StartGamification');
-        }
-
-        function applyDiscounts() {
-            STATE.discountsActive = true;
-            renderAllProducts(); // Re-render to show discounted prices
-            
-            // Change Footer Button Text & Style
-            const btn = document.getElementById('btn-activate-discounts');
-            btn.innerHTML = '<i class="ph-bold ph-whatsapp-logo"></i> Salvar nosso Whatsapp';
-            
-            trackEvent('DiscountsActivated');
-        }
-
+        // --- SIMPLE CONTACT SUPPORT FUNCTION (NO GAMIFICATION) ---
         function sendDirectOffers() {
-            let msg = "Olá, estou salvando seu contato. 📲\n\n*TABELA DE PREÇOS ATUALIZADA:*\n";
+            // Mensagem simples e direta que inicia conversa
+            let msg = "Olá, Dona Antônia! Vim pelo site e quero aproveitar o desconto nas Cestas Básicas. Pode me atender?";
             
-            const keys = ['GRANDE', 'MEDIA', 'PEQUENA', 'MINI', 'ECONOMICA'];
-            keys.forEach(k => {
-                const b = BASKETS[k];
-                msg += `*${b.name.replace('<br>', ' ')}*\n`;
-                b.opts.forEach(opt => {
-                     msg += `- ${opt.n}: *${opt.desc}*\n`;
-                });
-                msg += `\n`;
-            });
-            
-            msg += "✅ *Validade:* Todo o mês de Janeiro.";
-            msg += "\n\n👀 *Veja as cestas:*\ndonaantonia.com.br";
-            msg += "\n\n🎁 *Grupo de Descontos e Sorteios:*\nhttps://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1";
-            msg += "\n\n📸 *Siga no Instagram:*\nhttps://www.instagram.com/cestas.dona.antonia.cuiaba.vg/";
-
-            const phone = "5565998150975";
+            const phone = "5565998150975"; // Seu número
             window.location.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
             
-            trackEvent('ClickWhatsappSaved');
-        }
-
-        // --- SIMPLE CONFETTI IMPLEMENTATION ---
-        let confettiCtx;
-        let confettiPieces = [];
-        let animationId;
-
-        function startConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            confettiCtx = canvas.getContext('2d');
-            
-            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
-
-            for (let i = 0; i < 300; i++) {
-                confettiPieces.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    w: Math.random() * 10 + 5,
-                    h: Math.random() * 10 + 5,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    speed: Math.random() * 3 + 2,
-                    angle: Math.random() * 360
-                });
-            }
-            updateConfetti();
-        }
-
-        function updateConfetti() {
-            const canvas = document.getElementById('confetti-canvas');
-            confettiCtx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            confettiPieces.forEach(p => {
-                p.y += p.speed;
-                p.angle += 2;
-                if (p.y > canvas.height) p.y = -20;
-                
-                confettiCtx.save();
-                confettiCtx.translate(p.x, p.y);
-                confettiCtx.rotate(p.angle * Math.PI / 180);
-                confettiCtx.fillStyle = p.color;
-                confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-                confettiCtx.restore();
-            });
-            
-            animationId = requestAnimationFrame(updateConfetti);
-        }
-
-        function stopConfetti() {
-            cancelAnimationFrame(animationId);
-            confettiPieces = [];
-            if(confettiCtx) confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+            trackEvent('ClickWhatsapp_PedirAgora'); // Rastreamento melhorado
         }
 
         // --- INITIALIZATION ---
