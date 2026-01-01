@@ -3,24 +3,53 @@
 <head>
     <!-- 
         ================================================================
-        PILLAR 1: CORE WEB VITALS & SEO (HIGH PERFORMANCE)
+        PILAR 1: CORE WEB VITALS & SEO (HIGH PERFORMANCE)
         ================================================================
     -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>Catálogo Completo | Dona Antônia Cuiabá</title>
-    <meta name="description" content="Confira todas as nossas Cestas Básicas: Econômica, Pequena, Média e Grande. Entrega em Cuiabá e Várzea Grande.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <title>Super Cestas Dona Antônia | Cuiabá e Várzea Grande</title>
+    <meta name="description" content="Cestas Básicas com entrega em Cuiabá e VG. Pagamento na entrega. Confira nosso catálogo completo.">
     <meta name="theme-color" content="#ffffff">
     <meta name="robots" content="index, follow">
     <!-- Verification Meta Tag -->
     <meta name="facebook-domain-verification" content="sa60eslx69a2vs9jaojicyissuoueq" />
-    <link rel="canonical" href="https://www.donaantonia.com.br/catalogo">
+    <link rel="canonical" href="https://www.donaantonia.com.br">
+
+    <!-- Schema Markup LocalBusiness (Atualizado com Endereço Novo) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Super Cestas Dona Antônia",
+      "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
+      "telephone": ["+5565996813588", "+5565998150975"],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "R. Trinta, 105",
+        "addressLocality": "Jardim Nossa Sra. Aparecida",
+        "addressRegion": "MT",
+        "postalCode": "78090-660",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -15.6014, 
+        "longitude": -56.0979
+      },
+      "url": "https://www.donaantonia.com.br",
+      "sameAs": [
+        "https://www.facebook.com/cestasdonaantonia",
+        "https://www.instagram.com/cestas.dona.antonia.cuiaba.vg"
+      ],
+      "priceRange": "$$"
+    }
+    </script>
 
     <!-- PERFORMANCE HINTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://unpkg.com">
-    <link rel="preconnect" href="https://connect.facebook.net">
     <link rel="dns-prefetch" href="https://donaantonia.com.br">
 
     <!-- Meta Pixel Code -->
@@ -41,30 +70,40 @@
     /></noscript>
     <!-- End Meta Pixel Code -->
 
-    <!-- PILLAR 3: SECURITY -->
+    <!-- PILAR 3: SEGURANÇA E ANTI-CLONAGEM -->
     <script>
         (function() {
+            // Anti-Selection & Right Click (Proteção de Marca Básica)
+            document.addEventListener('contextmenu', event => event.preventDefault());
+            document.addEventListener('selectstart', event => event.preventDefault());
+            
+            // Verificação de Domínio (Evita Phishing)
             const allowedDomains = ['www.donaantonia.com.br', 'donaantonia.com.br', 'localhost', '127.0.0.1'];
             const currentDomain = window.location.hostname;
-            const isPreview = currentDomain.includes('google') || currentDomain.includes('sandbox') || currentDomain.includes('firebaseapp');
-            if (!isPreview && !allowedDomains.some(d => currentDomain.endsWith(d))) console.warn(`⚠️ Security Alert`);
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('dragstart', e => e.preventDefault());
+            // Ignora verificação em ambientes de preview do Google/Firebase
+            const isPreview = currentDomain.includes('google') || currentDomain.includes('sandbox') || currentDomain.includes('web.app');
+            
+            if (!isPreview && !allowedDomains.some(d => currentDomain.endsWith(d))) {
+                console.warn('⚠️ Domínio não oficial detectado.');
+                // Em produção real, você poderia redirecionar: window.location.href = 'https://www.donaantonia.com.br';
+            }
         })();
     </script>
 
-    <!-- PILLAR 2: DATA LAYER -->
+    <!-- PILAR 2: DATA LAYER -->
     <script>
         window.dataLayer = window.dataLayer || [];
         function trackEvent(eventName, params = {}) {
             const eventData = {
                 'event': eventName,
-                'eventID': 'evt_' + Date.now(),
+                'eventID': 'evt_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
                 'timestamp': new Date().toISOString(),
                 ...params
             };
             window.dataLayer.push(eventData);
-            if(typeof fbq === 'function') fbq('track', eventName, params, {eventID: eventData.eventID});
+            if(typeof fbq === 'function') {
+                fbq('track', eventName, params, {eventID: eventData.eventID});
+            }
             console.log(`🚀 [TRACKING] ${eventName}`, eventData);
         }
     </script>
@@ -75,49 +114,43 @@
 
     <style>
         :root {
-            --primary: #2563EB;
+            --primary: #1D4ED8; /* Azul confiável */
             --primary-light: #EFF6FF;
-            --primary-dark: #1D4ED8;
-            --success: #10B981;
-            --success-dark: #059669;
-            --green-strong: #047857;
+            --success: #059669; /* Verde Whatsapp/Sucesso */
             --surface: #FFFFFF;
-            --background: #F8FAFC;
+            --background: #F1F5F9;
             --text-main: #0F172A;
             --text-sec: #64748B;
-            --border: #E2E8F0;
-            --danger: #EF4444; 
+            --border: #CBD5E1;
             
-            --header-h: 90px; 
-            --footer-h: 140px; 
-            
-            --shadow-card: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            --header-h: 80px; 
+            --footer-h: 80px; /* Reduzido pois agora tem apenas 1 botão */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
             margin: 0; padding: 0;
             font-family: 'Plus Jakarta Sans', sans-serif;
             background: var(--background); color: var(--text-main);
             padding-bottom: calc(var(--footer-h) + 20px); 
+            user-select: none; /* Anti-copy CSS */
         }
 
-        /* --- HEADER --- */
+        /* --- HEADER SIMPLIFICADO --- */
         .app-header {
             height: var(--header-h);
             background: white;
             border-bottom: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center; padding: 0 16px; gap: 12px;
+            position: sticky; top: 0; z-index: 50;
         }
-        .logo { width: 72px; height: 72px; border-radius: 50%; border: 1px solid var(--border); object-fit: cover; } 
-        .brand h1 { font-size: 18px; font-weight: 800; line-height: 1.2; margin: 0; color: var(--text-main); } 
-
-        /* --- INTRO TEXT --- */
-        /* REMOVED AS REQUESTED */
+        .logo-header { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border); }
+        .brand h1 { font-size: 16px; font-weight: 800; line-height: 1.2; margin: 0; color: var(--text-main); text-transform: uppercase; } 
 
         /* --- CATALOG CONTAINER --- */
         .catalog-container { 
-            padding: 20px 16px; 
+            padding: 16px; 
             max-width: 600px; 
             margin: 0 auto; 
         }
@@ -125,365 +158,270 @@
         /* --- PRODUCT CARD --- */
         .product-section {
             background: var(--surface); 
-            border-radius: 24px;
+            border-radius: 20px;
             border: 1px solid var(--border);
-            box-shadow: var(--shadow-card);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             overflow: hidden;
-            margin-bottom: 0;
-            content-visibility: auto; 
-            contain-intrinsic-size: 1px 600px;
+            margin-bottom: 24px;
         }
 
-        /* HEADER BLOCK */
-        .p-header-block {
-            padding: 20px 20px 10px 20px;
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .p-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .p-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin: 0; letter-spacing: -0.5px; }
+        .p-header-block { padding: 20px 20px 10px 20px; background: #fff; border-bottom: 1px solid var(--border); }
+        .p-title { font-size: 20px; font-weight: 800; color: var(--text-main); margin: 0 0 12px 0; }
         
         .basket-hero-img {
             width: 100%; height: auto; 
-            aspect-ratio: 1/1; /* MUDANÇA: AGORA É QUADRADA */
-            max-height: 450px; /* MUDANÇA: AUMENTADO PARA 450px */
+            aspect-ratio: 1/1; 
+            max-height: 400px; 
             object-fit: cover; border-radius: 12px;
             border: 1px solid var(--border);
             margin-bottom: 16px;
             background: #f8fafc;
         }
 
-        /* OPÇÕES EM GRID (CARDS LADO A LADO) */
-        .p-options-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-            margin-bottom: 16px; 
-        }
+        /* OPÇÕES DE PREÇO */
+        .p-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
         .p-options-grid.single { grid-template-columns: 1fr; }
 
         .option-card {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 12px 8px; 
-            border: 1px solid var(--border); border-radius: 12px;
-            background: #F8FAFC;
-            text-align: center;
-            height: 100%;
-            transition: all 0.3s ease;
+            padding: 10px; border: 1px solid var(--border); border-radius: 10px;
+            background: #F8FAFC; text-align: center;
+            display: flex; flex-direction: column; justify-content: center;
         }
-        
-        /* Always show discount style */
-        .option-card.discount-active {
-            border-color: var(--success);
-            background: #F0FDF4; /* Light Green Bg */
-        }
-
-        .option-name { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
-        
-        .price-normal { font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
-        .price-striked { text-decoration: line-through; color: #94A3B8; font-size: 12px; display: block; margin-bottom: 2px; }
-        .price-discounted { color: var(--green-strong); font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
-
-        /* BUTTONS */
-        .btn-action-main {
-            width: 100%; background: var(--primary); color: white;
-            padding: 20px; 
-            border: none; border-radius: 12px;
-            font-size: 14px; font-weight: 800; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .btn-action-main:active { transform: scale(0.98); }
+        .option-card.active { border-color: var(--success); background: #ECFDF5; }
+        .option-name { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 2px; }
+        .price-normal { font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .price-striked { text-decoration: line-through; color: #94A3B8; font-size: 11px; }
+        .price-discounted { color: var(--success); font-size: 16px; font-weight: 800; }
 
         /* LIST & GRID */
-        .p-content-list { padding: 20px; }
-        
-        /* UNIFIED INFO BOX STYLES */
-        .info-summary {
-            background: #F0F9FF;
-            border: 1px solid #BAE6FD;
-            border-radius: 12px;
-            padding: 14px 12px;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        
-        .info-summary-title {
-            color: #0369A1;
-            font-weight: 800;
-            font-size: 15px;
-            margin-bottom: 6px;
-            display: block;
-        }
-        
-        .info-summary-sub {
-            color: #0c4a6e;
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 1.4;
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 6px;
-        }
-
-        /* COMPACT GRID */
-        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .p-content-list { padding: 16px; background: #fff; }
+        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
         .item-card {
-            background: #FFFFFF; border: 1px solid var(--border); border-radius: 8px;
+            background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 8px;
             padding: 4px; text-align: center;
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-            height: 100%;
         }
-        .item-img {
-            width: 100%; height: 90px;
-            aspect-ratio: 1/1; 
-            object-fit: contain; margin-bottom: 2px;
-            mix-blend-mode: multiply;
-        }
-        .item-qty {
-            background: var(--primary-light); color: var(--primary-dark);
-            font-size: 10px; font-weight: 800; padding: 1px 4px; border-radius: 4px;
-            margin-bottom: 2px; width: 100%;
-        }
-        .item-name {
-            font-size: 10px; font-weight: 600; color: var(--text-main); line-height: 1.1;
-            margin-bottom: 0;
-            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-        }
+        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: contain; mix-blend-mode: multiply; }
+        .item-qty { background: var(--primary-light); color: var(--primary); font-size: 9px; font-weight: 800; padding: 2px; border-radius: 4px; margin-bottom: 2px; }
+        .item-name { font-size: 10px; font-weight: 600; color: var(--text-main); line-height: 1.1; margin: 0; height: 2.2em; overflow: hidden; }
 
-        /* SEPARATOR & TITLES */
-        .section-separator {
-            height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
+        /* BOTOES GERAIS */
+        .btn-action-main {
+            width: 100%; background: var(--primary); color: white;
+            padding: 16px; border: none; border-radius: 12px;
+            font-size: 14px; font-weight: 700; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 12px;
         }
-        .section-separator::before {
-            content: ''; width: 100%; height: 2px;
-            background-image: linear-gradient(to right, transparent 0%, #cbd5e1 50%, transparent 100%);
-        }
-        .separator-icon {
-            position: absolute; background: var(--background); padding: 0 10px; color: #cbd5e1; font-size: 20px;
-        }
+        .btn-whatsapp { background: #25D366; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
 
-        .section-separator-title {
-            text-align: center;
-            margin: 30px 0 20px;
-            position: relative;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .section-separator-title span {
-            background: var(--background);
-            padding: 0 16px;
-            position: relative;
-            z-index: 1;
-            font-weight: 800;
-            color: var(--text-sec);
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .section-separator-title::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #CBD5E1;
-            z-index: 0;
-        }
-
-        /* --- FOOTER (UPDATED LAYOUT - STACKED) --- */
+        /* --- FOOTER FIXO (NOVO DESIGN) --- */
         .app-footer {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: #F1F5F9; 
-            backdrop-filter: blur(12px); border-top: 1px solid #E2E8F0;
-            display: flex; flex-direction: column; justify-content: flex-end; 
-            padding: 10px 12px 16px; gap: 10px; 
-            z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
-        }
-        .footer-label { 
-            font-size: 12px; font-weight: 800; color: var(--text-main);
-            text-align: center; text-transform: uppercase; margin-bottom: 4px; 
-        }
-        
-        .footer-actions-col {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-        }
-
-        .btn-social {
-            width: 100%;
-            padding: 14px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 800;
-            text-decoration: none;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: transform 0.1s;
-            cursor: pointer; border: none;
-        }
-        .btn-social:active { transform: scale(0.98); }
-
-        .btn-insta {
             background: white; 
-            color: #E1306C;
-            border: 1px solid #E2E8F0;
-            font-size: 13px;
+            border-top: 1px solid var(--border);
+            padding: 12px 16px; 
+            z-index: 100; box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            display: flex; align-items: center; justify-content: center;
         }
-        
-        /* Botão Principal */
-        .btn-offers {
-            background: #25D366; 
+
+        .btn-footer-company {
+            width: 100%; max-width: 500px;
+            background: #0F172A; /* Cor escura para contraste institucional */
             color: white;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            font-size: 15px;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* MODALS & INPUTS */
-        .modal-wrap {
+        /* --- MODAL DA EMPRESA (COMPANY INFO) --- */
+        .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.6); z-index: 1000;
-            display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: 0.3s;
-            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.7); z-index: 2000;
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: 0.3s;
+            backdrop-filter: blur(5px);
         }
-        .modal-wrap.active { opacity: 1; pointer-events: auto; }
-        .modal-wrap.center { align-items: center; justify-content: center; }
-        .modal-box {
-            background: white; width: 100%; border-radius: 24px 24px 0 0;
-            padding: 24px; max-width: 600px; margin: 0 auto;
-            transform: translateY(100%); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .modal-card {
+            background: white; width: 90%; max-width: 400px; max-height: 90vh;
+            border-radius: 24px; overflow-y: auto;
+            position: relative; transform: scale(0.9); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 0;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .modal-wrap.active .modal-box { transform: translateY(0); }
-        .modal-wrap.center .modal-box { border-radius: 24px; width: 90%; max-width: 360px; transform: scale(0.9); }
-        .modal-wrap.center.active .modal-box { transform: scale(1); }
+        .modal-overlay.active .modal-card { transform: scale(1); }
 
-        .inp { width: 100%; padding: 14px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: #F8FAFC; font-size: 16px; color: var(--text-main); outline: none; transition: border-color 0.2s; }
-        .inp:focus { border-color: var(--primary); background: white; }
-        .lbl { font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: block; text-transform: uppercase; }
-        
-        .close-btn { position: absolute; top: 16px; right: 16px; background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-sec); cursor: pointer; }
+        .modal-close {
+            position: absolute; top: 12px; right: 12px;
+            background: #F1F5F9; border: none; color: var(--text-sec);
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer; z-index: 10;
+        }
 
-        .company-header { text-align: center; padding: 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
-        .company-logo-lg { width: 72px; height: 72px; border-radius: 50%; border: 4px solid white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 12px; }
-        .contact-row { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid #E2E8F0; border-radius: 12px; text-decoration: none; color: var(--text-main); font-weight: 600; margin: 0 20px 12px; }
-        .contact-icon { width: 40px; height: 40px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; }
+        /* ESTILO DO CONTEUDO DO MODAL DE EMPRESA */
+        .company-hero {
+            background: linear-gradient(to bottom, #F8FAFC, #FFFFFF);
+            padding: 30px 20px 20px;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+        .company-logo-modal {
+            width: 90px; height: 90px; border-radius: 50%;
+            border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 12px; object-fit: cover;
+        }
+        .company-name { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0 0 4px; line-height: 1.3; }
+        .company-badge { background: #E0F2FE; color: #0284C7; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; margin-bottom: 12px; }
+
+        .company-body { padding: 20px; }
         
-        .info-block { padding: 0 24px 24px; text-align: left; font-size: 13px; color: var(--text-main); }
-        .info-section { margin-bottom: 16px; }
-        .info-title { font-weight: 800; text-transform: uppercase; font-size: 11px; color: var(--text-sec); margin-bottom: 4px; display: block; }
-        .social-links { display: flex; gap: 12px; margin-top: 8px; }
+        /* Lista de Contatos */
+        .contact-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .contact-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px; border: 1px solid #E2E8F0; border-radius: 12px;
+            text-decoration: none; color: var(--text-main); transition: background 0.2s;
+        }
+        .contact-item:active { background: #F8FAFC; }
+        .ci-icon { 
+            width: 36px; height: 36px; border-radius: 50%; background: #F1F5F9; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 18px; color: var(--text-sec); flex-shrink: 0;
+        }
+        .ci-text { display: flex; flex-direction: column; }
+        .ci-label { font-size: 10px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; }
+        .ci-val { font-size: 13px; font-weight: 700; color: var(--text-main); }
+
+        /* Botões Sociais e Salvar */
+        .social-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+        .btn-social-modal {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 12px; border-radius: 12px; border: 1px solid var(--border);
+            text-decoration: none; text-align: center; height: 100%;
+        }
+        .bs-icon { font-size: 24px; margin-bottom: 4px; }
+        .bs-followers { font-size: 10px; color: var(--text-sec); font-weight: 600; }
         
-        .btn-buy-modal { width: 100%; background: var(--green-strong); color: white; padding: 16px; border: none; border-radius: 16px; font-size: 16px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 4px 15px rgba(4, 120, 87, 0.4); margin-bottom: 12px; }
-        .btn-insta-modal { width: 100%; background: white; color: #E1306C; padding: 14px; border: 2px solid #E1306C; border-radius: 16px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none; }
+        .fb-style { color: #1877F2; background: #eff6ff; border-color: #dbeafe; }
+        .ig-style { color: #E1306C; background: #fff1f2; border-color: #ffe4e6; }
+
+        .btn-save-contact {
+            width: 100%; background: #25D366; color: white;
+            padding: 16px; border-radius: 12px; border: none;
+            font-size: 15px; font-weight: 800;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
 
     </style>
 </head>
 <body>
 
-    <!-- STRATEGY 1: STICKY TRUST BAR -->
-    <div style="background:#059669; color:white; text-align:center; padding:8px; font-size:12px; font-weight:800; letter-spacing:0.5px;">
-        <i class="ph-bold ph-shield-check"></i> PAGAMENTO SOMENTE NA ENTREGA • SEM RISCO
+    <!-- BARRA DE CONFIANÇA -->
+    <div style="background:#059669; color:white; text-align:center; padding:6px; font-size:11px; font-weight:700;">
+        <i class="ph-bold ph-shield-check"></i> PAGAMENTO SOMENTE NA ENTREGA
     </div>
 
-    <!-- STATIC HEADER -->
+    <!-- HEADER SIMPLES -->
     <header class="app-header">
         <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
-             class="logo" alt="Logo Dona Antônia" width="72" height="72" onerror="this.src='https://placehold.co/72x72'">
+             class="logo-header" alt="Logo Dona Antônia" onerror="this.src='https://placehold.co/50x50'">
         <div class="brand"><h1>Super Cestas Dona Antônia</h1></div>
     </header>
 
-    <!-- INTRO TITLE REMOVED -->
-
-    <!-- CATALOG FEED -->
+    <!-- CATALOG MOUNT POINT -->
     <main id="catalog-mount" class="catalog-container">
-        <!-- JS Injection of All Baskets -->
+        <!-- Javascript injeta as cestas aqui -->
     </main>
 
-    <!-- FIXED FOOTER -->
+    <!-- FOOTER FIXO: BOTÃO ÚNICO -->
     <footer class="app-footer">
-        <!-- STRATEGY 3: LTV HOOK LABEL -->
-        <div class="footer-label" style="color:#059669; font-weight:800;">QUER RECEBER PROMOÇÕES TODO MÊS?</div>
-        
-        <div class="footer-actions-col">
-            <!-- STRATEGY 3: LTV HOOK BUTTON -->
-            <button onclick="sendDirectOffers()" class="btn-social btn-offers">
-                <i class="ph-bold ph-whatsapp-logo"></i> ENTRAR NA LISTA VIP DO ZAP
-            </button>
-
-            <!-- INSTAGRAM BUTTON (SECONDARY) -->
-            <a href="https://instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="btn-social btn-insta">
-                <i class="ph-bold ph-instagram-logo"></i> Seguir no Instagram
-            </a>
-        </div>
+        <button onclick="openModal('company')" class="btn-footer-company">
+            <i class="ph-bold ph-buildings"></i> Conheça a Nossa Empresa
+        </button>
     </footer>
 
-    <!-- MODAL: DIRECT ORDER -->
-    <div id="modal-lead" class="modal-wrap" onclick="if(event.target===this) closeModal('lead')">
-        <div class="modal-box" style="padding-top: 16px;">
-            <button class="close-btn" onclick="closeModal('lead')" aria-label="Fechar Modal"><i class="ph-bold ph-x"></i></button>
+    <!-- MODAL DE EMPRESA (O NOVO HEADER DENTRO DO MODAL) -->
+    <div id="modal-company" class="modal-overlay" onclick="if(event.target===this) closeModal('company')">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeModal('company')" aria-label="Fechar"><i class="ph-bold ph-x"></i></button>
             
-            <!-- PAGAMENTO INFO -->
-            <div style="text-align: left; margin-bottom: 24px;">
-                <h2 style="margin:0 0 12px; font-size:20px;">Formas de Pagamento 💳</h2>
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 12px; padding: 16px;">
-                    <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: var(--text-main); line-height: 1.6;">
-                        <li style="margin-bottom: 6px;">Parcelamos em 3x sem juros no cartão de crédito</li>
-                        <li style="margin-bottom: 6px;">Cartões Alimentação e Refeição</li>
-                        <li>Dinheiro, Pix, Cartão de Débito</li>
-                    </ul>
-                    <div style="margin-top: 12px; padding-top: 8px; border-top: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; color: var(--danger);">
-                        <i class="ph-bold ph-warning"></i> Aviso: Não vendemos pra 30 dias
+            <div class="company-hero">
+                <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
+                     class="company-logo-modal" alt="Logo Dona Antônia" onerror="this.src='https://placehold.co/90x90'">
+                <h2 class="company-name">Super Cestas Dona Antônia</h2>
+                <span class="company-badge">Atendendo Cuiabá desde 2023</span>
+            </div>
+
+            <div class="company-body">
+                
+                <!-- TELEFONES -->
+                <div class="contact-list">
+                    <a href="tel:5565996813588" class="contact-item" onclick="trackEvent('ClickPhone', {number: '99681-3588'})">
+                        <div class="ci-icon"><i class="ph-bold ph-phone"></i></div>
+                        <div class="ci-text">
+                            <span class="ci-label">Telefone 1</span>
+                            <span class="ci-val">65 99681-3588</span>
+                        </div>
+                    </a>
+                    <a href="tel:5565998150975" class="contact-item" onclick="trackEvent('ClickPhone', {number: '99815-0975'})">
+                        <div class="ci-icon"><i class="ph-bold ph-whatsapp-logo"></i></div>
+                        <div class="ci-text">
+                            <span class="ci-label">Telefone 2</span>
+                            <span class="ci-val">65 99815-0975</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- REDES SOCIAIS -->
+                <div class="social-row">
+                    <a href="https://facebook.com/cestasdonaantonia" target="_blank" class="btn-social-modal fb-style" onclick="trackEvent('ClickSocial', {network: 'Facebook'})">
+                        <i class="ph-bold ph-facebook-logo bs-icon"></i>
+                        <span style="font-weight:700; font-size:12px;">Facebook</span>
+                        <span class="bs-followers">6 mil seguidores</span>
+                    </a>
+                    <a href="https://instagram.com/cestas.dona.antonia.cuiaba.vg" target="_blank" class="btn-social-modal ig-style" onclick="trackEvent('ClickSocial', {network: 'Instagram'})">
+                        <i class="ph-bold ph-instagram-logo bs-icon"></i>
+                        <span style="font-weight:700; font-size:12px;">Instagram</span>
+                        <span class="bs-followers">Quase 2k seg.</span>
+                    </a>
+                </div>
+
+                <!-- ENDEREÇO -->
+                <div class="contact-item" style="align-items: flex-start; margin-bottom: 16px;">
+                    <div class="ci-icon" style="margin-top: 2px;"><i class="ph-bold ph-map-pin"></i></div>
+                    <div class="ci-text">
+                        <span class="ci-label">Endereço Físico</span>
+                        <span class="ci-val" style="font-size: 12px; line-height: 1.4;">
+                            R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>
+                            Cuiabá - MT, 78090-660
+                        </span>
                     </div>
                 </div>
-            </div>
 
-            <!-- FORMULARIO LEAD -->
-            <div style="text-align: left;">
-                <input type="hidden" id="leadContext">
-                <button onclick="sendLead()" class="btn-buy-modal"><i class="ph-bold ph-whatsapp-logo"></i> Encomendar com desconto</button>
-                
-                <div style="text-align: center; font-size: 12px; color: var(--text-sec); margin-top: 10px;">
-                    Ao clicar, você será direcionado para o WhatsApp.
-                </div>
+                <!-- BOTÃO SALVAR CONTATO -->
+                <a href="https://api.whatsapp.com/send?phone=5565998150975&text=Ol%C3%A1%20estou%20salvando%20seu%20contato" 
+                   target="_blank" 
+                   class="btn-save-contact"
+                   onclick="trackEvent('SaveContact', {type: 'WhatsApp'})">
+                    <i class="ph-bold ph-user-plus"></i>
+                    SALVAR CONTATO NO ZAP
+                </a>
+
             </div>
         </div>
     </div>
 
-    <!-- ... existing modals ... -->
-    <div id="modal-info" class="modal-wrap center" onclick="if(event.target===this) closeModal('info')">
-        <div class="modal-box" style="text-align:center; max-height: 85vh; overflow-y: auto;">
-            <button class="close-btn" onclick="closeModal('info')" aria-label="Fechar Modal" style="top:10px; right:10px;"><i class="ph-bold ph-x"></i></button>
-            <div class="company-header">
-                <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="company-logo-lg" onerror="this.src='https://placehold.co/100x100'" alt="Logo Empresa" width="72" height="72">
-                <h3 style="margin:0; font-size:18px; color:var(--text-main);">Dona Antônia</h3>
-                <p style="margin:4px 0 0; font-size:12px; color:var(--text-sec);">CNPJ: 51.385.335.0001-06</p>
-            </div>
-            <div class="info-block">
-                 <div class="info-section">
-                    <span class="info-title">Sobre Nós</span>
-                    <p style="margin:0;">🔸️Cesta Básica em Cuiabá e Várzea Grande.<br>⭐ 99681-3588 | 99815-0975<br>💸 Pague só na entrega.<br>👇 Pedidos Somente por Whatsapp</p>
-                </div>
-                <div class="info-section">
-                    <span class="info-title">Endereço</span>
-                    <p style="margin:0;">R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>Cuiabá - MT, 78090-660</p>
-                </div>
-                <div class="info-section">
-                    <span class="info-title">Horário</span>
-                    <p style="margin:0; font-size:12px; line-height:1.6;">Seg-Sex: 08:00–12:00<br>Sáb: 08:00–12:00<br>Dom/Feriados: Fechado</p>
-                </div>
-            </div>
-            <div style="padding: 0 24px 24px; text-align: center;">
-                <div style="background:#ECFDF5; color:#065F46; padding:10px; border-radius:8px; font-size:12px; font-weight:700;"><i class="ph-money"></i> Pague só na entrega</div>
-            </div>
-        </div>
-    </div>
-
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         // --- DATA ---
         const BASKETS = {
@@ -576,27 +514,29 @@
             }
         };
 
-        // --- STATE MANAGEMENT ---
         const STATE = {
-            revealed: { 'PEQUENA': true }, // Stores 'key': boolean (PEQUENA starts open)
-            discountsActive: true // ALWAY ACTIVE BY DEFAULT (NO FRICTION)
+            revealed: { 'PEQUENA': true }
         };
 
+        // --- IMAGENS (LOGICA RESTAURADA COMPLETAMENTE) ---
         function getImg(n) {
             const low = n.toLowerCase();
             const f = 'img/alimento/';
             const c = 'img/limpeza/';
             
-            // Specific overrides
+            // Prioridade Alta (Marcas Específicas)
             if(low.includes('arroz tio alvino')) return f + 'arroztioalvino.jpg';
             if(low.includes('café premiado')) return f + 'cafepremiado.webp';
 
+            // Alimentos (Categorias Gerais)
             if(low.includes('arroz')) return f + 'Arroz Koblenz 5kg.webp';
             if(low.includes('açúcar')) return f + 'açucar doce dia 2 kg.webp';
             if(low.includes('bolacha')) return f + 'bolacha mybit.webp';
             if(low.includes('bolo')) return f + 'bolo apti chocolate.webp';
+            // Lógica específica para café (peso)
             if(low.includes('café') && low.includes('500')) return f + 'cafe caboclo 500g.webp';
             if(low.includes('café')) return f + 'cafe caboclo 250g.webp';
+            
             if(low.includes('espaguete')) return f + 'espaguete qdelicia.webp';
             if(low.includes('farinha')) return f + 'farinha de mandioca.webp';
             if(low.includes('feijão')) return f + 'feijão da casa.webp';
@@ -609,6 +549,8 @@
             if(low.includes('suco')) return f + 'suco frisco.webp';
             if(low.includes('tempero')) return f + 'tempero tio jonas.jpg';
             if(low.includes('trigo')) return f + 'trigo vitoriosa.webp';
+
+            // Limpeza
             if(low.includes('creme')) return c + 'Creme Dental Sorriso 70g.webp';
             if(low.includes('desinfetante')) return c + 'Desinfetante Remmus 2L.webp';
             if(low.includes('detergente')) return c + 'Detergente Ype 500ml.webp';
@@ -620,235 +562,99 @@
             if(low.includes('sabonete')) return c + 'sabonete palmolive 85g.webp';
             if(low.includes('barra')) return c + 'sabão barra ype 900g.webp';
             if(low.includes('sabão pó') || low.includes('omo')) return c + 'sabão em pó omo 800g.webp';
-            return `https://placehold.co/150x150/f1f5f9/94a3b8?text=${n.substr(0,3)}`;
+            
+            // Fallback apenas se não encontrar nada
+            return `https://placehold.co/100x100/e2e8f0/64748b?text=${n.substring(0,3).toUpperCase()}`;
         }
 
-        // --- NEW: GENERATE INNER HTML HELPER (Refactored for targeted updates) ---
-        function generateBasketInnerHtml(key, index) {
-            const data = BASKETS[key];
-            const isRevealed = STATE.revealed[key] || false;
-            
-            // Setup loading attributes for initial render (index provided) or updates (index = 999)
-            const isInitialHero = index === 0; // True for first render of PEQUENA
-            const imgLoading = isInitialHero ? 'eager' : 'lazy';
-            const fetchPriority = isInitialHero ? 'high' : 'auto';
-
-            // GERAÇÃO DAS OPÇÕES EM GRID (SEM RADIO)
-            const optionsHtml = data.opts.map((o) => {
-                let priceHtml = '';
-                let cardClass = 'option-card';
-                
-                if (STATE.discountsActive) {
-                    cardClass += ' discount-active';
-                    priceHtml = `
-                        <span class="price-striked">${o.norm}</span>
-                        <span class="price-discounted">${o.desc}</span>
-                    `;
-                } else {
-                    priceHtml = `<span class="price-normal">${o.norm}</span>`;
-                }
-
-                return `
-                <div class="${cardClass}">
-                    <span class="option-name">${o.n.replace('Com ', '')}</span>
-                    ${priceHtml}
-                </div>
-                `;
-            }).join('');
-            
-            // Classe grid ajustada se for apenas 1 opção
-            const gridClass = data.opts.length === 1 ? 'p-options-grid single' : 'p-options-grid';
-
-            const totalItems = data.items.reduce((acc, item) => acc + item.q, 0);
-
-            const itemsHtml = data.items.map(i => {
-                const qtd = i.q === 1 ? '1 unidade' : `${i.q} unidades`;
-                return `
-                <div class="item-card">
-                    <img src="${getImg(i.n)}" class="item-img" loading="lazy" decoding="async" width="100" height="90" alt="${i.n}">
-                    <div class="item-qty">${qtd}</div>
-                    <div class="item-name">${i.n}</div>
-                </div>`;
-            }).join('');
-
-            // LOGICA BOTOES (SPLIT VS SINGLE)
-            let actionHtml = '';
-            
-            if (isRevealed) {
-                // BUTTON DISAPPEARS ON REVEAL
-                actionHtml = '';
-            } else {
-                // SINGLE REVEAL BUTTON (UPDATED TEXT)
-                actionHtml = `
-                    <button class="btn-action-main" onclick="handleAction('${key}')">
-                        <i class="ph-bold ph-basket"></i> VER PRODUTOS DESTA CESTA
-                    </button>
-                `;
-            }
-
-            // Logic to toggle list visibility
-            const listDisplay = isRevealed ? 'block' : 'none';
-
-            return `
-                <div class="p-header-block">
-                        <div class="p-title-row">
-                        <h2 class="p-title">${data.name}</h2>
-                        </div>
-                        
-                        <img src="${data.img}" 
-                            class="basket-hero-img" 
-                            alt="${data.name}"
-                            loading="${imgLoading}"
-                            fetchpriority="${fetchPriority}"
-                            width="600" height="337">
-
-                    <div class="${gridClass}">${optionsHtml}</div>
-                    
-                    <div style="display: ${isRevealed ? 'block' : 'none'}; text-align: center; font-size: 13px; color: var(--success-dark); margin-bottom: 12px; font-weight: 700;">
-                        <i class="ph-bold ph-check-circle"></i> Lista de produtos completa abaixo
-                    </div>
-
-                    ${actionHtml}
-
-                </div>
-                <div class="p-content-list" style="display: ${listDisplay};">
-                    
-                    <!-- UNIFIED INFO BLOCK -->
-                    <div class="info-summary">
-                        <span class="info-summary-title">Essa Cesta possui ${totalItems} Produtos</span>
-                        <div class="info-summary-sub">
-                            <i class="ph-bold ph-arrows-left-right"></i> Você pode personalizar sua cesta trocando os produtos que não quer.
-                        </div>
-                    </div>
-
-                    <div class="items-grid">${itemsHtml}</div>
-                    
-                    <!-- BOTÃO PEDIR ESTA CESTA (NOVO) -->
-                    <button onclick="orderDirect('${key}')" class="btn-action-main" style="background: #25D366; margin-top: 15px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);">
-                        <i class="ph-bold ph-whatsapp-logo"></i> PEDIR ESTA CESTA NO ZAP
-                    </button>
-                </div>
-            `;
-        }
-
-        // --- RENDER LOGIC ---
-        function renderAllProducts() {
+        // --- RENDERIZADOR ---
+        function renderAll() {
             const container = document.getElementById('catalog-mount');
             let html = '';
 
-            // 1. RENDER PEQUENA (HERO PRODUCT - STARTS OPEN)
-            html += `
-                <article class="product-section" id="basket-PEQUENA">
-                    ${generateBasketInnerHtml('PEQUENA', 0)}
-                </article>
-            `;
+            // ORDEM: PEQUENA (Topo), depois as outras
+            const keys = ['PEQUENA', 'ECONOMICA', 'MINI', 'MEDIA', 'GRANDE'];
 
-            // 2. SEPARATOR TITLE
-            html += `
-                <div class="section-separator-title">
-                    <span>CONHEÇA AS NOSSAS OUTRAS CESTAS</span>
-                </div>
-            `;
+            keys.forEach((key) => {
+                const data = BASKETS[key];
+                const isRevealed = STATE.revealed[key];
+                
+                // Opções
+                const optsHtml = data.opts.map(o => `
+                    <div class="option-card active">
+                        <span class="option-name">${o.n.replace('Com ','')}</span>
+                        <span class="price-striked">${o.norm}</span>
+                        <span class="price-discounted">${o.desc}</span>
+                    </div>
+                `).join('');
+                
+                // Itens (só renderiza se revelado para economizar DOM na carga inicial, ou escondido via CSS)
+                const itemsHtml = data.items.map(i => `
+                    <div class="item-card">
+                        <img src="${getImg(i.n)}" class="item-img" loading="lazy" alt="${i.n}">
+                        <div class="item-qty">${i.q}x</div>
+                        <p class="item-name">${i.n}</p>
+                    </div>
+                `).join('');
 
-            // 3. RENDER OTHERS (ORDER: ECONOMICA, MINI, MEDIA, GRANDE)
-            const otherKeys = ['ECONOMICA', 'MINI', 'MEDIA', 'GRANDE'];
-            
-            otherKeys.forEach((key, index) => {
+                const btnHtml = isRevealed 
+                    ? `<button onclick="order('${key}')" class="btn-action-main btn-whatsapp">
+                         <i class="ph-bold ph-whatsapp-logo"></i> PEDIR AGORA NO ZAP
+                       </button>`
+                    : `<button onclick="reveal('${key}')" class="btn-action-main">
+                         <i class="ph-bold ph-caret-down"></i> VER ITENS DA CESTA
+                       </button>`;
+
                 html += `
-                    <article class="product-section" id="basket-${key}">
-                        ${generateBasketInnerHtml(key, index + 1)}
-                    </article>
+                    <section class="product-section" id="basket-${key}">
+                        <div class="p-header-block">
+                            <h2 class="p-title">${data.name}</h2>
+                            <img src="${data.img}" class="basket-hero-img" alt="${data.name}" loading="lazy">
+                            <div class="p-options-grid ${data.opts.length===1?'single':''}">${optsHtml}</div>
+                            ${btnHtml}
+                        </div>
+                        <div class="p-content-list" style="display:${isRevealed ? 'block' : 'none'}">
+                            <div class="items-grid">${itemsHtml}</div>
+                            <div style="margin-top:20px; font-size:12px; color:var(--text-sec); text-align:center;">
+                                * Imagens meramente ilustrativas. Marcas podem variar.
+                            </div>
+                        </div>
+                    </section>
                 `;
-                if (index < otherKeys.length - 1) {
-                    html += `<div class="section-separator"><div class="separator-icon"><i class="ph-fill ph-circles-three-plus"></i></div></div>`;
-                }
             });
+
             container.innerHTML = html;
         }
 
-        // --- NEW: TARGETED UPDATE FUNCTION (Fixes scroll jump) ---
-        function updateBasket(key) {
-            const basketEl = document.getElementById(`basket-${key}`);
-            if (basketEl) {
-                // We use index 999 to indicate update (not priority hero)
-                basketEl.innerHTML = generateBasketInnerHtml(key, 999);
-            }
+        // --- AÇÕES ---
+        function reveal(key) {
+            STATE.revealed[key] = true;
+            renderAll(); // Re-render simples (em app real usaria manipulação DOM direta)
+            trackEvent('ViewContent', { content_name: key });
         }
 
-        // --- ACTIONS ---
-        function selectOption(key, idx) {
-            BASKETS[key].opts.forEach((o, i) => o.sel = i === idx);
-        }
-
-        function handleAction(key) {
-            const isRevealed = STATE.revealed[key];
-            if (!isRevealed) {
-                STATE.revealed[key] = true;
-                updateBasket(key); 
-                trackEvent('RevealProducts', { basket: key });
-
-                // STRATEGY 2: REMARKETING TECHNICAL (PIXEL VIEWCONTENT)
-                trackEvent('ViewContent', { 
-                    content_name: BASKETS[key].name,
-                    content_ids: [key],
-                    content_type: 'product',
-                    value: 50.00, // Valor simbólico de interesse
-                    currency: 'BRL'
-                });
-            }
-        }
-
-        // NEW: DIRECT ORDER FUNCTION
-        function orderDirect(key) {
+        function order(key) {
             const data = BASKETS[key];
-            const selOpt = data.opts.find(o => o.sel);
-            const msg = `Olá, quero encomendar a ${data.name} - ${selOpt.n} (${selOpt.desc})`;
-            window.location.href = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
-            trackEvent('LeadDirect', { basket: key, value: selOpt.desc });
-        }
-
-        // --- MODALS ---
-        function openModal(id) { document.getElementById('modal-'+id).classList.add('active'); }
-        function closeModal(id) { document.getElementById('modal-'+id).classList.remove('active'); }
-        
-        function sendLead() {
-            const ctx = document.getElementById('leadContext').value;
-            const msg = `Olá, quero encomendar a ${ctx}`;
-            window.location.href = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
-            trackEvent('Lead', { value: 0 });
-            closeModal('lead');
-        }
-
-        // --- SIMPLE CONTACT SUPPORT FUNCTION (NO GAMIFICATION) ---
-        function sendDirectOffers() {
-            // Mensagem simples e direta que inicia conversa
-            let msg = "Olá, Dona Antônia! Vim pelo site e quero aproveitar o desconto nas Cestas Básicas. Pode me atender?";
+            // Pega a primeira opção como padrão
+            const opt = data.opts[0]; 
+            const msg = `Olá, gostaria de encomendar a ${data.name} (${opt.n}) por ${opt.desc}.`;
+            const url = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
             
-            const phone = "5565998150975"; // Seu número
-            window.location.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
-            
-            trackEvent('ClickWhatsapp_PedirAgora'); // Rastreamento melhorado
+            trackEvent('Lead', { value: parseFloat(opt.desc.replace('R$ ','').replace(',','.')), currency: 'BRL' });
+            window.location.href = url;
         }
 
-        // --- INITIALIZATION ---
-        renderAllProducts();
+        // --- MODAL CONTROLLER ---
+        function openModal(id) {
+            document.getElementById(`modal-${id}`).classList.add('active');
+            trackEvent('OpenModal', { modal_id: id });
+        }
+        function closeModal(id) {
+            document.getElementById(`modal-${id}`).classList.remove('active');
+        }
 
-        // --- BACKGROUND PRELOAD ---
-        window.addEventListener('load', () => {
-            const preloadTask = () => {
-                const hiddenImages = document.querySelectorAll('.item-card img');
-                hiddenImages.forEach(img => {
-                    img.setAttribute('loading', 'eager');
-                    new Image().src = img.src; 
-                });
-            };
-
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(preloadTask, { timeout: 2000 });
-            } else {
-                setTimeout(preloadTask, 1500);
-            }
-        });
+        // Init
+        renderAll();
 
     </script>
 </body>
