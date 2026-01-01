@@ -161,14 +161,14 @@
             background: #f8fafc;
         }
 
-        /* NOVAS OPÇÕES EM GRID (CARDS LADO A LADO) */
+        /* OPÇÕES EM GRID (CARDS LADO A LADO) */
         .p-options-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
             gap: 10px; 
             margin-bottom: 16px; 
         }
-        .p-options-grid.single { grid-template-columns: 1fr; } /* Para Economica */
+        .p-options-grid.single { grid-template-columns: 1fr; }
 
         .option-card {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -177,11 +177,22 @@
             background: #F8FAFC;
             text-align: center;
             height: 100%;
+            transition: all 0.3s ease;
         }
         
+        .option-card.discount-active {
+            border-color: var(--success);
+            background: #F0FDF4; /* Light Green Bg */
+            animation: pulse-card 0.5s ease;
+        }
+        @keyframes pulse-card { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
         .option-name { font-size: 11px; font-weight: 700; color: var(--text-sec); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
-        .price-normal { font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
         
+        .price-normal { font-size: 16px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+        .price-striked { text-decoration: line-through; color: #94A3B8; font-size: 12px; display: block; margin-bottom: 2px; }
+        .price-discounted { color: var(--green-strong); font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+
         /* BUTTONS */
         .btn-action-main {
             width: 100%; background: var(--primary); color: white;
@@ -306,15 +317,50 @@
             font-size: 13px;
         }
         
+        /* Botão Mágico Principal */
         .btn-offers {
-            background: #25D366; 
+            background: linear-gradient(90deg, #25D366, #128C7E); 
             color: white;
             box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
             font-size: 15px;
             animation: pulse-green 1.5s infinite;
+            position: relative;
+            overflow: hidden;
         }
+        /* Efeito de brilho passando */
+        .btn-offers::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; } }
 
         @keyframes pulse-green { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
+
+        /* GAMIFICATION OVERLAY */
+        #gamification-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #gamification-overlay.active { opacity: 1; pointer-events: auto; }
+        
+        .countdown-text {
+            color: white; font-size: 24px; font-weight: 800; text-align: center; margin-top: 20px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .countdown-number {
+            font-size: 80px; font-weight: 900; color: #22C55E; 
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+            animation: popIn 0.8s infinite alternate;
+        }
+        @keyframes popIn { from { transform: scale(0.8); } to { transform: scale(1.1); } }
+
+        #confetti-canvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;
+        }
 
         /* MODALS & INPUTS */
         .modal-wrap {
@@ -338,21 +384,6 @@
         .inp:focus { border-color: var(--primary); background: white; }
         .lbl { font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px; display: block; text-transform: uppercase; }
         
-        /* CITY SELECTOR */
-        .city-options { display: flex; gap: 10px; margin-bottom: 16px; }
-        .city-btn { 
-            flex: 1; padding: 14px; border: 2px solid var(--border); border-radius: 12px; 
-            background: #F8FAFC; color: var(--text-sec); font-weight: 700; font-size: 14px; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .city-btn.selected {
-            border-color: var(--primary); background: var(--primary-light); color: var(--primary);
-        }
-        .error-msg {
-            color: var(--danger); font-size: 12px; font-weight: 700; text-align: center; margin-top: -8px; margin-bottom: 12px; display: none;
-        }
-
-        /* Close btn accessibility */
         .close-btn { position: absolute; top: 16px; right: 16px; background: #F1F5F9; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; color: var(--text-sec); cursor: pointer; }
 
         .company-header { text-align: center; padding: 24px; background: #F8FAFC; border-bottom: 1px solid #E2E8F0; }
@@ -394,9 +425,9 @@
         <div class="footer-label">CONHEÇA NOSSA EMPRESA</div>
         
         <div class="footer-actions-col">
-            <!-- WHATSAPP OFFERS BUTTON (PRIMARY) -->
-            <button onclick="openOffersModal()" class="btn-social btn-offers">
-                <i class="ph-bold ph-whatsapp-logo"></i> RECEBER DESCONTOS NO WHATSAPP
+            <!-- MAIN ACTION BUTTON (CHANGES STATE) -->
+            <button id="btn-activate-discounts" onclick="handleFooterAction()" class="btn-social btn-offers">
+                <i class="ph-bold ph-magic-wand"></i> ATIVAR DESCONTOS
             </button>
 
             <!-- INSTAGRAM BUTTON (SECONDARY) -->
@@ -406,35 +437,11 @@
         </div>
     </footer>
 
-    <!-- MODAL: OFFERS / LEAD QUALIFICATION (NEW) -->
-    <div id="modal-offers" class="modal-wrap" onclick="if(event.target===this) closeModal('offers')">
-        <div class="modal-box" style="padding-top: 16px;">
-            <button class="close-btn" onclick="closeModal('offers')" aria-label="Fechar Modal"><i class="ph-bold ph-x"></i></button>
-            
-            <div style="text-align: left;">
-                <h2 style="margin:0 0 4px; font-size:20px;">Salvar Contato 📲</h2>
-                <p style="margin:0 0 20px; color:var(--text-sec); font-size:14px; line-height:1.4;">Preencha para receber a tabela de descontos atualizada no seu WhatsApp.</p>
-                
-                <label class="lbl">Seu Nome</label>
-                <input type="text" id="offerName" class="inp" placeholder="Digite seu nome...">
-
-                <label class="lbl">Sua Cidade</label>
-                <div class="city-options">
-                    <button class="city-btn" id="city-cba" onclick="selectCity('Cuiabá')">Cuiabá</button>
-                    <button class="city-btn" id="city-vg" onclick="selectCity('Várzea Grande')">Várzea Grande</button>
-                </div>
-                
-                <div id="offerError" class="error-msg">⚠️ Por favor, preencha seu nome e escolha a cidade.</div>
-
-                <button onclick="confirmOffers()" class="btn-buy-modal">
-                    <i class="ph-bold ph-whatsapp-logo"></i> Receber Tabela Agora
-                </button>
-                
-                <div style="text-align: center; font-size: 11px; color: var(--text-sec); margin-top: 10px;">
-                    <i class="ph-fill ph-lock-key"></i> Seus dados estão seguros
-                </div>
-            </div>
-        </div>
+    <!-- GAMIFICATION OVERLAY -->
+    <div id="gamification-overlay">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="countdown-number" id="countdown-display">3</div>
+        <div class="countdown-text">Ativando o Desconto<br>em todas as cestas...</div>
     </div>
 
     <!-- MODAL: DIRECT ORDER -->
@@ -593,7 +600,7 @@
         // --- STATE MANAGEMENT ---
         const STATE = {
             revealed: {}, // Stores 'key': boolean
-            offerCity: '' // Stores selected city for offers
+            discountsActive: false // New state for gamification
         };
 
         function getImg(n) {
@@ -648,12 +655,27 @@
             const fetchPriority = isInitialHero ? 'high' : 'auto';
 
             // GERAÇÃO DAS OPÇÕES EM GRID (SEM RADIO)
-            const optionsHtml = data.opts.map((o) => `
-                <div class="option-card">
+            const optionsHtml = data.opts.map((o) => {
+                let priceHtml = '';
+                let cardClass = 'option-card';
+                
+                if (STATE.discountsActive) {
+                    cardClass += ' discount-active';
+                    priceHtml = `
+                        <span class="price-striked">${o.norm}</span>
+                        <span class="price-discounted">${o.desc}</span>
+                    `;
+                } else {
+                    priceHtml = `<span class="price-normal">${o.norm}</span>`;
+                }
+
+                return `
+                <div class="${cardClass}">
                     <span class="option-name">${o.n.replace('Com ', '')}</span>
-                    <span class="price-normal">${o.norm}</span>
+                    ${priceHtml}
                 </div>
-            `).join('');
+                `;
+            }).join('');
             
             // Classe grid ajustada se for apenas 1 opção
             const gridClass = data.opts.length === 1 ? 'p-options-grid single' : 'p-options-grid';
@@ -674,7 +696,7 @@
             let actionHtml = '';
             
             if (isRevealed) {
-                // BUTTON DISAPPEARS ON REVEAL (NO ACTION BUTTONS HERE)
+                // BUTTON DISAPPEARS ON REVEAL
                 actionHtml = '';
             } else {
                 // SINGLE REVEAL BUTTON (UPDATED TEXT)
@@ -757,8 +779,6 @@
 
         // --- ACTIONS ---
         function selectOption(key, idx) {
-            // No selection logic needed visually anymore, 
-            // but we keep state for potential future use or analytics
             BASKETS[key].opts.forEach((o, i) => o.sel = i === idx);
         }
 
@@ -766,7 +786,7 @@
             const isRevealed = STATE.revealed[key];
             if (!isRevealed) {
                 STATE.revealed[key] = true;
-                updateBasket(key); // Targeted update only
+                updateBasket(key); 
                 trackEvent('RevealProducts', { basket: key });
             }
         }
@@ -783,59 +803,70 @@
         // --- MODALS ---
         function openModal(id) { document.getElementById('modal-'+id).classList.add('active'); }
         function closeModal(id) { document.getElementById('modal-'+id).classList.remove('active'); }
-        function openLead(ctx) {
-            document.getElementById('leadContext').value = ctx;
-            openModal('lead');
-            trackEvent('OpenForm', { context: ctx });
-        }
-
+        
         function sendLead() {
             const ctx = document.getElementById('leadContext').value;
-            // Simpler message directly to WhatsApp without validation
             const msg = `Olá, quero encomendar a ${ctx}`;
             window.location.href = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
             trackEvent('Lead', { value: 0 });
             closeModal('lead');
         }
 
-        // --- OFFERS MODAL LOGIC (QUALIFICATION) ---
-        function openOffersModal() {
-            // Reset fields
-            document.getElementById('offerName').value = '';
-            document.getElementById('offerError').style.display = 'none';
-            STATE.offerCity = '';
-            
-            // Reset buttons visual state
-            document.getElementById('city-cba').classList.remove('selected');
-            document.getElementById('city-vg').classList.remove('selected');
-            
-            openModal('offers');
-            trackEvent('OpenOffersForm');
-        }
-
-        function selectCity(city) {
-            STATE.offerCity = city;
-            // UI Toggle
-            const isCba = city === 'Cuiabá';
-            document.getElementById('city-cba').classList.toggle('selected', isCba);
-            document.getElementById('city-vg').classList.toggle('selected', !isCba);
-        }
-
-        function confirmOffers() {
-            const name = document.getElementById('offerName').value.trim();
-            const city = STATE.offerCity;
-            
-            // Validation
-            if (!name || !city) {
-                document.getElementById('offerError').style.display = 'block';
-                return;
+        // --- FOOTER BUTTON LOGIC (GAMIFICATION START) ---
+        function handleFooterAction() {
+            if (STATE.discountsActive) {
+                // If discounts are already active, just go to WhatsApp directly
+                sendDirectOffers();
+            } else {
+                // Start Gamification
+                activateDiscounts();
             }
+        }
 
-            // Construct Message
-            let msg = `Olá, eu sou o ${name}, moro em ${city} e vou salvar seu contato.\n\nValores com desconto:\n`;
+        function activateDiscounts() {
+            // Show Overlay
+            const overlay = document.getElementById('gamification-overlay');
+            const counter = document.getElementById('countdown-display');
+            overlay.classList.add('active');
+            
+            // Start Confetti
+            startConfetti();
+
+            // Countdown Logic
+            let count = 3;
+            counter.innerText = count;
+            
+            const timer = setInterval(() => {
+                count--;
+                if (count > 0) {
+                    counter.innerText = count;
+                } else {
+                    clearInterval(timer);
+                    // Finish Gamification
+                    applyDiscounts();
+                    overlay.classList.remove('active');
+                    stopConfetti();
+                }
+            }, 1000);
+            
+            trackEvent('StartGamification');
+        }
+
+        function applyDiscounts() {
+            STATE.discountsActive = true;
+            renderAllProducts(); // Re-render to show discounted prices
+            
+            // Change Footer Button Text & Style
+            const btn = document.getElementById('btn-activate-discounts');
+            btn.innerHTML = '<i class="ph-bold ph-whatsapp-logo"></i> Salvar nosso Whatsapp';
+            
+            trackEvent('DiscountsActivated');
+        }
+
+        function sendDirectOffers() {
+            let msg = "Olá, estou salvando seu contato. 📲\n\n*TABELA DE PREÇOS ATUALIZADA:*\n";
             
             const keys = ['GRANDE', 'MEDIA', 'PEQUENA', 'MINI', 'ECONOMICA'];
-            
             keys.forEach(k => {
                 const b = BASKETS[k];
                 msg += `*${b.name.replace('<br>', ' ')}*\n`;
@@ -846,8 +877,6 @@
             });
             
             msg += "✅ *Validade:* Todo o mês de Janeiro.";
-            
-            // Adicionando links extras ao final da mensagem
             msg += "\n\n👀 *Veja as cestas:*\ndonaantonia.com.br";
             msg += "\n\n🎁 *Grupo de Descontos e Sorteios:*\nhttps://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1";
             msg += "\n\n📸 *Siga no Instagram:*\nhttps://www.instagram.com/cestas.dona.antonia.cuiaba.vg/";
@@ -855,8 +884,60 @@
             const phone = "5565998150975";
             window.location.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
             
-            trackEvent('SubmitLeadOffers', { city: city });
-            closeModal('offers');
+            trackEvent('ClickWhatsappSaved');
+        }
+
+        // --- SIMPLE CONFETTI IMPLEMENTATION ---
+        let confettiCtx;
+        let confettiPieces = [];
+        let animationId;
+
+        function startConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            confettiCtx = canvas.getContext('2d');
+            
+            const colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4', '#00bcd4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722'];
+
+            for (let i = 0; i < 300; i++) {
+                confettiPieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+            updateConfetti();
+        }
+
+        function updateConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            confettiCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            confettiPieces.forEach(p => {
+                p.y += p.speed;
+                p.angle += 2;
+                if (p.y > canvas.height) p.y = -20;
+                
+                confettiCtx.save();
+                confettiCtx.translate(p.x, p.y);
+                confettiCtx.rotate(p.angle * Math.PI / 180);
+                confettiCtx.fillStyle = p.color;
+                confettiCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                confettiCtx.restore();
+            });
+            
+            animationId = requestAnimationFrame(updateConfetti);
+        }
+
+        function stopConfetti() {
+            cancelAnimationFrame(animationId);
+            confettiPieces = [];
+            if(confettiCtx) confettiCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
         }
 
         // --- INITIALIZATION ---
