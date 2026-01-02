@@ -9,11 +9,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
     <title>Monte Sua Cesta | Super Cestas Dona Antônia</title>
-    <meta name="description" content="Monte sua cesta básica personalizada em Cuiabá e VG. Escolha os itens e receba em casa.">
-    <meta name="theme-color" content="#ffffff">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="description" content="Monte sua cesta básica personalizada em Cuiabá e VG. Escolha os itens e receba em casa com segurança e rapidez.">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="robots" content="noindex, nofollow"> <!-- Mudar para index, follow em produção -->
     
-    <!-- PILLAR 3: SECURITY -->
+    <!-- SCHEMA MARKUP (LOCAL SEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "Super Cestas Dona Antônia",
+      "image": "https://seusite.com.br/logo.png",
+      "telephone": "5565998150975",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Av. Principal",
+        "addressLocality": "Cuiabá",
+        "addressRegion": "MT",
+        "addressCountry": "BR"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -15.6014,
+        "longitude": -56.0979
+      },
+      "priceRange": "$$"
+    }
+    </script>
+
+    <!-- PILLAR 3: SECURITY (CSP RIGOROSO) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https: 'unsafe-inline' 'unsafe-eval'; img-src 'self' data: https:; font-src 'self' https: data:;">
 
     <!-- LIBS -->
@@ -35,7 +59,7 @@
             --text-sec: #6B7280;
             --border-medium: #E5E7EB;
             --header-h: 70px;
-            --shadow-card: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -45,9 +69,10 @@
             font-family: 'Inter', sans-serif;
             background: var(--background); 
             color: var(--text-main);
-            padding-bottom: 140px; /* Espaço para a barra fixa */
+            padding-bottom: 160px; /* Aumentado para caber a barra de gamificação */
             -webkit-font-smoothing: antialiased;
-            -webkit-user-select: none; user-select: none; /* Anti-copy */
+            /* PILLAR 3: ANTI-COPY CSS */
+            -webkit-user-select: none; user-select: none; 
         }
 
         /* HEADER */
@@ -60,17 +85,15 @@
             padding: 0 16px; gap: 12px;
             position: sticky; top: 0; z-index: 50;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            overflow: visible;
         }
         .logo-header { 
-            width: 80px; height: 80px; 
+            width: 60px; height: 60px; 
             border-radius: 50%; object-fit: cover; 
-            border: 4px solid white; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
-            position: relative; top: 15px; 
-            flex-shrink: 0; z-index: 60; 
+            border: 3px solid white; 
+            box-shadow: var(--shadow-card); 
+            flex-shrink: 0;
         }
-        .brand h1 { font-size: 16px; font-weight: 700; margin: 0; color: var(--text-main); letter-spacing: -0.3px; }
+        .brand h1 { font-size: 18px; font-weight: 800; margin: 0; color: var(--text-main); letter-spacing: -0.5px; }
 
         /* NAV CATEGORIAS */
         .category-nav {
@@ -78,20 +101,21 @@
             z-index: 40; display: flex; gap: 10px; border-bottom: 1px solid var(--border-medium); overflow-x: auto;
         }
         .cat-btn {
-            flex: 1; padding: 10px; border-radius: 50px; border: 1px solid var(--border-medium);
-            background: white; font-weight: 600; font-size: 14px; color: var(--text-sec);
+            flex: 1; padding: 12px; border-radius: 50px; border: 1px solid var(--border-medium);
+            background: white; font-weight: 600; font-size: 15px; color: var(--text-sec);
             white-space: nowrap; cursor: pointer; transition: all 0.2s; text-align: center;
         }
         .cat-btn.active {
             background: var(--primary); color: white; border-color: var(--primary);
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         /* GRID */
         .monte-container { max-width: 900px; margin: 20px auto; padding: 0 12px; }
         .section-title {
-            font-size: 18px; font-weight: 800; color: var(--text-main);
-            margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;
+            font-size: 20px; font-weight: 800; color: var(--text-main);
+            margin: 32px 0 16px; display: flex; align-items: center; gap: 8px;
+            border-left: 4px solid var(--primary); padding-left: 12px;
         }
         .items-grid { 
             display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
@@ -104,20 +128,29 @@
             box-shadow: var(--shadow-card); border: 2px solid transparent;
             transition: all 0.2s; position: relative;
             display: flex; flex-direction: column; justify-content: space-between;
+            height: 100%;
         }
         .item-card.active { border-color: var(--primary); background: #EFF6FF; }
-        .item-img { width: 100%; aspect-ratio: 1/1; object-fit: contain; margin-bottom: 8px; mix-blend-mode: multiply; }
-        .item-name { 
-            font-size: 13px; font-weight: 600; color: var(--text-main); line-height: 1.3; 
-            margin-bottom: 8px; min-height: 34px; display: flex; align-items: center; justify-content: center;
+        
+        /* IMAGEM OTIMIZADA */
+        .item-img { 
+            width: 100%; aspect-ratio: 1/1; object-fit: contain; 
+            margin-bottom: 8px; mix-blend-mode: multiply; 
         }
+        
+        .item-name { 
+            font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.3; 
+            margin-bottom: 12px; min-height: 38px; display: flex; align-items: center; justify-content: center;
+        }
+        /* PREÇO OCULTO NO FRONT */
+        .item-price { display: none; } 
 
         /* BOTÃO DE OPÇÕES (SUBSTITUI QTY CONTROLS PARA VARIANTES) */
         .btn-choose-options {
             width: 100%; background: white; border: 1px solid var(--primary);
-            color: var(--primary); padding: 8px; border-radius: 8px;
-            font-weight: 700; font-size: 12px; cursor: pointer; margin-top: auto;
-            display: flex; align-items: center; justify-content: center; gap: 4px;
+            color: var(--primary); padding: 10px; border-radius: 8px;
+            font-weight: 700; font-size: 13px; cursor: pointer; margin-top: auto;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
         }
         .btn-choose-options:active { background: #EFF6FF; transform: scale(0.98); }
         .btn-choose-options.has-items { background: var(--primary); color: white; }
@@ -128,43 +161,78 @@
             background: var(--background); border-radius: 8px; padding: 4px; margin-top: auto;
         }
         .btn-qty {
-            width: 32px; height: 32px; border-radius: 6px; border: none;
+            width: 36px; height: 36px; border-radius: 6px; border: none;
             display: flex; align-items: center; justify-content: center;
-            font-weight: 700; font-size: 16px; cursor: pointer;
+            font-weight: 800; font-size: 18px; cursor: pointer;
+            touch-action: manipulation; /* UX Mobile */
         }
         .btn-minus { background: white; color: var(--text-sec); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-plus { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); }
-        .qty-val { font-weight: 700; font-size: 16px; color: var(--text-main); width: 30px; }
+        .qty-val { font-weight: 700; font-size: 16px; color: var(--text-main); width: 30px; text-align: center;}
 
         /* RESUMO DE VARIAÇÕES SELECIONADAS */
         .selected-summary {
             font-size: 11px; color: var(--text-sec); margin-top: 8px;
-            background: rgba(255,255,255,0.5); padding: 4px; border-radius: 4px;
+            background: rgba(255,255,255,0.6); padding: 4px; border-radius: 4px;
         }
         .item-card.active .selected-summary { color: var(--primary); font-weight: 600; }
 
-        /* BARRA FIXA INFERIOR */
+        /* BARRA FIXA INFERIOR COM GAMIFICAÇÃO */
         .fixed-action-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 1px solid var(--border-medium);
-            padding: 16px; z-index: 90; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            padding: 12px 16px 16px; /* Ajuste padding */
+            z-index: 90; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
-        .bar-content { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-        .status-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--text-sec); }
-        .item-counter { font-weight: 700; color: var(--primary); font-size: 16px; }
-        .min-warning { color: #EF4444; font-size: 12px; font-weight: 600; }
-        .min-warning.hidden { display: none; }
+        .bar-content { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 8px; }
+        
+        .status-row { 
+            display: flex; justify-content: space-between; align-items: center; 
+            font-size: 13px; color: var(--text-sec); 
+        }
+        .item-counter { font-weight: 800; color: var(--text-main); font-size: 16px; }
+        
         .btn-calc {
-            width: 100%; padding: 16px; border-radius: 12px; border: none;
+            width: 100%; padding: 14px; border-radius: 12px; border: none;
             background: #9CA3AF; color: white; font-weight: 700; font-size: 16px;
             cursor: not-allowed; transition: all 0.3s;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .btn-calc.ready { background: var(--primary-gradient); cursor: pointer; }
+        .btn-calc.ready { background: var(--primary-gradient); cursor: pointer; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+
+        /* GAMIFICATION BAR CSS */
+        .gamification-container {
+            margin-top: 4px;
+        }
+        .progress-track {
+            background: #E5E7EB;
+            height: 6px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 6px;
+        }
+        .progress-fill {
+            background: var(--primary); 
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+            border-radius: 10px;
+        }
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sec);
+            text-align: center;
+        }
+        .progress-text b { color: var(--primary); }
+        .ready .progress-text b { color: var(--success); }
 
         /* MODAL COMUM */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
             z-index: 2000; display: flex; align-items: flex-end; justify-content: center;
             opacity: 0; pointer-events: none; transition: 0.3s;
         }
@@ -177,8 +245,8 @@
         }
         .modal-overlay.active .modal-card { transform: translateY(0); }
         .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border-medium); display: flex; justify-content: space-between; align-items: center; background: #fff; border-radius: 24px 24px 0 0; z-index: 10; }
-        .modal-title { font-size: 16px; font-weight: 800; margin: 0; }
-        .modal-close { background: none; border: none; font-size: 24px; color: var(--text-sec); cursor: pointer; }
+        .modal-title { font-size: 18px; font-weight: 800; margin: 0; }
+        .modal-close { background: none; border: none; font-size: 24px; color: var(--text-sec); cursor: pointer; padding: 5px; }
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
         .modal-footer { padding: 20px; background: #F9FAFB; border-top: 1px solid var(--border-medium); }
 
@@ -188,20 +256,23 @@
             padding: 12px 0; border-bottom: 1px solid #F3F4F6;
         }
         .v-info { display: flex; align-items: center; gap: 12px; }
-        .v-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #F3F4F6; }
+        .v-img { width: 50px; height: 50px; border-radius: 8px; object-fit: cover; background: #F3F4F6; border: 1px solid var(--border-medium); }
         .v-name { font-weight: 600; font-size: 14px; color: var(--text-main); }
         .btn-confirm-selection {
-            width: 100%; padding: 14px; border-radius: 12px; border: none;
+            width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: var(--primary); color: white; font-weight: 700; font-size: 16px;
+            cursor: pointer;
         }
 
         /* RESUMO LISTA */
-        .summary-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #F3F4F6; font-size: 14px; }
+        .summary-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px; }
         .btn-whatsapp-final {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: var(--success-gradient); color: white; font-weight: 700; font-size: 16px;
             display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
         }
+        .total-row { display: flex; justify-content: space-between; font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 16px; }
 
     </style>
 </head>
@@ -210,7 +281,7 @@
     <!-- HEADER -->
     <header class="app-header">
         <img src="../img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
-             class="logo-header" alt="Logo Dona Antônia" onerror="this.src='https://placehold.co/80x80'">
+             class="logo-header" alt="Logo Dona Antônia" onerror="this.src='https://placehold.co/80x80/2563EB/white?text=DA'">
         <div class="brand"><h1>Monte Sua Cesta</h1></div>
     </header>
 
@@ -242,12 +313,21 @@
     <div class="fixed-action-bar">
         <div class="bar-content">
             <div class="status-row">
-                <span>Itens na cesta: <span class="item-counter" id="item-count">0</span></span>
-                <span id="min-msg" class="min-warning">Mínimo: 10 itens</span>
+                <span>Itens Selecionados:</span>
+                <span class="item-counter" id="item-count">0</span>
             </div>
+            
             <button id="btn-calc" class="btn-calc" onclick="calculate()" disabled>
-                CALCULAR VALOR
+                <span>CALCULAR VALOR</span>
             </button>
+
+            <!-- GAMIFICAÇÃO: BARRA EVOLUTIVA -->
+            <div class="gamification-container">
+                <div class="progress-track">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <div id="progress-text" class="progress-text">Comece a adicionar itens na cesta!</div>
+            </div>
         </div>
     </div>
 
@@ -285,8 +365,8 @@
                         <span>Taxa de Entrega:</span>
                         <span id="summ-delivery">R$ 10,00</span>
                     </div>
-                    <small id="frete-msg" style="display:block; text-align:right; color:#EF4444; font-size:11px; margin-top:2px;">
-                        Grátis acima de R$ 85,00
+                    <small id="frete-msg" style="display:block; text-align:right; color:#EF4444; font-size:12px; font-weight:600; margin-top:4px;">
+                        Falta pouco para Frete Grátis!
                     </small>
                 </div>
             </div>
@@ -296,16 +376,21 @@
                     <span id="summ-total">R$ 0,00</span>
                 </div>
                 <button class="btn-whatsapp-final" onclick="sendWhatsapp()">
-                    <i class="ph-bold ph-whatsapp-logo" style="font-size:20px;"></i> ENCOMENDAR AGORA
+                    <i class="ph-bold ph-whatsapp-logo" style="font-size:24px;"></i> ENCOMENDAR PELO ZAP
                 </button>
-                <p style="text-align:center; font-size:11px; color:var(--text-sec); margin:10px 0 0;">
-                    Pagamento somente na entrega.
+                <p style="text-align:center; font-size:12px; color:var(--text-sec); margin:12px 0 0;">
+                    <i class="ph-fill ph-lock-key"></i> Pagamento seguro somente na entrega.
                 </p>
             </div>
         </div>
     </div>
 
     <script>
+        // --- PILLAR 2: DATA LAYER SETUP ---
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        dataLayer.push({'event': 'page_view'});
+
         // --- DADOS ---
         const PRODUCTS = [
             // ALIMENTOS
@@ -343,49 +428,53 @@
             { id: 60, type: 'clean', name: "Esponja de Louça", price: 1.50 }
         ];
 
-        // --- MAPA IMAGENS ---
+        // --- CORREÇÃO DE IMAGENS ---
         function getExactImgPath(productName) {
             const name = productName.toLowerCase();
-            const f = '../descontos/img/alimento/';
-            const c = '../descontos/img/limpeza/';
-
-            if (name.includes('tio alvino')) return f + 'arroztioalvino.jpg';
-            if (name.includes('koblenz')) return f + 'Arroz Koblenz 5kg.webp';
-            if (name.includes('açúcar') || name.includes('doce dia')) return f + 'açucar doce dia 2 kg.webp';
-            if (name.includes('liza')) return f + 'oleo de soja liza.webp';
-            if (name.includes('feijão')) return f + 'feijão da casa.webp';
-            if (name.includes('caboclo') && name.includes('500')) return f + 'cafe caboclo 500g.webp';
-            if (name.includes('caboclo') && name.includes('250')) return f + 'cafe caboclo 250g.webp';
-            if (name.includes('premiado')) return f + 'cafepremiado.webp';
-            if (name.includes('espaguete') || name.includes('q\'delícia')) return f + 'espaguete qdelicia.webp';
-            if (name.includes('ovos')) return f + 'ovo duzia.jpg';
-            if (name.includes('bolo apti')) return f + 'bolo apti chocolate.webp';
-            if (name.includes('trigo')) return f + 'trigo vitoriosa.webp';
-            if (name.includes('sal')) return f + 'sal.webp';
-            if (name.includes('molho') || name.includes('fugini')) return f + 'molho fugini.webp';
-            if (name.includes('milho') || name.includes('predileta')) return f + 'milho verde predileta.webp';
-            if (name.includes('tempero') || name.includes('jonas')) return f + 'tempero tio jonas.jpg';
-            if (name.includes('bolacha') || name.includes('mybit')) return f + 'bolacha mybit.webp';
-            if (name.includes('miojo')) return f + 'miojo apti.webp';
-            if (name.includes('suco') || name.includes('frisco')) return f + 'suco frisco.webp';
-            if (name.includes('mandioca')) return f + 'farinha de mandioca.webp';
-            if (name.includes('assolan')) return f + 'esponja assolan.webp';
-
-            if (name.includes('creme dental')) return c + 'Creme Dental Sorriso 70g.webp';
-            if (name.includes('desinfetante')) return c + 'Desinfetante Remmus 2L.webp';
-            if (name.includes('detergente')) return c + 'Detergente Ype 500ml.webp';
-            if (name.includes('qboa')) return c + 'Qboa 1 Litro.webp';
-            if (name.includes('amaciante')) return c + 'amaciante ype 2L.webp';
-            if (name.includes('louça')) return c + 'esponja de lavar louça.webp';
-            if (name.includes('papel higiênico')) return c + 'papel higienico.webp';
-            if (name.includes('sabonete')) return c + 'sabonete palmolive 85g.webp';
-            if (name.includes('sabão em barra') || name.includes('sabão barra')) return c + 'sabão barra ype 900g.webp';
-            if (name.includes('sabão pó') || name.includes('omo')) return c + 'sabão em pó omo 800g.webp';
+            const basePath = '../descontos/img/alimento/'; 
             
-            return `https://placehold.co/150x150/e2e8f0/64748b?text=${encodeURIComponent(productName.substring(0,4))}`;
+            let fileName = '';
+
+            // ALIMENTOS
+            if (name.includes('tio alvino')) fileName = 'arroztioalvino.jpg';
+            else if (name.includes('koblenz')) fileName = 'Arroz Koblenz 5kg.webp';
+            else if (name.includes('açúcar') || name.includes('doce dia')) fileName = 'açucar doce dia 2 kg.webp';
+            else if (name.includes('liza')) fileName = 'oleo de soja liza.webp';
+            else if (name.includes('feijão')) fileName = 'feijão da casa.webp';
+            else if (name.includes('caboclo') && name.includes('500')) fileName = 'cafe caboclo 500g.webp';
+            else if (name.includes('caboclo') && name.includes('250')) fileName = 'cafe caboclo 250g.webp';
+            else if (name.includes('premiado')) fileName = 'cafepremiado.webp';
+            else if (name.includes('espaguete') || name.includes('q\'delícia')) fileName = 'espaguete qdelicia.webp';
+            else if (name.includes('ovos')) fileName = 'ovo duzia.jpg';
+            else if (name.includes('bolo apti')) fileName = 'bolo apti chocolate.webp';
+            else if (name.includes('trigo')) fileName = 'trigo vitoriosa.webp';
+            else if (name.includes('sal')) fileName = 'sal.webp';
+            else if (name.includes('molho') || name.includes('fugini')) fileName = 'molho fugini.webp';
+            else if (name.includes('milho') || name.includes('predileta')) fileName = 'milho verde predileta.webp';
+            else if (name.includes('tempero') || name.includes('jonas')) fileName = 'tempero tio jonas.jpg';
+            else if (name.includes('bolacha') || name.includes('mybit')) fileName = 'bolacha mybit.webp';
+            else if (name.includes('miojo')) fileName = 'miojo apti.webp';
+            else if (name.includes('suco') || name.includes('frisco')) fileName = 'suco frisco.webp';
+            else if (name.includes('mandioca')) fileName = 'farinha de mandioca.webp';
+            
+            // LIMPEZA
+            else if (name.includes('assolan')) fileName = 'esponja assolan.webp';
+            else if (name.includes('creme dental')) fileName = 'Creme Dental Sorriso 70g.webp';
+            else if (name.includes('desinfetante')) fileName = 'Desinfetante Remmus 2L.webp';
+            else if (name.includes('detergente')) fileName = 'Detergente Ype 500ml.webp';
+            else if (name.includes('qboa')) fileName = 'Qboa 1 Litro.webp';
+            else if (name.includes('amaciante')) fileName = 'amaciante ype 2L.webp';
+            else if (name.includes('louça')) fileName = 'esponja de lavar louça.webp';
+            else if (name.includes('papel higiênico')) fileName = 'papel higienico.webp';
+            else if (name.includes('sabonete')) fileName = 'sabonete palmolive 85g.webp';
+            else if (name.includes('sabão em barra') || name.includes('sabão barra')) fileName = 'sabão barra ype 900g.webp';
+            else if (name.includes('sabão pó') || name.includes('omo')) fileName = 'sabão em pó omo 800g.webp';
+            
+            if (fileName) return basePath + fileName;
+            return `https://placehold.co/200x200/e2e8f0/64748b?text=${encodeURIComponent(productName.substring(0,8))}`;
         }
 
-        let cart = {}; // { "id::variant": qty }
+        let cart = {}; 
 
         function render() {
             const gridFood = document.getElementById('grid-alimentos');
@@ -395,16 +484,13 @@
                 const imgPath = getExactImgPath(p.name);
                 let controlsHtml = '';
                 
-                // LÓGICA DE EXIBIÇÃO: SELETOR VS CONTROLE DIRETO
                 if(p.variants && p.variants.length > 0) {
-                    // Tem variantes -> Botão "Escolher Opções"
                     controlsHtml = `
                         <button class="btn-choose-options" id="btn-opt-${p.id}" onclick="openVariantModal(${p.id})">
                             <i class="ph-bold ph-list-plus"></i> ESCOLHER OPÇÕES
                         </button>
                     `;
                 } else {
-                    // Sem variantes -> Controle direto +/-
                     controlsHtml = `
                         <div class="qty-controls">
                             <button class="btn-qty btn-minus" onclick="updateQtySimple(${p.id}, -1)">-</button>
@@ -414,9 +500,10 @@
                     `;
                 }
 
+                // REMOVIDO: <div class="item-price">...</div>
                 const html = `
                     <div class="item-card" id="card-${p.id}">
-                        <img src="${imgPath}" class="item-img" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/150x150/png?text=Sem+Foto'">
+                        <img src="${imgPath}" class="item-img" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/200x200/png?text=Sem+Foto'">
                         <div class="item-name">${p.name}</div>
                         ${controlsHtml}
                         <div id="summary-${p.id}" class="selected-summary" style="display:none;"></div>
@@ -440,13 +527,9 @@
             const body = document.getElementById('mv-body');
             body.innerHTML = '';
 
-            // Renderiza cada linha de variação
             p.variants.forEach(variant => {
                 const key = `${id}::${variant}`;
                 const qty = cart[key] || 0;
-                
-                // Tenta achar foto da variação ou usa a principal
-                // (Para o futuro: lógica de getVariantImg aqui)
                 const varImg = mainImg; 
 
                 body.innerHTML += `
@@ -469,7 +552,6 @@
 
         function closeVariantModal() {
             document.getElementById('modal-variants').classList.remove('active');
-            // Atualiza o resumo no card principal ao fechar
             if(currentModalProductId) updateCardSummary(currentModalProductId);
             checkStatus();
         }
@@ -482,15 +564,14 @@
                 cart[key] = newVal;
                 if(newVal === 0) delete cart[key];
                 
-                // Atualiza o número no modal
                 const elId = `v-qty-${key.replace(/ /g,'-')}`;
                 if(document.getElementById(elId)) {
                     document.getElementById(elId).innerText = newVal;
                 }
             }
+            if (delta > 0) trackAddCart(key);
         }
 
-        // --- LÓGICA SIMPLES (SEM VARIAÇÃO) ---
         function updateQtySimple(id, delta) {
             const key = `${id}::default`;
             if(!cart[key]) cart[key] = 0;
@@ -508,9 +589,19 @@
                 
                 checkStatus();
             }
+            if (delta > 0) trackAddCart(id);
         }
 
-        // --- ATUALIZAÇÃO VISUAL DO CARD PRINCIPAL ---
+        function trackAddCart(itemId) {
+            dataLayer.push({
+                'event': 'addToCart',
+                'ecommerce': {
+                    'currency': 'BRL',
+                    'items': [{ 'item_id': itemId.toString(), 'item_name': 'Produto ' + itemId }]
+                }
+            });
+        }
+
         function updateCardSummary(id) {
             const summaryEl = document.getElementById(`summary-${id}`);
             const btnEl = document.getElementById(`btn-opt-${id}`);
@@ -534,7 +625,6 @@
                 card.classList.add('active');
                 btnEl.classList.add('has-items');
                 btnEl.innerHTML = `<i class="ph-bold ph-check"></i> ${total} SELECIONADO(S)`;
-                
                 summaryEl.style.display = 'block';
                 summaryEl.innerText = text.join(', ');
             } else {
@@ -545,41 +635,52 @@
             }
         }
 
-        // --- STATUS GERAL ---
+        // --- ATUALIZAÇÃO DA BARRA DE GAMIFICAÇÃO ---
         function checkStatus() {
-            // Conta produtos diferentes (independente de variação, conta o ID base)
             const productIds = new Set();
             Object.keys(cart).forEach(k => productIds.add(k.split('::')[0]));
-            
             const uniqueItems = productIds.size;
+            const minItems = 10;
             
             const btn = document.getElementById('btn-calc');
             const counter = document.getElementById('item-count');
-            const warning = document.getElementById('min-msg');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
 
             counter.innerText = uniqueItems;
 
-            if(uniqueItems >= 10) {
-                btn.removeAttribute('disabled');
-                btn.classList.add('ready');
-                btn.innerText = "CALCULAR VALOR";
-                warning.classList.add('hidden');
-                counter.style.color = 'var(--success)';
-            } else {
+            // CÁLCULO PORCENTAGEM (Capado em 100%)
+            const percent = Math.min((uniqueItems / minItems) * 100, 100);
+            progressFill.style.width = `${percent}%`;
+
+            if(uniqueItems === 0) {
+                progressText.innerHTML = "Comece a adicionar itens na cesta!";
+                progressFill.style.backgroundColor = "var(--primary)";
                 btn.setAttribute('disabled', 'true');
                 btn.classList.remove('ready');
-                btn.innerText = `FALTAM ${10 - uniqueItems} ITENS`;
-                warning.classList.remove('hidden');
-                counter.style.color = 'var(--text-sec)';
+                btn.innerHTML = `<span>MONTANDO CESTA...</span>`;
+            } 
+            else if(uniqueItems < minItems) {
+                const missing = minItems - uniqueItems;
+                progressText.innerHTML = `Faltam apenas <b style="color:var(--primary)">${missing} produtos</b> para o mínimo`;
+                progressFill.style.backgroundColor = "var(--primary)";
+                btn.setAttribute('disabled', 'true');
+                btn.classList.remove('ready');
+                btn.innerHTML = `<i class="ph-bold ph-lock-key"></i> <span>FALTAM ${missing} ITENS</span>`;
+            } 
+            else {
+                progressText.innerHTML = `🎉 <b style="color:var(--success-dark)">Parabéns! Pedido mínimo alcançado!</b>`;
+                progressFill.style.backgroundColor = "var(--success)";
+                btn.removeAttribute('disabled');
+                btn.classList.add('ready');
+                btn.innerHTML = `<i class="ph-bold ph-calculator"></i> <span>CALCULAR VALOR</span>`;
             }
         }
 
-        // --- CÁLCULO FINAL ---
         function calculate() {
             let subtotal = 0;
             let html = '';
             
-            // Agrupa por produto para ficar bonito no resumo
             const keys = Object.keys(cart).sort();
             
             keys.forEach(key => {
@@ -623,6 +724,14 @@
             }
 
             document.getElementById('modal-summary').classList.add('active');
+            
+            dataLayer.push({
+                'event': 'initiateCheckout',
+                'ecommerce': {
+                    'currency': 'BRL',
+                    'value': total
+                }
+            });
         }
 
         function closeSummaryModal() {
@@ -655,6 +764,13 @@
             msg += delivery === 0 ? "_(Frete Grátis)_\n" : "_(Com Taxa de Entrega)_\n";
             msg += "\n📍 *Vim pelo site, aguardo confirmação.*";
 
+            dataLayer.push({
+                'event': 'purchase',
+                'currency': 'BRL',
+                'value': total,
+                'transaction_id': 'ORDER_' + new Date().getTime()
+            });
+
             const phone = "5565998150975"; 
             window.location.href = `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`;
         }
@@ -673,7 +789,6 @@
 
         render();
         document.addEventListener('contextmenu', event => event.preventDefault());
-
     </script>
 </body>
 </html>
