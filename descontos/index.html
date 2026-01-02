@@ -141,17 +141,17 @@
             letter-spacing: -0.3px;
         }
 
-        /* --- DIDACTIC SLIDE --- */
+        /* --- DIDACTIC SLIDE (Compactado) --- */
         .didactic-section {
-            padding: 24px 16px 10px 16px;
+            padding: 16px 8px 8px 8px; /* Reduzido de 24px/16px */
             max-width: 600px; 
-            margin: 20px auto; /* Espaçamento ajustado para ficar entre cards */
+            margin: 16px auto; /* Reduzido de 20px */
         }
 
         .didactic-slide {
             background: #FFFFFF;
             border-radius: 20px;
-            padding: 24px;
+            padding: 16px; /* Reduzido de 24px */
             box-shadow: var(--shadow-card);
             border: 1px solid #E5E7EB;
             position: relative;
@@ -165,15 +165,15 @@
 
         .ds-title {
             font-size: 18px; font-weight: 800; color: #111827;
-            margin: 0 0 20px 0; line-height: 1.4; text-align: center;
+            margin: 0 0 16px 0; line-height: 1.4; text-align: center;
         }
 
         .ds-list {
-            display: flex; flex-direction: column; gap: 16px;
+            display: flex; flex-direction: column; gap: 12px; /* Reduzido de 16px */
         }
 
         .ds-item {
-            display: flex; align-items: flex-start; gap: 14px;
+            display: flex; align-items: flex-start; gap: 12px; /* Reduzido */
         }
 
         .ds-number {
@@ -193,26 +193,27 @@
             color: #111827; font-weight: 700;
         }
 
-        /* --- CATALOG CONTAINER --- */
+        /* --- CATALOG CONTAINER (Margens laterais reduzidas) --- */
         .catalog-container { 
-            padding: 16px; max-width: 600px; margin: 0 auto; 
+            padding: 8px; /* Reduzido de 16px para 8px */
+            max-width: 600px; margin: 0 auto; 
         }
         
-        /* --- PRODUCT CARD --- */
+        /* --- PRODUCT CARD (Margem inferior reduzida) --- */
         .product-section {
             background: var(--surface); 
-            border-radius: 24px;
+            border-radius: 20px; /* Levemente reduzido para acompanhar o layout mais compacto */
             box-shadow: var(--shadow-card);
-            margin-bottom: 30px;
+            margin-bottom: 16px; /* Reduzido de 30px */
             overflow: hidden;
             border: 1px solid rgba(0,0,0,0.03);
         }
 
-        .p-main-content { padding: 24px; position: relative; }
+        .p-main-content { padding: 16px; position: relative; } /* Reduzido de 24px */
 
         .p-title-row { 
             display: flex; justify-content: space-between; align-items: flex-start; 
-            margin-bottom: 16px; 
+            margin-bottom: 12px; /* Reduzido */
         }
         .p-title { 
             font-size: 20px; font-weight: 800; color: var(--text-main); 
@@ -227,12 +228,12 @@
         .basket-hero-img {
             width: 100%; height: auto; aspect-ratio: 1/1; 
             border-radius: 16px; object-fit: cover; 
-            background: #f9fafb; margin-bottom: 20px;
+            background: #f9fafb; margin-bottom: 16px; /* Reduzido */
             box-shadow: inset 0 0 0 1px rgba(0,0,0,0.03);
         }
 
         /* OPÇÕES */
-        .p-options-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .p-options-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; } /* Gap e Margin reduzidos */
         .opt-row {
             display: flex; align-items: center; justify-content: space-between;
             padding: 12px 16px; border-radius: 12px;
@@ -254,7 +255,8 @@
         /* BOTOES */
         .btn-action-main {
             width: 100%; background: var(--primary-gradient); color: white;
-            padding: 18px; border: none; border-radius: 16px;
+            padding: 16px; /* Levemente reduzido */
+            border: none; border-radius: 16px;
             font-size: 14px; font-weight: 700; cursor: pointer;
             display: flex; align-items: center; justify-content: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
@@ -266,19 +268,19 @@
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); 
         }
 
-        /* CONTEUDO EXPANSÍVEL */
-        .p-expand-content { background: #FAFAFA; border-top: 1px solid #F3F4F6; padding: 24px; }
+        /* CONTEUDO EXPANSÍVEL (Padding reduzido) */
+        .p-expand-content { background: #FAFAFA; border-top: 1px solid #F3F4F6; padding: 16px; }
         
-        /* ATUALIZADO: Grid em 2 Colunas para itens maiores */
+        /* ATUALIZADO: Grid em 2 Colunas (Gap reduzido) */
         .items-grid { 
             display: grid; 
-            grid-template-columns: repeat(2, 1fr); /* Mudado de 3 para 2 */
-            gap: 12px; 
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px; /* Reduzido de 12px */
         }
         
-        /* ATUALIZADO: Card maior e fontes maiores */
+        /* ATUALIZADO: Card maior e fontes maiores (Padding reduzido) */
         .item-card {
-            background: white; border-radius: 12px; padding: 12px 8px; 
+            background: white; border-radius: 12px; padding: 8px 4px; /* Reduzido de 12px 8px */
             text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); 
             border: 1px solid rgba(0,0,0,0.02);
             display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
