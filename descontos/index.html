@@ -230,6 +230,7 @@
             padding: 12px 16px; border-radius: 12px;
             border: 1px solid var(--border-medium); background: white;
             transition: all 0.2s;
+            cursor: pointer; /* Adicionado para indicar clique */
         }
         .opt-row.selected {
             border-color: var(--success); background: #F0FDF4;
@@ -613,7 +614,7 @@
                 
                 // Opções estilo "Lista Selecionável" (Mais App-like)
                 const optsHtml = data.opts.map((o, idx) => `
-                    <div class="opt-row ${idx===0 ? 'selected' : ''}">
+                    <div class="opt-row ${o.sel ? 'selected' : ''}" onclick="selectOption('${key}', ${idx})">
                         <div class="opt-info">
                             <span class="opt-name">${o.n.replace('Com ','')}</span>
                             <div class="opt-price">
@@ -621,15 +622,24 @@
                                 <span class="price-new">${o.desc}</span>
                             </div>
                         </div>
-                        <i class="ph-fill ${idx===0 ? 'ph-check-circle' : 'ph-circle'}" style="color:${idx===0?'var(--success)':'#D1D5DB'}; font-size:24px;"></i>
+                        <i class="ph-fill ${o.sel ? 'ph-check-circle' : 'ph-circle'}" style="color:${o.sel?'var(--success)':'#D1D5DB'}; font-size:24px;"></i>
                     </div>
                 `).join('');
                 
                 const itemsHtml = data.items.map(i => {
                     const qtyText = i.q === 1 ? '1 un' : `${i.q} un`;
+                    
+                    // Lógica para trocar a imagem do arroz conforme seleção
+                    let imgName = i.n;
+                    if(i.n.toLowerCase().includes('arroz')) {
+                        const sel = data.opts.find(o => o.sel);
+                        if(sel && sel.n.includes('Tio Alvino')) imgName = 'Arroz Tio Alvino';
+                        if(sel && sel.n.includes('Koblenz')) imgName = 'Arroz Koblenz';
+                    }
+
                     return `
                     <div class="item-card">
-                        <img src="${getImg(i.n)}" class="item-img" loading="lazy" alt="${i.n}">
+                        <img src="${getImg(imgName)}" class="item-img" loading="lazy" alt="${i.n}">
                         <span class="item-qty">${qtyText}</span>
                         <div class="item-name">${i.n}</div>
                     </div>
@@ -671,6 +681,11 @@
         }
 
         // --- AÇÕES ---
+        function selectOption(key, idx) {
+            BASKETS[key].opts.forEach((o, i) => o.sel = i === idx);
+            renderAll();
+        }
+
         function reveal(key) {
             STATE.revealed[key] = true;
             renderAll(); 
@@ -679,7 +694,7 @@
 
         function order(key) {
             const data = BASKETS[key];
-            const opt = data.opts[0]; 
+            const opt = data.opts.find(o => o.sel); 
             const msg = `Olá, gostaria de encomendar a ${data.name} (${opt.n}) por ${opt.desc}.`;
             const url = `https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`;
             
