@@ -169,6 +169,17 @@
     <link rel="preconnect" href="https://unpkg.com">
     <link rel="preconnect" href="https://maps.google.com">
 
+    <!-- GOOGLE ANALYTICS (GTAG) -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9XS8B8Z8BV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-9XS8B8Z8BV');
+    </script>
+
     <!-- PILLAR 2: DATA LAYER & PIXEL -->
     <script>
         !function(f,b,e,v,n,t,s)
@@ -923,8 +934,8 @@
 
         function getImg(n) {
             const low = n.toLowerCase();
-            const f = 'descontos/img/alimento/';
-            const c = 'descontos/img/limpeza/';
+            const f = 'img/alimento/';
+            const c = 'img/limpeza/';
             
             if(low.includes('arroz tio alvino')) return f + 'arroztioalvino.jpg';
             if(low.includes('café premiado')) return f + 'cafepremiado.webp';
@@ -1015,8 +1026,19 @@
                     </section>
                 `;
 
-                if (key === 'PEQUENA') { html += DIDACTIC_SECTION_HTML; }
+                // LOGICA DE INJEÇÃO CONDICIONAL (NOVA):
+                // No Mobile (Window width < 1024), injeta após a ECONÔMICA (primeira cesta).
+                // No Desktop, a section .didactic-section já é tratada via CSS Grid (order: -1) e não depende dessa injeção HTML.
+                if (key === 'ECONOMICA' && window.innerWidth < 1024) { 
+                    html += DIDACTIC_SECTION_HTML; 
+                }
             });
+            
+            // Injeta o HTML da seção didática no final se for desktop (para o CSS Grid posicionar)
+            if (window.innerWidth >= 1024) {
+                 html += DIDACTIC_SECTION_HTML;
+            }
+
             container.innerHTML = html;
         }
 
@@ -1080,6 +1102,9 @@
             `;
             openModal('products');
         }
+
+        // Adiciona listener de resize para re-renderizar caso o usuário mude de mobile para desktop ou vice-versa
+        window.addEventListener('resize', renderAll);
 
         renderAll();
     </script>
