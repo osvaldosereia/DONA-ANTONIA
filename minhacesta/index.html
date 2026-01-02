@@ -238,7 +238,7 @@
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal-card {
-            background: white; width: 100%; max-width: 500px;
+            background: white; width: 100%; max-width: 600px; /* Um pouco mais largo para o grid */
             border-radius: 24px 24px 0 0; max-height: 85vh; 
             display: flex; flex-direction: column;
             transform: translateY(100%); transition: 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -264,8 +264,62 @@
             cursor: pointer;
         }
 
-        /* RESUMO LISTA */
-        .summary-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #F3F4F6; font-size: 15px; }
+        /* RESUMO EM GRID (NOVO) */
+        #summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 colunas no mobile */
+            gap: 10px;
+            padding: 4px;
+        }
+        @media (min-width: 768px) {
+            #summary-grid {
+                grid-template-columns: repeat(4, 1fr); /* 4 colunas no desktop */
+            }
+        }
+        .summary-card-mini {
+            background: #fff;
+            border: 1px solid var(--border-medium);
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .summary-img-mini {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            mix-blend-mode: multiply;
+            margin-bottom: 6px;
+        }
+        .badge-qty {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--primary);
+            color: white;
+            font-size: 12px;
+            font-weight: 800;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 2;
+        }
+        .summary-name-mini {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-main);
+            line-height: 1.2;
+            margin-top: auto; /* Empurra para baixo se altura variar */
+        }
+
         .btn-whatsapp-final {
             width: 100%; padding: 16px; border-radius: 12px; border: none;
             background: var(--success-gradient); color: white; font-weight: 700; font-size: 16px;
@@ -347,15 +401,19 @@
         </div>
     </div>
 
-    <!-- MODAL RESUMO FINAL -->
+    <!-- MODAL RESUMO FINAL (AGORA COM GRID VISUAL) -->
     <div id="modal-summary" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
-                <h3 class="modal-title">Resumo da Cesta</h3>
+                <h3 class="modal-title">Sua Cesta Personalizada</h3>
                 <button class="modal-close" onclick="closeSummaryModal()"><i class="ph-bold ph-x"></i></button>
             </div>
             <div class="modal-body">
-                <ul id="summary-list" style="list-style:none; padding:0; margin:0;"></ul>
+                <p style="font-size:13px; color:var(--text-sec); margin-bottom:12px;">Confira seus itens abaixo:</p>
+                
+                <!-- GRID INJETADO AQUI -->
+                <div id="summary-grid"></div>
+
                 <div style="margin-top:20px; padding-top:10px; border-top:2px dashed var(--border-medium);">
                     <div style="display:flex; justify-content:space-between; color:var(--text-sec); margin-bottom:5px;">
                         <span>Subtotal Produtos:</span>
@@ -457,8 +515,8 @@
             else if (name.includes('suco') || name.includes('frisco')) fileName = 'suco frisco.webp';
             else if (name.includes('mandioca')) fileName = 'farinha de mandioca.webp';
             
-            // LIMPEZA
-            else if (name.includes('assolan')) fileName = 'esponja assolan.webp';
+            // LIMPEZA (Atualizado com nomes exatos)
+            else if (name.includes('assolan')) fileName = 'lã de aço assolan.webp';
             else if (name.includes('creme dental')) fileName = 'Creme Dental Sorriso 70g.webp';
             else if (name.includes('desinfetante')) fileName = 'Desinfetante Remmus 2L.webp';
             else if (name.includes('detergente')) fileName = 'Detergente Ype 500ml.webp';
@@ -679,7 +737,7 @@
 
         function calculate() {
             let subtotal = 0;
-            let html = '';
+            let gridHtml = ''; // Mudança: HTML do grid
             
             const keys = Object.keys(cart).sort();
             
@@ -688,6 +746,7 @@
                 const id = parseInt(idStr);
                 const p = PRODUCTS.find(x => x.id === id);
                 const qty = cart[key];
+                const imgPath = getExactImgPath(p.name);
                 
                 const totalItem = p.price * qty;
                 subtotal += totalItem;
@@ -695,18 +754,22 @@
                 let name = p.name;
                 if(variant !== 'default') name += ` (${variant})`;
 
-                html += `
-                    <li class="summary-item">
-                        <span><b style="color:var(--primary)">${qty}x</b> ${name}</span>
-                        <span>R$ ${totalItem.toFixed(2).replace('.',',')}</span>
-                    </li>
+                // GERA CARD MINIATURA
+                gridHtml += `
+                    <div class="summary-card-mini">
+                        <div class="badge-qty">${qty}</div>
+                        <img src="${imgPath}" class="summary-img-mini" alt="${name}">
+                        <div class="summary-name-mini">${name}</div>
+                    </div>
                 `;
             });
 
             const delivery = subtotal < 85 ? 10 : 0;
             const total = subtotal + delivery;
 
-            document.getElementById('summary-list').innerHTML = html;
+            // INJETA O GRID
+            document.getElementById('summary-grid').innerHTML = gridHtml;
+            
             document.getElementById('summ-subtotal').innerText = `R$ ${subtotal.toFixed(2).replace('.',',')}`;
             document.getElementById('summ-delivery').innerText = delivery === 0 ? 'GRÁTIS' : 'R$ 10,00';
             document.getElementById('summ-total').innerText = `R$ ${total.toFixed(2).replace('.',',')}`;
