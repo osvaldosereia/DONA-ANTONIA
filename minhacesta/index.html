@@ -266,7 +266,7 @@
 
     <!-- HEADER (ORIGINAL) -->
     <header class="app-header">
-        <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
+        <img src="img/limpeza/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
              class="logo-header" alt="Logo Dona Antônia" onerror="this.src='https://placehold.co/80x80'">
         <div class="brand"><h1>Monte Sua Cesta</h1></div>
     </header>
@@ -358,29 +358,35 @@
     </div>
 
     <script>
-        // --- BASE DE DADOS (Extraída do Site Original + Preços Estimados Ocultos) ---
+        // --- BASE DE DADOS (Atualizada para mapear com as imagens) ---
         const PRODUCTS = [
             // ALIMENTOS
             { id: 1, type: 'food', name: "Arroz Tio Alvino 5kg", price: 26.90 },
             { id: 2, type: 'food', name: "Arroz Koblenz 5kg", price: 27.90 },
-            { id: 3, type: 'food', name: "Açúcar 2kg", price: 8.90 },
-            { id: 4, type: 'food', name: "Óleo de Soja 900ml", price: 6.50 },
-            { id: 5, type: 'food', name: "Feijão 1kg", price: 7.90 },
-            { id: 6, type: 'food', name: "Café 500g", price: 18.50 },
-            { id: 7, type: 'food', name: "Espaguete 500g", price: 4.50 },
-            { id: 8, type: 'food', name: "12 Ovos", price: 14.00 },
-            { id: 9, type: 'food', name: "Mistura Bolo", price: 5.50 },
-            { id: 10, type: 'food', name: "Trigo 1kg", price: 4.90 },
+            { id: 3, type: 'food', name: "Açúcar Doce Dia 2kg", price: 8.90 },
+            { id: 4, type: 'food', name: "Óleo de Soja Liza", price: 6.50 },
+            { id: 5, type: 'food', name: "Feijão da Casa 1kg", price: 7.90 },
+            { id: 6, type: 'food', name: "Café Caboclo 500g", price: 18.50 },
+            { id: 61, type: 'food', name: "Café Caboclo 250g", price: 9.50 },
+            { id: 7, type: 'food', name: "Espaguete Q'Delícia", price: 4.50 },
+            { id: 8, type: 'food', name: "Ovos (Dúzia)", price: 14.00 },
+            { id: 9, type: 'food', name: "Bolo Apti Chocolate", price: 5.50 },
+            { id: 10, type: 'food', name: "Trigo Vitoriosa 1kg", price: 4.90 },
             { id: 11, type: 'food', name: "Sal 1kg", price: 2.00 },
-            { id: 12, type: 'food', name: "Molho Tomate", price: 2.50 },
-            { id: 13, type: 'food', name: "Milho Lata", price: 3.50 },
-            { id: 14, type: 'food', name: "Tempero Completo", price: 3.00 },
-            { id: 15, type: 'food', name: "Bolacha Recheada", price: 2.50 },
-            { id: 16, type: 'food', name: "Miojo", price: 1.50 },
-            { id: 17, type: 'food', name: "Suco em Pó", price: 1.20 },
-            { id: 18, type: 'food', name: "Farinha Mandioca", price: 6.00 },
+            { id: 12, type: 'food', name: "Molho Fugini", price: 2.50 },
+            { id: 13, type: 'food', name: "Milho Predileta", price: 3.50 },
+            { id: 14, type: 'food', name: "Tempero Tio Jonas", price: 3.00 },
+            { id: 15, type: 'food', name: "Bolacha MyBit", price: 2.50 },
+            { id: 16, type: 'food', name: "Miojo Apti", price: 1.50 },
+            { id: 17, type: 'food', name: "Suco Frisco", price: 1.20 },
+            { id: 18, type: 'food', name: "Farinha de Mandioca", price: 6.00 },
 
-            // LIMPEZA
+            // LIMPEZA / HIGIENE
+            // Nota: Esponja Assolan estava na lista de 'alimento' no texto, 
+            // mas colocamos como limpeza logicamente. O caminho respeitará a lista.
+            { id: 59, type: 'clean', name: "Esponja Assolan", price: 2.50 },
+            
+            // Produtos sem imagem na lista fornecida (Placeholder ou genérico)
             { id: 50, type: 'clean', name: "Sabão em Barra", price: 2.50 },
             { id: 51, type: 'clean', name: "Creme Dental", price: 3.50 },
             { id: 52, type: 'clean', name: "Papel Higiênico (4un)", price: 5.90 },
@@ -390,52 +396,47 @@
             { id: 56, type: 'clean', name: "Detergente Líquido", price: 2.80 },
             { id: 57, type: 'clean', name: "Qboa 1L", price: 4.50 },
             { id: 58, type: 'clean', name: "Sabonete", price: 2.00 },
-            { id: 59, type: 'clean', name: "Esponja de Aço", price: 2.50 },
             { id: 60, type: 'clean', name: "Esponja de Louça", price: 1.50 }
         ];
 
-        // --- FUNÇÃO DE IMAGENS ORIGINAL (Preservada) ---
-        function getImg(n) {
-            const low = n.toLowerCase();
-            const f = 'descontos/img/alimento/';
-            const c = 'descontos/img/limpeza/';
-            
-            if(low.includes('arroz tio alvino')) return f + 'arroztioalvino.jpg';
-            if(low.includes('café premiado')) return f + 'cafepremiado.webp';
+        // --- MAPA EXATO DE IMAGENS (CONFORME SUA LISTA) ---
+        // A chave é o texto parcial ou nome exato para busca
+        function getExactImgPath(productName) {
+            const name = productName.toLowerCase();
+            const f = 'img/alimento/';
+            const c = 'img/limpeza/';
 
-            // Alimentos
-            if(low.includes('arroz')) return f + 'Arroz Koblenz 5kg.webp';
-            if(low.includes('açúcar')) return f + 'açucar doce dia 2 kg.webp';
-            if(low.includes('bolacha')) return f + 'bolacha mybit.webp';
-            if(low.includes('bolo')) return f + 'bolo apti chocolate.webp';
-            if(low.includes('café')) return f + 'cafe caboclo 500g.webp';
-            if(low.includes('espaguete')) return f + 'espaguete qdelicia.webp';
-            if(low.includes('farinha')) return f + 'farinha de mandioca.webp';
-            if(low.includes('feijão')) return f + 'feijão da casa.webp';
-            if(low.includes('milho')) return f + 'milho verde predileta.webp';
-            if(low.includes('miojo')) return f + 'miojo apti.webp';
-            if(low.includes('molho')) return f + 'molho fugini.webp';
-            if(low.includes('óleo')) return f + 'oleo de soja liza.webp';
-            if(low.includes('ovo')) return f + 'ovo duzia.jpg';
-            if(low.includes('sal')) return f + 'sal.webp';
-            if(low.includes('suco')) return f + 'suco frisco.webp';
-            if(low.includes('tempero')) return f + 'tempero tio jonas.jpg';
-            if(low.includes('trigo')) return f + 'trigo vitoriosa.webp';
-
-            // Limpeza
-            if(low.includes('creme')) return c + 'Creme Dental Sorriso 70g.webp';
-            if(low.includes('desinfetante')) return c + 'Desinfetante Remmus 2L.webp';
-            if(low.includes('detergente')) return c + 'Detergente Ype 500ml.webp';
-            if(low.includes('qboa')) return c + 'Qboa 1 Litro.webp';
-            if(low.includes('amaciante')) return c + 'amaciante ype 2L.webp';
-            if(low.includes('louça')) return c + 'esponja de lavar louça.webp';
-            if(low.includes('aço')) return c + 'lã de aço assolan.webp';
-            if(low.includes('papel')) return c + 'papel higienico.webp';
-            if(low.includes('sabonete')) return c + 'sabonete palmolive 85g.webp';
-            if(low.includes('barra')) return c + 'sabão barra ype 900g.webp';
-            if(low.includes('sabão pó') || low.includes('omo')) return c + 'sabão em pó omo 800g.webp';
+            // Mapeamento direto baseado na sua lista de arquivos
+            if (name.includes('tio alvino')) return f + 'arroztioalvino.jpg';
+            if (name.includes('koblenz')) return f + 'Arroz Koblenz 5kg.webp';
+            if (name.includes('açúcar') || name.includes('doce dia')) return f + 'açucar doce dia 2 kg.webp';
+            if (name.includes('liza')) return f + 'oleo de soja liza.webp';
+            if (name.includes('feijão')) return f + 'feijão da casa.webp';
+            if (name.includes('caboclo') && name.includes('500')) return f + 'cafe caboclo 500g.webp';
+            if (name.includes('caboclo') && name.includes('250')) return f + 'cafe caboclo 250g.webp';
+            if (name.includes('premiado')) return f + 'cafepremiado.webp';
+            if (name.includes('espaguete') || name.includes('q\'delícia')) return f + 'espaguete qdelicia.webp';
+            if (name.includes('ovos')) return f + 'ovo duzia.jpg';
+            if (name.includes('bolo apti')) return f + 'bolo apti chocolate.webp';
+            if (name.includes('trigo')) return f + 'trigo vitoriosa.webp';
+            if (name.includes('sal')) return f + 'sal.webp';
+            if (name.includes('molho') || name.includes('fugini')) return f + 'molho fugini.webp';
+            if (name.includes('milho') || name.includes('predileta')) return f + 'milho verde predileta.webp';
+            if (name.includes('tempero') || name.includes('jonas')) return f + 'tempero tio jonas.jpg';
+            if (name.includes('bolacha') || name.includes('mybit')) return f + 'bolacha mybit.webp';
+            if (name.includes('miojo')) return f + 'miojo apti.webp';
+            if (name.includes('suco') || name.includes('frisco')) return f + 'suco frisco.webp';
+            if (name.includes('mandioca')) return f + 'farinha de mandioca.webp';
             
-            return `https://placehold.co/150x150/e2e8f0/64748b?text=${n.substring(0,3)}`;
+            // Item de Limpeza que estava na lista de alimentos
+            if (name.includes('assolan')) return f + 'esponja assolan.webp';
+
+            // Itens de limpeza (Tentar adivinhar ou usar placeholder se não fornecido)
+            // Como sua lista de limpeza só tinha logo/anuncio, vamos usar placeholder para os demais
+            // para não ficar quebrado.
+            if (name.includes('sabão pó') || name.includes('omo')) return 'https://placehold.co/150x150/e2e8f0/64748b?text=OMO';
+            
+            return `https://placehold.co/150x150/e2e8f0/64748b?text=${encodeURIComponent(productName.substring(0,4))}`;
         }
 
         // --- ESTADO ---
@@ -447,10 +448,10 @@
             const gridClean = document.getElementById('grid-limpeza');
             
             PRODUCTS.forEach(p => {
-                const img = getImg(p.name);
+                const imgPath = getExactImgPath(p.name);
                 const html = `
                     <div class="item-card" id="card-${p.id}">
-                        <img src="${img}" class="item-img" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/150x150'">
+                        <img src="${imgPath}" class="item-img" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/150x150/png?text=Sem+Foto'">
                         <div class="item-name">${p.name}</div>
                         
                         <div class="qty-controls">
