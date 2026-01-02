@@ -53,6 +53,7 @@
             --success: #10B981;
             --success-dark: #047857;
             --success-gradient: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --danger: #EF4444;
             --surface: #FFFFFF;
             --background: #F3F4F6;
             --text-main: #111827;
@@ -101,9 +102,9 @@
             overflow: visible;
         }
         .logo-header { 
-            width: 80px; height: 80px; /* DOBRO DO TAMANHO (Selo Gigante) */
+            width: 90px; height: 90px; /* DOBRO DO TAMANHO (Selo Gigante) */
             border-radius: 50%; object-fit: cover; 
-            border: 2px solid white; /* Borda grossa destaque */
+            border: 4px solid white; /* Borda grossa destaque */
             box-shadow: 0 6px 15px rgba(0,0,0,0.25); /* Sombra flutuante */
             position: absolute;
             top: 5px; /* Posicionamento para vazar */
@@ -114,18 +115,24 @@
         /* TÍTULO (ESCONDIDO NO MOBILE) */
         .brand { display: none; }
 
-        /* NAV DENTRO DO HEADER (OCUPA O RESTO DO ESPAÇO) */
+        /* NAV E ACTIONS (OCUPA O RESTO DO ESPAÇO) */
+        .header-actions {
+            display: flex; gap: 8px; 
+            flex: 1; 
+            align-items: center;
+            justify-content: flex-end;
+            margin-left: 20px; /* Compensar logo */
+        }
+
         .category-nav {
             display: flex; gap: 8px; 
-            flex: 1; /* Ocupa todo espaço restante */
-            overflow: hidden; /* Evita scroll */
-            padding: 0;
-            margin-left: 20px; /* Compensar o logo vazado */
+            flex: 1; /* Ocupa espaço disponível */
         }
+        
         .cat-btn {
             flex: 1; /* Divide espaço igualmente */
             padding: 8px 4px; /* Padding menor */
-            border-radius: 8px; /* Mais quadrado pra caber melhor */
+            border-radius: 8px; 
             border: 1px solid var(--border-medium);
             background: white; font-weight: 700; font-size: 13px; color: var(--text-sec);
             white-space: nowrap; cursor: pointer; transition: all 0.2s; text-align: center;
@@ -135,34 +142,54 @@
             background: var(--primary); color: white; border-color: var(--primary);
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
         }
-        /* Ajuste ícones no botão */
         .cat-btn i { font-size: 16px; }
+
+        /* BOTÃO HISTÓRICO */
+        .btn-history {
+            width: 40px; height: 38px;
+            border-radius: 8px;
+            border: 1px solid var(--border-medium);
+            background: white; color: var(--text-main);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; cursor: pointer;
+        }
+        .btn-history:active { background: #F3F4F6; }
 
         /* DESKTOP HEADER (AJUSTES PARA TELAS GRANDES) */
         @media (min-width: 768px) {
             .app-header { padding: 0 32px; height: 70px; justify-content: space-between; }
             .header-brand { width: auto; overflow: visible; margin-right: 20px; }
-            .logo-header { 
-                /* No desktop, mantemos o selo mas ajustamos posição se necessário */
-                position: absolute; top: -5px; width: 100px; height: 100px;
-            }
-            .brand { display: block; margin-left: 110px; } /* Empurra titulo pro lado do selo */
+            .logo-header { position: absolute; top: -5px; width: 100px; height: 100px; }
+            .brand { display: block; margin-left: 110px; }
             .brand h1 { font-size: 18px; font-weight: 800; color: var(--text-main); margin: 0; }
-            .category-nav { flex: 0 0 auto; gap: 12px; margin-left: 0; } 
-            .cat-btn { padding: 8px 20px; border-radius: 50px; font-size: 14px; }
+            .header-actions { flex: 0 0 auto; gap: 12px; margin-left: 0; width: auto; } 
+            .cat-btn { padding: 8px 20px; border-radius: 50px; font-size: 14px; flex: none; width: auto;}
         }
 
-        /* GRID */
-        .monte-container { max-width: 1200px; margin: 16px auto; padding: 0 12px; }
+        /* GRID E CONTAINER */
+        .monte-container { 
+            width: 94%; 
+            max-width: 1100px; 
+            margin: 16px auto; 
+            padding: 0; 
+        }
+        
         .section-title {
             font-size: 18px; font-weight: 800; color: var(--text-main);
             margin: 24px 0 12px; display: flex; align-items: center; gap: 8px;
             border-left: 4px solid var(--primary); padding-left: 10px;
         }
+        
+        /* GRID RESPONSIVO */
         .items-grid { 
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 10px;
         }
-        @media (min-width: 768px) { .items-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; } }
+        
+        @media (min-width: 768px) { 
+            .items-grid { grid-template-columns: repeat(5, 1fr); gap: 16px; } 
+        }
         
         /* CARD DE PRODUTO */
         .item-card {
@@ -185,7 +212,6 @@
             font-size: 13px; font-weight: 600; color: var(--text-main); line-height: 1.25; 
             margin-bottom: 8px; min-height: 34px; display: flex; align-items: center; justify-content: center;
         }
-        /* PREÇO OCULTO NO FRONT */
         .item-price { display: none; } 
 
         /* BOTÃO DE OPÇÕES */
@@ -213,7 +239,7 @@
         .btn-plus { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); }
         .qty-val { font-weight: 700; font-size: 14px; color: var(--text-main); width: 22px; text-align: center;}
 
-        /* RESUMO DE VARIAÇÕES SELECIONADAS */
+        /* RESUMO DE VARIAÇÕES */
         .selected-summary {
             font-size: 10px; color: var(--text-sec); margin-top: 6px;
             background: rgba(255,255,255,0.6); padding: 2px 4px; border-radius: 4px;
@@ -221,21 +247,21 @@
         }
         .item-card.active .selected-summary { color: var(--primary); font-weight: 600; }
 
-        /* BARRA FIXA INFERIOR "SLIM" */
+        /* BARRA FIXA INFERIOR */
         .fixed-action-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 1px solid var(--border-medium);
-            padding: 8px 12px; /* Padding reduzido ao máximo */
+            padding: 8px 12px; 
             z-index: 90; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
         .bar-content { 
-            max-width: 1200px; margin: 0 auto; 
+            width: 100%; max-width: 1100px; margin: 0 auto; 
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
         }
 
-        /* GAMIFICAÇÃO MICRO (ESQUERDA) */
+        /* GAMIFICAÇÃO */
         .gamification-container {
-            flex: 1; /* Ocupa o espaço restante */
+            flex: 1; 
             display: flex; flex-direction: column; justify-content: center;
             margin-top: 0;
         }
@@ -246,7 +272,7 @@
         .status-compact b { color: var(--primary); }
         .progress-track {
             background: #E5E7EB;
-            height: 4px; /* Micro barra */
+            height: 4px; 
             border-radius: 10px;
             overflow: hidden;
             width: 100%;
@@ -258,9 +284,14 @@
             border-radius: 10px;
         }
         
-        /* BOTÃO CALCULAR (DIREITA) */
+        /* BOTÕES DE AÇÃO (DIREITA) */
+        .action-buttons {
+            display: flex; gap: 8px; align-items: center;
+        }
+
+        /* Botão Calcular */
         .btn-calc {
-            width: auto; height: 38px; /* Altura fixa compacta */
+            width: auto; height: 38px;
             padding: 0 16px; border-radius: 8px; border: none;
             background: #9CA3AF; color: white; font-weight: 700; font-size: 13px;
             cursor: not-allowed; transition: all 0.3s;
@@ -269,6 +300,17 @@
             white-space: nowrap;
         }
         .btn-calc.ready { background: var(--primary-gradient); cursor: pointer; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4); }
+
+        /* Botão Reiniciar (Lixeira) */
+        .btn-restart {
+            width: 38px; height: 38px;
+            border-radius: 8px; border: none;
+            background: #FEE2E2; color: var(--danger);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-restart:active { background: #FECACA; transform: scale(0.95); }
 
         /* MODAL COMUM */
         .modal-overlay {
@@ -291,6 +333,20 @@
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
         .modal-footer { padding: 20px; background: #F9FAFB; border-top: 1px solid var(--border-medium); }
 
+        /* LISTA HISTÓRICO */
+        .history-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+        .history-item {
+            background: #F9FAFB; border: 1px solid var(--border-medium);
+            padding: 12px; border-radius: 12px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .h-info div { font-size: 14px; color: var(--text-main); font-weight: 600; }
+        .h-info small { font-size: 12px; color: var(--text-sec); }
+        .btn-restore {
+            background: white; border: 1px solid var(--primary); color: var(--primary);
+            padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer;
+        }
+
         /* ESTILO ESPECÍFICO DO MODAL DE VARIAÇÕES */
         .variant-row {
             display: flex; align-items: center; justify-content: space-between;
@@ -305,7 +361,7 @@
             cursor: pointer;
         }
 
-        /* RESUMO EM GRID (NOVO) */
+        /* RESUMO EM GRID */
         #summary-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -330,35 +386,19 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
         .summary-img-mini {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: contain;
-            mix-blend-mode: multiply;
-            margin-bottom: 6px;
+            width: 100%; aspect-ratio: 1/1; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 6px;
         }
         .badge-qty {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-            background: var(--primary);
-            color: white;
-            font-size: 12px;
-            font-weight: 800;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: -6px; right: -6px;
+            background: var(--primary); color: white;
+            font-size: 12px; font-weight: 800;
+            width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             z-index: 2;
         }
         .summary-name-mini {
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-main);
-            line-height: 1.2;
-            margin-top: auto; 
+            font-size: 11px; font-weight: 600; color: var(--text-main); line-height: 1.2; margin-top: auto; 
         }
 
         .btn-whatsapp-final {
@@ -373,7 +413,7 @@
 </head>
 <body>
 
-    <!-- HEADER REESTRUTURADO (LINHA ÚNICA) -->
+    <!-- HEADER -->
     <header class="app-header">
         <div class="header-brand">
             <img src="../img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
@@ -381,36 +421,41 @@
             <div class="brand"><h1>Monte Sua Cesta</h1></div>
         </div>
         
-        <!-- NAV OCUPA O RESTO DA LINHA -->
-        <nav class="category-nav">
-            <button class="cat-btn active" onclick="scrollToId('sec-alimentos', this)">
-                <i class="ph-bold ph-grains"></i> Alimentos
+        <div class="header-actions">
+            <!-- NAV -->
+            <nav class="category-nav">
+                <button class="cat-btn active" onclick="scrollToId('sec-alimentos', this)">
+                    <i class="ph-bold ph-grains"></i> Alimentos
+                </button>
+                <button class="cat-btn" onclick="scrollToId('sec-limpeza', this)">
+                    <i class="ph-bold ph-sparkle"></i> Limpeza
+                </button>
+            </nav>
+            
+            <!-- HISTÓRICO BTN -->
+            <button class="btn-history" onclick="openHistoryModal()">
+                <i class="ph-bold ph-clock-counter-clockwise"></i>
             </button>
-            <button class="cat-btn" onclick="scrollToId('sec-limpeza', this)">
-                <i class="ph-bold ph-sparkle"></i> Limpeza
-            </button>
-        </nav>
+        </div>
     </header>
 
     <!-- CONTEÚDO -->
     <main class="monte-container">
-        <!-- SEÇÃO ALIMENTOS -->
         <div id="sec-alimentos">
             <h2 class="section-title"><i class="ph-fill ph-bowl-food" style="color:var(--primary)"></i> Alimentos</h2>
             <div class="items-grid" id="grid-alimentos"></div>
         </div>
-        <!-- SEÇÃO LIMPEZA -->
         <div id="sec-limpeza">
             <h2 class="section-title"><i class="ph-fill ph-sparkle" style="color:var(--primary)"></i> Higiene e Limpeza</h2>
             <div class="items-grid" id="grid-limpeza"></div>
         </div>
     </main>
 
-    <!-- BARRA FIXA INFERIOR SLIM -->
+    <!-- BARRA FIXA INFERIOR -->
     <div class="fixed-action-bar">
         <div class="bar-content">
             
-            <!-- GAMIFICAÇÃO INTEGRADA (ESQUERDA) -->
+            <!-- GAMIFICAÇÃO -->
             <div class="gamification-container">
                 <div class="status-compact">
                     <span id="progress-text">Escolha seus itens</span>
@@ -421,30 +466,52 @@
                 </div>
             </div>
 
-            <!-- BOTÃO CALCULAR (DIREITA) -->
-            <button id="btn-calc" class="btn-calc" onclick="calculate()" disabled>
-                <span>CALCULAR</span>
-            </button>
+            <!-- ACTIONS -->
+            <div class="action-buttons">
+                <!-- REINICIAR (LIXEIRA) -->
+                <button class="btn-restart" onclick="resetCart()">
+                    <i class="ph-bold ph-trash"></i>
+                </button>
+                
+                <!-- CALCULAR -->
+                <button id="btn-calc" class="btn-calc" onclick="calculate()" disabled>
+                    <span>CALCULAR</span>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- MODAL DE VARIAÇÕES (SABORES/FRAGRÂNCIAS) -->
+    <!-- MODAL DE VARIAÇÕES -->
     <div id="modal-variants" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
                 <h3 class="modal-title" id="mv-title">Escolha os Sabores</h3>
                 <button class="modal-close" onclick="closeVariantModal()"><i class="ph-bold ph-x"></i></button>
             </div>
-            <div class="modal-body" id="mv-body">
-                <!-- LISTA DE SABORES INJETADA VIA JS -->
-            </div>
+            <div class="modal-body" id="mv-body"></div>
             <div class="modal-footer">
                 <button class="btn-confirm-selection" onclick="closeVariantModal()">CONFIRMAR ESCOLHA</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL RESUMO FINAL (GRID VISUAL) -->
+    <!-- MODAL HISTÓRICO (NOVO) -->
+    <div id="modal-history" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title">Histórico de Pedidos</h3>
+                <button class="modal-close" onclick="closeHistoryModal()"><i class="ph-bold ph-x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px; color:var(--text-sec); margin-bottom:12px; text-align:center;">Seus últimos pedidos enviados:</p>
+                <ul id="history-list" class="history-list">
+                    <!-- Itens inseridos via JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL RESUMO FINAL -->
     <div id="modal-summary" class="modal-overlay">
         <div class="modal-card">
             <div class="modal-header">
@@ -453,10 +520,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size:13px; color:var(--text-sec); margin-bottom:12px;">Confira seus itens abaixo:</p>
-                
-                <!-- GRID INJETADO AQUI -->
                 <div id="summary-grid"></div>
-
                 <div style="margin-top:20px; padding-top:10px; border-top:2px dashed var(--border-medium);">
                     <div style="display:flex; justify-content:space-between; color:var(--text-sec); margin-bottom:5px;">
                         <span>Subtotal Produtos:</span>
@@ -492,9 +556,12 @@
         function gtag(){dataLayer.push(arguments);}
         dataLayer.push({'event': 'page_view'});
 
+        // --- CONSTANTES DE STORAGE ---
+        const STORAGE_KEY_CART = 'supercestas_cart_v1';
+        const STORAGE_KEY_HISTORY = 'supercestas_history_v1';
+
         // --- DADOS ---
         const PRODUCTS = [
-            // ALIMENTOS
             { id: 1, type: 'food', name: "Arroz Tio Alvino 5kg", price: 15.90 },
             { id: 2, type: 'food', name: "Arroz Koblenz 5kg", price: 17.90 },
             { id: 3, type: 'food', name: "Açúcar Doce Dia 2kg", price: 6.90 },
@@ -514,8 +581,6 @@
             { id: 16, type: 'food', name: "Miojo Apti", price: 1.70, variants: ["Galinha Caipira", "Carne", "Tomate"] },
             { id: 17, type: 'food', name: "Suco Frisco", price: 1.20, variants: ["Laranja", "Uva", "Morango", "Abacaxi"] },
             { id: 18, type: 'food', name: "Farinha de Mandioca", price: 6.00 },
-
-            // LIMPEZA
             { id: 59, type: 'clean', name: "Esponja Assolan", price: 2.50 },
             { id: 50, type: 'clean', name: "Sabão em Barra", price: 14.50 },
             { id: 51, type: 'clean', name: "Creme Dental", price: 3.50, variants: ["Menta", "Hortelã", "Tripla Ação"] },
@@ -529,13 +594,12 @@
             { id: 60, type: 'clean', name: "Esponja de Louça", price: 1.50 }
         ];
 
-        // --- CORREÇÃO DE IMAGENS ---
+        // --- MANIPULAÇÃO DE CAMINHOS ---
         function getExactImgPath(productName) {
             const name = productName.toLowerCase();
             const pathFood = '../descontos/img/alimento/'; 
             const pathClean = '../descontos/img/limpeza/';
             
-            // ALIMENTOS (Retorna pathFood + arquivo)
             if (name.includes('tio alvino')) return pathFood + 'arroztioalvino.jpg';
             if (name.includes('koblenz')) return pathFood + 'Arroz Koblenz 5kg.webp';
             if (name.includes('açúcar') || name.includes('doce dia')) return pathFood + 'açucar doce dia 2 kg.webp';
@@ -557,7 +621,6 @@
             if (name.includes('suco') || name.includes('frisco')) return pathFood + 'suco frisco.webp';
             if (name.includes('mandioca')) return pathFood + 'farinha de mandioca.webp';
             
-            // LIMPEZA (Retorna pathClean + arquivo)
             if (name.includes('assolan')) return pathClean + 'lã de aço assolan.webp';
             if (name.includes('creme dental')) return pathClean + 'Creme Dental Sorriso 70g.webp';
             if (name.includes('desinfetante')) return pathClean + 'Desinfetante Remmus 2L.webp';
@@ -570,16 +633,120 @@
             if (name.includes('sabão em barra') || name.includes('sabão barra')) return pathClean + 'sabão barra ype 900g.webp';
             if (name.includes('sabão pó') || name.includes('omo')) return pathClean + 'sabão em pó omo 800g.webp';
             
-            // Fallback Genérico
             return `https://placehold.co/200x200/e2e8f0/64748b?text=${encodeURIComponent(productName.substring(0,8))}`;
         }
 
         let cart = {}; 
 
+        // --- INICIALIZAÇÃO COM PERSISTÊNCIA ---
+        function initApp() {
+            // Carregar carrinho do localStorage
+            const savedCart = localStorage.getItem(STORAGE_KEY_CART);
+            if(savedCart) {
+                try {
+                    cart = JSON.parse(savedCart);
+                } catch(e) {
+                    console.error("Erro ao carregar carrinho", e);
+                    cart = {};
+                }
+            }
+            render();
+            // Atualizar UI com dados carregados
+            Object.keys(cart).forEach(key => {
+                const [id, variant] = key.split('::');
+                const qty = cart[key];
+                
+                // Atualizar display simples
+                if(document.getElementById(`qty-${id}`)) {
+                    document.getElementById(`qty-${id}`).innerText = qty;
+                    const card = document.getElementById(`card-${id}`);
+                    if(qty > 0) card.classList.add('active');
+                }
+                
+                // Atualizar variants (será feito ao renderizar mas precisa atualizar o summary)
+                updateCardSummary(parseInt(id));
+            });
+            checkStatus();
+        }
+
+        // --- SALVAR ESTADO ---
+        function saveCart() {
+            localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+        }
+
+        // --- FUNÇÕES DE REINÍCIO E HISTÓRICO ---
+        function resetCart() {
+            // Limpa objeto e storage
+            cart = {};
+            saveCart();
+            // Recarrega a página para limpar visualmente rápido ou re-renderiza tudo
+            // Vamos re-renderizar para ser SPA friendly
+            document.querySelectorAll('.qty-val').forEach(el => el.innerText = '0');
+            document.querySelectorAll('.item-card').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.btn-choose-options').forEach(btn => {
+                btn.classList.remove('has-items');
+                btn.innerHTML = `<i class="ph-bold ph-list-plus"></i> ESCOLHER OPÇÕES`;
+            });
+            document.querySelectorAll('.selected-summary').forEach(el => {
+                el.style.display = 'none';
+                el.innerText = '';
+            });
+            checkStatus();
+        }
+
+        function openHistoryModal() {
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+            
+            if(history.length === 0) {
+                list.innerHTML = '<li style="text-align:center; padding:20px; color:var(--text-sec)">Nenhum pedido anterior encontrado.</li>';
+            } else {
+                history.reverse().forEach((order, index) => {
+                    list.innerHTML += `
+                        <li class="history-item">
+                            <div class="h-info">
+                                <div>R$ ${order.total}</div>
+                                <small>${order.date}</small>
+                            </div>
+                            <button class="btn-restore" onclick="restoreOrder(${history.length - 1 - index})">
+                                ABRIR
+                            </button>
+                        </li>
+                    `;
+                });
+            }
+            document.getElementById('modal-history').classList.add('active');
+        }
+
+        function closeHistoryModal() {
+            document.getElementById('modal-history').classList.remove('active');
+        }
+
+        function restoreOrder(reversedIndex) {
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+            // O index vem do array reverso visualmente, precisamos do index real se não usarmos o reverso na lógica
+            // Na função acima passei o indice real (history.length - 1 - index)
+            const order = history[reversedIndex];
+            
+            if(order) {
+                cart = order.cart;
+                saveCart();
+                closeHistoryModal();
+                // Re-inicializa a UI com o novo carrinho
+                // A maneira mais segura de limpar e aplicar é recarregar a página ou chamar initApp limpando antes
+                location.reload(); 
+            }
+        }
+
         function render() {
             const gridFood = document.getElementById('grid-alimentos');
             const gridClean = document.getElementById('grid-limpeza');
             
+            gridFood.innerHTML = ''; // Limpar antes de renderizar (segurança)
+            gridClean.innerHTML = '';
+
             PRODUCTS.forEach(p => {
                 const imgPath = getExactImgPath(p.name);
                 let controlsHtml = '';
@@ -668,6 +835,7 @@
                     document.getElementById(elId).innerText = newVal;
                 }
             }
+            saveCart(); // PERSISTENCIA
             if (delta > 0) trackAddCart(key);
         }
 
@@ -688,6 +856,7 @@
                 
                 checkStatus();
             }
+            saveCart(); // PERSISTENCIA
             if (delta > 0) trackAddCart(id);
         }
 
@@ -734,7 +903,6 @@
             }
         }
 
-        // --- ATUALIZAÇÃO DA BARRA DE GAMIFICAÇÃO (COMPACTA) ---
         function checkStatus() {
             const productIds = new Set();
             Object.keys(cart).forEach(k => productIds.add(k.split('::')[0]));
@@ -748,7 +916,6 @@
 
             compactCount.innerText = `${uniqueItems} itens`;
 
-            // CÁLCULO PORCENTAGEM (Capado em 100%)
             const percent = Math.min((uniqueItems / minItems) * 100, 100);
             progressFill.style.width = `${percent}%`;
 
@@ -792,7 +959,6 @@
                 let name = p.name;
                 if(variant !== 'default') name += ` (${variant})`;
 
-                // GERA CARD MINIATURA
                 gridHtml += `
                     <div class="summary-card-mini">
                         <div class="badge-qty">${qty}</div>
@@ -838,6 +1004,32 @@
         }
 
         function sendWhatsapp() {
+            // SALVAR NO HISTÓRICO ANTES DE ENVIAR
+            const history = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY) || '[]');
+            
+            // Recalcula total rapidinho para salvar
+            let histSubtotal = 0;
+            Object.keys(cart).forEach(key => {
+                const [idStr] = key.split('::');
+                const p = PRODUCTS.find(x => x.id == idStr);
+                if(p) histSubtotal += (p.price * cart[key]);
+            });
+            const histTotal = histSubtotal + (histSubtotal < 85 ? 10 : 0);
+            
+            const newOrder = {
+                date: new Date().toLocaleString('pt-BR'),
+                total: histTotal.toFixed(2).replace('.',','),
+                cart: cart
+            };
+            
+            // Adiciona no começo (stack)
+            history.push(newOrder);
+            // Opcional: Limitar historico a ultimos 10
+            if(history.length > 10) history.shift();
+            
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(history));
+
+            // PROCESSO NORMAL DE WPP
             let msg = "*NOVA ENCOMENDA - CESTA PERSONALIZADA*\n--------------------------------\n";
             let subtotal = 0;
             const keys = Object.keys(cart).sort();
@@ -886,7 +1078,8 @@
             window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         }
 
-        render();
+        // Inicializar App
+        initApp();
         document.addEventListener('contextmenu', event => event.preventDefault());
     </script>
 </body>
