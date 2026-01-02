@@ -344,7 +344,17 @@
             font-size: 0.9rem; color: var(--text-sec); margin: 5px 0 0;
         }
 
-        /* --- PRODUCT CARD --- */
+        /* --- PRODUCT CARD & LINKS --- */
+        /* Link wrapper for product cards */
+        .product-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
         .product-section {
             background: var(--surface); 
             border-radius: 20px;
@@ -352,6 +362,11 @@
             margin-bottom: 16px;
             overflow: hidden;
             border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.2s; /* Feedback visual */
+        }
+        
+        .product-link:active .product-section {
+            transform: scale(0.98); /* Efeito de clique */
         }
 
         .p-main-content { padding: 16px; position: relative; }
@@ -396,7 +411,7 @@
         .price-new { font-size: 16px; font-weight: 800; color: var(--text-main); }
         .opt-row.selected .price-new { color: var(--success-dark); }
 
-        /* BOTOES */
+        /* BOTOES (Agora divs estilizadas para validar dentro do <a>) */
         .btn-action-main {
             width: 100%; background: var(--primary-gradient); color: white;
             padding: 16px; border: none; border-radius: 16px;
@@ -405,7 +420,7 @@
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
             transition: transform 0.1s;
         }
-        .btn-action-main:active { transform: scale(0.98); }
+        /* Não usamos :active aqui pois o card pai já tem efeito */
         .btn-whatsapp { background: var(--success-gradient); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
 
         /* CONTEUDO EXPANSÍVEL */
@@ -642,6 +657,8 @@
             .product-section {
                 grid-column: span 1; height: 100%; display: flex; flex-direction: column;
             }
+            .product-link { height: 100%; display: flex; flex-direction: column; }
+            
             .p-main-content { flex: 1; display: flex; flex-direction: column; }
             .btn-action-main { margin-top: auto; }
             .p-expand-content { display: none !important; }
@@ -982,7 +999,7 @@
                 const isRevealed = STATE.revealed[key];
                 
                 const optsHtml = data.opts.map((o, idx) => `
-                    <div class="opt-row ${o.sel ? 'selected' : ''}" onclick="selectOption('${key}', ${idx})">
+                    <div class="opt-row ${o.sel ? 'selected' : ''}" onclick="selectOption('${key}', ${idx}); event.preventDefault(); event.stopPropagation();">
                         <div class="opt-info">
                             <span class="opt-name">${o.n.replace('Com ','')}</span>
                             <div class="opt-price"><span class="price-new">${o.norm}</span></div>
@@ -1007,11 +1024,13 @@
                     </div>
                 `}).join('');
 
+                // Botão convertido para DIV para não quebrar o HTML dentro do <a>
                 const btnHtml = isRevealed 
-                    ? `<button onclick="handleDetails('${key}')" class="btn-action-main btn-whatsapp"><i class="ph-bold ph-whatsapp-logo" style="font-size:20px;"></i> PEDIR NO WHATSAPP</button>`
-                    : `<button onclick="handleDetails('${key}')" class="btn-action-main"><i class="ph-bold ph-caret-down" style="font-size:20px;"></i> VER TODOS OS ITENS</button>`;
+                    ? `<div class="btn-action-main btn-whatsapp"><i class="ph-bold ph-whatsapp-logo" style="font-size:20px;"></i> PEDIR NO WHATSAPP</div>`
+                    : `<div class="btn-action-main"><i class="ph-bold ph-caret-down" style="font-size:20px;"></i> VER TODOS OS ITENS</div>`;
 
                 html += `
+                    <a href="#" onclick="event.preventDefault(); handleDetails('${key}')" class="product-link">
                     <section class="product-section" id="basket-${key}">
                         <div class="p-main-content">
                             <div class="p-title-row"><h2 class="p-title">${data.name}</h2><span class="p-badge">Entrega Grátis</span></div>
@@ -1024,17 +1043,14 @@
                             <div class="items-grid">${itemsHtml}</div>
                         </div>
                     </section>
+                    </a>
                 `;
 
-                // LOGICA DE INJEÇÃO CONDICIONAL (NOVA):
-                // No Mobile (Window width < 1024), injeta após a ECONÔMICA (primeira cesta).
-                // No Desktop, a section .didactic-section já é tratada via CSS Grid (order: -1) e não depende dessa injeção HTML.
                 if (key === 'ECONOMICA' && window.innerWidth < 1024) { 
                     html += DIDACTIC_SECTION_HTML; 
                 }
             });
             
-            // Injeta o HTML da seção didática no final se for desktop (para o CSS Grid posicionar)
             if (window.innerWidth >= 1024) {
                  html += DIDACTIC_SECTION_HTML;
             }
@@ -1103,7 +1119,6 @@
             openModal('products');
         }
 
-        // Adiciona listener de resize para re-renderizar caso o usuário mude de mobile para desktop ou vice-versa
         window.addEventListener('resize', renderAll);
 
         renderAll();
