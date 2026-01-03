@@ -736,9 +736,11 @@
             l.forEach((p, index) => {
                 const card = document.createElement('div');
                 const isSelected = p.id === pedidoSelecionadoId;
-                const nomeF = p.cliente.nome.split(' ').slice(0, 2).join(' ').toUpperCase();
+                // Ajuste solicitado: Nome completo sem truncar drasticamente
+                const nomeF = p.cliente.nome.toUpperCase(); 
                 card.dataset.id = p.id; card.setAttribute('draggable', 'true');
-                card.className = `draggable-card bg-white border border-gray-200 shadow-sm rounded mb-1 p-2 flex gap-2 items-center cursor-pointer transition-all ${isSelected ? 'selected-card ring-2 ring-indigo-500' : 'hover:bg-gray-50'}`;
+                // Ajuste layout: padding maior (p-3) e mb-2
+                card.className = `draggable-card bg-white border border-gray-200 shadow-sm rounded mb-2 p-3 flex gap-2 items-start cursor-pointer transition-all ${isSelected ? 'selected-card ring-2 ring-indigo-500' : 'hover:bg-gray-50'}`;
                 card.onclick = () => { pedidoSelecionadoId = p.id; renderizarListaPedidos(); renderizarDetalhesPedido(p.id); };
                 
                 // Drag and drop events
@@ -751,24 +753,32 @@
                 }});
                 card.addEventListener('dragend', (e) => document.querySelectorAll('.draggable-card').forEach(x=>x.classList.remove('dragging')));
 
-                let info = p.itens.map(i => `${i.tipo.replace('Cesta ','')} ${i.modo==='alterada'?'<i class="fa-solid fa-triangle-exclamation text-red-500 text-[10px]" title="Alterada"></i>':''}`).join(', ');
+                // Ajuste solicitado: Mostrar Cesta e Marca Bem visíveis
+                let htmlProdutos = p.itens.map(i => {
+                    const alteradaBadge = i.modo === 'alterada' ? '<i class="fa-solid fa-triangle-exclamation text-red-500 ml-1" title="Alterada"></i>' : '';
+                    return `<div class="font-bold text-indigo-800 text-sm mt-1 border-t border-indigo-50 pt-1">
+                                ${i.tipo.toUpperCase()} <span class="bg-indigo-100 text-indigo-900 px-1 rounded text-[10px] uppercase ml-1 border border-indigo-200">${i.marca.toUpperCase()}</span> ${alteradaBadge}
+                            </div>`;
+                }).join('');
+
+                // Cidade (se houver no objeto cliente) e Bairro
+                const cidade = p.cliente.cidade ? ` - ${p.cliente.cidade.toUpperCase()}` : '';
+                const localizacao = `<div class="text-[11px] text-gray-600 font-bold uppercase mt-0.5"><i class="fa-solid fa-map-pin mr-1 text-gray-400"></i>${p.rota.toUpperCase()} | ${p.cliente.bairro.toUpperCase()}${cidade}</div>`;
 
                 card.innerHTML = `
-                    <div class="flex flex-col gap-1 items-center justify-center border-r border-gray-200 pr-2">
-                        <button onclick="event.stopPropagation(); moverPedido('${p.id}', -1)" class="text-gray-300 hover:text-indigo-600"><i class="fa-solid fa-caret-up"></i></button>
-                        <button onclick="event.stopPropagation(); moverPedido('${p.id}', 1)" class="text-gray-300 hover:text-indigo-600"><i class="fa-solid fa-caret-down"></i></button>
+                    <div class="flex flex-col gap-1 items-center justify-center border-r border-gray-200 pr-2 pt-1">
+                        <button onclick="event.stopPropagation(); moverPedido('${p.id}', -1)" class="text-gray-300 hover:text-indigo-600"><i class="fa-solid fa-caret-up text-lg"></i></button>
+                        <button onclick="event.stopPropagation(); moverPedido('${p.id}', 1)" class="text-gray-300 hover:text-indigo-600"><i class="fa-solid fa-caret-down text-lg"></i></button>
                     </div>
                     <div class="flex-1 overflow-hidden">
-                        <div class="flex justify-between items-center border-b border-gray-100 pb-1 mb-1">
-                            <div class="text-xs font-black text-gray-800 truncate">
+                        <div class="flex justify-between items-start border-b border-gray-100 pb-1">
+                            <div class="font-black text-gray-800 text-xs leading-snug">
                                 <span class="bg-gray-800 text-white px-1.5 py-0.5 rounded font-mono mr-1 text-[10px]">${p.codigoVisual}</span> ${nomeF}
                             </div>
-                            <div class="text-[9px] font-bold text-gray-400">${p.rota.substring(0,3).toUpperCase()}</div>
+                            <button onclick="event.stopPropagation(); excluirPedido('${p.id}')" class="text-gray-300 hover:text-red-600 ml-1 transition-colors px-1"><i class="fa-solid fa-trash"></i></button>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <div class="text-[10px] text-gray-600 leading-tight truncate w-32">${info}</div>
-                            <button onclick="event.stopPropagation(); excluirPedido('${p.id}')" class="text-gray-300 hover:text-red-600 ml-1 transition-colors"><i class="fa-solid fa-trash"></i></button>
-                        </div>
+                        ${localizacao}
+                        ${htmlProdutos}
                     </div>
                 `;
                 c.appendChild(card);
