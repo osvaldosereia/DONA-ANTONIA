@@ -26,10 +26,10 @@
         
         /* Destaque do Card Selecionado */
         .selected-card { 
-            border-left-color: #4f46e5 !important; 
-            background-color: #eef2ff !important; 
+            border-left-color: #f97316 !important; /* Laranja para indicar edição/seleção */
+            background-color: #fff7ed !important; 
             border-width: 2px !important; 
-            border-color: #4f46e5 !important; 
+            border-color: #f97316 !important; 
         }
 
         .draggable-card { cursor: grab; user-select: none; }
@@ -178,7 +178,7 @@
             <!-- 1. Novo Pedido -->
             <div class="w-3/12 bg-white rounded shadow-sm border border-gray-300 flex flex-col overflow-hidden">
                 <div class="p-2 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center">
-                    <h2 class="font-bold text-indigo-800 text-xs uppercase"><i class="fa-solid fa-plus mr-1"></i>Novo Pedido</h2>
+                    <h2 id="tituloColuna1" class="font-bold text-indigo-800 text-xs uppercase"><i class="fa-solid fa-plus mr-1"></i>Novo Pedido</h2>
                     <button onclick="limparPedidoAtual()" class="text-[10px] text-red-500 hover:text-red-700 font-bold uppercase transition-colors">Limpar</button>
                 </div>
                 <div class="p-2 overflow-y-auto flex-1 custom-scroll">
@@ -265,7 +265,7 @@
                     <div class="bg-gray-800 text-white p-2 rounded text-center mb-2 shadow-inner">
                         <span class="text-xs text-gray-400 mr-1 uppercase font-bold">Total Final:</span><div class="text-2xl font-black text-green-400">R$ <span id="lblTotalFinal">0,00</span></div>
                     </div>
-                    <button onclick="finalizarPedido()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow-md text-sm transition-all-300 transform active:scale-95 flex justify-center items-center gap-2"><i class="fa-solid fa-check-circle"></i> SALVAR PEDIDO</button>
+                    <button id="btnSalvar" onclick="finalizarPedido()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow-md text-sm transition-all-300 transform active:scale-95 flex justify-center items-center gap-2"><i class="fa-solid fa-check-circle"></i> SALVAR PEDIDO</button>
                 </div>
             </div>
 
@@ -360,6 +360,7 @@
 
         const VALORES_DESCONTO = { 'economica': 5, 'mini': 10, 'pequena': 15, 'media': 20, 'grande': 25 };
         let carrinho = [], pedidos = [], listaClientesCache = [], filtroRotaAtual = 'todos', dragSrcEl = null, pedidoSelecionadoId = null;
+        let pedidoEmEdicaoId = null; // Variável para controlar se estamos editando
         const KEY_CLIENTES = 'sistema_empresarial_clientes', KEY_PEDIDOS = 'sistema_empresarial_vendas';
 
         // --- SISTEMA DE NOTIFICAÇÃO (TOAST) ---
@@ -614,7 +615,18 @@
             document.getElementById('obs').value = "";
             document.getElementById('pagStatus').value = "pendente";
             document.getElementById('desconto').value = "0";
+            document.getElementById('brinde').value = "Nenhum";
+            document.getElementById('pagMetodo').value = "dinheiro";
             alternarTab('padrao'); calcularTotalFinal(0);
+
+            // Reset Edição
+            pedidoEmEdicaoId = null;
+            document.getElementById('tituloColuna1').innerHTML = '<i class="fa-solid fa-plus mr-1"></i>Novo Pedido';
+            document.getElementById('tituloColuna1').className = 'font-bold text-indigo-800 text-xs uppercase';
+            
+            const btn = document.getElementById('btnSalvar');
+            btn.innerHTML = '<i class="fa-solid fa-check-circle"></i> SALVAR PEDIDO';
+            btn.className = "w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded shadow-md text-sm transition-all-300 transform active:scale-95 flex justify-center items-center gap-2";
         }
 
         function finalizarPedido() {
@@ -623,31 +635,55 @@
             if (carrinho.length === 0) return showToast('Carrinho vazio!', 'error');
             
             const clienteDados = JSON.parse(selCliente.options[selCliente.selectedIndex].dataset.json || "{}");
-            // Fallback se o dataset estiver vazio (busca no cache)
             const clienteFull = listaClientesCache.find(c => c.id == selCliente.value);
 
-            const now = new Date();
-            const dataHojeStr = now.toISOString().split('T')[0];
-            const countHoje = pedidos.filter(p => p.data.startsWith(dataHojeStr)).length + 1;
-            const codigoVisual = `${String(now.getDate()).padStart(2,'0')}${String(now.getMonth()+1).padStart(2,'0')}${String(countHoje).padStart(2,'0')}`;
-            
-            pedidos.push({
-                id: Date.now().toString(), 
-                codigoVisual: codigoVisual, 
-                data: new Date().toISOString(), 
-                ordem: Date.now(), 
-                cliente: clienteFull || clienteDados, 
-                rota: document.getElementById('rota').value,
-                pagamento: { metodo: document.getElementById('pagMetodo').value, status: document.getElementById('pagStatus').value },
-                financeiro: { subtotal: parseFloat(document.getElementById('lblSubtotal').innerText.replace(',', '.')), desconto: parseFloat(document.getElementById('desconto').value), total: parseFloat(document.getElementById('lblTotalFinal').innerText.replace(',', '.')) },
-                brinde: document.getElementById('brinde').value, 
-                obs: document.getElementById('obs').value, 
-                itens: carrinho
-            });
+            // Se for ATUALIZAÇÃO
+            if (pedidoEmEdicaoId) {
+                const index = pedidos.findIndex(p => p.id === pedidoEmEdicaoId);
+                if (index > -1) {
+                    const pAntigo = pedidos[index];
+                    const pNovo = {
+                        ...pAntigo,
+                        cliente: clienteFull || clienteDados,
+                        rota: document.getElementById('rota').value,
+                        pagamento: { metodo: document.getElementById('pagMetodo').value, status: document.getElementById('pagStatus').value },
+                        financeiro: { 
+                            subtotal: parseFloat(document.getElementById('lblSubtotal').innerText.replace(',', '.')), 
+                            desconto: parseFloat(document.getElementById('desconto').value), 
+                            total: parseFloat(document.getElementById('lblTotalFinal').innerText.replace(',', '.')) 
+                        },
+                        brinde: document.getElementById('brinde').value,
+                        obs: document.getElementById('obs').value,
+                        itens: carrinho,
+                        dataEdicao: new Date().toISOString()
+                    };
+                    pedidos[index] = pNovo;
+                    showToast(`PEDIDO ${pAntigo.codigoVisual} ATUALIZADO!`, 'success');
+                }
+            } else {
+                // Se for CRIAÇÃO (Novo)
+                const now = new Date();
+                const dataHojeStr = now.toISOString().split('T')[0];
+                const countHoje = pedidos.filter(p => p.data.startsWith(dataHojeStr)).length + 1;
+                const codigoVisual = `${String(now.getDate()).padStart(2,'0')}${String(now.getMonth()+1).padStart(2,'0')}${String(countHoje).padStart(2,'0')}`;
+                
+                pedidos.push({
+                    id: Date.now().toString(), 
+                    codigoVisual: codigoVisual, 
+                    data: new Date().toISOString(), 
+                    ordem: Date.now(), 
+                    cliente: clienteFull || clienteDados, 
+                    rota: document.getElementById('rota').value,
+                    pagamento: { metodo: document.getElementById('pagMetodo').value, status: document.getElementById('pagStatus').value },
+                    financeiro: { subtotal: parseFloat(document.getElementById('lblSubtotal').innerText.replace(',', '.')), desconto: parseFloat(document.getElementById('desconto').value), total: parseFloat(document.getElementById('lblTotalFinal').innerText.replace(',', '.')) },
+                    brinde: document.getElementById('brinde').value, 
+                    obs: document.getElementById('obs').value, 
+                    itens: carrinho
+                });
+                showToast(`PEDIDO ${codigoVisual} SALVO COM SUCESSO!`, 'success');
+            }
             
             salvarPedidosLocais();
-            showToast(`PEDIDO ${codigoVisual} SALVO COM SUCESSO!`, 'success');
-            
             limparPedidoAtual();
             document.getElementById('filtroData').valueAsDate = new Date();
             renderizarListaPedidos();
@@ -684,11 +720,47 @@
             if(confirm('Tem certeza que deseja EXCLUIR este pedido permanentemente?')) { 
                 pedidos = pedidos.filter(p => p.id !== id); 
                 salvarPedidosLocais(); 
-                if(pedidoSelecionadoId===id) pedidoSelecionadoId=null; 
+                if(pedidoSelecionadoId===id) { pedidoSelecionadoId=null; limparPedidoAtual(); }
                 renderizarListaPedidos(); 
                 renderizarDetalhesPedido(pedidoSelecionadoId);
                 showToast('Pedido excluído.', 'warning');
             } 
+        }
+
+        function carregarParaEdicao(id) {
+            const p = pedidos.find(i => i.id === id);
+            if(!p) return;
+
+            // Define modo de edição
+            pedidoEmEdicaoId = id;
+
+            // Popula Formulários
+            const selCliente = document.getElementById('selCliente');
+            selCliente.value = p.cliente.id;
+            
+            // Carrinho (Cópia profunda para não alterar referência direto)
+            carrinho = JSON.parse(JSON.stringify(p.itens));
+            renderizarCarrinho();
+
+            // Campos Simples
+            document.getElementById('pagMetodo').value = p.pagamento.metodo;
+            document.getElementById('pagStatus').value = p.pagamento.status;
+            document.getElementById('desconto').value = p.financeiro.desconto || 0;
+            document.getElementById('brinde').value = p.brinde || "Nenhum";
+            document.getElementById('rota').value = p.rota;
+            document.getElementById('obs').value = p.obs || "";
+
+            // Atualiza total com os valores carregados
+            calcularTotalFinal();
+
+            // Feedback Visual de Edição
+            const btn = document.getElementById('btnSalvar');
+            btn.innerHTML = '<i class="fa-solid fa-rotate mr-1"></i> ATUALIZAR PEDIDO';
+            btn.className = "w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded shadow-md text-sm transition-all-300 transform active:scale-95 flex justify-center items-center gap-2";
+            
+            const titulo = document.getElementById('tituloColuna1');
+            titulo.innerHTML = `<i class="fa-solid fa-pen-to-square mr-1"></i>Editando #${p.codigoVisual}`;
+            titulo.className = 'font-bold text-orange-700 text-xs uppercase';
         }
 
         // --- BACKUP E EXPORTAÇÃO (ATUALIZADO) ---
@@ -741,7 +813,14 @@
                 card.dataset.id = p.id; card.setAttribute('draggable', 'true');
                 // Ajuste layout: padding maior (p-3) e mb-2
                 card.className = `draggable-card bg-white border border-gray-200 shadow-sm rounded mb-2 p-3 flex gap-2 items-start cursor-pointer transition-all ${isSelected ? 'selected-card ring-2 ring-indigo-500' : 'hover:bg-gray-50'}`;
-                card.onclick = () => { pedidoSelecionadoId = p.id; renderizarListaPedidos(); renderizarDetalhesPedido(p.id); };
+                
+                // CLICK: Seleciona, Mostra Detalhes E Carrega para Edição
+                card.onclick = () => { 
+                    pedidoSelecionadoId = p.id; 
+                    renderizarListaPedidos(); 
+                    renderizarDetalhesPedido(p.id); 
+                    carregarParaEdicao(p.id); 
+                };
                 
                 // Drag and drop events
                 card.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', p.id); e.target.classList.add('dragging'); dragSrcEl = e.target; });
