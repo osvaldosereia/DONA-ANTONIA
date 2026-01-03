@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema V2.9 - Expedição 77mm</title>
+    <title>Sistema V3.0 - Branding & Retenção</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,22 +33,36 @@
         .draggable-card:active { cursor: grabbing; }
         .dragging { opacity: 0.5; border: 2px dashed #4f46e5 !important; background-color: #eef2ff !important; }
 
-        /* --- Estilo de Impressão (Etiqueta 77mm x 77mm) --- */
+        /* --- Estilo de Impressão (Etiqueta 76mm x 100mm) --- */
         @media print {
-            @page { size: 77mm 77mm; margin: 0; }
+            @page { size: 76mm 100mm; margin: 0; }
             body * { visibility: hidden; }
             #areaImpressao, #areaImpressao * { visibility: visible; }
             #areaImpressao {
-                position: absolute; left: 0; top: 0; width: 77mm;
+                position: absolute; left: 0; top: 0; width: 76mm;
                 background: white; color: black; font-family: 'Arial', sans-serif;
                 display: block !important; overflow: visible;
-                padding: 0 2mm; /* Margem lateral mínima para segurança na impressora */
+                padding: 0 2mm; 
             }
             
-            /* Classes de Etiqueta (77x77) */
+            /* --- CABEÇALHO PADRÃO (LOGO + ZAP) --- */
+            .print-header-brand {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 2px solid black;
+                padding-bottom: 5px;
+                margin-bottom: 5px;
+            }
+            .brand-logo img { width: 50px; height: 50px; object-fit: contain; }
+            .brand-info { text-align: right; }
+            .brand-whatsapp { font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+            .brand-site { font-size: 10px; font-weight: bold; margin-top: 2px; text-transform: uppercase;}
+
+            /* Classes de Etiqueta */
             .label-container {
                 width: 100%;
-                height: 76mm; /* Ajuste fino para não pular página */
+                height: 98mm; /* Ajuste para etiqueta de 100mm */
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
@@ -59,86 +73,36 @@
                 position: relative;
             }
 
-            /* 1. Cabeçalho: Data Grande */
-            .label-date { 
-                font-size: 16px; 
-                font-weight: 900; 
-                text-align: center; 
-                border-bottom: 2px solid black; 
-                margin-bottom: 3px; 
-            }
+            .label-date { font-size: 14px; font-weight: 900; text-align: center; border-bottom: 1px solid black; margin-bottom: 3px; }
+            .label-client-name { font-size: 20px; font-weight: 900; line-height: 1; text-transform: uppercase; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+            .label-client-phone { font-size: 16px; font-weight: 900; margin-bottom: 3px; }
+            .label-client-address { font-size: 12px; line-height: 1.1; margin-bottom: 5px; text-transform: uppercase; font-weight: normal; }
             
-            /* 2. Cliente: Nome e Telefone */
-            .label-client-name { 
-                font-size: 18px; 
-                font-weight: 900; 
-                line-height: 1; 
-                text-transform: uppercase; 
-                margin-bottom: 2px;
-                white-space: nowrap; 
-                overflow: hidden; 
-                text-overflow: ellipsis;
-            }
-            .label-client-phone { 
-                font-size: 18px; 
-                font-weight: 900; 
-                margin-bottom: 3px; 
-            }
-            
-            /* 3. Endereço Normal */
-            .label-client-address { 
-                font-size: 12px; 
-                line-height: 1.1; 
-                margin-bottom: 5px; 
-                text-transform: uppercase; 
-                font-weight: normal;
-            }
-            
-            /* 4. Códigos: Cliente Texto Normal, Rota e Pedido em Caixas */
             .info-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
             .label-client-code { font-size: 14px; font-weight: bold; }
-            
-            .box-code {
-                border: 2px solid black;
-                font-weight: 900;
-                padding: 1px 4px;
-                font-size: 14px;
-                text-transform: uppercase;
-                border-radius: 4px;
-            }
+            .box-code { border: 2px solid black; font-weight: 900; padding: 1px 4px; font-size: 14px; text-transform: uppercase; border-radius: 4px; }
 
-            /* 5. Cesta e Brinde */
-            .label-basket-info {
-                font-size: 13px;
-                font-weight: bold;
-                text-transform: uppercase;
-                border-top: 1px solid black;
-                padding-top: 2px;
-                margin-top: 2px;
-            }
-            .label-brinde {
-                font-size: 12px;
-                font-weight: bold;
-                margin-top: 2px;
-            }
+            .label-basket-info { font-size: 13px; font-weight: bold; text-transform: uppercase; border-top: 1px solid black; padding-top: 2px; margin-top: 2px; }
+            .label-brinde { font-size: 12px; font-weight: bold; margin-top: 2px; }
             
-            /* 6. Rodapé */
-            .label-footer { 
-                position: absolute;
-                bottom: 2px;
-                right: 0;
-                width: 100%;
-                text-align: right;
-            }
-            .volume-counter { font-size: 20px; font-weight: 900; }
+            .label-footer { position: absolute; bottom: 2px; right: 0; width: 100%; text-align: right; }
+            .volume-counter { font-size: 18px; font-weight: 900; }
             
             /* Classes de Montagem */
-            .montagem-item { border-bottom: 1px solid #000; padding: 8px 0; font-family: 'Arial', sans-serif; display: flex; align-items: center; justify-content: space-between; }
-            .montagem-header { font-size: 20px; font-weight: 900; text-transform: uppercase; border-bottom: 3px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
+            .montagem-item { border-bottom: 1px solid #000; padding: 5px 0; font-family: 'Arial', sans-serif; display: flex; align-items: center; justify-content: space-between; }
+            .montagem-header { font-size: 18px; font-weight: 900; text-transform: uppercase; border-bottom: 2px solid #000; padding-bottom: 5px; margin-bottom: 10px; }
             .montagem-prod { font-size: 14px; font-weight: bold; flex: 1; padding-right: 5px; }
-            /* CÓDIGO E QTD MAIORES */
-            .montagem-meta { font-size: 24px; font-family: 'Courier New', monospace; font-weight: 900; text-align: right; }
+            .montagem-meta { font-size: 20px; font-family: 'Courier New', monospace; font-weight: 900; text-align: right; }
             
+            /* Classes do Cupom de Desconto */
+            .cupom-container { text-align: center; font-family: 'Arial', sans-serif; padding-top: 10px; }
+            .cupom-title { font-size: 20px; font-weight: 900; margin-bottom: 5px; text-transform: uppercase; }
+            .cupom-box { border: 3px dashed black; padding: 10px; margin: 10px 0; border-radius: 8px; }
+            .cupom-price-label { font-size: 12px; font-weight: bold; }
+            .cupom-price-value { font-size: 32px; font-weight: 900; }
+            .cupom-validity { font-size: 12px; margin-top: 5px; }
+            .cupom-footer { font-size: 10px; margin-top: 10px; font-style: italic; }
+
             .no-print { display: none !important; }
         }
         #areaImpressao { display: none; }
@@ -154,7 +118,7 @@
                 <div class="bg-indigo-600 text-white p-1.5 rounded">
                     <i class="fa-solid fa-truck-fast text-sm"></i>
                 </div>
-                <h1 class="font-bold text-base text-gray-700">Módulo 2: Expedição V2.9</h1>
+                <h1 class="font-bold text-base text-gray-700">Módulo 2: Expedição V3.0</h1>
             </div>
             
             <nav class="flex gap-2">
@@ -172,7 +136,7 @@
             </div>
         </header>
 
-        <!-- Layout Principal: 3 Colunas -->
+        <!-- Layout Principal -->
         <div class="flex flex-1 gap-2 overflow-hidden">
             
             <!-- COLUNA 1: Criador de Pedidos (25%) -->
@@ -314,7 +278,7 @@
         // --- CONFIG ---
         const CATALOGO_PRODUTOS = {
             '001': { nome: 'Arroz Tio Alvino 5kg', ean: '7891234560010' },
-            '001b': { nome: 'Arroz Koblenz 5kg', ean: '7891234560011' }, // CÓDIGO DIFERENTE PARA KOBLENZ
+            '001b': { nome: 'Arroz Koblenz 5kg', ean: '7891234560011' }, 
             '002': { nome: 'Açúcar Cristal 2kg', ean: '7891234560027' },
             '003': { nome: 'Óleo de Soja 900ml', ean: '7891234560034' },
             '004': { nome: 'Feijão 1kg', ean: '7891234560041' },
@@ -360,6 +324,8 @@
             'media': { 'alvino': 320, 'koblenz': 325 },
             'grande': { 'alvino': 380, 'koblenz': 390 }
         };
+
+        const VALORES_DESCONTO = { 'economica': 5, 'mini': 10, 'pequena': 15, 'media': 20, 'grande': 25 };
 
         let carrinho = []; 
         let pedidos = []; 
@@ -491,7 +457,6 @@
             const area = document.getElementById('areaItensCesta');
             area.innerHTML = '';
             
-            // Verifica marca do arroz
             const selMarca = document.getElementById('selMarcaPreco');
             let isKoblenz = false;
             if (selMarca && !selMarca.classList.contains('hidden') && selMarca.selectedIndex >= 0) {
@@ -502,13 +467,7 @@
             listaItensCod.forEach((item) => {
                 const qtd = item[0];
                 let cod = item[1];
-                
-                // --- TROCA DE CÓDIGO DO ARROZ ---
-                // Se o item for arroz (001) e a marca selecionada for Koblenz, troca para 001b
-                if (cod === '001' && isKoblenz) {
-                    cod = '001b';
-                }
-
+                if (cod === '001' && isKoblenz) cod = '001b';
                 const produto = CATALOGO_PRODUTOS[cod];
                 const nome = produto ? produto.nome.substring(0,30) : 'Desc';
                 
@@ -536,16 +495,13 @@
             let itensFinais = [];
             let identificacao = null; 
             let nomeCestaDisplay = isImportTab ? 'Importada' : DADOS_CESTAS[tipoKey].titulo;
-
-            // Logica de Arroz (Alvino/Koblenz)
             let isKoblenz = (marcaNome === 'Koblenz');
 
             if (modo === 'normal') {
                 const listaCod = DADOS_CESTAS[tipoKey].itensCod;
                 listaCod.forEach(item => {
                    let cod = item[1];
-                   if(cod === '001' && isKoblenz) cod = '001b'; // Troca SKU
-                   
+                   if(cod === '001' && isKoblenz) cod = '001b'; 
                    const produto = CATALOGO_PRODUTOS[cod];
                    if(produto) itensFinais.push({ cod: cod, qtd: item[0], nome: produto.nome, ean: produto.ean });
                 });
@@ -694,7 +650,6 @@
             const container = document.getElementById('listaPedidos');
             const lista = getPedidosVisiveis();
             
-            // Resumo topo
             const resumo = {}; lista.forEach(p => { resumo[p.rota] = (resumo[p.rota] || 0) + 1; });
             document.getElementById('resumoRotas').innerHTML = Object.entries(resumo).map(([r, q]) => `<span class="bg-blue-100 text-blue-800 px-1 rounded">${r.substring(0,3)}:${q}</span>`).join('');
             
@@ -705,7 +660,6 @@
                 const card = document.createElement('div');
                 const isSelected = p.id === pedidoSelecionadoId;
                 
-                // Formatação Nome (Nome + 1 Sobrenome)
                 const nomeParts = p.cliente.nome.split(' ');
                 const nomeFormatado = nomeParts.slice(0, 2).join(' ').toUpperCase();
 
@@ -714,39 +668,13 @@
                 card.className = `draggable-card bg-white border border-gray-200 shadow-sm rounded mb-1 p-1.5 flex gap-2 items-center cursor-pointer transition-colors ${isSelected ? 'selected-card' : 'hover:bg-gray-50'}`;
                 card.onclick = () => selecionarPedido(p.id);
                 
-                // Drag Events
-                card.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text/plain', p.id); e.target.classList.add('dragging'); dragSrcEl = e.target; });
-                card.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
-                card.addEventListener('dragenter', (e) => e.target.classList.add('bg-indigo-50'));
-                card.addEventListener('dragleave', (e) => e.target.classList.remove('bg-indigo-50'));
-                card.addEventListener('drop', (e) => { 
-                    e.preventDefault(); 
-                    if(dragSrcEl !== e.target) {
-                        // Lógica simples de troca na lista filtrada
-                        const idOrigem = dragSrcEl.dataset.id;
-                        const idDestino = p.id;
-                        const listaAtual = getPedidosVisiveis();
-                        // Re-indexa
-                        listaAtual.forEach((item, i) => item.ordem = i*10);
-                        const idxOrigem = listaAtual.findIndex(i => i.id === idOrigem);
-                        const idxDestino = listaAtual.findIndex(i => i.id === idDestino);
-                        if(idxOrigem > -1 && idxDestino > -1) {
-                            const [moved] = listaAtual.splice(idxOrigem, 1);
-                            listaAtual.splice(idxDestino, 0, moved);
-                            listaAtual.forEach((item, i) => item.ordem = i*10);
-                            salvarPedidosLocais();
-                            renderizarListaPedidos();
-                        }
-                    }
-                });
-                card.addEventListener('dragend', (e) => { 
-                    document.querySelectorAll('.draggable-card').forEach(c => c.classList.remove('dragging', 'bg-indigo-50')); 
-                });
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragenter', handleDragEnter);
+                card.addEventListener('dragover', handleDragOver);
+                card.addEventListener('dragleave', handleDragLeave);
+                card.addEventListener('drop', handleDrop);
+                card.addEventListener('dragend', handleDragEnd);
 
-                // Conteúdo do Card (LIMPO)
-                // CÓDIGO PEDIDO | NOME E 1 SOBRENOME
-                // NOME DA CESTA SEM ABREVIAR | VALOR | PADRAO/ALTERADA | LIXEIRA
-                
                 let infoCestas = p.itens.map(i => {
                     const status = i.modo === 'alterada' ? '<span class="text-red-600 font-bold">[ALT]</span>' : '<span class="text-green-600 font-bold">[PAD]</span>';
                     return `${i.tipo} | R$${i.preco} | ${status}`;
@@ -775,7 +703,7 @@
 
         function selecionarPedido(id) {
             pedidoSelecionadoId = id;
-            renderizarListaPedidos(); // Re-renderiza para atualizar destaque
+            renderizarListaPedidos(); 
             renderizarDetalhesPedido(id);
         }
 
@@ -791,7 +719,6 @@
             const codCli = gerarCodigoClienteVisual(p.cliente, p.rota);
             const endereco = `${p.cliente.endereco}, ${p.cliente.bairro} - ${p.cliente.cidade || ''}`;
             
-            // Gera lista de itens detalhada
             let htmlItens = '';
             p.itens.forEach(item => {
                 const labelModo = item.modo === 'alterada' ? `<span class="bg-red-100 text-red-800 px-1 rounded text-[10px] ml-2">ALTERADA - ${item.identificacao}</span>` : '';
@@ -857,7 +784,7 @@
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 gap-2 mb-2">
                             <button onclick="imprimirEtiquetaPedido('${p.id}')" class="bg-gray-800 hover:bg-gray-700 text-white font-bold py-3 rounded shadow flex items-center justify-center gap-2">
                                 <i class="fa-solid fa-tag"></i> IMPRIMIR ETIQUETA
                             </button>
@@ -865,6 +792,9 @@
                                 <i class="fa-solid fa-boxes-packing"></i> IMPRIMIR MONTAGEM
                             </button>
                         </div>
+                        <button onclick="imprimirCupomDesconto('${p.id}')" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded shadow flex items-center justify-center gap-2 text-xs uppercase">
+                            <i class="fa-solid fa-ticket"></i> Imprimir Cupom de Desconto
+                        </button>
                     </div>
                 </div>
             `;
@@ -881,6 +811,21 @@
             const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(l)], {type: "application/json"})); a.download = `bkp_${f}.json`; a.click();
         }
 
+        // --- FUNÇÃO DE CABEÇALHO PADRÃO ---
+        function getHeaderImpressao() {
+            return `
+                <div class="print-header-brand">
+                    <div class="brand-logo">
+                        <img src="icon-512 (2).jpg" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869636.png'" alt="Logo">
+                    </div>
+                    <div class="brand-info">
+                        <div class="brand-whatsapp"><i class="fa-brands fa-whatsapp"></i> 65 99815-0975</div>
+                        <div class="brand-site">www.DONAANTONIA.com.br</div>
+                    </div>
+                </div>
+            `;
+        }
+
         // --- IMPRESSÃO ETIQUETA ---
         function imprimirEtiquetaPedido(id) {
             const p = pedidos.find(item => item.id === id); if (!p) return;
@@ -888,47 +833,38 @@
             const codCli = gerarCodigoClienteVisual(p.cliente, p.rota);
             const nomeCli = p.cliente.nome.split(' ').slice(0, 2).join(' ').toUpperCase();
             
-            // Dados para o HTML da etiqueta
             const dataF = new Date(p.data).toLocaleDateString('pt-BR');
             const tel = p.cliente.telefone || '';
             const end = `${p.cliente.endereco}, ${p.cliente.bairro}`;
-            
-            // Lógica de Brinde
             const brindeTexto = (p.brinde && p.brinde !== 'Nenhum') ? `BRINDE: ${p.brinde.toUpperCase()}` : 'SEM BRINDE';
 
             let html = '';
+            const header = getHeaderImpressao();
+
             p.itens.forEach(item => {
                 let qtd = (item.tipo.match(/mini|pequena/i)) ? 2 : (item.tipo.match(/grande|media|média/i) ? 3 : 1);
-                
-                // Monta string da Cesta: TIPO + MARCA
                 let nomeCesta = `${item.tipo.toUpperCase()} (${item.marca})`;
-                // Se alterada, adiciona o aviso
-                if(item.modo === 'alterada') {
-                    nomeCesta += ` - ALTERADA (COD: ${item.identificacao})`;
-                }
+                if(item.modo === 'alterada') nomeCesta += ` - ALTERADA (COD: ${item.identificacao})`;
 
                 for (let i = 1; i <= qtd; i++) {
                     html += `
                         <div class="label-container">
+                            ${header}
                             <div>
                                 <div class="label-date">${dataF}</div>
-                                
                                 <div class="label-client-name">${nomeCli}</div>
                                 <div class="label-client-phone">${tel}</div>
                                 <div class="label-client-address">${end}</div>
-                                
                                 <div class="info-row">
                                     <div class="label-client-code">${codCli}</div>
                                     <div class="box-code">ROTA: ${p.rota.toUpperCase()}</div>
                                     <div class="box-code">PED: ${p.codigoVisual}</div>
                                 </div>
                             </div>
-
                             <div>
                                 <div class="label-basket-info">${nomeCesta}</div>
                                 <div class="label-brinde">${brindeTexto}</div>
                             </div>
-
                             <div class="label-footer">
                                 <div class="volume-counter">VOL: ${i}/${qtd}</div>
                             </div>
@@ -944,6 +880,7 @@
             const area = document.getElementById('areaImpressao');
             const dataF = new Date(p.data).toLocaleDateString('pt-BR');
             const horaF = new Date(p.data).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            const header = getHeaderImpressao();
             
             let htmlConteudo = '';
             p.itens.forEach(item => {
@@ -971,11 +908,72 @@
             });
 
             area.innerHTML = `
+                ${header}
                 <div style="text-align:center; font-size:16px; font-weight:900; margin-bottom:10px;">MONTAGEM <br>${dataF} ${horaF}</div>
                 <div style="font-size:24px; font-weight:900; margin-bottom:5px;">${p.cliente.nome.split(' ')[0]} | #${p.codigoVisual}</div>
                 <div style="border-bottom: 4px solid black; margin-bottom:10px;"></div>
                 <div>${htmlConteudo}</div>
                 ${p.obs ? `<div style="font-size:16px; font-weight:bold; border: 2px solid black; padding: 5px; margin-top: 10px;">OBS: ${p.obs.toUpperCase()}</div>` : ''}
+            `;
+            setTimeout(() => window.print(), 300);
+        }
+
+        // --- IMPRESSÃO CUPOM DE DESCONTO ---
+        function imprimirCupomDesconto(id) {
+            const p = pedidos.find(item => item.id === id); if (!p) return;
+            const area = document.getElementById('areaImpressao');
+            const header = getHeaderImpressao();
+
+            // Identifica a cesta de maior valor/relevância para aplicar o desconto
+            let melhorCesta = null;
+            let maiorDesconto = 0;
+
+            p.itens.forEach(item => {
+                // Remove acentos e minúsculas para match
+                const tipoClean = item.tipo.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+                let desconto = 0;
+                
+                if(tipoClean.includes('grande')) desconto = 25;
+                else if(tipoClean.includes('media')) desconto = 20;
+                else if(tipoClean.includes('pequena')) desconto = 15;
+                else if(tipoClean.includes('mini')) desconto = 10;
+                else if(tipoClean.includes('economica')) desconto = 5;
+                else desconto = 5; // Padrão mínimo
+
+                if(desconto > maiorDesconto) {
+                    maiorDesconto = desconto;
+                    melhorCesta = item;
+                }
+            });
+
+            if(!melhorCesta) {
+                // Fallback se não identificar cesta padrão
+                maiorDesconto = 5; 
+                melhorCesta = p.itens[0];
+            }
+
+            const validade = new Date();
+            validade.setDate(validade.getDate() + 30);
+            const validadeStr = validade.toLocaleDateString('pt-BR');
+            
+            const valorFinal = melhorCesta.preco - maiorDesconto;
+
+            area.innerHTML = `
+                ${header}
+                <div class="cupom-container">
+                    <div class="cupom-title">PRESENTE PARA VOCÊ!</div>
+                    <div style="font-size:14px;">Olá <b>${p.cliente.nome.split(' ')[0]}</b>, obrigado pela compra!</div>
+                    <div style="font-size:12px; margin-top:5px;">Compre novamente a <b>${melhorCesta.tipo.toUpperCase()}</b> até dia <b>${validadeStr}</b> e pague apenas:</div>
+                    
+                    <div class="cupom-box">
+                        <div class="cupom-price-label">VALOR PROMOCIONAL</div>
+                        <div class="cupom-price-value">R$ ${valorFinal.toFixed(2).replace('.', ',')}</div>
+                    </div>
+
+                    <div style="font-size:11px;">(Preço normal: R$ ${melhorCesta.preco.toFixed(2)})</div>
+                    <div class="cupom-validity">Válido até: <b>${validadeStr}</b></div>
+                    <div class="cupom-footer">Apresente este cupom na próxima compra.<br>Válido apenas para a cesta especificada acima.</div>
+                </div>
             `;
             setTimeout(() => window.print(), 300);
         }
