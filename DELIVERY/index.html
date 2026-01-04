@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v3.9</title>
+    <title>Sistema Logística Local-First v4.0 (Secure)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,13 +45,14 @@
         .animate-in { animation: fadeIn 0.3s ease-out; }
     </style>
 
-    <!-- 3. IMPORTMAP REACT -->
+    <!-- 3. IMPORTMAP REACT + ZOD -->
     <script type="importmap">
     {
       "imports": {
         "react": "https://esm.sh/react@18.2.0",
         "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1",
+        "zod": "https://esm.sh/zod@3.22.4"
       }
     }
     </script>
@@ -66,6 +67,7 @@
     <script type="text/babel" data-type="module">
         import React, { useState, useEffect } from 'react';
         import { createRoot } from 'react-dom/client';
+        import { z } from 'zod';
         import { 
           Save, Truck, Package, ShoppingCart, Users, MapPin, 
           Printer, Share2, Download, Upload, Trash2, Plus, 
@@ -73,12 +75,86 @@
           ArrowUp, ArrowDown, History, MessageCircle, XCircle,
           AlertTriangle, FileText, Banknote, List, Tag, Percent, 
           Calendar, Filter, Phone, Database, Clipboard, Box, ExternalLink,
-          Clock, Home, DollarSign, CreditCard, Check
+          Clock, Home, DollarSign, CreditCard, Check, ShieldCheck
         } from 'lucide-react';
+
+        // --- SCHEMAS DE VALIDAÇÃO (ZOD) ---
+        // Garante a integridade dos dados ao importar backups externos
+
+        const ClientSchema = z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            code: z.string().optional().or(z.literal('')),
+            phone: z.string().optional().or(z.literal('')),
+            address: z.string().optional().or(z.literal('')),
+            city: z.string().optional().or(z.literal('')),
+            district: z.string().optional().or(z.literal('')),
+            region: z.string().optional().or(z.literal('')),
+            mapLink: z.string().optional().or(z.literal('')),
+            photoLink: z.string().optional().or(z.literal('')),
+            obs: z.string().optional().or(z.literal(''))
+        });
+
+        const ProductSchema = z.object({
+            id: z.string(),
+            name: z.string().min(1),
+            internalCode: z.string().optional().or(z.literal('')),
+            category: z.string().optional().or(z.literal('')),
+            ncm: z.string().optional().or(z.literal('')),
+            barcode: z.string().optional().or(z.literal('')),
+            cost: z.any().transform(v => Number(v) || 0), // Coerce para número seguro
+            price: z.any().transform(v => Number(v) || 0),
+            stock: z.any().transform(v => Number(v) || 0),
+            isCombo: z.boolean().optional(),
+            comboItems: z.array(z.object({
+                id: z.string(),
+                qty: z.number()
+            })).optional(),
+            stockHistory: z.array(z.any()).optional()
+        });
+
+        const SaleItemSchema = z.object({
+            id: z.string(),
+            name: z.string(),
+            price: z.any().transform(v => Number(v) || 0),
+            tempId: z.string().optional(),
+            qty: z.number().optional(), // Legado
+            isCombo: z.boolean().optional(),
+            comboItems: z.array(z.any()).optional()
+        }).passthrough(); // Aceita campos extras legados
+
+        const SaleSchema = z.object({
+            id: z.string(),
+            fullId: z.string().optional(),
+            clientId: z.string(),
+            items: z.array(SaleItemSchema),
+            subTotal: z.number(),
+            discount: z.number(),
+            total: z.number(),
+            payMethod: z.string(),
+            changeFor: z.any().optional(),
+            obs: z.string().optional().or(z.literal('')),
+            date: z.string(),
+            status: z.string(),
+            printedLabel: z.boolean().optional(),
+            printedList: z.boolean().optional(),
+            volumes: z.number().optional(),
+            routeId: z.any().optional()
+        });
+
+        const BackupSchema = z.object({
+            version: z.string().optional(),
+            exportedAt: z.string().optional(),
+            clients: z.array(ClientSchema).optional(),
+            products: z.array(ProductSchema).optional(),
+            sales: z.array(SaleSchema).optional(),
+            companyPhone: z.string().optional()
+        });
+
+        // --- FIM DOS SCHEMAS ---
 
         const generateId = () => Math.random().toString(36).substr(2, 9);
 
-        // Gera ID sequencial diário (01-99)
         const generateDailyId = (sales) => {
             const today = new Date().toISOString().slice(0, 10);
             const todaysSales = sales.filter(s => s.date.startsWith(today));
@@ -136,7 +212,6 @@
           const [saleToEdit, setSaleToEdit] = useState(null);
           const [backupType, setBackupType] = useState('all'); 
 
-          // Lógica robusta para detectar link do entregador
           useEffect(() => {
             const checkHash = () => {
                 const hash = window.location.hash;
@@ -154,17 +229,13 @@
                     if (viewMode === 'driver') setViewMode('dashboard');
                 }
             };
-
-            // Checa ao carregar
             checkHash();
-
-            // Checa se a URL mudar na mesma janela
             window.addEventListener('hashchange', checkHash);
             return () => window.removeEventListener('hashchange', checkHash);
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '3.9', exportedAt: new Date() };
+            let data = { version: '4.0', exportedAt: new Date().toISOString() };
             let filename = 'backup';
 
             if (backupType === 'all') {
@@ -186,25 +257,40 @@
             a.click();
           };
 
+          // --- IMPORTAÇÃO SEGURA COM ZOD ---
           const handleRestore = (e) => {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
+            
             reader.onload = (event) => {
               try {
-                const data = JSON.parse(event.target.result);
-                const confirmMsg = "ATENÇÃO: A importação irá SOBRESCREVER os dados existentes do tipo importado. Continuar?";
+                const rawData = JSON.parse(event.target.result);
+                
+                // Validação de Integridade
+                const result = BackupSchema.safeParse(rawData);
+
+                if (!result.success) {
+                    console.error("Erros de validação:", result.error.format());
+                    const errorMsg = result.error.issues.map(i => `${i.path.join('.')}: ${i.message}`).slice(0, 3).join('\n');
+                    alert(`FALHA DE INTEGRIDADE (ZOD):\nO arquivo contém dados inválidos e foi rejeitado para proteger o sistema.\n\n${errorMsg}...`);
+                    return;
+                }
+
+                const data = result.data;
+                const confirmMsg = "SEGURANÇA: Dados validados com sucesso.\nA importação irá SOBRESCREVER os dados locais. Continuar?";
                 
                 if (confirm(confirmMsg)) {
                   let msg = "Importado com sucesso:\n";
-                  if (data.clients) { setClients(data.clients); msg += "- Clientes\n"; }
-                  if (data.products) { setProducts(data.products); msg += "- Produtos\n"; }
-                  if (data.sales) { setSales(data.sales); msg += "- Vendas\n"; }
+                  if (data.clients) { setClients(data.clients); msg += `- ${data.clients.length} Clientes\n`; }
+                  if (data.products) { setProducts(data.products); msg += `- ${data.products.length} Produtos\n`; }
+                  if (data.sales) { setSales(data.sales); msg += `- ${data.sales.length} Vendas\n`; }
                   if (data.companyPhone) setCompanyPhone(data.companyPhone);
                   alert(msg);
                 }
               } catch (err) {
-                alert("Erro ao ler backup.");
+                console.error(err);
+                alert("ERRO CRÍTICO: Não foi possível ler o arquivo JSON.");
               }
             };
             reader.readAsText(file);
@@ -222,7 +308,7 @@
               <header className="bg-slate-900 text-white p-2 flex justify-between items-center shadow-lg z-20 shrink-0 h-14 relative">
                 <div className="flex items-center gap-2">
                   <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold">LOG</div>
-                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V3.9</h1>
+                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V4.0 <span className="text-[10px] text-emerald-400 opacity-80 font-normal border border-emerald-500 rounded px-1 ml-1">SECURE</span></h1>
                 </div>
                 <div className="flex gap-2 items-center">
                    <div className="flex items-center gap-1 bg-slate-800 p-1 rounded border border-slate-700">
@@ -235,7 +321,7 @@
                       />
                    </div>
                   <label className="flex items-center gap-1 bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded cursor-pointer text-xs transition border border-slate-600">
-                    <Upload size={14} /> <span className="hidden sm:inline">Importar</span>
+                    <ShieldCheck size={14} className="text-emerald-400" /> <span className="hidden sm:inline">Importar Seguro</span>
                     <input type="file" className="hidden" accept=".json" onChange={handleRestore} />
                   </label>
                   
@@ -312,14 +398,11 @@
           </div>
         );
 
-        /* * DRIVER VIEW COMPONENT (App Entregador v2)
-         * - Botões de ação rápida
-         * - Notificação automática para a central
-         */
+        /* * DRIVER VIEW COMPONENT (App Entregador v2) */
         function DriverView({ data, onExit }) {
           const [deliveryModal, setDeliveryModal] = useState(null); 
-          const [filter, setFilter] = useState('Todas'); // Estado para os chips de filtro
-          const [completedIds, setCompletedIds] = useState([]); // Rastreia entregas feitas na sessão
+          const [filter, setFilter] = useState('Todas'); 
+          const [completedIds, setCompletedIds] = useState([]); 
 
           if (!data) return <div className="p-4 text-center">Dados inválidos ou expirados.</div>;
 
@@ -330,17 +413,14 @@
              window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
           };
 
-          // Extrair regiões únicas para os chips
           const uniqueRegions = [...new Set(data.orders.map(o => o.region || 'Geral').filter(Boolean))];
           const regions = ['Todas', ...uniqueRegions];
           const showChips = uniqueRegions.length > 1;
 
-          // Filtrar pedidos
           const filteredOrders = filter === 'Todas' 
             ? data.orders 
             : data.orders.filter(o => (o.region || 'Geral') === filter);
 
-          // Ordenar: Pendentes primeiro, Concluídos por último
           const visibleOrders = [...filteredOrders].sort((a, b) => {
              const aDone = completedIds.includes(a.id);
              const bDone = completedIds.includes(b.id);
@@ -352,9 +432,8 @@
             if (!deliveryModal) return;
             const order = deliveryModal;
             const clientPhone = order.phone.replace(/\D/g, '');
-            const clientName = order.customer.split(' ')[0]; // Primeiro nome
+            const clientName = order.customer.split(' ')[0]; 
 
-            // Gerador de links para o cliente
             const genLink = (msg) => `https://wa.me/55${clientPhone}?text=${encodeURIComponent(msg)}`;
 
             const msg1 = `Olá ${clientName}! Muito obrigado pela preferência. Esperamos que goste da sua cesta! 🧺✨`;
@@ -362,7 +441,6 @@
             const msg3 = `Entre no nosso Grupo VIP de Descontos para ofertas exclusivas! 🚀 https://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1`;
             const msg4 = `Acompanhe nossas novidades no Instagram! 📸 https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/`;
 
-            // Mensagem para o Gestor (Central)
             const msg = `✅ *ENTREGA REALIZADA*\n\n` +
                         `🆔 Pedido: #${order.id}\n` +
                         `👤 Cliente: ${order.customer}\n` +
@@ -377,7 +455,6 @@
 
             window.open(`https://wa.me/55${companyPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             
-            // Marca como concluído e joga pro final
             setCompletedIds(prev => [...prev, order.id]);
             setDeliveryModal(null);
           };
@@ -393,7 +470,6 @@
                     <button onClick={onExit} className="text-xs bg-indigo-800 px-2 py-1 rounded hover:bg-indigo-900 transition">Sair</button>
                  </div>
                  
-                 {/* CHIPS DE FILTRO (Só aparece se tiver > 1 região diferente) */}
                  {showChips && (
                      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin mb-1">
                         {regions.map(r => (
@@ -425,7 +501,6 @@
 
                     return (
                         <div key={order.id} className={`rounded-lg shadow-sm border overflow-hidden relative transition-all duration-500 ${isDelivered ? 'bg-gray-100 border-gray-200 opacity-75' : 'bg-white'}`}>
-                        {/* Overlay de Entregue */}
                         {isDelivered && (
                             <div className="absolute top-2 right-2 z-20">
                                 <span className="bg-green-600 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
@@ -446,7 +521,6 @@
                                 {order.address}, {order.district}
                             </p>
 
-                            {/* 1. OBS DO CLIENTE (Prioridade) */}
                             {order.clientObs && !isDelivered && (
                                 <div className="mb-4 bg-purple-50 p-3 rounded-lg border-l-4 border-purple-500 text-purple-900 shadow-sm">
                                     <p className="text-xs font-bold uppercase mb-1">⚠️ Obs do Cadastro:</p>
@@ -454,22 +528,18 @@
                                 </div>
                             )}
 
-                            {/* 2. PAINEL DE BOTÕES (GRID 3 COLUNAS) */}
                             <div className="grid grid-cols-3 gap-2 mb-4">
-                                {/* Ligar */}
                                 <a href={`tel:${order.phone}`} className="flex flex-col items-center justify-center bg-gray-100 py-3 rounded hover:bg-gray-200 active:scale-95 transition">
                                     <Phone size={20} className="text-gray-700 mb-1"/>
                                     <span className="text-[10px] font-bold text-gray-600">LIGAR</span>
                                 </a>
 
-                                {/* 10 Min - Personalizado */}
                                 <button onClick={() => sendToCustomer(order.phone, `Olá ${clientFirstName}! Sua entrega chega em aproximadamente 10 minutos. 🚚`)} 
                                     className="flex flex-col items-center justify-center bg-blue-50 py-3 rounded hover:bg-blue-100 active:scale-95 transition">
                                     <Clock size={20} className="text-blue-600 mb-1"/>
                                     <span className="text-[10px] font-bold text-blue-700">10 MIN</span>
                                 </button>
 
-                                {/* Cheguei - Personalizado */}
                                 <button onClick={() => sendToCustomer(order.phone, `Olá ${clientFirstName}! O entregador chegou e está aguardando. 🏠`)}
                                     className="flex flex-col items-center justify-center bg-yellow-50 py-3 rounded hover:bg-yellow-100 active:scale-95 transition">
                                     <Home size={20} className="text-yellow-600 mb-1"/>
@@ -893,12 +963,10 @@
             
             const itemsToAdd = [];
             for(let i=0; i<qty; i++) {
-               // Clone profundo para combos
                const cartItem = { 
                    ...product, 
                    tempId: generateId(), 
                    originalPrice: product.price,
-                   // Se for combo, trazemos uma cópia dos itens para poder editar
                    comboItems: product.isCombo ? product.comboItems.map(ci => ({...ci})) : []
                };
                itemsToAdd.push(cartItem);
@@ -920,7 +988,6 @@
           const updateComboItemQty = (cartItemTempId, subItemId, newQty) => {
              setCart(cart.map(item => {
                 if (item.tempId !== cartItemTempId) return item;
-                // Atualiza a qtde do item dentro do combo na cesta
                 return {
                     ...item,
                     comboItems: item.comboItems.map(sub => sub.id === subItemId ? {...sub, qty: newQty} : sub)
@@ -940,7 +1007,6 @@
               const dbProd = newProducts.find(p => p.id === cartItem.id);
               if (dbProd) {
                 if (dbProd.isCombo) {
-                  // Baixa estoque baseado na configuração DO CARRINHO (editada)
                   cartItem.comboItems?.forEach(ing => {
                      const dbIng = newProducts.find(p => p.id === ing.id);
                      if (dbIng) {
@@ -956,12 +1022,11 @@
             });
             setProducts(newProducts);
             
-            // Gera ID curto diário
             const shortId = generateDailyId(sales);
 
             const newSale = {
-              id: shortId, // Novo ID curto
-              fullId: generateId(), // ID único interno
+              id: shortId, 
+              fullId: generateId(), 
               clientId: selectedClient,
               items: cart,
               subTotal,
@@ -974,7 +1039,7 @@
               status: 'Pendente',
               printedLabel: false,
               printedList: false,
-              volumes: volumes, // Salva qtde volumes
+              volumes: volumes, 
               routeId: null
             };
 
@@ -1117,7 +1182,6 @@
                                 <Trash2 size={12} className="text-red-400 cursor-pointer hover:text-red-600" onClick={() => removeFromCart(item.tempId)} />
                              </div>
                           </div>
-                          {/* Área de Edição de Combo */}
                           {item.isCombo && (
                              <div className="mt-1 bg-yellow-50 p-1 rounded text-[10px] space-y-1 border border-yellow-100">
                                 {item.comboItems.map(ci => {
@@ -1181,7 +1245,6 @@
                 </div>
               )}
 
-              {/* Batch Import Modal */}
               {showBatchModal && (
                 <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center p-4">
                   <div className="bg-white p-4 rounded shadow-lg flex flex-col gap-2 w-72">
@@ -1219,7 +1282,6 @@
               const dbProd = newProducts.find(p => p.id === item.id);
               if (dbProd) {
                 if (dbProd.isCombo) {
-                   // Devolve estoque baseado no que foi salvo na venda (item.comboItems pode ter sido editado)
                    item.comboItems?.forEach(ing => {
                      const dbIng = newProducts.find(p => p.id === ing.id);
                      if (dbIng) {
@@ -1252,7 +1314,6 @@
           const printLabel = (sale, client) => {
             const volCount = sale.volumes || 1;
             
-            // Gerar múltiplas etiquetas se > 1 volume
             let labelsHtml = '';
             for (let i = 1; i <= volCount; i++) {
                 labelsHtml += `
@@ -1293,7 +1354,7 @@
                         display: flex;
                         flex-direction: column;
                         page-break-after: always;
-                        border: 1px solid #ddd; /* Visual apenas na tela, some no papel */
+                        border: 1px solid #ddd;
                     }
                     .header {
                         display: flex;
@@ -1336,20 +1397,16 @@
               </body>
               </html>
             `);
-            // REMOVIDO: w.document.close(); O usuário deve fechar a janela manualmente.
-            // w.document.close() é importante para terminar o stream, mas o window.close() do script foi removido.
             w.document.close(); 
           };
 
           const printPickingList = (sale, client) => {
             const w = window.open('', '', 'width=400,height=600');
             
-            // Monta lista de itens, explodindo combos
             let itemsHtml = '';
             sale.items.forEach(item => {
                 if (item.isCombo) {
                     itemsHtml += `<li class="combo-title">${item.name}</li>`;
-                    // Lista os componentes salvos na venda
                     item.comboItems.forEach(ci => {
                         const prodRef = products.find(p => p.id === ci.id);
                         if (ci.qty > 0) {
@@ -1481,7 +1538,6 @@
           const generateDriverLink = () => {
             if (routeSales.length === 0) return alert("Nada para entregar!");
             
-            // Otimizando payload para reduzir tamanho da URL
             const payload = {
               route: selectedRoute,
               companyPhone, 
@@ -1508,12 +1564,10 @@
             const encoded = encodeURIComponent(btoa(JSON.stringify(payload)));
             const link = `${window.location.origin}${window.location.pathname}#driver=${encoded}`;
             
-            // Tenta usar a API moderna de clipboard
             if (navigator.clipboard && window.isSecureContext) {
                 navigator.clipboard.writeText(link).then(() => {
                     alert("LINK COPIADO! Envie para o entregador.");
                 }).catch(() => {
-                    // Fallback
                     copyToClipboardFallback(link);
                 });
             } else {
