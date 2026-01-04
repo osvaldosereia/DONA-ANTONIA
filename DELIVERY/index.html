@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v3.3 (Tela Única)</title>
+    <title>Sistema Logística Local-First v3.4</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,7 +72,7 @@
           Minus, CheckCircle, Search, Navigation, Edit2, 
           ArrowUp, ArrowDown, History, MessageCircle, XCircle,
           AlertTriangle, FileText, Banknote, List, Tag, Percent, 
-          Calendar, Filter, Phone
+          Calendar, Filter, Phone, Database
         } from 'lucide-react';
 
         const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -126,6 +126,9 @@
           
           // State global para edição de venda
           const [saleToEdit, setSaleToEdit] = useState(null);
+          
+          // Backup Type State
+          const [backupType, setBackupType] = useState('all'); // all, clients, products
 
           useEffect(() => {
             const hash = window.location.hash;
@@ -142,12 +145,25 @@
           }, []);
 
           const handleBackup = () => {
-            const data = { clients, products, sales, companyPhone, version: '3.3', exportedAt: new Date() };
+            let data = { version: '3.4', exportedAt: new Date() };
+            let filename = 'backup';
+
+            if (backupType === 'all') {
+                data = { ...data, clients, products, sales, companyPhone };
+                filename = 'backup_completo';
+            } else if (backupType === 'clients') {
+                data = { ...data, clients };
+                filename = 'backup_clientes';
+            } else if (backupType === 'products') {
+                data = { ...data, products };
+                filename = 'backup_produtos';
+            }
+
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `backup_logistica_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `${filename}_${new Date().toISOString().slice(0,10)}.json`;
             a.click();
           };
 
@@ -158,11 +174,15 @@
             reader.onload = (event) => {
               try {
                 const data = JSON.parse(event.target.result);
-                if (confirm("ATENÇÃO: Isso substituirá todos os dados atuais. Continuar?")) {
-                  setClients(data.clients || []);
-                  setProducts(data.products || []);
-                  setSales(data.sales || []);
-                  setCompanyPhone(data.companyPhone || '65998150975');
+                const confirmMsg = "ATENÇÃO: A importação irá SOBRESCREVER os dados existentes do tipo importado. Continuar?";
+                
+                if (confirm(confirmMsg)) {
+                  let msg = "Importado com sucesso:\n";
+                  if (data.clients) { setClients(data.clients); msg += "- Clientes\n"; }
+                  if (data.products) { setProducts(data.products); msg += "- Produtos\n"; }
+                  if (data.sales) { setSales(data.sales); msg += "- Vendas\n"; }
+                  if (data.companyPhone) setCompanyPhone(data.companyPhone);
+                  alert(msg);
                 }
               } catch (err) {
                 alert("Erro ao ler backup.");
@@ -183,7 +203,7 @@
               <header className="bg-slate-900 text-white p-2 flex justify-between items-center shadow-lg z-20 shrink-0 h-14 relative">
                 <div className="flex items-center gap-2">
                   <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold">LOG</div>
-                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V3.3</h1>
+                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V3.4</h1>
                 </div>
                 <div className="flex gap-2 items-center">
                    <div className="flex items-center gap-1 bg-slate-800 p-1 rounded border border-slate-700">
@@ -199,9 +219,22 @@
                     <Upload size={14} /> <span className="hidden sm:inline">Importar</span>
                     <input type="file" className="hidden" accept=".json" onChange={handleRestore} />
                   </label>
-                  <button onClick={handleBackup} className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 rounded text-xs transition border border-emerald-400 font-bold shadow-sm">
-                    <Download size={14} /> <span className="hidden sm:inline">Backup</span>
-                  </button>
+                  
+                  <div className="flex items-center bg-emerald-700 rounded border border-emerald-500 overflow-hidden">
+                      <select 
+                        className="bg-emerald-700 text-white text-xs p-1.5 outline-none font-bold cursor-pointer hover:bg-emerald-600"
+                        value={backupType}
+                        onChange={(e) => setBackupType(e.target.value)}
+                        title="Tipo de Backup"
+                      >
+                          <option value="all">Exportar: Geral</option>
+                          <option value="clients">Exportar: Clientes</option>
+                          <option value="products">Exportar: Produtos</option>
+                      </select>
+                      <button onClick={handleBackup} className="bg-emerald-600 hover:bg-emerald-500 px-3 py-1.5 text-xs transition font-bold border-l border-emerald-500 h-full flex items-center">
+                        <Download size={14} />
+                      </button>
+                  </div>
                 </div>
               </header>
 
@@ -269,8 +302,9 @@
           const [editingProductId, setEditingProductId] = useState(null);
           const [searchClient, setSearchClient] = useState('');
 
-          const [cForm, setCForm] = useState({ name: '', code: '', phone: '', address: '', city: 'Cuiabá', district: '', region: 'CBA', mapLink: '', photoLink: '', obs: '' });
-          const [pForm, setPForm] = useState({ name: '', internalCode: '', category: 'geral', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] });
+          const [cForm, setCForm] = useState({ name: '', code: '', phone: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' });
+          // Default category updated to one of the new ones
+          const [pForm, setPForm] = useState({ name: '', internalCode: '', category: 'ALIMENTOS', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] });
           
           const [stockModal, setStockModal] = useState(null); 
           const [historyModal, setHistoryModal] = useState(null);
@@ -292,7 +326,7 @@
               setClients([...clients, { ...cForm, id: generateId(), code: newCode }]);
               alert(`Cliente Cadastrado! Código: ${newCode}`);
             }
-            setCForm({ name: '', code: '', phone: '', address: '', city: 'Cuiabá', district: '', region: 'CBA', mapLink: '', photoLink: '', obs: '' });
+            setCForm({ name: '', code: '', phone: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' });
           };
 
           const deleteClient = (id) => {
@@ -322,7 +356,7 @@
               setProducts([...products, newProd]);
               alert('Produto Cadastrado!');
             }
-            setPForm({ name: '', internalCode: '', category: 'geral', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] });
+            setPForm({ name: '', internalCode: '', category: 'ALIMENTOS', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] });
           };
 
           const deleteProduct = (id) => {
@@ -370,23 +404,23 @@
                     <div className="flex gap-1">
                        <input className="input-field w-1/2" placeholder="Bairro" value={cForm.district} onChange={e => setCForm({...cForm, district: e.target.value})} />
                        <select className="input-field w-1/2" value={cForm.city} onChange={e => setCForm({...cForm, city: e.target.value})}>
-                         <option value="Cuiabá">Cuiabá</option>
-                         <option value="Várzea Grande">Várzea Grande</option>
+                         <option value="CUIABÁ">Cuiabá</option>
+                         <option value="VARZEA GRANDE">Várzea Grande</option>
                        </select>
                     </div>
                     <div className="flex gap-1">
                        <select className="input-field w-1/3" value={cForm.region} onChange={e => setCForm({...cForm, region: e.target.value})}>
-                          <option value="CBA">CBA (Geral)</option>
-                          <option value="CX">CX (Caixa)</option>
-                          <option value="VG">VG (Várzea)</option>
-                          <option value="CPA">CPA (Região)</option>
+                          <option value="CUIABÁ">CUIABÁ (Centro/Geral)</option>
+                          <option value="COXIPO">COXIPO</option>
+                          <option value="VARZEA GRANDE">VARZEA GRANDE</option>
+                          <option value="CPA">CPA</option>
                        </select>
                        <input className="input-field w-2/3" placeholder="Link Maps" value={cForm.mapLink} onChange={e => setCForm({...cForm, mapLink: e.target.value})} />
                     </div>
                     <input className="input-field" placeholder="Observação (Ex: Casa de Esquina, Cuidado Cão)" value={cForm.obs} onChange={e => setCForm({...cForm, obs: e.target.value})} />
                     
                     <div className="flex gap-2">
-                      {editingClientId && <button onClick={() => {setEditingClientId(null); setCForm({ name: '', code: '', phone: '', address: '', city: 'Cuiabá', district: '', region: 'CBA', mapLink: '', photoLink: '', obs: '' })}} className="w-1/3 bg-gray-400 text-white rounded text-xs font-bold">CANCELAR</button>}
+                      {editingClientId && <button onClick={() => {setEditingClientId(null); setCForm({ name: '', code: '', phone: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' })}} className="w-1/3 bg-gray-400 text-white rounded text-xs font-bold">CANCELAR</button>}
                       <button onClick={saveClient} className="btn-primary flex-1">{editingClientId ? 'SALVAR ALTERAÇÕES' : 'CADASTRAR'}</button>
                     </div>
                   </div>
@@ -426,11 +460,10 @@
                     </div>
                     <div className="flex gap-1">
                        <select className="input-field w-1/2" value={pForm.category} onChange={e => setPForm({...pForm, category: e.target.value})}>
-                          <option value="geral">Geral</option>
-                          <option value="bebida">Bebida</option>
-                          <option value="lanche">Lanche</option>
-                          <option value="sobremesa">Sobremesa</option>
-                          <option value="combo">Combo</option>
+                          <option value="CESTAS BÁSICAS">CESTAS BÁSICAS</option>
+                          <option value="ALIMENTOS">ALIMENTOS</option>
+                          <option value="LIMPEZA">LIMPEZA</option>
+                          <option value="HIGIENE">HIGIENE</option>
                        </select>
                        <input className="input-field w-1/2" placeholder="NCM" value={pForm.ncm} onChange={e => setPForm({...pForm, ncm: e.target.value})} />
                     </div>
@@ -469,7 +502,7 @@
                       </div>
                     )}
                     <div className="flex gap-2">
-                      {editingProductId && <button onClick={() => {setEditingProductId(null); setPForm({ name: '', internalCode: '', category: 'geral', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] })}} className="w-1/3 bg-gray-400 text-white rounded text-xs font-bold">CANCELAR</button>}
+                      {editingProductId && <button onClick={() => {setEditingProductId(null); setPForm({ name: '', internalCode: '', category: 'ALIMENTOS', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] })}} className="w-1/3 bg-gray-400 text-white rounded text-xs font-bold">CANCELAR</button>}
                       <button onClick={saveProduct} className="btn-primary flex-1">{editingProductId ? 'SALVAR ALTERAÇÕES' : 'CADASTRAR'}</button>
                     </div>
                   </div>
@@ -549,10 +582,8 @@
           const [discount, setDiscount] = useState('');
           const [editingItem, setEditingItem] = useState(null); 
           
-          // Quantidade temporária para adicionar
           const [tempQty, setTempQty] = useState({}); 
 
-          // Efeito para carregar venda para edição
           useEffect(() => {
             if (saleToEdit) {
               const client = clients.find(c => c.id === saleToEdit.clientId);
@@ -565,9 +596,6 @@
               setObs(saleToEdit.obs);
               setPayMethod(saleToEdit.payMethod);
               if (saleToEdit.changeFor) setChangeFor(saleToEdit.changeFor);
-              
-              // Remove a venda original do estado e reverte estoque (já que é edição)
-              // Nota: A lógica de reverter estoque já foi feita no componente ExpeditionPanel antes de chamar setSaleToEdit.
               setSaleToEdit(null); 
             }
           }, [saleToEdit, clients]);
@@ -590,7 +618,7 @@
                itemsToAdd.push({ ...product, tempId: generateId(), originalPrice: product.price });
             }
             setCart([...cart, ...itemsToAdd]);
-            setTempQty({...tempQty, [product.id]: 1}); // Reset qty
+            setTempQty({...tempQty, [product.id]: 1}); 
           };
 
           const removeFromCart = (tempId) => {
@@ -649,7 +677,6 @@
 
             setSales([...sales, newSale]);
             
-            // Reset
             setCart([]);
             setSelectedClient('');
             setClientSearch('');
@@ -793,7 +820,6 @@
             setSales(sales.map(s => s.id === saleId ? { ...s, [field]: !s[field] } : s));
           };
 
-          // Reverter estoque
           const returnStock = (sale) => {
              const newProducts = [...products];
              sale.items.forEach(item => {
@@ -900,7 +926,6 @@
                         </button>
                      </div>
                      
-                     {/* Checkboxes manuais para controle visual sem abrir popup */}
                      <div className="flex gap-4 text-[10px] text-gray-500 mb-2 justify-center">
                         <label className="flex items-center gap-1"><input type="checkbox" checked={sale.printedLabel} onChange={() => togglePrint(sale.id, 'printedLabel')} /> Já imprimi etiqueta</label>
                         <label className="flex items-center gap-1"><input type="checkbox" checked={sale.printedList} onChange={() => togglePrint(sale.id, 'printedList')} /> Já imprimi lista</label>
