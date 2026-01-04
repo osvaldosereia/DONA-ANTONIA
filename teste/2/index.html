@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo PDV - Caixa (Local-First)</title>
+    
+    <!-- 1. TAILWIND CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- 2. ESTILOS EXTRAS -->
+    <style>
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #f1f1f1; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        
+        .input-field {
+            width: 100%;
+            padding: 0.6rem; 
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.9rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 1px #3b82f6;
+        }
+        
+        /* Animações */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.3s ease-out; }
+    </style>
+
+    <!-- 3. IMPORTMAP REACT + ZOD -->
+    <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1",
+        "zod": "https://esm.sh/zod@3.22.4"
+      }
+    }
+    </script>
+    
+    <!-- 4. BABEL -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans h-full overflow-hidden">
+    
+    <div id="root" class="h-full"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useEffect, useMemo } from 'react';
+        import { createRoot } from 'react-dom/client';
+        import { 
+          ShoppingCart, Search, Plus, Minus, Trash2, XCircle, 
+          CreditCard, DollarSign, Share2, Wallet, User, MapPin, 
+          Menu, X, Save, Box, AlertTriangle, CheckCircle, Package
+        } from 'lucide-react';
+
+        // --- UTILITÁRIOS ---
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+        
+        const generateDailyId = (sales) => {
+            const today = new Date().toISOString().slice(0, 10);
+            const todaysSales = sales.filter(s => s.date.startsWith(today));
+            const count = todaysSales.length + 1;
+            return count > 99 ? count.toString() : count.toString().padStart(2, '0');
+        };
+
+        const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+
+        const useStickyState = (key, defaultValue) => {
+          const [value, setValue] = useState(() => {
+            const stickyValue = window.localStorage.getItem(key);
+            return stickyValue !== null ? JSON.parse(stickyValue) : defaultValue;
+          });
+          useEffect(() => {
+            window.localStorage.setItem(key, JSON.stringify(value));
+          }, [key, value]);
+          return [value, setValue];
+        };
+
+        // --- APP PRINCIPAL ---
+        function App() {
+          // COMPATIBILIDADE: Mesmas chaves do sistema principal
+          const [clients] = useStickyState('db_clients_v3', []);
+          const [products, setProducts] = useStickyState('db_products_v3', []);
+          const [sales, setSales] = useStickyState('db_sales_v3', []);
+          
+          const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+          return (
+            <div className="flex flex-col lg:flex-row h-screen bg-gray-100 font-sans text-gray-800 overflow-hidden">
+                {/* MOBILE HEADER */}
+                <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0 z-50 shadow-md">
+                    <div className="flex items-center gap-2">
+                        <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold text-xs">PDV</div>
+                        <h1 className="font-bold tracking-wider">CAIXA</h1>
+                    </div>
+                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 bg-slate-800 rounded">
+                        {mobileMenuOpen ? <X size={20}/> : <Menu size={20}/>}
+                    </button>
+                </div>
+
+                {/* SIDEBAR (Reduzida) */}
+                <aside className={`fixed inset-y-0 left-0 bg-slate-900 text-white flex flex-col transition-transform duration-300 z-40 w-64 lg:static lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
+                    <div className="h-16 hidden lg:flex items-center justify-start px-6 border-b border-slate-800">
+                        <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">PDV</div>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">CAIXA <span className="text-gray-400 text-xs font-normal ml-1">v2.0</span></h1>
+                    </div>
+                    <nav className="flex-1 py-4 space-y-1 overflow-y-auto mt-16 lg:mt-0">
+                        <div className="w-full flex items-center justify-start gap-3 p-3 lg:px-6 bg-slate-800 text-white border-r-4 border-yellow-500">
+                            <ShoppingCart size={20}/>
+                            <span className="font-medium text-sm">Ponto de Venda</span>
+                        </div>
+                    </nav>
+                    <div className="p-4 border-t border-slate-800 text-xs text-slate-500 text-center">
+                        Módulo Isolado<br/>Compatível com Base Central
+                    </div>
+                </aside>
+                
+                {/* MAIN CONTENT AREA */}
+                <main className="flex-1 flex flex-col min-w-0 bg-gray-50 h-full overflow-hidden relative">
+                    <header className="h-16 bg-white border-b hidden lg:flex items-center justify-between px-6 shrink-0 shadow-sm z-20">
+                        <div><h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">Frente de Caixa</h2></div>
+                        <div className="flex items-center gap-2">
+                             <span className="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">{products.length} Produtos</span>
+                             <span className="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">{clients.length} Clientes</span>
+                        </div>
+                    </header>
+                    
+                    <div className="flex-1 overflow-hidden relative bg-gray-50">
+                        <POSView 
+                            clients={clients} 
+                            products={products} 
+                            setProducts={setProducts} 
+                            sales={sales} 
+                            setSales={setSales} 
+                        />
+                    </div>
+                </main>
+                
+                {mobileMenuOpen && <div className="fixed inset-0 bg-black/50 z-30 lg:hidden" onClick={() => setMobileMenuOpen(false)}></div>}
+            </div>
+          );
+        }
+
+        // --- COMPONENTE POS (Lógica Principal) ---
+        function POSView({ clients, products, setProducts, sales, setSales }) {
+             // Estados do Carrinho e Venda
+             const [selectedClient, setSelectedClient] = useState('');
+             const [clientSearch, setClientSearch] = useState('');
+             const [cart, setCart] = useState([]);
+             
+             // Estados do Formulário
+             const [saleRegion, setSaleRegion] = useState('');
+             const [isPaid, setIsPaid] = useState(false);
+             const [gift, setGift] = useState('Nenhum');
+             const [discount, setDiscount] = useState(0);
+             const [payMethod, setPayMethod] = useState('Pix');
+             const [changeFor, setChangeFor] = useState(''); 
+             const [obs, setObs] = useState(''); 
+             const [volumes, setVolumes] = useState(1);
+             
+             // Estados de Busca e UI
+             const [searchProd, setSearchProd] = useState('');
+             const [selectedCategory, setSelectedCategory] = useState('todas');
+             const [editingItem, setEditingItem] = useState(null);
+             
+             // Cashback
+             const [useCashback, setUseCashback] = useState(false);
+             const [cashbackVal, setCashbackVal] = useState(0);
+
+             // Ordenação inteligente: Produtos mais vendidos primeiro
+             const productSalesCount = useMemo(() => {
+                 const counts = {};
+                 sales.forEach(s => {
+                     s.items.forEach(i => {
+                         counts[i.name] = (counts[i.name] || 0) + (i.qty || 1);
+                     });
+                 });
+                 return counts;
+             }, [sales]);
+
+             const sortedProducts = useMemo(() => {
+                 return [...products].sort((a, b) => {
+                     const soldA = productSalesCount[a.name] || 0;
+                     const soldB = productSalesCount[b.name] || 0;
+                     if (soldB !== soldA) return soldB - soldA; 
+                     return a.name.localeCompare(b.name);
+                 });
+             }, [products, productSalesCount]);
+
+             const filteredProducts = sortedProducts.filter(p => (selectedCategory === 'todas' || p.category === selectedCategory) && p.name.toLowerCase().includes(searchProd.toLowerCase()));
+             const categories = ['todas', ...new Set(products.map(p => p.category))];
+
+             // Cálculos de Totais
+             const subTotal = useMemo(() => cart.reduce((acc, item) => acc + Number(item.price), 0), [cart]);
+             const totalFinal = Math.max(0, subTotal - discount - (useCashback ? cashbackVal : 0));
+
+             // Funções de Carrinho
+             const addToCart = (product) => {
+                if (!product.isCombo && product.stock <= 0) {
+                  if (!confirm(`Estoque Zerado. Adicionar mesmo assim?`)) return;
+                } else if (!product.isCombo && product.stock < 5) {
+                   // Apenas aviso visual, não bloqueia
+                }
+
+                // Cria item do carrinho
+                const cartItem = { 
+                    ...product, 
+                    tempId: generateId(), 
+                    originalPrice: product.price,
+                    // Se for combo, prepara os sub-itens para baixa de estoque
+                    comboItems: product.isCombo ? product.comboItems.map(ci => {
+                        const subProd = products.find(p => p.id === ci.id);
+                        // Distribuição proporcional de preço (opcional, para relatórios futuros)
+                        return { ...ci, internalPrice: 0 }; 
+                    }) : []
+                };
+                setCart([...cart, cartItem]);
+             };
+
+             const removeFromCart = (tempId) => {
+                 setCart(cart.filter(item => item.tempId !== tempId));
+             };
+
+             const handleDiscountChange = (val) => {
+                 const d = parseFloat(val);
+                 if (!isNaN(d)) setDiscount(d);
+             };
+             
+             const handleManualTotalChange = (val) => {
+                 const target = parseFloat(val);
+                 if (!isNaN(target)) {
+                     const currentCb = useCashback ? cashbackVal : 0;
+                     const newDiscount = Math.max(0, subTotal - target - currentCb);
+                     setDiscount(newDiscount);
+                 }
+             };
+
+             const updateCartItemPrice = () => {
+                if (!editingItem) return;
+                const newCart = cart.map(i => i.tempId === editingItem.tempId ? { ...i, price: parseFloat(editingItem.price) } : i);
+                setCart(newCart);
+                setEditingItem(null);
+             };
+
+             // Seleção de Cliente
+             const handleSelectClient = (c) => {
+                 setSelectedClient(c.id);
+                 setClientSearch(c.name);
+                 setSaleRegion(c.region || '');
+             };
+             
+             const filteredClients = clients.filter(c => c.name.toLowerCase().includes(clientSearch.toLowerCase()));
+
+             // FINALIZAÇÃO DE VENDA (Critical Logic)
+             const finalizeSale = () => {
+                if (!selectedClient) return alert('Selecione um cliente para prosseguir.');
+                if (cart.length === 0) return alert('Carrinho vazio.');
+                
+                // 1. Atualizar Estoque (Imutabilidade garantida)
+                const newProducts = [...products];
+                
+                cart.forEach(cartItem => {
+                  const dbProd = newProducts.find(p => p.id === cartItem.id);
+                  if (dbProd) {
+                    if (dbProd.isCombo) {
+                      // Se for combo, deduz dos ingredientes
+                      cartItem.comboItems?.forEach(ing => {
+                         const dbIng = newProducts.find(p => p.id === ing.id);
+                         if (dbIng) {
+                           dbIng.stock = Math.max(0, dbIng.stock - ing.qty);
+                           if (!dbIng.stockHistory) dbIng.stockHistory = [];
+                           dbIng.stockHistory.push({ date: new Date().toISOString(), type: 'SALE_COMBO', qty: ing.qty, ref: cartItem.name });
+                         }
+                      });
+                    } else {
+                      // Se for produto simples, deduz dele mesmo
+                      dbProd.stock = Number(dbProd.stock) - 1;
+                      if (!dbProd.stockHistory) dbProd.stockHistory = [];
+                      dbProd.stockHistory.push({ date: new Date().toISOString(), type: 'SALE', qty: 1 });
+                    }
+                  }
+                });
+                setProducts(newProducts);
+
+                // 2. Criar Registro de Venda
+                const shortId = generateDailyId(sales);
+                const newSale = {
+                  id: shortId, 
+                  fullId: generateId(), 
+                  clientId: selectedClient, 
+                  items: cart,
+                  subTotal: subTotal, 
+                  discount: discount,
+                  total: totalFinal, 
+                  payMethod, 
+                  changeFor: payMethod === 'Dinheiro' ? changeFor : null, 
+                  obs,
+                  date: new Date().toISOString(), 
+                  status: 'Pendente', // Começa como Pendente para ir para Expedição
+                  printedLabel: false, 
+                  printedList: false, 
+                  volumes: volumes, 
+                  regionOverride: saleRegion, 
+                  gift: gift,
+                  isPaid: isPaid,
+                  cashbackValue: useCashback ? cashbackVal : 0
+                };
+                
+                setSales([...sales, newSale]);
+
+                // 3. Resetar UI
+                setCart([]); setSelectedClient(''); setClientSearch(''); setObs(''); setChangeFor(''); setVolumes(1); 
+                setSaleRegion(''); setIsPaid(false); setGift('Nenhum'); setDiscount(0); setUseCashback(false); setCashbackVal(0);
+                
+                alert(`VENDA #${shortId} REALIZADA COM SUCESSO!`);
+             };
+
+             return (
+                <div className="flex flex-col lg:flex-row min-h-full h-full">
+                    {/* LEFT: PRODUCTS GRID */}
+                    <div className="flex-1 flex flex-col lg:border-r bg-white p-4 h-[500px] lg:h-full overflow-hidden">
+                        {/* Filtros */}
+                        <div className="flex gap-2 lg:gap-4 mb-4 shrink-0">
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-2.5 text-gray-400" size={20}/>
+                                <input 
+                                    className="w-full pl-10 pr-4 py-2 border rounded-lg bg-gray-50 focus:bg-white focus:border-blue-500 outline-none transition" 
+                                    placeholder="Buscar produto..." 
+                                    value={searchProd} 
+                                    onChange={e => setSearchProd(e.target.value)} 
+                                />
+                            </div>
+                            <select 
+                                className="border rounded-lg px-2 lg:px-4 bg-white outline-none focus:border-blue-500 max-w-[100px] lg:max-w-none" 
+                                value={selectedCategory} 
+                                onChange={e => setSelectedCategory(e.target.value)}
+                            >
+                                <option value="todas">Todas</option>
+                                {categories.filter(c=>c!=='todas').map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
+                        </div>
+                        
+                        {/* Lista de Produtos */}
+                        <div className="flex-1 overflow-y-auto scrollbar-thin border rounded-lg">
+                            <table className="w-full text-left border-collapse">
+                                <thead className="bg-gray-100 text-gray-600 text-xs uppercase sticky top-0 z-10 shadow-sm">
+                                    <tr>
+                                        <th className="p-3 border-b">Produto</th>
+                                        <th className="p-3 border-b text-center hidden sm:table-cell">Categ</th>
+                                        <th className="p-3 border-b text-center">Estoque</th>
+                                        <th className="p-3 border-b text-right">Preço</th>
+                                        <th className="p-3 border-b text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm divide-y divide-gray-100">
+                                    {filteredProducts.map(p => (
+                                        <tr key={p.id} className="hover:bg-gray-50 cursor-pointer group transition-colors" onClick={() => addToCart(p)}>
+                                            <td className="p-3">
+                                                <div className="font-bold text-gray-800 leading-tight">{p.name}</div>
+                                                <div className="text-[10px] text-gray-500 flex gap-2 items-center mt-1">
+                                                    {productSalesCount[p.name] > 0 && <span className="bg-orange-100 text-orange-800 px-1.5 py-0.5 rounded font-bold text-[9px] flex items-center shadow-sm">🔥 {productSalesCount[p.name]}</span>}
+                                                    {p.internalCode && <span>Cód: {p.internalCode}</span>}
+                                                    {p.isCombo && <span className="bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded font-bold text-[9px] border border-yellow-200">KIT</span>}
+                                                </div>
+                                            </td>
+                                            <td className="p-3 text-center hidden sm:table-cell"><span className="text-[10px] bg-gray-100 px-2 py-1 rounded-full text-gray-600 border">{p.category}</span></td>
+                                            <td className="p-3 text-center font-bold text-xs">
+                                                <span className={`px-2 py-1 rounded ${p.stock <= 5 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{p.stock}</span>
+                                            </td>
+                                            <td className="p-3 text-right font-bold text-emerald-600 text-base">{formatCurrency(p.price)}</td>
+                                            <td className="p-3 text-center">
+                                                <button className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition shadow-sm active:scale-95"><Plus size={18}/></button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {filteredProducts.length === 0 && (
+                                        <tr><td colSpan="5" className="p-8 text-center text-gray-400">Nenhum produto encontrado.</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* RIGHT: CART & CHECKOUT */}
+                    <div className="w-full lg:w-[450px] flex flex-col bg-gray-50 border-t lg:border-t-0 lg:border-l shadow-xl z-20 shrink-0 h-[50%] lg:h-full">
+                        {/* CLIENTE */}
+                        <div className="p-4 bg-white border-b space-y-3 shadow-sm z-20">
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase mb-1 block flex items-center gap-1"><User size={12}/> Cliente</label>
+                                <div className="relative">
+                                    <input 
+                                        className={`w-full p-3 border rounded-lg outline-none transition font-medium ${selectedClient ? 'bg-green-50 border-green-500 text-green-800' : 'bg-white focus:border-blue-500'}`} 
+                                        placeholder="Buscar Cliente (Nome)..." 
+                                        value={clientSearch} 
+                                        onChange={e => { setClientSearch(e.target.value); setSelectedClient(''); }} 
+                                    />
+                                    {/* Dropdown de Clientes */}
+                                    {clientSearch && !selectedClient && (
+                                        <div className="absolute top-full left-0 w-full bg-white border shadow-xl max-h-60 overflow-y-auto z-50 rounded-b-lg">
+                                            {filteredClients.map(c => (
+                                                <div key={c.id} className="p-3 hover:bg-blue-50 cursor-pointer border-b flex justify-between items-center group" onClick={() => handleSelectClient(c)}>
+                                                    <div>
+                                                        <div className="font-bold text-sm text-gray-800 group-hover:text-blue-700">{c.name}</div>
+                                                        <div className="text-xs text-gray-500">{c.district || 'Sem Bairro'} • {c.city || 'Sem Cidade'}</div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {filteredClients.length === 0 && <div className="p-3 text-xs text-gray-500">Nenhum cliente encontrado.</div>}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            {selectedClient && (
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase mb-1 block flex items-center gap-1"><MapPin size={12}/> Rota / Região</label>
+                                    <select className="w-full border rounded p-2 text-sm bg-gray-50 outline-none focus:bg-white focus:border-blue-500" value={saleRegion} onChange={e => setSaleRegion(e.target.value)}>
+                                        <option value="">Padrão do Cliente</option>
+                                        <option value="CUIABÁ">CUIABÁ (Centro)</option>
+                                        <option value="COXIPO">COXIPO</option>
+                                        <option value="VARZEA GRANDE">VARZEA GRANDE</option>
+                                        <option value="CPA">CPA</option>
+                                    </select>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* CART ITEMS LIST */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-gray-50">
+                            {cart.length === 0 && (
+                                <div className="h-full flex flex-col items-center justify-center text-gray-400 opacity-60">
+                                    <ShoppingCart size={64} strokeWidth={1} className="mb-4"/>
+                                    <p className="font-medium">O carrinho está vazio</p>
+                                    <p className="text-xs">Adicione produtos ao lado</p>
+                                </div>
+                            )}
+                            {cart.map((item, idx) => (
+                                <div key={item.tempId} className="bg-white p-3 rounded-lg border shadow-sm relative group animate-in" style={{animationDelay: `${idx * 0.05}s`}}>
+                                    <div className="flex justify-between items-start mb-1">
+                                        <div className="font-bold text-sm text-gray-800 pr-6 leading-tight">{item.name}</div>
+                                        <button onClick={() => removeFromCart(item.tempId)} className="text-gray-300 hover:text-red-500 absolute top-2 right-2 transition"><XCircle size={18}/></button>
+                                    </div>
+                                    <div className="flex justify-between items-center mt-2">
+                                        <button onClick={() => setEditingItem({tempId: item.tempId, price: item.price})} className="text-sm font-bold text-green-700 hover:bg-green-50 px-2 py-1 rounded transition border border-transparent hover:border-green-200">
+                                            {formatCurrency(item.price)}
+                                        </button>
+                                        <div className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Unitário</div>
+                                    </div>
+                                    {item.isCombo && (
+                                        <div className="mt-2 bg-amber-50 p-2 rounded border border-amber-100">
+                                            <p className="text-[9px] font-bold text-amber-700 uppercase mb-1">Itens do Kit:</p>
+                                            <div className="flex flex-wrap gap-1">
+                                                {item.comboItems.map((ci, i) => (
+                                                    <span key={i} className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-amber-200 text-amber-800">
+                                                        {ci.qty}x {products.find(p => p.id === ci.id)?.name || '?'}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* FOOTER & CHECKOUT */}
+                        <div className="bg-white border-t p-4 shadow-[0_-4px_15px_-3px_rgba(0,0,0,0.1)] z-30">
+                            {/* Totais e Descontos */}
+                            <div className="flex justify-between items-end mb-3">
+                                <div><label className="text-[10px] font-bold text-gray-400 uppercase">Subtotal</label><div className="text-sm text-gray-600 font-medium">{formatCurrency(subTotal)}</div></div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase">Desconto</label>
+                                    <div className="flex items-center border-b border-gray-300 focus-within:border-red-500 transition">
+                                        <span className="text-red-500 text-xs mr-1">-R$</span>
+                                        <input type="number" className="w-16 text-right text-sm outline-none text-red-500 font-bold" value={discount} onChange={e => handleDiscountChange(e.target.value)} />
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* CASHBACK */}
+                            <div className="flex items-center justify-between mb-3 p-2 bg-pink-50 rounded border border-pink-100 hover:border-pink-300 transition">
+                                <label className="flex items-center gap-2 cursor-pointer select-none">
+                                    <input type="checkbox" checked={useCashback} onChange={e => setUseCashback(e.target.checked)} className="w-4 h-4 text-pink-600 rounded focus:ring-pink-500 accent-pink-500" />
+                                    <span className="text-xs font-bold text-pink-800 flex items-center gap-1"><Wallet size={12}/> USAR CASHBACK</span>
+                                </label>
+                                {useCashback && (
+                                    <div className="flex items-center">
+                                        <span className="text-pink-700 text-xs font-bold mr-1">-R$</span>
+                                        <input type="number" className="w-16 border-b border-pink-300 text-right text-sm outline-none bg-transparent font-bold text-pink-700" placeholder="0,00" value={cashbackVal} onChange={e => setCashbackVal(parseFloat(e.target.value) || 0)} />
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* TOTAL FINAL */}
+                            <div className="flex justify-between items-center mb-4 pt-2 border-t">
+                                <span className="text-gray-500 font-bold uppercase text-xs">A Pagar</span>
+                                <input className="font-bold text-3xl text-right w-40 border-b-2 border-emerald-500 focus:outline-none text-emerald-600 bg-transparent" value={totalFinal.toFixed(2)} onChange={(e) => handleManualTotalChange(e.target.value)} />
+                            </div>
+
+                            {/* FORMA DE PAGAMENTO */}
+                            <div className="grid grid-cols-2 gap-3 mb-3">
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Pagamento</label>
+                                    <select className="w-full border rounded p-2 text-sm bg-gray-50 outline-none focus:border-blue-500" value={payMethod} onChange={e => setPayMethod(e.target.value)}>
+                                        <option value="Pix">Pix</option>
+                                        <option value="Dinheiro">Dinheiro</option>
+                                        <option value="Cartão">Cartão</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Brinde</label>
+                                    <select className="w-full border rounded p-2 text-sm bg-gray-50 outline-none focus:border-blue-500" value={gift} onChange={e => setGift(e.target.value)}>
+                                        <option value="Nenhum">Nenhum</option>
+                                        <option value="Amaciante">Amaciante</option>
+                                        <option value="Café">Café</option>
+                                        <option value="Ovo">Ovo</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            {/* OPÇÕES EXTRAS CONDICIONAIS */}
+                            {payMethod === 'Dinheiro' && (
+                                <div className="mb-3 animate-in">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">Troco Para</label>
+                                    <div className="relative">
+                                        <span className="absolute left-3 top-2 text-gray-500 text-sm">R$</span>
+                                        <input className="w-full border rounded p-2 pl-8 text-sm bg-yellow-50 outline-none border-yellow-200 text-yellow-800 font-bold" type="number" placeholder="0,00" value={changeFor} onChange={e => setChangeFor(e.target.value)} />
+                                    </div>
+                                </div>
+                            )}
+
+                            {(payMethod === 'Pix' || payMethod === 'Cartão') && (
+                                <label className="flex items-center gap-2 mb-3 bg-green-50 p-3 rounded border border-green-100 cursor-pointer animate-in select-none">
+                                    <input type="checkbox" checked={isPaid} onChange={e => setIsPaid(e.target.checked)} className="w-5 h-5 text-green-600 rounded focus:ring-green-500 accent-green-600" />
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold text-green-800 flex items-center gap-1"><CheckCircle size={12}/> PEDIDO JÁ PAGO</span>
+                                        <span className="text-[9px] text-green-600">Marcar para apenas entregar (sem cobrança na porta)</span>
+                                    </div>
+                                </label>
+                            )}
+                            
+                            {/* OBSERVAÇÕES E BOTÃO FINAL */}
+                            <input className="w-full border rounded p-2 text-sm bg-gray-50 outline-none mb-4 focus:bg-white transition" placeholder="Observações do pedido..." value={obs} onChange={e => setObs(e.target.value)} />
+                            
+                            <button onClick={finalizeSale} className="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition shadow-lg flex justify-between items-center px-6 text-lg group active:scale-[0.98]">
+                                <span className="flex items-center gap-2"><CheckCircle className="text-emerald-400 group-hover:text-emerald-300"/> FINALIZAR</span>
+                                <span className="text-emerald-400 group-hover:text-emerald-300">{formatCurrency(totalFinal)}</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* MODAL DE EDIÇÃO DE PREÇO */}
+                    {editingItem && (
+                        <div className="absolute inset-0 bg-black/50 z-50 flex flex-col items-center justify-center p-4 animate-in">
+                            <div className="bg-white p-6 rounded-xl shadow-2xl flex flex-col gap-4 w-72">
+                                <h3 className="text-sm font-bold text-center text-gray-800 uppercase">Ajustar Preço Unitário</h3>
+                                <div className="relative">
+                                    <span className="absolute left-2 top-2 text-gray-400 font-bold text-xl">R$</span>
+                                    <input 
+                                        type="number" 
+                                        autoFocus 
+                                        className="text-3xl font-bold text-center border-b-2 border-blue-500 outline-none pb-2 w-full pl-6" 
+                                        value={editingItem.price} 
+                                        onChange={e => setEditingItem({...editingItem, price: e.target.value})}
+                                    />
+                                </div>
+                                <div className="flex gap-2 mt-2">
+                                    <button onClick={() => setEditingItem(null)} className="flex-1 bg-gray-100 py-2 rounded font-bold text-gray-500 hover:bg-gray-200 transition">Cancelar</button>
+                                    <button onClick={updateCartItemPrice} className="flex-1 bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700 transition shadow-lg">Confirmar</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+             );
+        }
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
