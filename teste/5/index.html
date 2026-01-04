@@ -64,6 +64,9 @@
           MessageSquare, Menu, X, Gift, Home, Clock, ExternalLink, Hash, Package
         } from 'lucide-react';
 
+        // --- CONSTANTES ---
+        const ADMIN_PHONE = '5565998150975';
+
         // --- HOOKS & UTILS ---
         const useStickyState = (key, defaultValue) => {
           const [value, setValue] = useState(() => {
@@ -162,7 +165,8 @@
                             items: s.items || [],
                             pay: s.isPaid ? `${s.payMethod} (JÁ PAGO)` : s.payMethod, 
                             change: s.changeFor ? s.changeFor - s.total : 0, 
-                            obs: s.obs, isPaid: s.isPaid
+                            obs: s.obs, isPaid: s.isPaid,
+                            route: selectedRoute
                         }; 
                     }) 
                 }; 
@@ -209,12 +213,11 @@
             );
         }
 
-        // --- DRIVER VIEW (THE CORE IMPROVEMENT) ---
+        // --- DRIVER VIEW ---
         function DriverView({ data, onExit }) {
           const [deliveryResults, setDeliveryResults] = useState({});
           const [confirmModal, setConfirmModal] = useState(null);
 
-          // Sorting logic: Unfinished first, finished last
           const sortedOrders = useMemo(() => {
               return [...data.orders].sort((a, b) => {
                   const aDone = !!deliveryResults[a.id];
@@ -226,12 +229,28 @@
           const sendWhatsApp = (phone, text) => {
               if(!phone) return;
               const cleanPhone = phone.replace(/\D/g, '');
-              const url = `https://wa.me/55${cleanPhone}?text=${encodeURIComponent(text)}`;
+              const url = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(text)}`;
               window.open(url, '_blank');
           };
 
           const handleFinish = (method) => {
-              setDeliveryResults(prev => ({ ...prev, [confirmModal.id]: { status: 'Entregue', method } }));
+              const order = confirmModal;
+              const res = { status: 'Entregue', method };
+              
+              setDeliveryResults(prev => ({ ...prev, [order.id]: res }));
+              
+              // RELATÓRIO INDIVIDUAL PARA O ADMIN
+              const prodList = order.items?.map(i => `${i.qty}x ${i.name}`).join(', ') || 'N/A';
+              const reportIndividual = `*NOVA ENTREGA CONCLUÍDA*\n\n` +
+                `📌 *Pedido*: #${order.id}\n` +
+                `📍 *Cidade*: ${order.city}\n` +
+                `🏠 *Bairro*: ${order.district}\n` +
+                `📦 *Produtos*: ${prodList}\n` +
+                `💰 *Valor*: ${formatCurrency(order.total)}\n` +
+                `💳 *Pgto*: ${method}\n` +
+                `🚚 *Rota*: ${order.route || data.route}`;
+              
+              sendWhatsApp(ADMIN_PHONE, reportIndividual);
               setConfirmModal(null);
           };
 
@@ -258,8 +277,6 @@
 
                         return (
                             <div key={order.id} className={`bg-white rounded-xl shadow-md border-2 transition-all ${isDone ? 'done-card border-slate-200' : 'border-slate-300 highlight-card animate-in'}`}>
-                                
-                                {/* CABEÇALHO DO CARD */}
                                 <div className="p-4 bg-slate-50 border-b-2 border-slate-100 flex justify-between items-start">
                                     <div className="flex flex-col">
                                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">NÚMERO DO PEDIDO</span>
@@ -276,7 +293,6 @@
                                 <div className="p-5">
                                     <h2 className="text-2xl font-black text-slate-900 uppercase leading-tight mb-2">{order.customer}</h2>
                                     
-                                    {/* ENDEREÇO EM DESTAQUE */}
                                     <div className="bg-amber-50 p-4 rounded-lg border-2 border-amber-100 mb-4">
                                         <div className="flex items-start gap-3">
                                             <MapPin className="text-amber-600 mt-1 shrink-0" size={24} />
@@ -287,7 +303,6 @@
                                         </div>
                                     </div>
 
-                                    {/* PRODUTOS EM DESTAQUE */}
                                     <div className="mb-4">
                                         <span className="text-[10px] font-black text-slate-400 uppercase mb-2 block tracking-widest">ITENS DO PEDIDO</span>
                                         <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-1">
@@ -297,7 +312,6 @@
                                                         <span className="font-bold text-slate-700 text-base uppercase">
                                                             <span className="text-primary-600">{item.qty}x</span> {item.name}
                                                         </span>
-                                                        <span className="font-black text-slate-400">...</span>
                                                     </div>
                                                 ))
                                             ) : (
@@ -306,7 +320,6 @@
                                         </div>
                                     </div>
 
-                                    {/* FINANCEIRO EM DESTAQUE */}
                                     <div className="grid grid-cols-2 gap-3 mb-6">
                                         <div className="bg-slate-900 text-white p-4 rounded-lg">
                                             <span className="text-[10px] font-bold text-slate-400 block uppercase">TOTAL A RECEBER</span>
@@ -320,7 +333,6 @@
 
                                     {!isDone && (
                                         <div className="space-y-4">
-                                            {/* COMUNICAÇÃO - TELEFONE 1 */}
                                             <div className="space-y-2">
                                                 <p className="text-[10px] font-black text-slate-400 uppercase">Contato Principal: {order.phone}</p>
                                                 <div className="grid grid-cols-2 gap-2">
@@ -336,11 +348,10 @@
                                                 </a>
                                             </div>
 
-                                            {/* COMUNICAÇÃO - TELEFONE 2 (DUPLICADO SE EXISTIR) */}
                                             {order.phone2 && (
                                                 <div className="pt-4 border-t-2 border-slate-100 space-y-2">
                                                     <p className="text-[10px] font-black text-slate-400 uppercase">Contato Secundário: {order.phone2}</p>
-                                                    <div className="grid grid-cols-2 gap-2 opacity-90">
+                                                    <div className="grid grid-cols-2 gap-2">
                                                         <button onClick={() => sendWhatsApp(order.phone2, "Olá! Em 10 minutos sua cesta chega. 🚚")} className="btn-secondary text-[10px] py-3 bg-slate-50 border-slate-200">
                                                             <Clock size={16}/> Cesta em 10m (2)
                                                         </button>
@@ -348,9 +359,6 @@
                                                             <Home size={16}/> Cheguei (2)
                                                         </button>
                                                     </div>
-                                                    <a href={`tel:${order.phone2}`} className="btn-secondary w-full border-slate-300">
-                                                        <Phone size={16}/> Ligar Secundário
-                                                    </a>
                                                 </div>
                                             )}
 
@@ -389,17 +397,17 @@
                     </div>
                 )}
 
-                {/* RELATÓRIO FINAL */}
+                {/* RELATÓRIO FINAL SIMPLIFICADO */}
                 {Object.keys(deliveryResults).length === data.orders.length && (
                     <div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t-2 border-slate-200 z-40">
                         <button onClick={() => {
-                            let r = `*RELATÓRIO DE FINALIZAÇÃO*\n\n`;
+                            let r = "";
                             Object.entries(deliveryResults).forEach(([id, res]) => {
-                                r += `📦 *Pedido #${id}*: ${res.status} | ${res.method}\n`;
+                                r += `${id} | ${res.status.toUpperCase()} | ${res.method}\n`;
                             });
-                            sendWhatsApp(data.companyPhone, r);
+                            sendWhatsApp(ADMIN_PHONE, r.trim());
                         }} className="btn-primary w-full py-5 bg-green-600 shadow-xl shadow-green-200">
-                            <MessageSquare size={20}/> Enviar Relatório de Campo
+                            <MessageSquare size={20}/> Relatório p/ Conferência
                         </button>
                     </div>
                 )}
