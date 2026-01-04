@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v3.8</title>
+    <title>Sistema Logística Local-First v3.9</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -164,7 +164,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '3.8', exportedAt: new Date() };
+            let data = { version: '3.9', exportedAt: new Date() };
             let filename = 'backup';
 
             if (backupType === 'all') {
@@ -222,7 +222,7 @@
               <header className="bg-slate-900 text-white p-2 flex justify-between items-center shadow-lg z-20 shrink-0 h-14 relative">
                 <div className="flex items-center gap-2">
                   <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold">LOG</div>
-                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V3.8</h1>
+                  <h1 className="font-bold tracking-wider text-sm md:text-base hidden sm:block">SISTEMA V3.9</h1>
                 </div>
                 <div className="flex gap-2 items-center">
                    <div className="flex items-center gap-1 bg-slate-800 p-1 rounded border border-slate-700">
@@ -317,7 +317,8 @@
          * - Notificação automática para a central
          */
         function DriverView({ data, onExit }) {
-          const [deliveryModal, setDeliveryModal] = useState(null); // armazena o pedido sendo finalizado
+          const [deliveryModal, setDeliveryModal] = useState(null); 
+          const [filter, setFilter] = useState('Todas'); // Estado para os chips de filtro
 
           if (!data) return <div className="p-4 text-center">Dados inválidos ou expirados.</div>;
 
@@ -328,17 +329,42 @@
              window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
           };
 
+          // Extrair regiões únicas para os chips
+          const uniqueRegions = [...new Set(data.orders.map(o => o.region || 'Geral').filter(Boolean))];
+          const regions = ['Todas', ...uniqueRegions];
+          const showChips = uniqueRegions.length > 1;
+
+          // Filtrar pedidos
+          const visibleOrders = filter === 'Todas' 
+            ? data.orders 
+            : data.orders.filter(o => (o.region || 'Geral') === filter);
+
           const handleDeliveryConfirm = (method) => {
             if (!deliveryModal) return;
             const order = deliveryModal;
+            const clientPhone = order.phone.replace(/\D/g, '');
+            const clientName = order.customer.split(' ')[0]; // Primeiro nome
 
-            // Mensagem padronizada para a central
+            // Gerador de links para o cliente
+            const genLink = (msg) => `https://wa.me/55${clientPhone}?text=${encodeURIComponent(msg)}`;
+
+            const msg1 = `Olá ${clientName}! Muito obrigado pela preferência. Esperamos que goste da sua cesta! 🧺✨`;
+            const msg2 = `Oi ${clientName}! Que tal ganhar R$ 20,00 de desconto na próxima compra? 🤑 É só avaliar a gente rapidinho no Google: https://g.page/r/CaIREJtO1L6WEBE/review Mandar print para validar!`;
+            const msg3 = `Entre no nosso Grupo VIP de Descontos para ofertas exclusivas! 🚀 https://chat.whatsapp.com/IOI3gSBLRVk4jGK2QMunp1`;
+            const msg4 = `Acompanhe nossas novidades no Instagram! 📸 https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/`;
+
+            // Mensagem para o Gestor (Central)
             const msg = `✅ *ENTREGA REALIZADA*\n\n` +
                         `🆔 Pedido: #${order.id}\n` +
                         `👤 Cliente: ${order.customer}\n` +
                         `📍 Bairro: ${order.district}\n` +
                         `💰 Valor: ${formatCurrency(order.total)}\n` +
-                        `💵 Recebido via: *${method}*`;
+                        `💵 Recebido via: *${method}*\n\n` +
+                        `--- 🔗 PÓS-VENDA (LINKS P/ O CLIENTE) ---\n` +
+                        `1️⃣ *Agradecimento:* ${genLink(msg1)}\n\n` +
+                        `2️⃣ *Cupom R$20 (Review):* ${genLink(msg2)}\n\n` +
+                        `3️⃣ *Grupo VIP:* ${genLink(msg3)}\n\n` +
+                        `4️⃣ *Instagram:* ${genLink(msg4)}`;
 
             window.open(`https://wa.me/55${companyPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             setDeliveryModal(null);
@@ -351,14 +377,30 @@
                     <h1 className="font-bold text-lg">ROTA: {data.route}</h1>
                     <button onClick={onExit} className="text-xs bg-indigo-800 px-2 py-1 rounded hover:bg-indigo-900 transition">Sair</button>
                  </div>
+                 
+                 {/* CHIPS DE FILTRO (Só aparece se tiver > 1 região diferente) */}
+                 {showChips && (
+                     <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-thin mb-1">
+                        {regions.map(r => (
+                            <button 
+                                key={r}
+                                onClick={() => setFilter(r)}
+                                className={`px-3 py-1 rounded-full text-xs font-bold whitespace-nowrap transition border ${filter === r ? 'bg-white text-indigo-700 border-white' : 'bg-indigo-800 text-indigo-200 border-indigo-600 hover:bg-indigo-600'}`}
+                            >
+                                {r}
+                            </button>
+                        ))}
+                     </div>
+                 )}
+
                  <div className="text-xs opacity-80 flex justify-between">
-                    <span>{data.orders.length} Entregas</span>
+                    <span>{visibleOrders.length} Entregas</span>
                     <span>{new Date(data.generatedAt).toLocaleDateString()}</span>
                  </div>
                </header>
                
                <div className="p-4 space-y-6">
-                  {data.orders.map((order, idx) => (
+                  {visibleOrders.map((order, idx) => (
                     <div key={order.id} className="bg-white rounded-lg shadow-sm border overflow-hidden relative">
                        <div className="bg-indigo-50 p-3 border-b border-indigo-100 flex justify-between items-center">
                           <span className="font-bold text-indigo-900 bg-white px-3 py-1 rounded-full text-sm shadow-sm">#{idx + 1}</span>
@@ -380,8 +422,8 @@
                              </div>
                           )}
 
-                          {/* 2. PAINEL DE BOTÕES */}
-                          <div className="grid grid-cols-4 gap-2 mb-4">
+                          {/* 2. PAINEL DE BOTÕES (GRID 3 COLUNAS) */}
+                          <div className="grid grid-cols-3 gap-2 mb-4">
                              {/* Ligar */}
                              <a href={`tel:${order.phone}`} className="flex flex-col items-center justify-center bg-gray-100 py-3 rounded hover:bg-gray-200 active:scale-95 transition">
                                 <Phone size={20} className="text-gray-700 mb-1"/>
@@ -401,12 +443,6 @@
                                 <Home size={20} className="text-yellow-600 mb-1"/>
                                 <span className="text-[10px] font-bold text-yellow-700">CHEGUEI</span>
                              </button>
-
-                             {/* WhatsApp */}
-                             <a href={`https://wa.me/55${order.phone.replace(/\D/g,'')}`} target="_blank" className="flex flex-col items-center justify-center bg-green-50 py-3 rounded hover:bg-green-100 active:scale-95 transition">
-                                <MessageCircle size={20} className="text-green-600 mb-1"/>
-                                <span className="text-[10px] font-bold text-green-700">WHATS</span>
-                             </a>
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 mb-4">
@@ -468,7 +504,7 @@
                                 <CheckCircle size={24}/> JÁ PAGO
                             </button>
                         </div>
-                        <p className="text-[10px] text-gray-400 text-center mt-2">Isso enviará o comprovante para a central.</p>
+                        <p className="text-[10px] text-gray-400 text-center mt-2">Isso enviará o comprovante para a central e os links de pós-venda.</p>
                     </div>
                  </div>
                )}
