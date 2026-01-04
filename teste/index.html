@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v7.5 (Admin Tools)</title>
+    <title>Sistema Logística Local-First v7.6 (Full Control)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -93,25 +93,25 @@
         const ClientSchema = z.object({
             id: z.string(),
             name: z.string().min(1),
-            code: z.string().optional().or(z.literal('')),
-            phone: z.string().optional().or(z.literal('')),
-            phone2: z.string().optional().or(z.literal('')), 
-            address: z.string().optional().or(z.literal('')),
-            city: z.string().optional().or(z.literal('')),
-            district: z.string().optional().or(z.literal('')),
-            region: z.string().optional().or(z.literal('')),
-            mapLink: z.string().optional().or(z.literal('')),
-            photoLink: z.string().optional().or(z.literal('')),
-            obs: z.string().optional().or(z.literal(''))
+            code: z.string().nullish().or(z.literal('')),
+            phone: z.string().nullish().or(z.literal('')),
+            phone2: z.string().nullish().or(z.literal('')), 
+            address: z.string().nullish().or(z.literal('')),
+            city: z.string().nullish().or(z.literal('')),
+            district: z.string().nullish().or(z.literal('')),
+            region: z.string().nullish().or(z.literal('')),
+            mapLink: z.string().nullish().or(z.literal('')),
+            photoLink: z.string().nullish().or(z.literal('')),
+            obs: z.string().nullish().or(z.literal(''))
         });
 
         const ProductSchema = z.object({
             id: z.string(),
             name: z.string().min(1),
-            internalCode: z.string().optional().or(z.literal('')),
-            category: z.string().optional().or(z.literal('')),
-            ncm: z.string().optional().or(z.literal('')),
-            barcode: z.string().optional().or(z.literal('')),
+            internalCode: z.string().nullish().or(z.literal('')),
+            category: z.string().nullish().or(z.literal('')),
+            ncm: z.string().nullish().or(z.literal('')),
+            barcode: z.string().nullish().or(z.literal('')),
             cost: z.any().transform(v => Number(v) || 0), 
             price: z.any().transform(v => Number(v) || 0),
             stock: z.any().transform(v => Number(v) || 0),
@@ -144,15 +144,15 @@
             total: z.number(),
             payMethod: z.string(),
             changeFor: z.any().optional(),
-            obs: z.string().optional().or(z.literal('')),
+            obs: z.string().nullish().or(z.literal('')),
             date: z.string(),
             status: z.string(),
             printedLabel: z.boolean().optional(),
             printedList: z.boolean().optional(),
             volumes: z.number().optional(),
             routeId: z.any().optional(),
-            regionOverride: z.string().optional(),
-            gift: z.string().optional(),
+            regionOverride: z.string().nullish(),
+            gift: z.string().nullish(),
             isPaid: z.boolean().optional(),
             cashbackValue: z.number().optional()
         });
@@ -164,10 +164,7 @@
             products: z.array(ProductSchema).optional(),
             sales: z.array(SaleSchema).optional(),
             companyPhone: z.string().optional(),
-            postSaleLog: z.record(z.object({
-                date: z.string(),
-                count: z.number()
-            })).optional()
+            postSaleLog: z.record(z.any()).optional()
         });
         
         // --- UTILITÁRIOS ---
@@ -266,7 +263,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '7.5', exportedAt: new Date().toISOString() };
+            let data = { version: '7.6', exportedAt: new Date().toISOString() };
             let filename = 'backup';
             if (backupType === 'all') { 
                 data = { ...data, clients, products, sales, companyPhone, postSaleLog }; 
@@ -341,7 +338,7 @@
                 <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0 z-50 shadow-md">
                     <div className="flex items-center gap-2">
                         <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold text-xs">LOG</div>
-                        <h1 className="font-bold tracking-wider">SISTEMA v7.5</h1>
+                        <h1 className="font-bold tracking-wider">SISTEMA v7.6</h1>
                     </div>
                     <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 bg-slate-800 rounded">
                         {mobileMenuOpen ? <X size={20}/> : <Menu size={20}/>}
@@ -352,7 +349,7 @@
                 <aside className={`fixed inset-y-0 left-0 bg-slate-900 text-white flex flex-col transition-transform duration-300 z-40 w-64 lg:static lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
                     <div className="h-16 hidden lg:flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
                         <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">LOG</div>
-                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.5</span></h1>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.6</span></h1>
                     </div>
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto mt-16 lg:mt-0">
                         <NavItem icon={<LayoutDashboard size={20}/>} label="Visão Geral" active={activeTab === 'dashboard'} onClick={() => {setActiveTab('dashboard'); setMobileMenuOpen(false);}} />
@@ -1211,11 +1208,50 @@
             };
             const activeSales = sales.filter(s => s.status !== 'Entregue').sort((a,b) => new Date(a.date) - new Date(b.date));
             const KanbanColumn = ({ title, status, color, children }) => (<div className="flex flex-col h-full min-w-[300px] flex-1 bg-gray-100 rounded-xl overflow-hidden border border-gray-200"><div className={`p-3 font-bold text-sm uppercase text-${color}-800 bg-${color}-100 border-b border-${color}-200 flex justify-between`}>{title}<span className="bg-white px-2 rounded-full text-xs flex items-center">{children.length}</span></div><div className="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-thin">{children}</div></div>);
+            
+            // ACTION BUTTONS COMPONENT (Reusable)
+            const ActionButtons = ({ sale, showEdit }) => (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition absolute top-4 right-4 bg-white/90 rounded shadow-sm">
+                    {showEdit && <button onClick={() => handleEdit(sale)} className="p-1.5 hover:bg-blue-50 text-blue-500 rounded"><Edit2 size={16}/></button>}
+                    <button onClick={() => deleteSale(sale)} className="p-1.5 hover:bg-red-50 text-red-500 rounded"><Trash2 size={16}/></button>
+                </div>
+            );
+
             return (
                 <div className="p-4 lg:p-6 pb-20 overflow-x-auto"><div className="flex flex-col md:flex-row gap-6 h-full min-w-full md:min-w-0">
-                    <KanbanColumn title="Pendente" status="Pendente" color="orange">{activeSales.filter(s => s.status === 'Pendente').map(s => <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"><div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span><div className="flex gap-1 opacity-0 group-hover:opacity-100 transition"><button onClick={() => handleEdit(s)} className="p-1 hover:bg-blue-50 text-blue-500 rounded"><Edit2 size={14}/></button><button onClick={() => deleteSale(s)} className="p-1 hover:bg-red-50 text-red-500 rounded"><Trash2 size={14}/></button></div></div><div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div><div className="flex gap-2 mb-3"><button onClick={() => printLabel(s, clients.find(c=>c.id===s.clientId))} className="flex-1 border rounded py-1 text-xs">Etiqueta</button><button onClick={() => printPickingList(s, clients.find(c=>c.id===s.clientId))} className="flex-1 border rounded py-1 text-xs">Lista</button></div><button onClick={() => updateStatus(s.id, 'Montagem')} className="w-full bg-orange-500 text-white font-bold py-2 rounded text-xs">INICIAR MONTAGEM</button></div>)}</KanbanColumn>
-                    <KanbanColumn title="Em Montagem" status="Montagem" color="blue">{activeSales.filter(s => s.status === 'Montagem').map(s => <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"><div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span></div><div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div><button onClick={() => updateStatus(s.id, 'Rota')} className="w-full bg-blue-500 text-white font-bold py-2 rounded text-xs mt-4">PRONTO PARA ROTA</button></div>)}</KanbanColumn>
-                    <KanbanColumn title="Pronto p/ Rota" status="Rota" color="green">{activeSales.filter(s => s.status === 'Rota').map(s => <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group"><div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span></div><div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div><div className="text-center text-xs font-bold text-green-600 bg-green-50 py-2 rounded border border-green-100 mt-4">AGUARDANDO ENTREGA</div></div>)}</KanbanColumn>
+                    <KanbanColumn title="Pendente" status="Pendente" color="orange">
+                        {activeSales.filter(s => s.status === 'Pendente').map(s => (
+                            <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group relative">
+                                <div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span></div>
+                                <ActionButtons sale={s} showEdit={true} />
+                                <div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div>
+                                <div className="flex gap-2 mb-3"><button onClick={() => printLabel(s, clients.find(c=>c.id===s.clientId))} className="flex-1 border rounded py-1 text-xs">Etiqueta</button><button onClick={() => printPickingList(s, clients.find(c=>c.id===s.clientId))} className="flex-1 border rounded py-1 text-xs">Lista</button></div>
+                                <button onClick={() => updateStatus(s.id, 'Montagem')} className="w-full bg-orange-500 text-white font-bold py-2 rounded text-xs">INICIAR MONTAGEM</button>
+                            </div>
+                        ))}
+                    </KanbanColumn>
+                    
+                    <KanbanColumn title="Em Montagem" status="Montagem" color="blue">
+                        {activeSales.filter(s => s.status === 'Montagem').map(s => (
+                            <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group relative">
+                                <div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span></div>
+                                <ActionButtons sale={s} showEdit={false} />
+                                <div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div>
+                                <button onClick={() => updateStatus(s.id, 'Rota')} className="w-full bg-blue-500 text-white font-bold py-2 rounded text-xs mt-4">PRONTO PARA ROTA</button>
+                            </div>
+                        ))}
+                    </KanbanColumn>
+                    
+                    <KanbanColumn title="Pronto p/ Rota" status="Rota" color="green">
+                        {activeSales.filter(s => s.status === 'Rota').map(s => (
+                            <div key={s.id} className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition group relative">
+                                <div className="flex justify-between items-start mb-2"><span className="font-bold text-lg text-slate-700">#{s.id}</span></div>
+                                <ActionButtons sale={s} showEdit={false} />
+                                <div className="font-bold text-sm mb-1">{clients.find(c=>c.id===s.clientId)?.name}</div>
+                                <div className="text-center text-xs font-bold text-green-600 bg-green-50 py-2 rounded border border-green-100 mt-4">AGUARDANDO ENTREGA</div>
+                            </div>
+                        ))}
+                    </KanbanColumn>
                 </div></div>
             );
         }
@@ -1355,8 +1391,27 @@
                 } 
                 setCForm({ name: '', code: '', phone: '', phone2: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' }); 
             };
+            
             const saveProduct = () => { if (!pForm.name) return alert('Nome obrigatório'); if (editingProductId) { setProducts(products.map(p => p.id === editingProductId ? { ...pForm, id: editingProductId, stock: p.stock, stockHistory: p.stockHistory } : p)); setEditingProductId(null); alert('Atualizado!'); } else { const newProd = { ...pForm, id: generateId(), stockHistory: [{ date: new Date().toISOString(), type: 'INITIAL', qty: Number(pForm.stock) }] }; setProducts([...products, newProd]); alert('Criado!'); } setPForm({ name: '', internalCode: '', category: 'ALIMENTOS', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] }); };
             
+            const deleteItem = () => {
+                if(tab === 'clients') {
+                    if(!editingClientId) return;
+                    if(!confirm("TEM CERTEZA? Excluir este cliente é irreversível.")) return;
+                    setClients(clients.filter(c => c.id !== editingClientId));
+                    setEditingClientId(null);
+                    setCForm({ name: '', code: '', phone: '', phone2: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' });
+                    alert("Cliente excluído.");
+                } else {
+                    if(!editingProductId) return;
+                    if(!confirm("TEM CERTEZA? Excluir este produto é irreversível.")) return;
+                    setProducts(products.filter(p => p.id !== editingProductId));
+                    setEditingProductId(null);
+                    setPForm({ name: '', internalCode: '', category: 'ALIMENTOS', ncm: '', barcode: '', cost: '', price: '', stock: 0, isCombo: false, comboItems: [] });
+                    alert("Produto excluído.");
+                }
+            };
+
             const list = tab === 'clients' ? clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).sort((a,b) => a.name.localeCompare(b.name)) : products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).sort((a,b) => a.name.localeCompare(b.name));
 
             return (
@@ -1374,7 +1429,10 @@
                     </div>
                     <div className="flex-1 bg-gray-50 p-4 lg:p-8 overflow-y-auto">
                         <div className="max-w-2xl mx-auto bg-white p-6 rounded-xl shadow-sm border">
-                            <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2">{tab === 'clients' ? (editingClientId ? 'Editar Cliente' : 'Novo Cliente') : (editingProductId ? 'Editar Produto' : 'Novo Produto')}</h2>
+                            <h2 className="text-lg font-bold text-gray-800 mb-6 border-b pb-2 flex justify-between items-center">
+                                <span>{tab === 'clients' ? (editingClientId ? 'Editar Cliente' : 'Novo Cliente') : (editingProductId ? 'Editar Produto' : 'Novo Produto')}</span>
+                                {(editingClientId || editingProductId) && <button onClick={deleteItem} className="text-xs bg-red-100 text-red-600 hover:bg-red-200 px-3 py-1 rounded font-bold transition">EXCLUIR</button>}
+                            </h2>
                             {tab === 'clients' ? (
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4"><div className="md:col-span-3"><label className="text-xs font-bold text-gray-500 uppercase">Nome</label><input className="input-field" value={cForm.name} onChange={e => setCForm({...cForm, name: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Código</label><input className="input-field bg-gray-100" value={cForm.code} disabled /></div></div>
