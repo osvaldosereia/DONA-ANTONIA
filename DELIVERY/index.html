@@ -385,7 +385,7 @@
             .sort((a, b) => a.name.localeCompare(b.name));
 
           return (
-            <div className="h-full flex flex-col gap-4">
+            <div className="h-full flex flex-col gap-4 relative">
               <div className="flex bg-gray-200 p-1 rounded gap-1 shrink-0">
                 <button onClick={() => setTab('clients')} className={`flex-1 py-1 text-xs font-bold rounded ${tab === 'clients' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}>CLIENTES</button>
                 <button onClick={() => setTab('products')} className={`flex-1 py-1 text-xs font-bold rounded ${tab === 'products' ? 'bg-white shadow text-blue-600' : 'text-gray-500'}`}>PRODUTOS</button>
@@ -531,36 +531,41 @@
                   </div>
 
                   {stockModal && (
-                    <div className="absolute inset-0 bg-white/95 z-10 flex flex-col items-center justify-center p-4">
-                      <h3 className="font-bold mb-2">Movimentação: {stockModal.product.name}</h3>
-                      <div className={`text-sm font-bold mb-4 ${stockModal.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
-                        {stockModal.type === 'IN' ? 'ENTRADA' : 'SAÍDA'}
-                      </div>
-                      <input autoFocus type="number" className="text-2xl text-center w-24 border-b-2 border-gray-300 focus:outline-none mb-4" 
-                        value={stockModal.qty || ''} placeholder="0" onChange={e => setStockModal({...stockModal, qty: Number(e.target.value)})}
-                      />
-                      <div className="flex gap-2 w-full">
-                        <button onClick={() => setStockModal(null)} className="flex-1 bg-gray-200 py-2 rounded">Cancelar</button>
-                        <button onClick={handleStockMove} className={`flex-1 py-2 rounded text-white font-bold ${stockModal.type === 'IN' ? 'bg-green-600' : 'bg-red-600'}`}>Confirmar</button>
+                    <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center p-4">
+                      <div className="bg-white w-full rounded-lg shadow-xl p-4 flex flex-col gap-3">
+                          <h3 className="font-bold text-center text-gray-800">Movimentação: {stockModal.product.name}</h3>
+                          <div className={`text-sm font-bold text-center ${stockModal.type === 'IN' ? 'text-green-600' : 'text-red-600'}`}>
+                            {stockModal.type === 'IN' ? 'ENTRADA DE ESTOQUE' : 'SAÍDA DE ESTOQUE'}
+                          </div>
+                          <input autoFocus type="number" className="text-3xl text-center w-full border-b-2 border-gray-300 focus:border-blue-500 focus:outline-none py-2" 
+                            value={stockModal.qty || ''} placeholder="0" onChange={e => setStockModal({...stockModal, qty: Number(e.target.value)})}
+                          />
+                          <div className="flex gap-2 w-full mt-2">
+                            <button onClick={() => setStockModal(null)} className="flex-1 bg-gray-200 py-2 rounded text-sm font-bold text-gray-600">Cancelar</button>
+                            <button onClick={handleStockMove} className={`flex-1 py-2 rounded text-sm font-bold text-white ${stockModal.type === 'IN' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}`}>Confirmar</button>
+                          </div>
                       </div>
                     </div>
                   )}
 
                   {historyModal && (
-                    <div className="absolute inset-0 bg-white/95 z-20 flex flex-col p-4 animate-in">
-                       <div className="flex justify-between items-center mb-4 border-b pb-2">
-                         <h3 className="font-bold">Histórico: {historyModal.name}</h3>
-                         <button onClick={() => setHistoryModal(null)}><XCircle className="text-gray-500"/></button>
-                       </div>
-                       <div className="flex-1 overflow-y-auto space-y-2">
-                         {historyModal.stockHistory?.slice().reverse().map((h, i) => (
-                           <div key={i} className="text-xs border-b pb-1 flex justify-between">
-                             <span className="text-gray-500">{formatDateTime(h.date)}</span>
-                             <span className={`font-bold ${h.type === 'INITIAL' || h.type === 'IN' || h.type === 'CANCEL_RETURN' ? 'text-green-600' : 'text-red-600'}`}>
-                               {h.type} ({h.qty})
-                             </span>
+                    <div className="absolute inset-0 bg-black/50 z-20 flex items-center justify-center p-4">
+                       <div className="bg-white w-full h-3/4 rounded-lg shadow-xl p-4 flex flex-col">
+                           <div className="flex justify-between items-center mb-4 border-b pb-2">
+                             <h3 className="font-bold text-gray-800">Histórico: {historyModal.name}</h3>
+                             <button onClick={() => setHistoryModal(null)} className="p-1 hover:bg-gray-100 rounded-full"><XCircle className="text-gray-500"/></button>
                            </div>
-                         ))}
+                           <div className="flex-1 overflow-y-auto space-y-2 pr-1 scrollbar-thin">
+                             {historyModal.stockHistory?.slice().reverse().map((h, i) => (
+                               <div key={i} className="text-xs border-b pb-2 flex justify-between items-center">
+                                 <span className="text-gray-500">{formatDateTime(h.date)}</span>
+                                 <span className={`font-bold ${h.type === 'INITIAL' || h.type === 'IN' || h.type === 'CANCEL_RETURN' ? 'text-green-600' : 'text-red-600'}`}>
+                                   {h.type === 'INITIAL' ? 'Inicial' : h.type === 'IN' ? 'Entrada' : h.type === 'SALE' ? 'Venda' : h.type} ({h.qty})
+                                 </span>
+                               </div>
+                             ))}
+                             {(!historyModal.stockHistory || historyModal.stockHistory.length === 0) && <div className="text-center text-gray-400 mt-4">Sem histórico</div>}
+                           </div>
                        </div>
                     </div>
                   )}
