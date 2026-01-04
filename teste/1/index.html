@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Módulo Clientes v2.1 (Persistence Fix)</title>
+    <title>Módulo Clientes v2.2 (Segmentation Edition)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -56,6 +56,11 @@
         .btn-call { background: #e0f2fe; color: #0369a1; border-color: #bae6fd; }
         .btn-share { background: #f1f5f9; color: #475569; border-color: #cbd5e1; }
         .btn-print { background: #fff1f2; color: #be123c; border-color: #fecdd3; }
+        
+        .segment-tab {
+            font-size: 10px; font-weight: 800; padding: 6px 4px; border-radius: 4px;
+            flex: 1; text-align: center; transition: all 0.2s; text-transform: uppercase;
+        }
     </style>
 
     <script type="importmap">
@@ -77,11 +82,11 @@
         import { createRoot } from 'react-dom/client';
         import { 
           Users, Search, Plus, Save, Trash2, Phone, MapPin, 
-          Share2, Printer, Filter, Star, Zap, Crown, Download, Upload, AlertCircle
+          Share2, Printer, Filter, Star, Zap, Crown, Download, Upload, CheckCircle2
         } from 'lucide-react';
 
         // --- CONSTANTS ---
-        const CURRENT_STORAGE_KEY = 'db_clients_v5'; // Bumped version
+        const CURRENT_STORAGE_KEY = 'db_clients_v5';
         const PREVIOUS_KEYS = ['db_clients_v4', 'db_clients_v3', 'db_clients_v2', 'db_clients'];
 
         // --- UTILS ---
@@ -97,7 +102,6 @@
                     try {
                         const parsed = JSON.parse(oldData);
                         if (Array.isArray(parsed) && parsed.length > 0) {
-                            console.log(`Migrando dados de ${oldKey} para ${CURRENT_STORAGE_KEY}`);
                             localStorage.setItem(CURRENT_STORAGE_KEY, oldData);
                             return parsed;
                         }
@@ -112,17 +116,6 @@
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         };
 
-        const handlePrint = (client) => {
-            const printWindow = window.open('', '', 'width=400,height=600');
-            printWindow.document.write(`
-                <html><body style="font-family:sans-serif; padding:20px; text-align:center;">
-                <h2>${client.code}</h2><h1>${client.name}</h1><p>${client.phone}</p><p>${client.address}</p>
-                </body></html>
-            `);
-            printWindow.document.close();
-            setTimeout(() => { printWindow.print(); printWindow.close(); }, 500);
-        };
-
         // --- COMPONENTS ---
 
         function ClientsModule({ clients, setClients }) {
@@ -133,7 +126,7 @@
             });
             const [editingClientId, setEditingClientId] = useState(null);
             const [search, setSearch] = useState('');
-            const [segmentFilter, setSegmentFilter] = useState('ALL');
+            const [activeSegment, setActiveSegment] = useState('ALL'); // ALL, NEW, RECURRING, LOYAL, VIP
 
             const saveClient = () => { 
                 if (!cForm.name.trim()) return; 
@@ -151,63 +144,68 @@
                 setEditingClientId(null);
             };
 
+            const getSegmentData = (count) => {
+                const n = parseInt(count || 0);
+                if (n > 24) return { id: 'VIP', label: 'VIP', color: 'bg-purple-100 text-purple-700', icon: Crown };
+                if (n > 10) return { id: 'LOYAL', label: 'FIEL', color: 'bg-amber-100 text-amber-700', icon: Star };
+                if (n >= 4) return { id: 'RECURRING', label: 'RECORRENTE', color: 'bg-blue-100 text-blue-700', icon: Zap };
+                return { id: 'NEW', label: 'NOVO', color: 'bg-slate-100 text-slate-500', icon: Users };
+            };
+
+            const filteredList = useMemo(() => {
+                let list = clients.filter(c => 
+                    c.name.toLowerCase().includes(search.toLowerCase()) || 
+                    (c.phone && c.phone.includes(search))
+                );
+
+                if (activeSegment !== 'ALL') {
+                    list = list.filter(c => getSegmentData(c.purchaseCount).id === activeSegment);
+                }
+
+                return list.sort((a,b) => a.name.localeCompare(b.name));
+            }, [clients, search, activeSegment]);
+
             const exportData = () => {
                 const blob = new Blob([JSON.stringify(clients, null, 2)], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
+                const a = document.createElement('a'); a.href = url;
                 a.download = `backup_clientes_${new Date().toISOString().split('T')[0]}.json`;
                 a.click();
             };
 
-            const importData = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    try {
-                        const data = JSON.parse(event.target.result);
-                        if (Array.isArray(data)) {
-                            if (confirm(`Importar ${data.length} clientes? Isso substituirá os dados atuais.`)) {
-                                setClients(data);
-                            }
-                        }
-                    } catch (err) { alert("Arquivo JSON inválido."); }
-                };
-                reader.readAsText(file);
-            };
-
-            const list = useMemo(() => {
-                return clients.filter(c => 
-                    c.name.toLowerCase().includes(search.toLowerCase()) || 
-                    (c.phone && c.phone.includes(search))
-                ).sort((a,b) => a.name.localeCompare(b.name));
-            }, [clients, search]);
-
-            const getSegment = (count) => {
-                const n = parseInt(count || 0);
-                if (n > 24) return { label: 'VIP', color: 'bg-purple-100 text-purple-700', icon: Crown };
-                if (n > 10) return { label: 'FIEL', color: 'bg-amber-100 text-amber-700', icon: Star };
-                if (n >= 4) return { label: 'RECORRENTE', color: 'bg-blue-100 text-blue-700', icon: Zap };
-                return { label: 'NOVO', color: 'bg-slate-100 text-slate-500', icon: Users };
-            };
-
             return (
                 <div className="flex h-full">
-                    {/* ASIDE: LISTA */}
+                    {/* ASIDE: LISTA E SEGMENTAÇÃO */}
                     <aside className="w-[420px] bg-white border-r border-slate-200 flex flex-col shrink-0">
                         <div className="p-4 bg-slate-50 border-b border-slate-200">
                             <div className="flex justify-between items-center mb-4">
                                 <h2 className="font-black text-slate-800 flex items-center gap-2">
-                                    <Users size={18} className="text-blue-600"/> CLIENTES ({list.length})
+                                    <Users size={18} className="text-blue-600"/> CLIENTES ({filteredList.length})
                                 </h2>
-                                <div className="flex gap-2">
+                                <div className="flex gap-1">
                                     <button onClick={exportData} title="Backup" className="p-2 hover:bg-slate-200 rounded text-slate-500"><Download size={16}/></button>
-                                    <label className="p-2 hover:bg-slate-200 rounded text-slate-500 cursor-pointer">
-                                        <Upload size={16}/><input type="file" className="hidden" onChange={importData} accept=".json"/>
-                                    </label>
                                 </div>
                             </div>
+
+                            {/* TABS DE SEGMENTAÇÃO */}
+                            <div className="flex bg-slate-200 p-1 rounded-lg gap-1 mb-4">
+                                {[
+                                    { id: 'ALL', label: 'Todos' },
+                                    { id: 'NEW', label: 'Novos' },
+                                    { id: 'RECURRING', label: 'Recorr.' },
+                                    { id: 'LOYAL', label: 'Fiéis' },
+                                    { id: 'VIP', label: 'VIPs' }
+                                ].map(seg => (
+                                    <button 
+                                        key={seg.id}
+                                        onClick={() => setActiveSegment(seg.id)}
+                                        className={`segment-tab ${activeSegment === seg.id ? 'bg-white text-blue-700 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                    >
+                                        {seg.label}
+                                    </button>
+                                ))}
+                            </div>
+
                             <div className="relative">
                                 <Search className="absolute left-3 top-2.5 text-slate-400" size={16}/>
                                 <input 
@@ -220,9 +218,11 @@
                         </div>
 
                         <div className="flex-1 overflow-y-auto scrollbar-thin divide-y divide-slate-100">
-                            {list.map(c => {
+                            {filteredList.length === 0 ? (
+                                <div className="p-10 text-center text-slate-400 italic text-sm">Nenhum cliente nesta categoria.</div>
+                            ) : filteredList.map(c => {
                                 const active = editingClientId === c.id;
-                                const seg = getSegment(c.purchaseCount);
+                                const seg = getSegmentData(c.purchaseCount);
                                 return (
                                     <div key={c.id} className={`p-4 cursor-pointer hover:bg-slate-50 transition-colors ${active ? 'bg-blue-50 border-l-4 border-blue-600' : 'border-l-4 border-transparent'}`}
                                          onClick={() => { setCForm(c); setEditingClientId(c.id); }}>
@@ -236,7 +236,6 @@
                                         </div>
                                         {active && (
                                             <div className="flex gap-2 mt-3 pt-3 border-t border-blue-100">
-                                                <button onClick={(e) => { e.stopPropagation(); handlePrint(c); }} className="action-btn btn-print"><Printer size={14}/></button>
                                                 <button onClick={(e) => { e.stopPropagation(); handleShare(c); }} className="action-btn btn-share"><Share2 size={14}/></button>
                                                 {c.phone && <button onClick={(e) => { e.stopPropagation(); window.open(`https://wa.me/55${c.phone.replace(/\D/g,'')}`); }} className="action-btn btn-whats"><Phone size={14}/></button>}
                                             </div>
@@ -252,52 +251,68 @@
                         </div>
                     </aside>
 
-                    {/* MAIN: FORM */}
+                    {/* MAIN: FORM (LIMPO) */}
                     <main className="flex-1 bg-slate-100 overflow-y-auto p-8 scrollbar-thin">
                         <div className="max-w-4xl mx-auto">
                             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                                 <div className="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                                    <div>
-                                        <h1 className="text-xl font-black text-slate-900 uppercase">
-                                            {editingClientId ? 'Editar Registro' : 'Novo Cliente'}
-                                        </h1>
-                                        <p className="text-[10px] text-slate-400 font-bold tracking-widest uppercase mt-0.5">Módulo de Vendas v2.1</p>
+                                    <div className="flex items-center gap-4">
+                                        <div className={`w-3 h-3 rounded-full ${editingClientId ? 'bg-amber-500' : 'bg-blue-600'}`}></div>
+                                        <div>
+                                            <h1 className="text-xl font-black text-slate-900 uppercase">
+                                                {editingClientId ? 'Editar Cadastro' : 'Novo Cliente'}
+                                            </h1>
+                                            {editingClientId && (
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${getSegmentData(cForm.purchaseCount).color}`}>
+                                                        {getSegmentData(cForm.purchaseCount).label}
+                                                    </span>
+                                                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                                                        Cód: {cForm.code}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                     <div className="flex gap-3">
                                         {editingClientId && (
-                                            <button onClick={() => { if(confirm("Excluir?")) { setClients(clients.filter(i=>i.id!==editingClientId)); startNew(); } }} className="px-4 py-2 text-red-600 font-bold text-sm hover:bg-red-50 rounded">EXCLUIR</button>
+                                            <button onClick={() => { if(confirm("Excluir definitivamente?")) { setClients(clients.filter(i=>i.id!==editingClientId)); startNew(); } }} className="px-4 py-2 text-red-600 font-bold text-sm hover:bg-red-50 rounded transition">EXCLUIR</button>
                                         )}
-                                        <button onClick={saveClient} className="px-8 py-2 bg-blue-600 text-white font-black rounded-md shadow-md hover:bg-blue-700 flex items-center gap-2">
+                                        <button onClick={saveClient} className="px-8 py-2 bg-blue-600 text-white font-black rounded-md shadow-lg hover:bg-blue-700 flex items-center gap-2 transition active:scale-95">
                                             <Save size={18}/> SALVAR
                                         </button>
                                     </div>
                                 </div>
 
                                 <div className="p-8 grid grid-cols-12 gap-6">
-                                    <div className="col-span-12 md:col-span-8">
-                                        <label className="input-label">Nome / Razão Social</label>
-                                        <input className="input-field" value={cForm.name} onChange={e => setCForm({...cForm, name: e.target.value.toUpperCase()})} placeholder="NOME DO CLIENTE"/>
+                                    {/* IDENTIFICAÇÃO */}
+                                    <div className="col-span-12 md:col-span-10">
+                                        <label className="input-label">Nome Completo / Razão Social</label>
+                                        <input className="input-field uppercase" value={cForm.name} onChange={e => setCForm({...cForm, name: e.target.value.toUpperCase()})} placeholder="DIGITE O NOME"/>
                                     </div>
-                                    <div className="col-span-6 md:col-span-2">
-                                        <label className="input-label">Código</label>
-                                        <input className="input-field bg-slate-50 text-slate-400 text-center font-mono" value={cForm.code} disabled placeholder="AUTO"/>
-                                    </div>
-                                    <div className="col-span-6 md:col-span-2">
+                                    <div className="col-span-12 md:col-span-2">
                                         <label className="input-label">Compras</label>
-                                        <input type="number" className="input-field text-center font-bold" value={cForm.purchaseCount} onChange={e => setCForm({...cForm, purchaseCount: e.target.value})}/>
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-black text-blue-700 text-lg bg-blue-50 px-4 py-1.5 rounded-md border border-blue-100 w-full text-center">
+                                                {cForm.purchaseCount}
+                                            </span>
+                                            {/* Removido o input manual, mantido apenas o display ou botão de incremento se desejado futuramente */}
+                                        </div>
                                     </div>
 
                                     <div className="col-span-12 md:col-span-6">
-                                        <label className="input-label">WhatsApp Principal</label>
+                                        <label className="input-label">WhatsApp (Principal)</label>
                                         <input className="input-field font-mono" value={cForm.phone} onChange={e => setCForm({...cForm, phone: e.target.value})} placeholder="(65) 9 0000-0000"/>
                                     </div>
                                     <div className="col-span-12 md:col-span-6">
-                                        <label className="input-label">E-mail ou Contato Secundário</label>
-                                        <input className="input-field" value={cForm.phone2} onChange={e => setCForm({...cForm, phone2: e.target.value})} />
+                                        <label className="input-label">Outro Contato / Observação de Telefone</label>
+                                        <input className="input-field" value={cForm.phone2} onChange={e => setCForm({...cForm, phone2: e.target.value})} placeholder="Ex: Fixo ou Recado" />
                                     </div>
 
-                                    <div className="col-span-12 pt-4 border-t border-slate-50 mt-2">
-                                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">Logística e Endereço</h3>
+                                    <div className="col-span-12 pt-6 border-t border-slate-50 mt-4">
+                                        <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                            <MapPin size={14}/> Logística e Endereço
+                                        </h3>
                                     </div>
 
                                     <div className="col-span-12 md:col-span-4">
@@ -319,13 +334,13 @@
                                     </div>
 
                                     <div className="col-span-12">
-                                        <label className="input-label">Endereço Completo</label>
+                                        <label className="input-label">Endereço de Entrega</label>
                                         <input className="input-field" value={cForm.address} onChange={e => setCForm({...cForm, address: e.target.value})} placeholder="Rua, Número, Referência..."/>
                                     </div>
 
-                                    <div className="col-span-12">
-                                        <label className="input-label">Observações Internas</label>
-                                        <textarea className="input-field h-24 resize-none text-slate-600 font-medium" value={cForm.obs} onChange={e => setCForm({...cForm, obs: e.target.value})} placeholder="Histórico, restrições, horários..."/>
+                                    <div className="col-span-12 pt-4">
+                                        <label className="input-label">Observações sobre o Cliente</label>
+                                        <textarea className="input-field h-24 resize-none text-slate-600 font-medium" value={cForm.obs} onChange={e => setCForm({...cForm, obs: e.target.value})} placeholder="Preferências, restrições, históricos de pedidos..."/>
                                     </div>
                                 </div>
                             </div>
@@ -337,7 +352,6 @@
 
         function App() {
             const [clients, setClients] = useState(() => migrateData());
-
             useEffect(() => {
                 localStorage.setItem(CURRENT_STORAGE_KEY, JSON.stringify(clients));
             }, [clients]);
