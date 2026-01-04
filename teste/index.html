@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v7.7 (Spreadsheet View)</title>
+    <title>Sistema Logística Local-First v7.8 (Client Spreadsheet)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -263,7 +263,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '7.7', exportedAt: new Date().toISOString() };
+            let data = { version: '7.8', exportedAt: new Date().toISOString() };
             let filename = 'backup';
             if (backupType === 'all') { 
                 data = { ...data, clients, products, sales, companyPhone, postSaleLog }; 
@@ -338,7 +338,7 @@
                 <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0 z-50 shadow-md">
                     <div className="flex items-center gap-2">
                         <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold text-xs">LOG</div>
-                        <h1 className="font-bold tracking-wider">SISTEMA v7.7</h1>
+                        <h1 className="font-bold tracking-wider">SISTEMA v7.8</h1>
                     </div>
                     <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 bg-slate-800 rounded">
                         {mobileMenuOpen ? <X size={20}/> : <Menu size={20}/>}
@@ -349,7 +349,7 @@
                 <aside className={`fixed inset-y-0 left-0 bg-slate-900 text-white flex flex-col transition-transform duration-300 z-40 w-64 lg:static lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
                     <div className="h-16 hidden lg:flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
                         <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">LOG</div>
-                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.7</span></h1>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.8</span></h1>
                     </div>
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto mt-16 lg:mt-0">
                         <NavItem icon={<LayoutDashboard size={20}/>} label="Visão Geral" active={activeTab === 'dashboard'} onClick={() => {setActiveTab('dashboard'); setMobileMenuOpen(false);}} />
@@ -1432,7 +1432,9 @@
                 }
             };
 
-            const list = tab === 'clients' ? clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase())).sort((a,b) => a.name.localeCompare(b.name)) : products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).sort((a,b) => a.name.localeCompare(b.name));
+            const list = tab === 'clients' 
+                ? clients.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || (c.code && c.code.includes(search)) || (c.phone && c.phone.includes(search))).sort((a,b) => a.name.localeCompare(b.name)) 
+                : products.filter(p => p.name.toLowerCase().includes(search.toLowerCase())).sort((a,b) => a.name.localeCompare(b.name));
 
             return (
                 <div className="flex flex-col lg:flex-row h-full pb-20 lg:pb-0">
@@ -1482,19 +1484,38 @@
                                     </tbody>
                                 </table>
                             ) : (
-                                <div className="divide-y divide-gray-100">
-                                    {list.map(c => (
-                                        <div key={c.id} className={`p-4 cursor-pointer hover:bg-blue-50 transition ${editingClientId === c.id ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`} onClick={() => { setCForm(c); setEditingClientId(c.id); }}>
-                                            <div className="flex justify-between">
-                                                <span className="font-bold text-gray-800">{c.name}</span>
-                                                <span className="text-xs text-gray-400 font-mono">{c.code}</span>
-                                            </div>
-                                            <div className="text-xs text-gray-500 mt-1 flex gap-2">
-                                                <span>{c.phone}</span> • <span className="truncate">{c.district}</span>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
+                                <table className="w-full text-left border-collapse text-xs sm:text-sm">
+                                    <thead className="bg-gray-100 text-gray-600 sticky top-0 z-10 font-bold uppercase shadow-sm">
+                                        <tr>
+                                            <th className="p-3 border-b">Nome</th>
+                                            <th className="p-3 border-b text-center hidden sm:table-cell">Cód</th>
+                                            <th className="p-3 border-b hidden md:table-cell">Cidade</th>
+                                            <th className="p-3 border-b">Bairro</th>
+                                            <th className="p-3 border-b text-center hidden lg:table-cell">Rota</th>
+                                            <th className="p-3 border-b text-center">Contato</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {list.map(c => {
+                                            const isSelected = editingClientId === c.id;
+                                            return (
+                                                <tr key={c.id} onClick={() => { setCForm(c); setEditingClientId(c.id); }} className={`hover:bg-blue-50 cursor-pointer transition ${isSelected ? 'bg-blue-50 border-l-4 border-l-blue-500' : ''}`}>
+                                                    <td className="p-3 font-medium text-gray-800">{c.name}</td>
+                                                    <td className="p-3 text-center text-gray-500 hidden sm:table-cell font-mono">{c.code || '-'}</td>
+                                                    <td className="p-3 text-gray-500 hidden md:table-cell">{c.city}</td>
+                                                    <td className="p-3 text-gray-500">{c.district}</td>
+                                                    <td className="p-3 text-center text-gray-500 hidden lg:table-cell">{c.region}</td>
+                                                    <td className="p-3 text-center">
+                                                        <div className="flex justify-center gap-2" onClick={(e) => e.stopPropagation()}>
+                                                            <button onClick={() => window.open(`https://wa.me/55${c.phone?.replace(/\D/g, '')}`, '_blank')} className="p-1.5 bg-green-100 text-green-600 rounded hover:bg-green-200" title="WhatsApp"><MessageCircle size={16}/></button>
+                                                            <button onClick={() => window.open(`tel:${c.phone}`, '_self')} className="p-1.5 bg-blue-100 text-blue-600 rounded hover:bg-blue-200" title="Ligar"><Phone size={16}/></button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
                             )}
                         </div>
                     </div>
@@ -1527,7 +1548,7 @@
                                         <div><label className="text-[10px] font-bold text-gray-400 uppercase">Bairro</label><input className="input-field" value={cForm.district} onChange={e => setCForm({...cForm, district: e.target.value})} /></div>
                                     </div>
                                     <div><label className="text-[10px] font-bold text-gray-400 uppercase">Endereço</label><input className="input-field" value={cForm.address} onChange={e => setCForm({...cForm, address: e.target.value})} /></div>
-                                    <div><label className="text-[10px] font-bold text-gray-400 uppercase">Região / Rota</label><select className="input-field" value={cForm.region} onChange={e => setCForm({...cForm, region: e.target.value})}><option value="CUIABÁ">CUIABÁ (Centro)</option><option value="COXIPO">COXIPO</option><option value="VARZEA GRANDE">VARZEA GRANDE</option><option value="CPA">CPA</option></select></div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4"><div><label className="text-xs font-bold text-gray-500 uppercase">Região / Rota</label><select className="input-field" value={cForm.region} onChange={e => setCForm({...cForm, region: e.target.value})}><option value="CUIABÁ">CUIABÁ (Centro)</option><option value="COXIPO">COXIPO</option><option value="VARZEA GRANDE">VARZEA GRANDE</option><option value="CPA">CPA</option></select></div><div><label className="text-xs font-bold text-gray-500 uppercase">Link Maps</label><input className="input-field" value={cForm.mapLink} onChange={e => setCForm({...cForm, mapLink: e.target.value})} /></div></div>
                                     <div><label className="text-[10px] font-bold text-gray-400 uppercase">Observações</label><textarea className="input-field h-20 resize-none" value={cForm.obs} onChange={e => setCForm({...cForm, obs: e.target.value})} /></div>
                                     <button onClick={saveClient} className="w-full btn-primary mt-2">SALVAR CLIENTE</button>
                                 </div>
