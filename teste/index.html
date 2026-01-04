@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v7.4 (Cashback & Scroll Fix)</title>
+    <title>Sistema Logística Local-First v7.5 (Admin Tools)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -86,7 +86,7 @@
           Calendar, Filter, Phone, Database, Clipboard, Box, ExternalLink,
           Clock, Home, DollarSign, CreditCard, Check, ShieldCheck, ClipboardList,
           ArrowRight, ArrowLeft, LayoutDashboard, Settings, Menu, BarChart2, TrendingUp, PieChart,
-          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star, Activity, LineChart, ChevronDown, Gift, X, Wallet
+          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star, Activity, LineChart, ChevronDown, Gift, X, Wallet, Ban
         } from 'lucide-react';
 
         // --- SCHEMAS DE VALIDAÇÃO (ZOD) ---
@@ -266,7 +266,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '7.4', exportedAt: new Date().toISOString() };
+            let data = { version: '7.5', exportedAt: new Date().toISOString() };
             let filename = 'backup';
             if (backupType === 'all') { 
                 data = { ...data, clients, products, sales, companyPhone, postSaleLog }; 
@@ -309,18 +309,29 @@
             reader.readAsText(file);
           };
 
+          const clearDailySales = () => {
+              const pwd = prompt("SENHA DE ADMINISTRADOR:");
+              if (pwd !== '12345') return alert("Senha incorreta.");
+              if (!confirm("⚠️ ATENÇÃO ⚠️\n\nIsso apagará TODAS as vendas com a data de HOJE.\nEsta ação é irreversível e geralmente usada para limpar testes.\n\nContinuar?")) return;
+
+              const today = new Date().toISOString().slice(0, 10);
+              const newSales = sales.filter(s => !s.date.startsWith(today));
+              setSales(newSales);
+              alert("Vendas de hoje foram removidas com sucesso.");
+          };
+
           if (viewMode === 'driver') return <DriverView data={driverData} onExit={() => { window.location.hash = ''; setViewMode('dashboard'); }} />;
 
           const renderContent = () => {
              switch(activeTab) {
-                case 'dashboard': return <DashboardView sales={sales} products={products} clients={clients} />;
+                case 'dashboard': return <DashboardView sales={sales} products={products} clients={clients} onClearDaily={clearDailySales} />;
                 case 'pos': return <POSView clients={clients} products={products} setProducts={setProducts} sales={sales} setSales={setSales} saleToEdit={saleToEdit} setSaleToEdit={setSaleToEdit} />;
                 case 'expedition': return <ExpeditionView sales={sales} setSales={setSales} clients={clients} products={products} setProducts={setProducts} onEditSale={(sale) => { setSaleToEdit(sale); setActiveTab('pos'); }} />;
                 case 'logistics': return <LogisticsView sales={sales} setSales={setSales} clients={clients} companyPhone={companyPhone} products={products} setProducts={setProducts} />;
                 case 'crm': return <RegistryView clients={clients} setClients={setClients} products={products} setProducts={setProducts} />;
                 case 'reports': return <ReportsView sales={sales} clients={clients} products={products} postSaleLog={postSaleLog} />;
-                case 'postsale': return <PostSalesView sales={sales} clients={clients} postSaleLog={postSaleLog} setPostSaleLog={setPostSaleLog} companyPhone={companyPhone} />;
-                default: return <DashboardView sales={sales} products={products} clients={clients} />;
+                case 'postsale': return <PostSalesView sales={sales} setSales={setSales} clients={clients} postSaleLog={postSaleLog} setPostSaleLog={setPostSaleLog} companyPhone={companyPhone} products={products} setProducts={setProducts} />;
+                default: return <DashboardView sales={sales} products={products} clients={clients} onClearDaily={clearDailySales} />;
              }
           };
 
@@ -330,7 +341,7 @@
                 <div className="lg:hidden bg-slate-900 text-white p-4 flex justify-between items-center shrink-0 z-50 shadow-md">
                     <div className="flex items-center gap-2">
                         <div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold text-xs">LOG</div>
-                        <h1 className="font-bold tracking-wider">SISTEMA v7.4</h1>
+                        <h1 className="font-bold tracking-wider">SISTEMA v7.5</h1>
                     </div>
                     <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 bg-slate-800 rounded">
                         {mobileMenuOpen ? <X size={20}/> : <Menu size={20}/>}
@@ -341,7 +352,7 @@
                 <aside className={`fixed inset-y-0 left-0 bg-slate-900 text-white flex flex-col transition-transform duration-300 z-40 w-64 lg:static lg:translate-x-0 ${mobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}`}>
                     <div className="h-16 hidden lg:flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
                         <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">LOG</div>
-                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.4</span></h1>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.5</span></h1>
                     </div>
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto mt-16 lg:mt-0">
                         <NavItem icon={<LayoutDashboard size={20}/>} label="Visão Geral" active={activeTab === 'dashboard'} onClick={() => {setActiveTab('dashboard'); setMobileMenuOpen(false);}} />
@@ -400,7 +411,7 @@
         );
 
         // --- DASHBOARD ---
-        function DashboardView({ sales, products, clients }) {
+        function DashboardView({ sales, products, clients, onClearDaily }) {
             const today = new Date().toISOString().slice(0, 10);
             const salesToday = sales.filter(s => s.date.startsWith(today) && s.status !== 'Cancelado');
             const totalToday = salesToday.reduce((acc, s) => acc + s.total, 0);
@@ -408,12 +419,22 @@
             const lowStock = products.filter(p => !p.isCombo && p.stock <= 5).length;
             
             return (
-                <div className="p-4 lg:p-6 pb-20">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-                        <MetricCard title="Vendas Hoje" value={formatCurrency(totalToday)} icon={<DollarSign size={24} className="text-green-600"/>} color="green" sub={`${salesToday.length} pedidos`} />
-                        <MetricCard title="Pedidos Pendentes" value={pendingOrders} icon={<Clock size={24} className="text-orange-600"/>} color="orange" sub="Aguardando montagem" />
-                        <MetricCard title="Estoque Baixo" value={lowStock} icon={<AlertTriangle size={24} className="text-red-600"/>} color="red" sub="Produtos críticos" />
-                        <MetricCard title="Total Clientes" value={clients.length} icon={<Users size={24} className="text-blue-600"/>} color="blue" sub="Base ativa" />
+                <div className="p-4 lg:p-6 pb-20 flex flex-col h-full">
+                    <div className="flex-1">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+                            <MetricCard title="Vendas Hoje" value={formatCurrency(totalToday)} icon={<DollarSign size={24} className="text-green-600"/>} color="green" sub={`${salesToday.length} pedidos`} />
+                            <MetricCard title="Pedidos Pendentes" value={pendingOrders} icon={<Clock size={24} className="text-orange-600"/>} color="orange" sub="Aguardando montagem" />
+                            <MetricCard title="Estoque Baixo" value={lowStock} icon={<AlertTriangle size={24} className="text-red-600"/>} color="red" sub="Produtos críticos" />
+                            <MetricCard title="Total Clientes" value={clients.length} icon={<Users size={24} className="text-blue-600"/>} color="blue" sub="Base ativa" />
+                        </div>
+                    </div>
+                    
+                    {/* ADMIN ACTION - CLEAR TODAY */}
+                    <div className="mt-8 border-t pt-4">
+                        <button onClick={onClearDaily} className="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-6 rounded-lg flex items-center gap-2 transition text-sm">
+                            <Trash2 size={18}/> ZERAR VENDAS DO DIA (ADMIN)
+                        </button>
+                        <p className="text-xs text-gray-400 mt-1 ml-1">Requer senha administrativa. Use apenas para limpar dados de teste.</p>
                     </div>
                 </div>
             );
@@ -687,8 +708,8 @@
             );
         }
 
-        // --- PÓS-VENDA VIEW ---
-        function PostSalesView({ sales, clients, postSaleLog, setPostSaleLog, companyPhone }) {
+        // --- PÓS-VENDA VIEW (Updated with Cancel Button) ---
+        function PostSalesView({ sales, setSales, clients, postSaleLog, setPostSaleLog, companyPhone, products, setProducts }) {
             const [displayLimit, setDisplayLimit] = useState(10);
 
             const validSales = useMemo(() => {
@@ -717,6 +738,36 @@
                 }));
 
                 window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            };
+
+            const cancelSale = (sale) => {
+                if (!confirm(`TEM CERTEZA QUE DESEJA CANCELAR A VENDA #${sale.id}?\n\nOs itens voltarão automaticamente para o estoque.`)) return;
+
+                // 1. Devolver estoque
+                const newProducts = [...products];
+                sale.items.forEach(item => {
+                    const dbProd = newProducts.find(p => p.id === item.id);
+                    if (dbProd) {
+                        if (dbProd.isCombo) {
+                            item.comboItems?.forEach(ing => {
+                                const dbIng = newProducts.find(p => p.id === ing.id);
+                                if (dbIng) {
+                                    dbIng.stock += ing.qty * (item.qty || 1);
+                                    dbIng.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_POSTSALE', qty: ing.qty * (item.qty || 1) });
+                                }
+                            });
+                        } else {
+                            dbProd.stock += (item.qty || 1);
+                            dbProd.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_POSTSALE', qty: (item.qty || 1) });
+                        }
+                    }
+                });
+                setProducts(newProducts);
+
+                // 2. Atualizar status da venda
+                const updatedSales = sales.map(s => s.id === sale.id ? { ...s, status: 'Cancelado' } : s);
+                setSales(updatedSales);
+                alert("Venda cancelada e estoque reposto!");
             };
 
             return (
@@ -781,13 +832,22 @@
                                                     </div>
                                                 </td>
                                                 <td className="p-4 text-center">
-                                                    <button 
-                                                        onClick={() => sendThankYou(sale, client)}
-                                                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 mx-auto transition shadow-sm hover:shadow"
-                                                        title="Enviar Agradecimento"
-                                                    >
-                                                        <MessageCircle size={14} /> <span>Agradecer</span>
-                                                    </button>
+                                                    <div className="flex justify-center gap-2">
+                                                        <button 
+                                                            onClick={() => sendThankYou(sale, client)}
+                                                            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition shadow-sm hover:shadow"
+                                                            title="Enviar Agradecimento"
+                                                        >
+                                                            <MessageCircle size={14} /> <span>Agradecer</span>
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => cancelSale(sale)}
+                                                            className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition shadow-sm"
+                                                            title="Cancelar Venda (Devolve Estoque)"
+                                                        >
+                                                            <Ban size={14} />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         );
