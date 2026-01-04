@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v7.0 (BI Edition)</title>
+    <title>Sistema Logística Local-First v7.1 (BI + PostSale List)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -86,7 +86,7 @@
           Calendar, Filter, Phone, Database, Clipboard, Box, ExternalLink,
           Clock, Home, DollarSign, CreditCard, Check, ShieldCheck, ClipboardList,
           ArrowRight, ArrowLeft, LayoutDashboard, Settings, Menu, BarChart2, TrendingUp, PieChart,
-          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star, Activity, LineChart
+          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star, Activity, LineChart, ChevronDown
         } from 'lucide-react';
 
         // --- SCHEMAS DE VALIDAÇÃO (ZOD) ---
@@ -261,7 +261,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '7.0', exportedAt: new Date().toISOString() };
+            let data = { version: '7.1', exportedAt: new Date().toISOString() };
             let filename = 'backup';
             if (backupType === 'all') { 
                 data = { ...data, clients, products, sales, companyPhone, postSaleLog }; 
@@ -324,7 +324,7 @@
                 <aside className="w-20 lg:w-64 bg-slate-900 text-white flex flex-col shrink-0 transition-all duration-300 z-30 shadow-xl">
                     <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
                         <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">LOG</div>
-                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.0</span></h1>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.1</span></h1>
                     </div>
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
                         <NavItem icon={<LayoutDashboard size={20}/>} label="Visão Geral" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
@@ -398,7 +398,7 @@
             <div className={`bg-white p-5 rounded-xl shadow-sm border border-${color}-100 relative overflow-hidden group`}><div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110`}>{icon}</div><div className="relative z-10"><p className="text-gray-500 text-sm font-medium uppercase tracking-wider mb-1">{title}</p><h3 className="text-2xl font-bold text-gray-800 mb-1">{value}</h3><p className={`text-xs text-${color}-600 font-bold`}>{sub}</p></div></div>
         );
 
-        // --- INTELLIGENCE / REPORTS VIEW (REBUILT v7.0) ---
+        // --- INTELLIGENCE / REPORTS VIEW (UPDATED V7.1 - REMOVED PEAK HOURS) ---
         function ReportsView({ sales, clients, products, postSaleLog }) {
             const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().slice(0, 10));
             const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
@@ -461,21 +461,18 @@
                 return Object.values(map).sort((a,b) => b.revenue - a.revenue);
             }, [filteredSales]);
 
-            // --- ANÁLISE TEMPORAL (Dia da Semana & Hora) ---
+            // --- ANÁLISE TEMPORAL (Dia da Semana) - Hora removido ---
             const timeAnalysis = useMemo(() => {
                 const days = {0:'Dom', 1:'Seg', 2:'Ter', 3:'Qua', 4:'Qui', 5:'Sex', 6:'Sáb'};
                 const dayCounts = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
-                const hourCounts = new Array(24).fill(0);
                 
                 filteredSales.forEach(s => {
                     const d = new Date(s.date);
                     dayCounts[d.getDay()]++;
-                    hourCounts[d.getHours()]++;
                 });
 
                 return {
-                    days: Object.entries(dayCounts).map(([k,v]) => ({ label: days[k], val: v })),
-                    hours: hourCounts.map((v, k) => ({ label: `${k}h`, val: v }))
+                    days: Object.entries(dayCounts).map(([k,v]) => ({ label: days[k], val: v }))
                 };
             }, [filteredSales]);
 
@@ -608,15 +605,11 @@
                         </div>
                     </div>
 
-                    {/* GRÁFICOS DE TEMPO */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+                    {/* GRÁFICOS DE TEMPO - Pico de Horário Removido */}
+                    <div className="grid grid-cols-1 gap-6 pb-6">
                         <div className="bg-white p-5 rounded-xl shadow-sm border">
                             <h3 className="font-bold text-gray-700 text-sm uppercase mb-6">Fluxo Semanal (Pedidos)</h3>
                             <BarChart data={timeAnalysis.days} color="indigo" height={120} />
-                        </div>
-                        <div className="bg-white p-5 rounded-xl shadow-sm border">
-                            <h3 className="font-bold text-gray-700 text-sm uppercase mb-6">Pico de Horário (Pedidos)</h3>
-                            <BarChart data={timeAnalysis.hours} color="orange" height={120} />
                         </div>
                     </div>
 
@@ -624,102 +617,125 @@
             );
         }
 
-        // --- PÓS-VENDA VIEW ---
+        // --- PÓS-VENDA VIEW (NEW TABLE LAYOUT v7.1) ---
         function PostSalesView({ sales, clients, postSaleLog, setPostSaleLog, companyPhone }) {
-            const clientLastSale = useMemo(() => {
-                const map = {};
-                sales.forEach(s => {
-                    if (s.status === 'Cancelado') return;
-                    if (!map[s.clientId] || new Date(s.date) > new Date(map[s.clientId].date)) {
-                        map[s.clientId] = s;
-                    }
-                });
-                return map;
+            const [displayLimit, setDisplayLimit] = useState(10);
+
+            // Filter valid sales and sort by date descending
+            const validSales = useMemo(() => {
+                return sales
+                    .filter(s => s.status === 'Entregue' || s.status === 'Concluído' || s.status === 'Pendente')
+                    .sort((a, b) => new Date(b.date) - new Date(a.date));
             }, [sales]);
 
-            const now = new Date();
-            const buckets = { opportunity: [], attention: [], risk: [] };
+            const visibleSales = validSales.slice(0, displayLimit);
 
-            Object.values(clientLastSale).forEach(sale => {
-                const saleDate = new Date(sale.date);
-                const diffTime = Math.abs(now - saleDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                const client = clients.find(c => c.id === sale.clientId);
-                if (!client) return;
+            const loadMore = () => {
+                setDisplayLimit(prev => prev + 10);
+            };
 
-                let rawCashback = sale.total * 0.06;
-                let cashback = Math.max(5, Math.round(rawCashback / 5) * 5); 
-
-                const data = { client, sale, diffDays, cashback };
-
-                if (diffDays >= 25 && diffDays <= 30) buckets.opportunity.push(data);
-                else if (diffDays >= 31 && diffDays <= 45) buckets.attention.push(data);
-                else if (diffDays >= 46) buckets.risk.push(data);
-            });
-
-            const sendWhatsApp = (item) => {
-                const log = postSaleLog[item.client.id];
-                const isReminder = !!log;
-                const clientName = item.client.name.split(' ')[0];
-                const cleanPhone = item.client.phone.replace(/\D/g, '');
+            const sendThankYou = (sale, client) => {
+                if (!client) return alert("Cliente não encontrado");
                 
-                let msg = '';
-                if (!isReminder) {
-                    msg = `Olá ${clientName}! 🌟 Faz ${item.diffDays} dias que não te vemos. Como agradecimento, liberamos um *Cashback de ${formatCurrency(item.cashback)}* para sua próxima compra! 💰 Validade: 7 dias. Aproveite!`;
-                } else {
-                    msg = `Oi ${clientName}! ⏳ Passando pra lembrar do seu *Cashback de ${formatCurrency(item.cashback)}*! Prorroguei a validade por mais 7 dias pra você aproveitar. Vem conferir as novidades!`;
-                }
+                const clientName = client.name.split(' ')[0];
+                const cleanPhone = client.phone.replace(/\D/g, '');
+                
+                // Simplified items list for message
+                const itemsSummary = sale.items.map(i => `${i.qty || 1}x ${i.name}`).join(', ');
+                
+                const msg = `Olá ${clientName}! 👋\n\nPassando para agradecer pela compra de hoje! ❤\n\nVocê pediu: ${itemsSummary}.\n\nEsperamos que goste! Qualquer dúvida estamos à disposição. Até a próxima! 🚀`;
 
+                // Log the interaction
                 setPostSaleLog(prev => ({
                     ...prev,
-                    [item.client.id]: { date: new Date().toISOString(), count: (prev[item.client.id]?.count || 0) + 1 }
+                    [`${sale.id}_thankyou`]: { date: new Date().toISOString(), type: 'thank_you' }
                 }));
 
                 window.open(`https://wa.me/55${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
             };
 
-            const PostSaleCard = ({ item, type }) => {
-                const log = postSaleLog[item.client.id];
-                const lastMsgDate = log ? new Date(log.date).toLocaleDateString('pt-BR') : 'Nunca';
-                
-                return (
-                    <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-200 flex flex-col gap-2">
-                        <div className="flex justify-between items-start">
-                            <span className="font-bold text-gray-800 text-sm truncate">{item.client.name}</span>
-                            <span className="text-[10px] font-bold bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">{item.diffDays}d</span>
-                        </div>
-                        <div className="text-xs text-gray-500">
-                            Última: {formatCurrency(item.sale.total)} <br/>
-                            <span className="text-[10px]">Msg: {lastMsgDate}</span>
-                        </div>
-                        <div className="flex items-center justify-between mt-1 pt-2 border-t border-dashed">
-                            <div className="text-green-700 font-bold text-sm">
-                                🎁 {formatCurrency(item.cashback)}
-                            </div>
-                            <button onClick={() => sendWhatsApp(item)} className={`px-3 py-1.5 rounded text-xs font-bold text-white flex items-center gap-1 transition ${log ? 'bg-indigo-500 hover:bg-indigo-600' : 'bg-green-600 hover:bg-green-700'}`}>
-                                {log ? <RefreshCcw size={12}/> : <MessageSquare size={12}/>}
-                                {log ? 'Lembrar' : 'Enviar'}
-                            </button>
-                        </div>
-                    </div>
-                );
-            };
-
             return (
-                <div className="h-full p-6 overflow-x-auto">
-                    <div className="flex gap-6 h-full min-w-[1000px]">
-                        <div className="flex-1 flex flex-col bg-green-50 rounded-xl border border-green-200 overflow-hidden">
-                            <div className="p-3 bg-green-100 border-b border-green-200 flex justify-between items-center"><h3 className="font-bold text-green-900 flex items-center gap-2"><Clock size={16}/> Momento Ideal (25-30d)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-green-700">{buckets.opportunity.length}</span></div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.opportunity.map(item => <PostSaleCard key={item.client.id} item={item} type="opp" />)}</div>
+                <div className="h-full flex flex-col p-6 overflow-hidden bg-gray-50">
+                    <div className="flex justify-between items-center mb-6">
+                         <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><HeartHandshake className="text-pink-600"/> Pós-Venda & Fidelização</h2>
+                         <div className="text-xs text-gray-500 font-medium">Exibindo {visibleSales.length} de {validSales.length} vendas</div>
+                    </div>
+
+                    <div className="flex-1 bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col">
+                        <div className="overflow-x-auto flex-1">
+                            <table className="w-full text-left border-collapse">
+                                <thead className="bg-gray-100 text-gray-600 uppercase text-xs font-bold sticky top-0 z-10">
+                                    <tr>
+                                        <th className="p-4 border-b">Data</th>
+                                        <th className="p-4 border-b">Cliente</th>
+                                        <th className="p-4 border-b">Localização</th>
+                                        <th className="p-4 border-b">Cesta</th>
+                                        <th className="p-4 border-b">Pagamento</th>
+                                        <th className="p-4 border-b text-center">Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="text-sm divide-y divide-gray-100">
+                                    {visibleSales.map(sale => {
+                                        const client = clients.find(c => c.id === sale.clientId);
+                                        const saleDate = new Date(sale.date);
+                                        const isToday = new Date().toDateString() === saleDate.toDateString();
+                                        
+                                        return (
+                                            <tr key={sale.id} className="hover:bg-gray-50 transition">
+                                                <td className="p-4">
+                                                    <div className="font-bold text-gray-800">{saleDate.toLocaleDateString('pt-BR')}</div>
+                                                    <div className="text-xs text-gray-400">{saleDate.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+                                                    {isToday && <span className="bg-green-100 text-green-700 text-[10px] px-1.5 rounded font-bold">HOJE</span>}
+                                                </td>
+                                                <td className="p-4">
+                                                    {client ? (
+                                                        <div>
+                                                            <div className="font-bold text-gray-700">{client.name}</div>
+                                                            <div className="text-xs text-gray-400">{client.phone}</div>
+                                                        </div>
+                                                    ) : <span className="text-red-400">Cliente Removido</span>}
+                                                </td>
+                                                <td className="p-4 text-gray-600">
+                                                    {client ? (
+                                                        <>
+                                                            <div className="font-medium">{client.district || '-'}</div>
+                                                            <div className="text-xs text-gray-400">{client.city || '-'}</div>
+                                                        </>
+                                                    ) : '-'}
+                                                </td>
+                                                <td className="p-4">
+                                                    <div className="max-w-[200px] truncate text-gray-600" title={sale.items.map(i => i.name).join(', ')}>
+                                                        {sale.items.length} itens: {sale.items[0]?.name} {sale.items.length > 1 ? `+${sale.items.length - 1}` : ''}
+                                                    </div>
+                                                    <div className="font-bold text-xs text-emerald-600 mt-1">{formatCurrency(sale.total)}</div>
+                                                </td>
+                                                <td className="p-4">
+                                                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium">{sale.payMethod}</span>
+                                                </td>
+                                                <td className="p-4 text-center">
+                                                    <button 
+                                                        onClick={() => sendThankYou(sale, client)}
+                                                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 mx-auto transition shadow-sm hover:shadow"
+                                                        title="Enviar Agradecimento"
+                                                    >
+                                                        <MessageCircle size={14} /> <span>Agradecer</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                            {visibleSales.length === 0 && <div className="p-10 text-center text-gray-400">Nenhuma venda registrada.</div>}
                         </div>
-                        <div className="flex-1 flex flex-col bg-yellow-50 rounded-xl border border-yellow-200 overflow-hidden">
-                            <div className="p-3 bg-yellow-100 border-b border-yellow-200 flex justify-between items-center"><h3 className="font-bold text-yellow-900 flex items-center gap-2"><AlertTriangle size={16}/> Atenção (31-45d)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-yellow-700">{buckets.attention.length}</span></div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.attention.map(item => <PostSaleCard key={item.client.id} item={item} type="att" />)}</div>
-                        </div>
-                        <div className="flex-1 flex flex-col bg-red-50 rounded-xl border border-red-200 overflow-hidden">
-                            <div className="p-3 bg-red-100 border-b border-red-200 flex justify-between items-center"><h3 className="font-bold text-red-900 flex items-center gap-2"><XCircle size={16}/> Risco de Churn (46d+)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-red-700">{buckets.risk.length}</span></div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.risk.map(item => <PostSaleCard key={item.client.id} item={item} type="risk" />)}</div>
-                        </div>
+                        
+                        {visibleSales.length < validSales.length && (
+                            <div className="p-4 border-t bg-gray-50 flex justify-center">
+                                <button onClick={loadMore} className="flex items-center gap-2 bg-white border border-gray-300 px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 transition shadow-sm">
+                                    <ChevronDown size={16}/> Carregar mais vendas
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
             );
@@ -1128,7 +1144,7 @@
              return (<div className="flex h-full"><div className="w-1/3 border-r bg-gray-50 p-4 overflow-y-auto scrollbar-thin">{sortedProducts.map(p => (<div key={p.id} className="flex justify-between items-center text-xs py-2 border-b"><div><span className="font-bold block">{p.name}</span><span className="text-[10px] text-gray-500">{p.internalCode}</span></div><span className={`font-bold px-2 py-1 rounded ${p.stock <= 5 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{p.stock}</span></div>))}</div><div className="flex-1 p-6 space-y-4 overflow-y-auto"><div className="grid grid-cols-2 gap-6"><div><h3 className="font-bold text-green-700 mb-2">Entrada em Massa</h3><textarea className="w-full h-64 border p-2 text-xs font-mono bg-green-50" placeholder="COD | QTD" value={bulkIn} onChange={e=>setBulkIn(e.target.value)}></textarea><button onClick={()=>processBulk(bulkIn, 'IN')} className="btn-primary w-full bg-green-600 hover:bg-green-700 mt-2">PROCESSAR ENTRADA</button></div><div><h3 className="font-bold text-red-700 mb-2">Saída em Massa</h3><textarea className="w-full h-64 border p-2 text-xs font-mono bg-red-50" placeholder="COD | QTD" value={bulkOut} onChange={e=>setBulkOut(e.target.value)}></textarea><button onClick={()=>processBulk(bulkOut, 'OUT')} className="btn-primary w-full bg-red-600 hover:bg-red-700 mt-2">PROCESSAR SAÍDA</button></div></div></div></div>)
         }
         
-        // --- DRIVER VIEW (Mantido) ---
+        // --- DRIVER VIEW (UPDATED V7.1 - SCROLL FIX) ---
         function DriverView({ data, onExit }) {
           const [deliveryModal, setDeliveryModal] = useState(null); 
           const [filter, setFilter] = useState('Todas'); 
@@ -1186,9 +1202,10 @@
           const progress = Math.round((completedCount / data.orders.length) * 100); 
           const allFinished = completedCount === data.orders.length;
 
+          // Main Layout Change: h-screen flex flex-col to fix scrolling
           return (
-            <div className="min-h-screen bg-gray-50 text-gray-800 pb-20">
-               <header className="bg-indigo-700 text-white p-4 sticky top-0 z-10 shadow-md">
+            <div className="h-screen flex flex-col bg-gray-50 text-gray-800">
+               <header className="bg-indigo-700 text-white p-4 shrink-0 shadow-md z-10">
                  <div className="flex justify-between items-center mb-2">
                     <h1 className="font-bold text-lg">ROTA: {data.route}</h1>
                     <button onClick={onExit} className="text-xs bg-indigo-800 px-2 py-1 rounded hover:bg-indigo-900 transition">Sair</button>
@@ -1199,7 +1216,9 @@
                     <div className="w-1/2 bg-indigo-900 rounded-full h-1.5 overflow-hidden"><div className="bg-green-400 h-full transition-all duration-500" style={{width: `${progress}%`}}></div></div>
                  </div>
                </header>
-               <div className="p-4 space-y-6">
+               
+               {/* Scrollable Area */}
+               <div className="flex-1 overflow-y-auto p-4 space-y-6 pb-24">
                   {visibleOrders.map((order) => {
                     const result = deliveryResults[order.id];
                     const isDone = !!result;
@@ -1228,7 +1247,13 @@
                                 {isDone ? (<button disabled className="flex-1 bg-gray-200 text-gray-400 border border-gray-300 py-3 rounded font-bold text-sm flex items-center justify-center gap-2 cursor-not-allowed"><CheckCircle size={18}/> FINALIZADO</button>) : (<><button onClick={() => handleCancelDelivery(order)} className="w-1/3 bg-red-100 text-red-700 py-3 rounded font-bold text-sm hover:bg-red-200 flex items-center justify-center border border-red-200"><XCircle size={18}/> CANCELAR</button><button onClick={() => setDeliveryModal(order)} className="flex-1 bg-emerald-600 text-white py-3 rounded font-bold text-sm hover:bg-emerald-700 flex items-center justify-center gap-2 shadow animate-pulse"><CheckCircle size={18}/> ENTREGAR</button></>)}
                             </div>
 
-                            <div className={`p-3 rounded text-sm mt-3 border ${isDone ? 'bg-gray-100 border-gray-200 text-gray-500' : 'bg-gray-50 border-gray-100'}`}><div className="flex justify-between mb-1"><span className="text-gray-500">Forma Pagto Prevista:</span><span className="font-bold uppercase">{order.pay}</span></div><div className="flex justify-between items-center mb-1"><span className="text-gray-500">Valor Total:</span><span className={`font-bold text-xl ${isDone ? 'text-gray-600' : 'text-green-700'}`}>{formatCurrency(order.total)}</span></div>{order.change > 0 && <div className="text-xs text-orange-600 font-bold mt-1">Troco p/: {formatCurrency(order.change + order.total)}</div>}</div>{order.clientObs && <div className="text-xs text-purple-700 bg-purple-50 p-2 mt-2 rounded border border-purple-100 font-medium">⚠️ Obs Cliente: {order.clientObs}</div>}</div></div>); })}</div>{deliveryModal && (<div className="fixed inset-0 bg-black/80 z-50 flex items-end justify-center sm:items-center p-4 animate-in"><div className="bg-white w-full max-w-sm rounded-xl p-4 shadow-2xl"><div className="flex justify-between items-center mb-4 border-b pb-2"><h3 className="font-bold text-lg text-gray-800">Confirmar Recebimento</h3><button onClick={() => setDeliveryModal(null)} className="bg-gray-200 p-1 rounded-full"><XCircle size={20}/></button></div><div className="grid grid-cols-2 gap-3 mb-2"><button onClick={() => handleDeliveryConfirm('DINHEIRO')} className="bg-green-100 text-green-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-green-200"><DollarSign size={24}/> DINHEIRO</button><button onClick={() => handleDeliveryConfirm('PIX')} className="bg-indigo-100 text-indigo-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-indigo-200"><Share2 size={24}/> PIX</button><button onClick={() => handleDeliveryConfirm('CARTÃO')} className="bg-blue-100 text-blue-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-blue-200"><CreditCard size={24}/> CARTÃO</button><button onClick={() => handleDeliveryConfirm('SÓ ENTREGUE')} className="bg-gray-100 text-gray-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-gray-200"><CheckCircle size={24}/> JÁ PAGO</button></div></div></div>)}{allFinished && (<div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t shadow-lg z-50 animate-in"><button onClick={generateFinalReport} className="w-full bg-green-600 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:bg-green-700 flex items-center justify-center gap-2"><MessageSquare size={24}/> FINALIZAR E ENVIAR RELATÓRIO</button></div>)}</div>);
+                            <div className={`p-3 rounded text-sm mt-3 border ${isDone ? 'bg-gray-100 border-gray-200 text-gray-500' : 'bg-gray-50 border-gray-100'}`}><div className="flex justify-between mb-1"><span className="text-gray-500">Forma Pagto Prevista:</span><span className="font-bold uppercase">{order.pay}</span></div><div className="flex justify-between items-center mb-1"><span className="text-gray-500">Valor Total:</span><span className={`font-bold text-xl ${isDone ? 'text-gray-600' : 'text-green-700'}`}>{formatCurrency(order.total)}</span></div>{order.change > 0 && <div className="text-xs text-orange-600 font-bold mt-1">Troco p/: {formatCurrency(order.change + order.total)}</div>}</div>{order.clientObs && <div className="text-xs text-purple-700 bg-purple-50 p-2 mt-2 rounded border border-purple-100 font-medium">⚠️ Obs Cliente: {order.clientObs}</div>}</div></div>); })}
+               </div>
+
+               {deliveryModal && (<div className="fixed inset-0 bg-black/80 z-50 flex items-end justify-center sm:items-center p-4 animate-in"><div className="bg-white w-full max-w-sm rounded-xl p-4 shadow-2xl"><div className="flex justify-between items-center mb-4 border-b pb-2"><h3 className="font-bold text-lg text-gray-800">Confirmar Recebimento</h3><button onClick={() => setDeliveryModal(null)} className="bg-gray-200 p-1 rounded-full"><XCircle size={20}/></button></div><div className="grid grid-cols-2 gap-3 mb-2"><button onClick={() => handleDeliveryConfirm('DINHEIRO')} className="bg-green-100 text-green-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-green-200"><DollarSign size={24}/> DINHEIRO</button><button onClick={() => handleDeliveryConfirm('PIX')} className="bg-indigo-100 text-indigo-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-indigo-200"><Share2 size={24}/> PIX</button><button onClick={() => handleDeliveryConfirm('CARTÃO')} className="bg-blue-100 text-blue-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-blue-200"><CreditCard size={24}/> CARTÃO</button><button onClick={() => handleDeliveryConfirm('SÓ ENTREGUE')} className="bg-gray-100 text-gray-800 p-4 rounded-lg font-bold flex flex-col items-center gap-1 hover:bg-gray-200"><CheckCircle size={24}/> JÁ PAGO</button></div></div></div>)}
+               
+               {allFinished && (<div className="fixed bottom-0 left-0 w-full p-4 bg-white border-t shadow-lg z-50 animate-in"><button onClick={generateFinalReport} className="w-full bg-green-600 text-white font-bold py-4 rounded-xl text-lg shadow-xl hover:bg-green-700 flex items-center justify-center gap-2"><MessageSquare size={24}/> FINALIZAR E ENVIAR RELATÓRIO</button></div>)}
+            </div>);
         }
 
         const root = createRoot(document.getElementById('root'));
