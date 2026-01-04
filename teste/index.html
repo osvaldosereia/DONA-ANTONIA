@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Logística Local-First v6.0 (Closed-Loop)</title>
+    <title>Sistema Logística Local-First v7.0 (BI Edition)</title>
     
     <!-- 1. TAILWIND CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -45,6 +45,13 @@
         .animate-in { animation: fadeIn 0.3s ease-out; }
         
         .nav-item.active { background-color: #334155; border-right: 4px solid #34d399; }
+
+        /* Gráficos simples via CSS */
+        .bar-container { display: flex; align-items: flex-end; gap: 4px; height: 100px; }
+        .bar { background-color: #3b82f6; border-radius: 4px 4px 0 0; transition: height 0.5s; position: relative; }
+        .bar:hover { opacity: 0.8; }
+        .bar-tooltip { visibility: hidden; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #1e293b; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 10px; white-space: nowrap; z-index: 10; margin-bottom: 4px; }
+        .bar:hover .bar-tooltip { visibility: visible; }
     </style>
 
     <!-- 3. IMPORTMAP REACT + ZOD -->
@@ -79,7 +86,7 @@
           Calendar, Filter, Phone, Database, Clipboard, Box, ExternalLink,
           Clock, Home, DollarSign, CreditCard, Check, ShieldCheck, ClipboardList,
           ArrowRight, ArrowLeft, LayoutDashboard, Settings, Menu, BarChart2, TrendingUp, PieChart,
-          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star
+          MessageSquare, HeartHandshake, RefreshCcw, ThumbsUp, Star, Activity, LineChart
         } from 'lucide-react';
 
         // --- SCHEMAS DE VALIDAÇÃO (ZOD) ---
@@ -88,7 +95,7 @@
             name: z.string().min(1),
             code: z.string().optional().or(z.literal('')),
             phone: z.string().optional().or(z.literal('')),
-            phone2: z.string().optional().or(z.literal('')), // Novo campo
+            phone2: z.string().optional().or(z.literal('')), 
             address: z.string().optional().or(z.literal('')),
             city: z.string().optional().or(z.literal('')),
             district: z.string().optional().or(z.literal('')),
@@ -188,9 +195,8 @@
           return [value, setValue];
         };
         const formatCurrency = (value) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+        const formatPercent = (value) => new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(value);
         const formatDate = (dateString) => (!dateString) ? '-' : new Date(dateString).toLocaleDateString('pt-BR');
-        const formatDateTime = (dateString) => (!dateString) ? '-' : new Date(dateString).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute:'2-digit' });
-
         const distributeTotal = (targetTotal, items, getPrice, setPrice, getQty) => {
             const currentSum = items.reduce((acc, item) => acc + (getPrice(item) * getQty(item)), 0);
             if (currentSum === 0) return items;
@@ -216,7 +222,7 @@
             return adjustedItems;
         };
 
-        // --- COMPONENTE PRINCIPAL ---
+        // --- APP PRINCIPAL ---
         function App() {
           const [clients, setClients] = useStickyState('db_clients_v3', []);
           const [products, setProducts] = useStickyState('db_products_v3', []);
@@ -255,7 +261,7 @@
           }, []);
 
           const handleBackup = () => {
-            let data = { version: '6.0', exportedAt: new Date().toISOString() };
+            let data = { version: '7.0', exportedAt: new Date().toISOString() };
             let filename = 'backup';
             if (backupType === 'all') { 
                 data = { ...data, clients, products, sales, companyPhone, postSaleLog }; 
@@ -305,10 +311,9 @@
                 case 'dashboard': return <DashboardView sales={sales} products={products} clients={clients} />;
                 case 'pos': return <POSView clients={clients} products={products} setProducts={setProducts} sales={sales} setSales={setSales} saleToEdit={saleToEdit} setSaleToEdit={setSaleToEdit} />;
                 case 'expedition': return <ExpeditionView sales={sales} setSales={setSales} clients={clients} products={products} setProducts={setProducts} onEditSale={(sale) => { setSaleToEdit(sale); setActiveTab('pos'); }} />;
-                // Logistics agora recebe products e setProducts para processar devoluções em massa
                 case 'logistics': return <LogisticsView sales={sales} setSales={setSales} clients={clients} companyPhone={companyPhone} products={products} setProducts={setProducts} />;
                 case 'crm': return <RegistryView clients={clients} setClients={setClients} products={products} setProducts={setProducts} />;
-                case 'reports': return <ReportsView sales={sales} clients={clients} products={products} />;
+                case 'reports': return <ReportsView sales={sales} clients={clients} products={products} postSaleLog={postSaleLog} />;
                 case 'postsale': return <PostSalesView sales={sales} clients={clients} postSaleLog={postSaleLog} setPostSaleLog={setPostSaleLog} companyPhone={companyPhone} />;
                 default: return <DashboardView sales={sales} products={products} clients={clients} />;
              }
@@ -319,7 +324,7 @@
                 <aside className="w-20 lg:w-64 bg-slate-900 text-white flex flex-col shrink-0 transition-all duration-300 z-30 shadow-xl">
                     <div className="h-16 flex items-center justify-center lg:justify-start lg:px-6 border-b border-slate-800">
                         <div className="bg-yellow-500 text-slate-900 p-1.5 rounded font-bold mr-2">LOG</div>
-                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V6.0</span></h1>
+                        <h1 className="font-bold tracking-wider hidden lg:block text-lg">SISTEMA <span className="text-emerald-400 text-xs font-normal border border-emerald-500 rounded px-1 ml-1">V7.0</span></h1>
                     </div>
                     <nav className="flex-1 py-4 space-y-1 overflow-y-auto">
                         <NavItem icon={<LayoutDashboard size={20}/>} label="Visão Geral" active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} />
@@ -327,7 +332,7 @@
                         <NavItem icon={<Package size={20}/>} label="Expedição" active={activeTab === 'expedition'} onClick={() => setActiveTab('expedition')} />
                         <NavItem icon={<Truck size={20}/>} label="Logística" active={activeTab === 'logistics'} onClick={() => setActiveTab('logistics')} />
                         <NavItem icon={<Database size={20}/>} label="Cadastros" active={activeTab === 'crm'} onClick={() => setActiveTab('crm')} />
-                        <NavItem icon={<BarChart2 size={20}/>} label="Relatórios" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
+                        <NavItem icon={<LineChart size={20}/>} label="Inteligência (BI)" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
                         <NavItem icon={<HeartHandshake size={20}/>} label="Pós-Venda" active={activeTab === 'postsale'} onClick={() => setActiveTab('postsale')} />
                     </nav>
                     <div className="p-4 border-t border-slate-800 space-y-3">
@@ -350,7 +355,7 @@
                 <main className="flex-1 flex flex-col min-w-0 bg-gray-50 h-full">
                     <header className="h-16 bg-white border-b flex items-center justify-between px-6 shrink-0 shadow-sm z-20">
                         <div className="flex items-center gap-2 lg:hidden"><div className="bg-yellow-500 text-slate-900 p-1 rounded font-bold">LOG</div></div>
-                        <div className="hidden lg:block"><h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">{activeTab === 'dashboard' ? 'Visão Geral' : activeTab === 'pos' ? 'Ponto de Venda' : activeTab === 'expedition' ? 'Expedição' : activeTab === 'logistics' ? 'Logística' : activeTab === 'crm' ? 'Cadastros' : activeTab === 'postsale' ? 'Pós-Venda & Fidelização' : 'Relatórios'}</h2></div>
+                        <div className="hidden lg:block"><h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">{activeTab === 'dashboard' ? 'Visão Geral' : activeTab === 'pos' ? 'Ponto de Venda' : activeTab === 'expedition' ? 'Expedição' : activeTab === 'logistics' ? 'Logística' : activeTab === 'crm' ? 'Cadastros' : activeTab === 'postsale' ? 'Pós-Venda & Fidelização' : 'Inteligência de Negócios'}</h2></div>
                         <div className="flex items-center gap-4">
                             <div className="hidden sm:flex items-center gap-2 text-sm text-gray-500 bg-gray-100 px-3 py-1.5 rounded-full border">
                                 <Phone size={14} /><input className="bg-transparent w-24 outline-none" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} />
@@ -369,7 +374,7 @@
             <button onClick={onClick} className={`w-full flex items-center justify-center lg:justify-start gap-3 p-3 lg:px-6 transition-all duration-200 nav-item ${active ? 'active text-white bg-slate-800' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`} title={label}>{icon}<span className="hidden lg:inline font-medium text-sm">{label}</span></button>
         );
 
-        // --- DASHBOARD (Mantido) ---
+        // --- DASHBOARD ---
         function DashboardView({ sales, products, clients }) {
             const today = new Date().toISOString().slice(0, 10);
             const salesToday = sales.filter(s => s.date.startsWith(today) && s.status !== 'Cancelado');
@@ -385,7 +390,6 @@
                         <MetricCard title="Estoque Baixo" value={lowStock} icon={<AlertTriangle size={24} className="text-red-600"/>} color="red" sub="Produtos críticos" />
                         <MetricCard title="Total Clientes" value={clients.length} icon={<Users size={24} className="text-blue-600"/>} color="blue" sub="Base ativa" />
                     </div>
-                    {/* ... rest of dashboard ... */}
                 </div>
             );
         }
@@ -394,9 +398,234 @@
             <div className={`bg-white p-5 rounded-xl shadow-sm border border-${color}-100 relative overflow-hidden group`}><div className={`absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity transform group-hover:scale-110`}>{icon}</div><div className="relative z-10"><p className="text-gray-500 text-sm font-medium uppercase tracking-wider mb-1">{title}</p><h3 className="text-2xl font-bold text-gray-800 mb-1">{value}</h3><p className={`text-xs text-${color}-600 font-bold`}>{sub}</p></div></div>
         );
 
-        // --- PÓS-VENDA VIEW (NOVO) ---
+        // --- INTELLIGENCE / REPORTS VIEW (REBUILT v7.0) ---
+        function ReportsView({ sales, clients, products, postSaleLog }) {
+            const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().slice(0, 10));
+            const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
+
+            // Filtro Principal
+            const filteredSales = useMemo(() => {
+                return sales.filter(s => {
+                    const d = s.date.slice(0, 10);
+                    return d >= startDate && d <= endDate && s.status !== 'Cancelado';
+                });
+            }, [sales, startDate, endDate]);
+
+            // --- CÁLCULOS FINANCEIROS (DRE Simplificado) ---
+            const financialData = useMemo(() => {
+                let grossRevenue = 0; // Faturamento Bruto (Total pago pelo cliente)
+                let totalCost = 0;    // CMV (Custo da Mercadoria Vendida)
+                let totalDiscounts = 0; 
+                let totalItems = 0;
+                
+                filteredSales.forEach(sale => {
+                    grossRevenue += sale.total;
+                    totalDiscounts += (sale.discount || 0);
+                    
+                    sale.items.forEach(item => {
+                        totalItems += (item.qty || 1);
+                        const prod = products.find(p => p.id === item.id);
+                        if (prod) {
+                            // Cálculo de custo (suporta Combos explodidos)
+                            if (prod.isCombo) {
+                                prod.comboItems?.forEach(ci => {
+                                    const subProd = products.find(sp => sp.id === ci.id);
+                                    if (subProd) {
+                                        totalCost += (Number(subProd.cost) || 0) * (ci.qty * (item.qty || 1));
+                                    }
+                                });
+                            } else {
+                                totalCost += (Number(prod.cost) || 0) * (item.qty || 1);
+                            }
+                        }
+                    });
+                });
+
+                const netProfit = grossRevenue - totalCost;
+                const margin = grossRevenue > 0 ? (netProfit / grossRevenue) : 0;
+                const ticketAvg = filteredSales.length > 0 ? grossRevenue / filteredSales.length : 0;
+
+                return { grossRevenue, totalCost, netProfit, margin, ticketAvg, totalOrders: filteredSales.length, totalItems };
+            }, [filteredSales, products]);
+
+            // --- CURVA ABC PRODUTOS ---
+            const productPerformance = useMemo(() => {
+                const map = {};
+                filteredSales.forEach(s => {
+                    s.items.forEach(i => {
+                        if (!map[i.name]) map[i.name] = { name: i.name, qty: 0, revenue: 0 };
+                        map[i.name].qty += (i.qty || 1);
+                        map[i.name].revenue += (i.price * (i.qty || 1));
+                    });
+                });
+                return Object.values(map).sort((a,b) => b.revenue - a.revenue);
+            }, [filteredSales]);
+
+            // --- ANÁLISE TEMPORAL (Dia da Semana & Hora) ---
+            const timeAnalysis = useMemo(() => {
+                const days = {0:'Dom', 1:'Seg', 2:'Ter', 3:'Qua', 4:'Qui', 5:'Sex', 6:'Sáb'};
+                const dayCounts = {0:0,1:0,2:0,3:0,4:0,5:0,6:0};
+                const hourCounts = new Array(24).fill(0);
+                
+                filteredSales.forEach(s => {
+                    const d = new Date(s.date);
+                    dayCounts[d.getDay()]++;
+                    hourCounts[d.getHours()]++;
+                });
+
+                return {
+                    days: Object.entries(dayCounts).map(([k,v]) => ({ label: days[k], val: v })),
+                    hours: hourCounts.map((v, k) => ({ label: `${k}h`, val: v }))
+                };
+            }, [filteredSales]);
+
+            // --- GEOGRAFIA E PAGAMENTOS ---
+            const miscStats = useMemo(() => {
+                const payMethods = {};
+                const regions = {};
+                filteredSales.forEach(s => {
+                    payMethods[s.payMethod] = (payMethods[s.payMethod] || 0) + 1;
+                    const client = clients.find(c => c.id === s.clientId);
+                    const region = client?.region || 'Outros';
+                    regions[region] = (regions[region] || 0) + s.total;
+                });
+                return {
+                    payMethods: Object.entries(payMethods).sort((a,b) => b[1]-a[1]),
+                    regions: Object.entries(regions).sort((a,b) => b[1]-a[1])
+                };
+            }, [filteredSales, clients]);
+
+            // Componente de Gráfico de Barras Simples
+            const BarChart = ({ data, color = 'blue', height = 60 }) => {
+                if (data.length === 0) return <div className="text-xs text-gray-400">Sem dados</div>;
+                const max = Math.max(...data.map(d => d.val));
+                return (
+                    <div className="flex items-end gap-1 w-full" style={{height: `${height}px`}}>
+                        {data.map((d, i) => (
+                            <div key={i} className="flex-1 flex flex-col items-center group relative">
+                                <div className={`w-full bg-${color}-500 rounded-t hover:bg-${color}-600 transition-all`} style={{height: `${max > 0 ? (d.val / max) * 100 : 0}%`, minHeight: d.val > 0 ? '4px' : '0'}}></div>
+                                <span className="text-[9px] text-gray-500 mt-1 truncate w-full text-center">{d.label}</span>
+                                {d.val > 0 && <div className="absolute bottom-full mb-1 bg-slate-800 text-white text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 whitespace-nowrap z-10">{d.val}</div>}
+                            </div>
+                        ))}
+                    </div>
+                );
+            };
+
+            const printReport = () => {
+                window.print();
+            };
+
+            return (
+                <div className="h-full flex flex-col p-6 overflow-y-auto bg-gray-50">
+                    {/* HEADER */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 bg-white p-4 rounded-xl shadow-sm border shrink-0">
+                        <div>
+                            <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><Activity className="text-blue-600"/> Inteligência de Negócios</h2>
+                            <p className="text-xs text-gray-500">Analise a saúde financeira e operacional da sua empresa.</p>
+                        </div>
+                        <div className="flex gap-4 items-end mt-4 md:mt-0">
+                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block">Início</label><input type="date" className="border p-2 rounded text-sm bg-gray-50" value={startDate} onChange={e => setStartDate(e.target.value)} /></div>
+                            <div><label className="text-[10px] font-bold text-gray-400 uppercase block">Fim</label><input type="date" className="border p-2 rounded text-sm bg-gray-50" value={endDate} onChange={e => setEndDate(e.target.value)} /></div>
+                            <button onClick={printReport} className="bg-slate-800 text-white p-2 rounded hover:bg-slate-700 transition" title="Imprimir Relatório"><Printer size={20}/></button>
+                        </div>
+                    </div>
+
+                    {/* BIG NUMBERS - DRE */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 shrink-0">
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-emerald-500 flex flex-col justify-between">
+                            <div><p className="text-xs font-bold text-gray-400 uppercase">Faturamento Bruto</p><h3 className="text-2xl font-bold text-slate-800">{formatCurrency(financialData.grossRevenue)}</h3></div>
+                            <div className="mt-2 text-xs text-emerald-600 font-bold bg-emerald-50 inline-block px-2 py-1 rounded w-fit">{financialData.totalOrders} pedidos</div>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-red-500 flex flex-col justify-between">
+                            <div><p className="text-xs font-bold text-gray-400 uppercase">Custo Mercadoria (CMV)</p><h3 className="text-2xl font-bold text-slate-800">{formatCurrency(financialData.totalCost)}</h3></div>
+                            <div className="mt-2 text-xs text-red-600 font-bold bg-red-50 inline-block px-2 py-1 rounded w-fit">Estimado via cadastros</div>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500 flex flex-col justify-between">
+                            <div><p className="text-xs font-bold text-gray-400 uppercase">Lucro Operacional</p><h3 className="text-2xl font-bold text-blue-700">{formatCurrency(financialData.netProfit)}</h3></div>
+                            <div className="mt-2 w-full bg-gray-200 rounded-full h-2 overflow-hidden"><div className="bg-blue-500 h-full" style={{width: `${Math.min(100, Math.max(0, financialData.margin * 100))}%`}}></div></div>
+                        </div>
+                        <div className="bg-white p-5 rounded-xl shadow-sm border-l-4 border-purple-500 flex flex-col justify-between">
+                            <div><p className="text-xs font-bold text-gray-400 uppercase">Margem de Lucro</p><h3 className="text-2xl font-bold text-purple-700">{formatPercent(financialData.margin)}</h3></div>
+                            <div className="mt-2 text-xs text-purple-600 font-bold bg-purple-50 inline-block px-2 py-1 rounded w-fit">Ticket Médio: {formatCurrency(financialData.ticketAvg)}</div>
+                        </div>
+                    </div>
+
+                    {/* GRÁFICOS E TABELAS */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                        
+                        {/* 1. TOP PRODUTOS (Revenue) */}
+                        <div className="bg-white p-5 rounded-xl shadow-sm border lg:col-span-2 flex flex-col h-[320px]">
+                            <h3 className="font-bold text-gray-700 text-sm uppercase mb-4 flex justify-between"><span>🏆 Top Produtos (Faturamento)</span> <span className="text-xs text-gray-400">{filteredSales.length > 0 ? 'Rankeado por valor total' : ''}</span></h3>
+                            <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin space-y-3">
+                                {productPerformance.slice(0, 10).map((p, i) => (
+                                    <div key={i} className="flex items-center gap-3 text-sm">
+                                        <div className={`w-6 h-6 rounded flex items-center justify-center text-xs font-bold ${i < 3 ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-100 text-gray-600'}`}>{i+1}</div>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between mb-1">
+                                                <span className="font-medium text-gray-800 truncate">{p.name}</span>
+                                                <span className="font-bold text-gray-800">{formatCurrency(p.revenue)}</span>
+                                            </div>
+                                            <div className="w-full bg-gray-100 rounded-full h-1.5"><div className="bg-emerald-500 h-full rounded-full" style={{width: `${(p.revenue / productPerformance[0].revenue) * 100}%`}}></div></div>
+                                        </div>
+                                        <div className="text-xs text-gray-500 w-16 text-right">{p.qty} un</div>
+                                    </div>
+                                ))}
+                                {productPerformance.length === 0 && <div className="text-center text-gray-400 py-10">Sem vendas no período.</div>}
+                            </div>
+                        </div>
+
+                        {/* 2. REGION & PAY METHODS */}
+                        <div className="flex flex-col gap-6">
+                             {/* Pay Methods */}
+                            <div className="bg-white p-5 rounded-xl shadow-sm border flex-1">
+                                <h3 className="font-bold text-gray-700 text-sm uppercase mb-4">Formas de Pagamento</h3>
+                                <div className="space-y-3">
+                                    {miscStats.payMethods.map(([method, qty], i) => (
+                                        <div key={i} className="flex justify-between items-center text-sm border-b border-dashed pb-1 last:border-0">
+                                            <span className="text-gray-600">{method}</span>
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-20 bg-gray-100 h-2 rounded-full overflow-hidden"><div className="bg-blue-500 h-full" style={{width: `${(qty / financialData.totalOrders) * 100}%`}}></div></div>
+                                                <span className="font-bold w-6 text-right">{qty}</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                             {/* Geo Analysis Simple */}
+                            <div className="bg-white p-5 rounded-xl shadow-sm border flex-1">
+                                <h3 className="font-bold text-gray-700 text-sm uppercase mb-4">Faturamento por Região</h3>
+                                <div className="space-y-2 overflow-y-auto max-h-[150px] scrollbar-thin">
+                                     {miscStats.regions.map(([reg, val], i) => (
+                                         <div key={i} className="flex justify-between text-xs">
+                                             <span className="text-gray-600 truncate max-w-[120px]">{reg}</span>
+                                             <span className="font-bold text-gray-800">{formatCurrency(val)}</span>
+                                         </div>
+                                     ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* GRÁFICOS DE TEMPO */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+                        <div className="bg-white p-5 rounded-xl shadow-sm border">
+                            <h3 className="font-bold text-gray-700 text-sm uppercase mb-6">Fluxo Semanal (Pedidos)</h3>
+                            <BarChart data={timeAnalysis.days} color="indigo" height={120} />
+                        </div>
+                        <div className="bg-white p-5 rounded-xl shadow-sm border">
+                            <h3 className="font-bold text-gray-700 text-sm uppercase mb-6">Pico de Horário (Pedidos)</h3>
+                            <BarChart data={timeAnalysis.hours} color="orange" height={120} />
+                        </div>
+                    </div>
+
+                </div>
+            );
+        }
+
+        // --- PÓS-VENDA VIEW ---
         function PostSalesView({ sales, clients, postSaleLog, setPostSaleLog, companyPhone }) {
-            // Lógica: Última compra por cliente
             const clientLastSale = useMemo(() => {
                 const map = {};
                 sales.forEach(s => {
@@ -409,13 +638,7 @@
             }, [sales]);
 
             const now = new Date();
-            
-            // Bucket Logic
-            const buckets = {
-                opportunity: [], // 25-30 days
-                attention: [],   // 31-45 days
-                risk: []         // 46+ days
-            };
+            const buckets = { opportunity: [], attention: [], risk: [] };
 
             Object.values(clientLastSale).forEach(sale => {
                 const saleDate = new Date(sale.date);
@@ -424,8 +647,6 @@
                 const client = clients.find(c => c.id === sale.clientId);
                 if (!client) return;
 
-                // Cálculo do Cashback (6% arredondado para múltiplo de 5 mais próximo)
-                // Ex: 6% de 100 = 6 -> Arredonda para 5. 6% de 200 = 12 -> Arredonda para 10.
                 let rawCashback = sale.total * 0.06;
                 let cashback = Math.max(5, Math.round(rawCashback / 5) * 5); 
 
@@ -439,7 +660,6 @@
             const sendWhatsApp = (item) => {
                 const log = postSaleLog[item.client.id];
                 const isReminder = !!log;
-                
                 const clientName = item.client.name.split(' ')[0];
                 const cleanPhone = item.client.phone.replace(/\D/g, '');
                 
@@ -450,7 +670,6 @@
                     msg = `Oi ${clientName}! ⏳ Passando pra lembrar do seu *Cashback de ${formatCurrency(item.cashback)}*! Prorroguei a validade por mais 7 dias pra você aproveitar. Vem conferir as novidades!`;
                 }
 
-                // Log a interação
                 setPostSaleLog(prev => ({
                     ...prev,
                     [item.client.id]: { date: new Date().toISOString(), count: (prev[item.client.id]?.count || 0) + 1 }
@@ -489,48 +708,24 @@
             return (
                 <div className="h-full p-6 overflow-x-auto">
                     <div className="flex gap-6 h-full min-w-[1000px]">
-                        {/* COLUNA 1: OPORTUNIDADE (25-30 DIAS) */}
                         <div className="flex-1 flex flex-col bg-green-50 rounded-xl border border-green-200 overflow-hidden">
-                            <div className="p-3 bg-green-100 border-b border-green-200 flex justify-between items-center">
-                                <h3 className="font-bold text-green-900 flex items-center gap-2"><Clock size={16}/> Momento Ideal (25-30d)</h3>
-                                <span className="bg-white px-2 rounded-full text-xs font-bold text-green-700">{buckets.opportunity.length}</span>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
-                                {buckets.opportunity.map(item => <PostSaleCard key={item.client.id} item={item} type="opp" />)}
-                                {buckets.opportunity.length === 0 && <div className="text-center text-xs text-green-400 mt-10">Nenhum cliente neste perfil.</div>}
-                            </div>
+                            <div className="p-3 bg-green-100 border-b border-green-200 flex justify-between items-center"><h3 className="font-bold text-green-900 flex items-center gap-2"><Clock size={16}/> Momento Ideal (25-30d)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-green-700">{buckets.opportunity.length}</span></div>
+                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.opportunity.map(item => <PostSaleCard key={item.client.id} item={item} type="opp" />)}</div>
                         </div>
-
-                        {/* COLUNA 2: ATENÇÃO (31-45 DIAS) */}
                         <div className="flex-1 flex flex-col bg-yellow-50 rounded-xl border border-yellow-200 overflow-hidden">
-                            <div className="p-3 bg-yellow-100 border-b border-yellow-200 flex justify-between items-center">
-                                <h3 className="font-bold text-yellow-900 flex items-center gap-2"><AlertTriangle size={16}/> Atenção (31-45d)</h3>
-                                <span className="bg-white px-2 rounded-full text-xs font-bold text-yellow-700">{buckets.attention.length}</span>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
-                                {buckets.attention.map(item => <PostSaleCard key={item.client.id} item={item} type="att" />)}
-                            </div>
+                            <div className="p-3 bg-yellow-100 border-b border-yellow-200 flex justify-between items-center"><h3 className="font-bold text-yellow-900 flex items-center gap-2"><AlertTriangle size={16}/> Atenção (31-45d)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-yellow-700">{buckets.attention.length}</span></div>
+                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.attention.map(item => <PostSaleCard key={item.client.id} item={item} type="att" />)}</div>
                         </div>
-
-                        {/* COLUNA 3: RISCO (46+ DIAS) */}
                         <div className="flex-1 flex flex-col bg-red-50 rounded-xl border border-red-200 overflow-hidden">
-                            <div className="p-3 bg-red-100 border-b border-red-200 flex justify-between items-center">
-                                <h3 className="font-bold text-red-900 flex items-center gap-2"><XCircle size={16}/> Risco de Churn (46d+)</h3>
-                                <span className="bg-white px-2 rounded-full text-xs font-bold text-red-700">{buckets.risk.length}</span>
-                            </div>
-                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
-                                {buckets.risk.map(item => <PostSaleCard key={item.client.id} item={item} type="risk" />)}
-                            </div>
+                            <div className="p-3 bg-red-100 border-b border-red-200 flex justify-between items-center"><h3 className="font-bold text-red-900 flex items-center gap-2"><XCircle size={16}/> Risco de Churn (46d+)</h3><span className="bg-white px-2 rounded-full text-xs font-bold text-red-700">{buckets.risk.length}</span></div>
+                            <div className="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">{buckets.risk.map(item => <PostSaleCard key={item.client.id} item={item} type="risk" />)}</div>
                         </div>
                     </div>
                 </div>
             );
         }
 
-        // --- POS, REGISTRY, REPORTS, ETC... (MANTIDOS E CORRIGIDOS) ---
-        // (Devido ao limite de caracteres, mantendo a estrutura exata das correções v5.4, apenas injetando o PostSalesView acima)
-        
-        // ... (Mesma lógica do POSView da v5.4 para garantir funcionamento do combo)
+        // --- POS (Mantido) ---
         function POSView({ clients, products, setProducts, sales, setSales, saleToEdit, setSaleToEdit }) {
              const [selectedClient, setSelectedClient] = useState('');
              const [clientSearch, setClientSearch] = useState('');
@@ -559,9 +754,6 @@
               }, [saleToEdit, clients]);
     
              const getQty = (id) => tempQty[id] || 1;
-             const incQty = (id) => setTempQty({...tempQty, [id]: getQty(id) + 1});
-             const decQty = (id) => setTempQty({...tempQty, [id]: Math.max(1, getQty(id) - 1)});
-
              const addToCart = (product) => {
                 const qty = getQty(product.id);
                 if (!product.isCombo && product.stock < qty) {
@@ -589,14 +781,12 @@
                 setManualTotal(newSum.toFixed(2));
                 setTempQty({...tempQty, [product.id]: 1}); 
              };
-
              const removeFromCart = (tempId) => {
                  const newCart = cart.filter(item => item.tempId !== tempId);
                  setCart(newCart);
                  const newSum = newCart.reduce((acc, i) => acc + i.price, 0);
                  setManualTotal(newSum.toFixed(2));
              };
-             
              const handleManualTotalChange = (val) => {
                  setManualTotal(val);
                  const target = parseFloat(val);
@@ -605,7 +795,6 @@
                      setCart(newCart);
                  }
              };
-
              const updateCartItemPrice = () => {
                 if (!editingItem) return;
                 const newCart = cart.map(i => i.tempId === editingItem.tempId ? { ...i, price: parseFloat(editingItem.price) } : i);
@@ -614,7 +803,6 @@
                 setManualTotal(newSum.toFixed(2));
                 setEditingItem(null);
              };
-
              const updateComboItemQty = (cartItemTempId, subItemId, newQty) => {
                  setCart(cart.map(item => {
                     if (item.tempId !== cartItemTempId) return item;
@@ -623,11 +811,9 @@
              };
 
              const subTotal = cart.reduce((acc, item) => acc + Number(item.price), 0);
-             
              const finalizeSale = () => {
                 if (!selectedClient) return alert('Selecione um cliente');
                 if (cart.length === 0) return alert('Carrinho vazio');
-                
                 const finalTotal = parseFloat(manualTotal) || subTotal;
 
                 const newProducts = [...products];
@@ -718,10 +904,7 @@
              );
         }
 
-        // --- EXPEDIÇÃO, LOGISTICS, REGISTRY, DRIVER, STOCKMANAGER (MANTIDOS DA V5.4) ---
-        // (Abaixo repetimos os componentes essenciais para garantir que o código seja self-contained, 
-        // já com as correções de visualização de combos no registry e lógica de driver)
-
+        // --- EXPEDITION ---
         function ExpeditionView({ sales, setSales, clients, products, setProducts, onEditSale }) {
             const updateStatus = (saleId, newStatus) => setSales(sales.map(s => s.id === saleId ? { ...s, status: newStatus } : s));
             const returnStock = (sale) => {
@@ -758,6 +941,7 @@
             );
         }
 
+        // --- LOGISTICS ---
         function LogisticsView({ sales, setSales, clients, companyPhone, products, setProducts }) {
             const [selectedRoute, setSelectedRoute] = useState('Todas');
             const [routeSales, setRouteSales] = useState([]); 
@@ -791,7 +975,6 @@
             const forceDelivery = (id) => { if (confirm("Marcar entregue?")) setSales(sales.map(s => s.id === id ? { ...s, status: 'Entregue' } : s)); };
             const totalValue = routeSales.reduce((acc, s) => acc + s.total, 0);
 
-            // --- LÓGICA DE BAIXA POR RELATÓRIO (RETORNO DE ESTOQUE E STATUS) ---
             const processReturnReport = () => {
                 const lines = importText.split('\n');
                 let updatedCount = 0;
@@ -799,7 +982,6 @@
                 let newProducts = [...products];
 
                 lines.forEach(line => {
-                    // Espera formato: ID: 105 | STATUS: ENTREGUE | PGTO: PIX
                     const idMatch = line.match(/ID:\s*#?(\S+)/);
                     const statusMatch = line.match(/STATUS:\s*(\w+)/);
                     const payMatch = line.match(/PGTO:\s*([A-Za-zÀ-ú\s]+)/);
@@ -814,7 +996,6 @@
                             const saleIndex = newSales.findIndex(s => s.id === id);
                             if (saleIndex > -1) {
                                 const sale = newSales[saleIndex];
-                                // Se for cancelamento e ainda não estava cancelado, devolve estoque
                                 if (status === 'Cancelado' && sale.status !== 'Cancelado') {
                                      sale.items.forEach(item => {
                                         const dbProd = newProducts.find(p => p.id === item.id);
@@ -822,39 +1003,21 @@
                                             if (dbProd.isCombo) { 
                                                 item.comboItems?.forEach(ing => { 
                                                     const dbIng = newProducts.find(p => p.id === ing.id); 
-                                                    if (dbIng) { 
-                                                        dbIng.stock += ing.qty; 
-                                                        dbIng.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_DRIVER', qty: ing.qty }); 
-                                                    } 
+                                                    if (dbIng) { dbIng.stock += ing.qty; dbIng.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_DRIVER', qty: ing.qty }); } 
                                                 }); 
-                                            } else { 
-                                                dbProd.stock += 1; 
-                                                dbProd.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_DRIVER', qty: 1 }); 
-                                            }
+                                            } else { dbProd.stock += 1; dbProd.stockHistory.push({ date: new Date().toISOString(), type: 'CANCEL_DRIVER', qty: 1 }); }
                                         }
                                      });
                                 }
-                                
-                                newSales[saleIndex] = { 
-                                    ...sale, 
-                                    status, 
-                                    payMethod: payMethod || sale.payMethod 
-                                };
+                                newSales[saleIndex] = { ...sale, status, payMethod: payMethod || sale.payMethod };
                                 updatedCount++;
                             }
                         }
                     }
                 });
-
                 if (updatedCount > 0) {
-                    setSales(newSales);
-                    setProducts(newProducts);
-                    setImportText('');
-                    setShowImport(false);
-                    alert(`${updatedCount} pedidos atualizados com sucesso!`);
-                } else {
-                    alert("Nenhum pedido processado. Verifique o formato.");
-                }
+                    setSales(newSales); setProducts(newProducts); setImportText(''); setShowImport(false); alert(`${updatedCount} pedidos atualizados com sucesso!`);
+                } else { alert("Nenhum pedido processado. Verifique o formato."); }
             };
 
             return (
@@ -865,36 +1028,20 @@
                             <select className="border rounded-lg p-2 bg-gray-50 outline-none" value={selectedRoute} onChange={e => setSelectedRoute(e.target.value)}><option value="Todas">Todas</option>{routes.map(r => <option key={r} value={r}>{r}</option>)}</select>
                         </div>
                         <div className="flex items-center gap-4">
-                            <div className="text-right">
-                                <div className="text-xs text-gray-400 font-bold uppercase">Total da Rota</div>
-                                <div className="text-2xl font-bold text-green-700">{formatCurrency(totalValue)}</div>
-                            </div>
+                            <div className="text-right"><div className="text-xs text-gray-400 font-bold uppercase">Total da Rota</div><div className="text-2xl font-bold text-green-700">{formatCurrency(totalValue)}</div></div>
                             <button onClick={() => setShowImport(true)} className="bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-700 flex items-center gap-2"><Upload size={16}/> PROCESSAR RETORNO</button>
                         </div>
                     </div>
-
                     <div className="flex-1 bg-white rounded-xl shadow-sm border overflow-hidden flex flex-col">
                         <div className="p-3 bg-indigo-50 border-b border-indigo-100 flex justify-between items-center"><span className="font-bold text-indigo-900 text-sm flex items-center gap-2"><Truck size={16}/> {routeSales.length} Entregas Pendentes</span><button onClick={generateDriverLink} className="bg-indigo-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700 transition">GERAR LINK MOTORISTA</button></div>
                         <div className="flex-1 overflow-y-auto p-2 space-y-2 bg-gray-50">{routeSales.map((s, idx) => { const client = clients.find(c => c.id === s.clientId) || {}; return (<div key={s.id} className="bg-white p-3 rounded-lg border shadow-sm flex gap-4 items-center"><div className="flex flex-col gap-1"><button onClick={() => moveOrder(idx, 'up')} className="p-1 hover:bg-gray-100 rounded"><ArrowUp size={14} className="text-gray-400"/></button><span className="font-bold text-sm text-center text-indigo-600 w-6">{idx + 1}</span><button onClick={() => moveOrder(idx, 'down')} className="p-1 hover:bg-gray-100 rounded"><ArrowDown size={14} className="text-gray-400"/></button></div><div className="flex-1"><div className="flex justify-between"><h4 className="font-bold text-gray-800">{client.name}</h4><span className="font-mono text-xs bg-gray-100 px-2 rounded text-gray-500">#{s.id}</span></div><p className="text-sm text-gray-500">{client.address}, {client.district}</p><div className="flex gap-2 mt-2 text-xs"><span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-medium">{s.payMethod}</span><span className="bg-green-50 text-green-700 px-2 py-0.5 rounded font-bold">{formatCurrency(s.total)}</span></div></div><button onClick={() => forceDelivery(s.id)} className="p-3 hover:bg-green-50 text-gray-300 hover:text-green-600 rounded-full transition"><CheckCircle size={24}/></button></div>); })}</div>
                     </div>
-
-                    {showImport && (
-                        <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-                            <div className="bg-white w-full max-w-lg rounded-xl p-6 shadow-2xl">
-                                <h3 className="text-lg font-bold mb-4">Processar Retorno do Motorista</h3>
-                                <p className="text-xs text-gray-500 mb-2">Cole aqui o relatório enviado pelo motorista no WhatsApp.</p>
-                                <textarea className="w-full h-48 border rounded p-2 text-xs font-mono mb-4 bg-gray-50" placeholder="Cole o relatório aqui..." value={importText} onChange={e => setImportText(e.target.value)} />
-                                <div className="flex gap-2">
-                                    <button onClick={() => setShowImport(false)} className="flex-1 bg-gray-200 py-2 rounded font-bold text-gray-600">Cancelar</button>
-                                    <button onClick={processReturnReport} className="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded font-bold text-white">PROCESSAR BAIXA</button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+                    {showImport && (<div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"><div className="bg-white w-full max-w-lg rounded-xl p-6 shadow-2xl"><h3 className="text-lg font-bold mb-4">Processar Retorno do Motorista</h3><p className="text-xs text-gray-500 mb-2">Cole aqui o relatório enviado pelo motorista no WhatsApp.</p><textarea className="w-full h-48 border rounded p-2 text-xs font-mono mb-4 bg-gray-50" placeholder="Cole o relatório aqui..." value={importText} onChange={e => setImportText(e.target.value)} /><div className="flex gap-2"><button onClick={() => setShowImport(false)} className="flex-1 bg-gray-200 py-2 rounded font-bold text-gray-600">Cancelar</button><button onClick={processReturnReport} className="flex-1 bg-green-600 hover:bg-green-700 py-2 rounded font-bold text-white">PROCESSAR BAIXA</button></div></div></div>)}
                 </div>
             );
         }
 
+        // --- REGISTRY ---
         function RegistryView({ clients, setClients, products, setProducts }) {
             const [tab, setTab] = useState('clients');
             const [cForm, setCForm] = useState({ name: '', code: '', phone: '', phone2: '', address: '', city: 'CUIABÁ', district: '', region: 'CUIABÁ', mapLink: '', photoLink: '', obs: '' });
@@ -939,7 +1086,7 @@
                     <div className="space-y-4">
                         <div className="grid grid-cols-3 gap-4"><div className="col-span-2"><label className="text-xs font-bold text-gray-500 uppercase">Nome Produto</label><input className="input-field" value={pForm.name} onChange={e => setPForm({...pForm, name: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Cód Interno</label><input className="input-field" value={pForm.internalCode} onChange={e => setPForm({...pForm, internalCode: e.target.value})} /></div></div>
                         <div className="grid grid-cols-2 gap-4"><div><label className="text-xs font-bold text-gray-500 uppercase">Categoria</label><input className="input-field" value={pForm.category} onChange={e => setPForm({...pForm, category: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Cód Barras</label><input className="input-field" value={pForm.barcode} onChange={e => setPForm({...pForm, barcode: e.target.value})} /></div></div>
-                        <div className="grid grid-cols-2 gap-4"><div><label className="text-xs font-bold text-gray-500 uppercase">NCM</label><input className="input-field" value={pForm.ncm} onChange={e => setPForm({...pForm, ncm: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Custo</label><input className="input-field" type="number" value={pForm.cost} onChange={e => setPForm({...pForm, cost: e.target.value})} /></div></div>
+                        <div className="grid grid-cols-2 gap-4"><div><label className="text-xs font-bold text-gray-500 uppercase">NCM</label><input className="input-field" value={pForm.ncm} onChange={e => setPForm({...pForm, ncm: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Custo (CMV)</label><input className="input-field" type="number" value={pForm.cost} onChange={e => setPForm({...pForm, cost: e.target.value})} /></div></div>
                         <div className="grid grid-cols-2 gap-4"><div><label className="text-xs font-bold text-gray-500 uppercase">Preço Venda</label><input className="input-field font-bold text-green-700" type="number" value={pForm.price} onChange={e => setPForm({...pForm, price: e.target.value})} /></div><div><label className="text-xs font-bold text-gray-500 uppercase">Estoque Atual</label><input className="input-field bg-gray-100" type="number" value={pForm.stock} disabled={pForm.isCombo} onChange={e => setPForm({...pForm, stock: Number(e.target.value)})} /></div></div>
                         <div className="flex items-center gap-2 pt-2 border-t"><input type="checkbox" checked={pForm.isCombo} onChange={e => setPForm({...pForm, isCombo: e.target.checked})} /><label className="font-bold text-sm">Este produto é um Combo/Kit?</label></div>
                         {pForm.isCombo && (<div className="bg-yellow-50 p-4 rounded border border-yellow-200"><h4 className="font-bold text-yellow-800 text-xs uppercase mb-2">Composição do Kit</h4><div className="space-y-2 max-h-48 overflow-y-auto">{products.filter(p => !p.isCombo).map(p => (<div key={p.id} className="flex justify-between items-center text-sm border-b border-yellow-100 pb-1"><span>{p.name}</span><input type="number" className="w-16 border rounded text-center p-1" placeholder="0" value={pForm.comboItems.find(i => i.id === p.id)?.qty || ''} onChange={(e) => { const qty = Number(e.target.value); const existing = pForm.comboItems.filter(i => i.id !== p.id); if (qty > 0) setPForm({...pForm, comboItems: [...existing, {id: p.id, qty}]}); else setPForm({...pForm, comboItems: existing}); }} /></div>))}</div></div>)}
@@ -947,66 +1094,6 @@
                     </div>
                 )}</div></div></div>
             );
-        }
-
-        // --- RELATÓRIOS VIEW ---
-        function ReportsView({ sales, clients, products, postSaleLog }) {
-            const [startDate, setStartDate] = useState(new Date(new Date().setDate(new Date().getDate() - 30)).toISOString().slice(0, 10));
-            const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
-            const filteredSales = sales.filter(s => { const d = s.date.slice(0, 10); return d >= startDate && d <= endDate && s.status !== 'Cancelado'; });
-            
-            // Cálculos existentes...
-            const totalRevenue = filteredSales.reduce((acc, s) => acc + s.total, 0);
-            const totalOrders = filteredSales.length;
-            const ticketMedio = totalOrders > 0 ? totalRevenue / totalOrders : 0;
-            let totalCost = 0; filteredSales.forEach(s => { s.items.forEach(item => { const prod = products.find(p => p.id === item.id); if (prod) { if (prod.isCombo) { prod.comboItems?.forEach(ci => { const subProd = products.find(sp => sp.id === ci.id); if (subProd) totalCost += (Number(subProd.cost) || 0) * ci.qty; }); } else { totalCost += (Number(prod.cost) || 0); } } }); });
-            const grossProfit = totalRevenue - totalCost;
-            const prodCount = {}; filteredSales.forEach(s => s.items.forEach(i => prodCount[i.name] = (prodCount[i.name] || 0) + 1));
-            const topProducts = Object.entries(prodCount).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            const clientSpend = {}; filteredSales.forEach(s => { const cName = clients.find(c => c.id === s.clientId)?.name || 'N/A'; clientSpend[cName] = (clientSpend[cName] || 0) + s.total; });
-            const topClients = Object.entries(clientSpend).sort((a,b) => b[1] - a[1]).slice(0, 5);
-            const payMethods = {}; filteredSales.forEach(s => payMethods[s.payMethod] = (payMethods[s.payMethod] || 0) + 1);
-            
-            // Novos Relatórios V6.2
-            const salesByCity = {};
-            const salesByDistrict = {};
-            filteredSales.forEach(s => {
-                const client = clients.find(c => c.id === s.clientId);
-                if (client) {
-                    const city = client.city || 'N/I';
-                    const dist = client.district || 'N/I';
-                    salesByCity[city] = (salesByCity[city] || 0) + 1;
-                    salesByDistrict[dist] = (salesByDistrict[dist] || 0) + 1;
-                }
-            });
-            const topCities = Object.entries(salesByCity).sort((a,b) => b[1]-a[1]);
-            const topDistricts = Object.entries(salesByDistrict).sort((a,b) => b[1]-a[1]).slice(0, 5);
-            
-            // Total Cashbacks enviados
-            const totalCashbacks = Object.values(postSaleLog).reduce((acc, log) => {
-                 const logDate = log.date.slice(0, 10);
-                 return (logDate >= startDate && logDate <= endDate) ? acc + log.count : acc;
-            }, 0);
-
-            return (
-                <div className="h-full flex flex-col p-6 overflow-y-auto bg-gray-50">
-                     <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-xl shadow-sm border"><h2 className="text-xl font-bold text-slate-800 flex items-center gap-2"><TrendingUp/> Relatórios & Inteligência</h2><div className="flex gap-2 items-center"><input type="date" className="border p-2 rounded text-sm" value={startDate} onChange={e => setStartDate(e.target.value)} /><span className="text-gray-400">até</span><input type="date" className="border p-2 rounded text-sm" value={endDate} onChange={e => setEndDate(e.target.value)} /></div></div>
-                     
-                     <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-l-4 border-l-blue-500"><p className="text-xs font-bold text-gray-400 uppercase">Faturamento</p><p className="text-2xl font-bold text-blue-700">{formatCurrency(totalRevenue)}</p></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-l-4 border-l-emerald-500"><p className="text-xs font-bold text-gray-400 uppercase">Lucro Bruto (Est.)</p><p className="text-2xl font-bold text-emerald-700">{formatCurrency(grossProfit)}</p></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-l-4 border-l-orange-500"><p className="text-xs font-bold text-gray-400 uppercase">Ticket Médio</p><p className="text-2xl font-bold text-orange-700">{formatCurrency(ticketMedio)}</p></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-l-4 border-l-purple-500"><p className="text-xs font-bold text-gray-400 uppercase">Total Pedidos</p><p className="text-2xl font-bold text-purple-700">{totalOrders}</p></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border border-l-4 border-l-pink-500"><p className="text-xs font-bold text-gray-400 uppercase">Cashbacks Env.</p><p className="text-2xl font-bold text-pink-700">{totalCashbacks}</p></div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="bg-white p-4 rounded-xl shadow-sm border"><h3 className="font-bold text-gray-700 mb-4 text-sm uppercase border-b pb-2">Por Pagamento</h3><div className="space-y-2">{Object.entries(payMethods).map(([method, qtd], i) => (<div key={i} className="flex justify-between text-sm"><span className="text-gray-600">{method}</span><span className="font-bold">{qtd}</span></div>))}</div></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border"><h3 className="font-bold text-gray-700 mb-4 text-sm uppercase border-b pb-2">Por Cidade</h3><div className="space-y-2">{topCities.map(([city, qtd], i) => (<div key={i} className="flex justify-between text-sm"><span className="text-gray-600">{city}</span><span className="font-bold">{qtd}</span></div>))}</div></div>
-                        <div className="bg-white p-4 rounded-xl shadow-sm border"><h3 className="font-bold text-gray-700 mb-4 text-sm uppercase border-b pb-2">Top Bairros</h3><div className="space-y-2">{topDistricts.map(([dist, qtd], i) => (<div key={i} className="flex justify-between text-sm"><span className="text-gray-600">{dist}</span><span className="font-bold">{qtd}</span></div>))}</div></div>
-                    </div>
-                </div>
-            )
         }
 
         // --- STOCK MANAGER ---
@@ -1041,7 +1128,7 @@
              return (<div className="flex h-full"><div className="w-1/3 border-r bg-gray-50 p-4 overflow-y-auto scrollbar-thin">{sortedProducts.map(p => (<div key={p.id} className="flex justify-between items-center text-xs py-2 border-b"><div><span className="font-bold block">{p.name}</span><span className="text-[10px] text-gray-500">{p.internalCode}</span></div><span className={`font-bold px-2 py-1 rounded ${p.stock <= 5 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{p.stock}</span></div>))}</div><div className="flex-1 p-6 space-y-4 overflow-y-auto"><div className="grid grid-cols-2 gap-6"><div><h3 className="font-bold text-green-700 mb-2">Entrada em Massa</h3><textarea className="w-full h-64 border p-2 text-xs font-mono bg-green-50" placeholder="COD | QTD" value={bulkIn} onChange={e=>setBulkIn(e.target.value)}></textarea><button onClick={()=>processBulk(bulkIn, 'IN')} className="btn-primary w-full bg-green-600 hover:bg-green-700 mt-2">PROCESSAR ENTRADA</button></div><div><h3 className="font-bold text-red-700 mb-2">Saída em Massa</h3><textarea className="w-full h-64 border p-2 text-xs font-mono bg-red-50" placeholder="COD | QTD" value={bulkOut} onChange={e=>setBulkOut(e.target.value)}></textarea><button onClick={()=>processBulk(bulkOut, 'OUT')} className="btn-primary w-full bg-red-600 hover:bg-red-700 mt-2">PROCESSAR SAÍDA</button></div></div></div></div>)
         }
         
-        // --- DRIVER VIEW ---
+        // --- DRIVER VIEW (Mantido) ---
         function DriverView({ data, onExit }) {
           const [deliveryModal, setDeliveryModal] = useState(null); 
           const [filter, setFilter] = useState('Todas'); 
