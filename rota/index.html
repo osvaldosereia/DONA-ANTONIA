@@ -12,6 +12,7 @@
             --secondary: #64748b;
             --success: #16a34a;
             --whatsapp: #25d366;
+            --call: #334155;
             --card-bg: #ffffff;
         }
         
@@ -53,6 +54,7 @@
         .main-actions { margin-top: 20px; border-top: 1px dashed #cbd5e1; padding-top: 20px; }
         .btn-action { width: 100%; margin-bottom: 10px; font-weight: bold; }
         .btn-gps { background-color: #ef4444; border: none; }
+        .btn-call { background-color: var(--call); border: none; }
         .btn-check { background-color: var(--success); border: none; }
 
         /* Modal Customizado */
@@ -157,6 +159,8 @@
                         bairro: item.detalhes_cliente.bairro,
                         cidade: item.detalhes_cliente.cidade,
                         rota: item.rota,
+                        // Campo específico solicitado para o Maps
+                        maps_busca: item.detalhes_cliente.maps,
                         produto: item.detalhes_produto.nome,
                         qtd: item.qty,
                         total: item.total,
@@ -205,7 +209,13 @@
             }
             state.selectedId = dbId;
             const item = state.entregas.find(i => i.db_id === dbId);
-            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.morada + ', ' + item.bairro + ', ' + item.cidade)}`;
+            
+            // Lógica do Maps: Prioriza campo 'maps_busca', senão usa endereço
+            const mapsQuery = item.maps_busca && item.maps_busca.trim() !== "" 
+                ? item.maps_busca 
+                : `${item.morada}, ${item.bairro}, ${item.cidade}`;
+            
+            const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapsQuery)}`;
             
             const waPreMsg = encodeURIComponent(`Olá ${item.primeiroNome}! Aqui é do setor de entregas. Sua encomenda é a próxima da rota e já estou a caminho! 🚚`);
             const waArrivedMsg = encodeURIComponent(`Olá ${item.primeiroNome}! Acabei de chegar no seu endereço para a entrega. 🔔`);
@@ -225,7 +235,8 @@
                     </div>
 
                     <div class="main-actions">
-                        <a href="${mapsUrl}" target="_blank" class="btn-action btn-gps" role="button">Abrir Rota no GPS</a>
+                        <a href="tel:55${item.tel}" class="btn-action btn-call" role="button">📞 Ligar p/ Cliente</a>
+                        <a href="${mapsUrl}" target="_blank" class="btn-action btn-gps" role="button">🗺️ Abrir Rota no GPS</a>
                         ${!item.concluido ? 
                             `<button class="btn-action btn-check" onclick="openModal()">Confirmar Entrega</button>` : 
                             `<p style="text-align:center; color:var(--success); font-weight:bold">✓ Pedido Finalizado</p>`
@@ -253,13 +264,13 @@
 
             // Relatório para o Admin via WhatsApp
             const adminMsg = encodeURIComponent(
-                `🏁 *ENTREGA CONCLUÍDA*\n\n` +
-                `🆔 Pedido: ${item.id}\n` +
-                `👤 Cliente: ${item.nome}\n` +
-                `🚚 Rota: ${item.rota}\n` +
-                `📍 Local: ${item.cidade} / ${item.bairro}\n` +
-                `💰 Valor: R$ ${item.total.toFixed(2)}\n` +
-                `💳 Pago via: ${method}`
+                `*ENTREGA CONCLUÍDA*\n\n` +
+                `Pedido: ${item.id}\n` +
+                `Cliente: ${item.nome}\n` +
+                `Rota: ${item.rota}\n` +
+                `Local: ${item.cidade} / ${item.bairro}\n` +
+                `Valor: R$ ${item.total.toFixed(2)}\n` +
+                `Pago via: ${method}`
             );
             
             window.open(`https://wa.me/${ADMIN_WA}?text=${adminMsg}`, '_blank');
