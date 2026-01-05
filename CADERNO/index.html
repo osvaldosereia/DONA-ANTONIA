@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
@@ -146,16 +146,16 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
-                        <div class="md:col-span-10">
+                        <div class="md:col-span-8">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Observações do Pedido</label>
                             <input type="text" id="o-obs" placeholder="Ex: Entrega prioritária..." class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white h-[54px]">
                         </div>
-                        <div class="md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1 text-center">Qtd</label>
-                            <input type="number" id="oq" value="1" min="1" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white text-center font-bold h-[54px]">
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1 text-center">Quantidade</label>
+                            <input type="number" id="oq" value="1" min="1" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white text-center font-black h-[54px] text-lg text-blue-600">
                         </div>
-                        <div class="md:col-span-1 flex items-end">
-                            <button onclick="addO()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black h-[54px] rounded-xl shadow-sm btn-transition text-xl">+</button>
+                        <div class="md:col-span-2 flex items-end">
+                            <button onclick="addO()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black h-[54px] rounded-xl shadow-md btn-transition text-2xl flex items-center justify-center">＋</button>
                         </div>
                     </div>
 
@@ -179,15 +179,20 @@
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
                         <div class="flex flex-col gap-4 border-b pb-4 mb-4">
                             <div class="flex justify-between items-center">
-                                <h3 class="font-bold text-slate-800 flex items-center gap-2">🕒 Histórico</h3>
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                    <input type="checkbox" id="select-all-h" onchange="toggleAllH(this.checked)" class="w-5 h-5 rounded border-slate-300 text-blue-600">
+                                    🕒 Histórico
+                                </h3>
                                 <div class="flex gap-2">
                                     <button onclick="deleteSelected()" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-red-100 btn-transition">Excluir</button>
-                                    <button onclick="exportSelected()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 btn-transition">Exportar</button>
+                                    <button onclick="exportSelected()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 btn-transition shadow-sm">Exportar</button>
                                 </div>
                             </div>
-                            <p class="text-[10px] text-slate-400 leading-tight"><b>Nota:</b> O estoque só é baixado na exportação. Pedidos processados: ✅.</p>
+                            <p class="text-[10px] text-slate-400 leading-tight"><b>Nota:</b> O estoque só é baixado na exportação. Processados: ✅.</p>
                         </div>
-                        <div id="oh" class="space-y-3 max-h-[700px] overflow-y-auto pr-1"></div>
+                        <div id="oh" class="space-y-3 max-h-[700px] overflow-y-auto pr-1">
+                            <!-- Pedidos injetados via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -324,7 +329,7 @@
                 obs: obs,
                 processed: false 
             };
-            ords.push(n); curO = []; $('o-cli').value = ''; $('o-obs').value = ''; save(); render(); renderO(); renderOH(); prt(n);
+            ords.push(n); curO = []; $('o-cli').value = ''; $('o-obs').value = ''; $('oq').value = 1; save(); render(); renderO(); renderOH(); prt(n);
         };
 
         const renderOH = () => {
@@ -359,7 +364,12 @@
                             <input type="text" value="${o.obs || ''}" onchange="updateField('${o.id}', 'obs', this.value)" placeholder="Vazio" class="text-[11px] bg-slate-50 border-none p-1.5 rounded-lg focus:ring-1 focus:ring-blue-400 font-medium italic text-slate-600">
                         </div>
                     </div>
-                </div>`).join('') : '<p class="text-center text-slate-400 text-xs py-10">Nenhum pedido hoje.</p>';
+                </div>`).join('') : '<p class="text-center text-slate-400 text-xs py-10 italic">Nenhum pedido hoje.</p>';
+            $('select-all-h').checked = false;
+        };
+
+        const toggleAllH = (c) => {
+            document.querySelectorAll('.order-select').forEach(cb => cb.checked = c);
         };
 
         const updateField = (id, field, val) => {
