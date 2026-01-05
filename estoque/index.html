@@ -276,6 +276,30 @@
                 <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Pedidos</span><h3 id="crm-total-orders" class="text-2xl font-black text-slate-700 leading-tight">0</h3></div>
                 <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Clientes</span><h3 id="crm-active-clients" class="text-2xl font-black text-orange-500 leading-tight">0</h3></div>
             </section>
+
+            <!-- RELATÓRIO DE PERFORMANCE DE PRODUTOS -->
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="p-4 border-b bg-slate-50/50 flex justify-between items-center">
+                    <h3 class="text-xs font-bold uppercase text-slate-500 tracking-tighter">Performance e Resultado por Produto</h3>
+                    <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Ordenado por Resultado Final</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
+                            <tr>
+                                <th class="p-4">Produto</th>
+                                <th class="p-4 text-center">Vendas (Un)</th>
+                                <th class="p-4">Faturamento</th>
+                                <th class="p-4">Lucro Total</th>
+                                <th class="p-4">Margem (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="crm-table-products" class="divide-y divide-slate-100">
+                            <!-- Injetado via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -297,8 +321,6 @@
             saveAll: (data) => {
                 if (storageAvailable('localStorage')) localStorage.setItem(DB.key, JSON.stringify(data));
             },
-            // Lógica Centralizada: Lê o valor mais alto da lista existente e retorna o próximo
-            // Venda agora é sequencial contínuo sem reset diário
             getNextCode: (type, options = {}) => {
                 const db = DB.load();
                 let maxNum = 0;
@@ -327,7 +349,6 @@
                 }
 
                 if (type === 'venda') {
-                    // Escaneia todas as vendas para encontrar o maior número global
                     db.venda.forEach(v => {
                         const n = parseInt(v.codigo?.substring(1)) || 0;
                         if (n > maxNum) maxNum = n;
@@ -343,7 +364,6 @@
                     db[type][idx] = obj; 
                 } else {
                     if(!obj.id) obj.id = Date.now().toString();
-                    // Garante que o código seja gerado com base no estado mais atual da lista
                     if(!obj.codigo) obj.codigo = DB.getNextCode(type, {isTemp: obj.isTemp});
                     db[type].push(obj);
                 }
@@ -421,6 +441,44 @@
                 UI.get('crm-avg-ticket').innerText = `R$ ${(totalRev / (db.venda.length || 1)).toFixed(2)}`;
                 UI.get('crm-total-orders').innerText = db.venda.length;
                 UI.get('crm-active-clients').innerText = [...new Set(db.venda.map(v => v.cliId))].length;
+
+                // LÓGICA DE PERFORMANCE DE PRODUTOS
+                const stats = {};
+                db.venda.forEach(v => {
+                    const p = db.produto.find(x => x.id === v.prodId);
+                    if(!stats[v.prodId]) {
+                        stats[v.prodId] = { 
+                            nome: p ? p.nome : 'Prod. Excluído', 
+                            codigo: p ? p.codigo : '???', 
+                            qty: 0, 
+                            rev: 0, 
+                            cost: 0 
+                        };
+                    }
+                    stats[v.prodId].qty += v.qty;
+                    stats[v.prodId].rev += v.total;
+                    // Cálculo de custo total baseado no custo unitário cadastrado no produto
+                    stats[v.prodId].cost += (Number(p?.custo || 0) * v.qty);
+                });
+
+                // Ordenar por Resultado Final (Lucro Absoluto)
+                const sorted = Object.values(stats).sort((a, b) => (b.rev - b.cost) - (a.rev - a.cost));
+
+                UI.get('crm-table-products').innerHTML = sorted.map(s => {
+                    const profit = s.rev - s.cost;
+                    const margin = s.rev > 0 ? (profit / s.rev) * 100 : 0;
+                    return `
+                        <tr class="hover:bg-slate-50 text-xs transition-all">
+                            <td class="p-4 font-bold text-slate-700">${s.codigo} - ${s.nome}</td>
+                            <td class="p-4 text-center font-black text-slate-500">${s.qty}</td>
+                            <td class="p-4 font-bold text-slate-800">R$ ${s.rev.toFixed(2)}</td>
+                            <td class="p-4 font-bold text-blue-600">R$ ${profit.toFixed(2)}</td>
+                            <td class="p-4 font-black ${margin >= 30 ? 'text-emerald-600' : (margin >= 15 ? 'text-orange-500' : 'text-red-500')}">
+                                ${margin.toFixed(1)}%
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
             },
             resetForm: (t) => {
                 const form = UI.get(`form-${t}`);
@@ -429,7 +487,6 @@
                 UI.get(`${t[0]}-id`).value = '';
                 UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
                 
-                // Atribui o próximo código baseado no valor mais alto da lista existente
                 if(t === 'cliente') {
                     UI.get('c-codigo').value = DB.getNextCode('cliente');
                 } else if(t === 'produto') {
