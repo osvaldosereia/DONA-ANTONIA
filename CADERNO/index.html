@@ -1,9 +1,9 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Estoque Pro Elite</title>
+    <title>Estoque Pro Elite - Local-First</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -123,7 +123,7 @@
         <section id="so" class="hidden space-y-6 animate-in slide-in-from-bottom-4 duration-500">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
-                <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
                             <span class="w-2 h-6 bg-green-500 rounded-full"></span>
@@ -134,29 +134,35 @@
                         </div>
                     </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+                        <div class="md:col-span-4">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Código Cliente</label>
+                            <input type="text" id="o-cli" placeholder="Ex: CLI001" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white font-bold h-[54px]">
+                        </div>
                         <div class="md:col-span-8">
                             <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Buscar Produto</label>
                             <select id="os" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white h-[54px]"></select>
                         </div>
-                        <div class="md:col-span-2">
-                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Qtd</label>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div class="md:col-span-10">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Observações do Pedido</label>
+                            <input type="text" id="o-obs" placeholder="Ex: Entrega prioritária..." class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white h-[54px]">
+                        </div>
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1 text-center">Qtd</label>
                             <input type="number" id="oq" value="1" min="1" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white text-center font-bold h-[54px]">
                         </div>
-                        <div class="md:col-span-2 flex items-end">
+                        <div class="md:col-span-1 flex items-end">
                             <button onclick="addO()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black h-[54px] rounded-xl shadow-sm btn-transition text-xl">+</button>
                         </div>
                     </div>
 
-                    <div class="mt-4">
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Observações do Pedido</label>
-                        <textarea id="o-obs" rows="2" placeholder="Ex: Entrega prioritária, cuidado com frágil..." class="w-full border-slate-200 border-2 p-3 rounded-xl bg-slate-50 focus:bg-white transition-all text-sm"></textarea>
-                    </div>
-
-                    <div class="mt-4">
+                    <div class="mt-6">
                         <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Itens no Carrinho</label>
-                        <div class="border-2 border-slate-100 rounded-2xl min-h-[150px] max-h-[300px] overflow-y-auto bg-slate-50/30" id="ol">
-                            <p class="text-center text-slate-400 py-10 italic">Nenhum item adicionado...</p>
+                        <div class="border-2 border-slate-100 rounded-2xl min-h-[200px] max-h-[350px] overflow-y-auto bg-slate-50/30" id="ol">
+                            <p class="text-center text-slate-400 py-14 italic">Nenhum item adicionado...</p>
                         </div>
                     </div>
 
@@ -165,17 +171,23 @@
                             <p class="text-xs uppercase font-bold text-slate-400">Total a Pagar</p>
                             <h3 class="text-3xl font-black text-white" id="ov">R$ 0,00</h3>
                         </div>
-                        <button onclick="finO()" class="w-full md:w-auto bg-blue-500 hover:bg-blue-400 text-white font-black px-10 py-4 rounded-xl shadow-lg btn-transition text-lg uppercase tracking-tight">Finalizar Pedido</button>
+                        <button onclick="finO()" class="w-full md:w-auto bg-blue-500 hover:bg-blue-400 text-white font-black px-10 py-4 rounded-xl shadow-lg btn-transition text-lg uppercase tracking-tight">Salvar Pedido</button>
                     </div>
                 </div>
 
-                <div class="lg:col-span-4 space-y-4">
+                <div class="lg:col-span-5 space-y-4">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center border-b pb-3 mb-4">
-                            <h3 class="font-bold text-slate-800 flex items-center gap-2">🕒 Histórico</h3>
-                            <button onclick="exportSelected()" class="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-100 btn-transition">Exportar Seleção</button>
+                        <div class="flex flex-col gap-4 border-b pb-4 mb-4">
+                            <div class="flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2">🕒 Histórico</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="deleteSelected()" class="bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-red-100 btn-transition">Excluir</button>
+                                    <button onclick="exportSelected()" class="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[10px] font-black uppercase hover:bg-blue-700 btn-transition">Exportar</button>
+                                </div>
+                            </div>
+                            <p class="text-[10px] text-slate-400 leading-tight"><b>Nota:</b> O estoque só é baixado na exportação. Pedidos processados: ✅.</p>
                         </div>
-                        <div id="oh" class="space-y-3 max-h-[600px] overflow-y-auto pr-1"></div>
+                        <div id="oh" class="space-y-3 max-h-[700px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
             </div>
@@ -225,13 +237,8 @@
                 stock: parseInt($('st').value), isK: k, isT: $('it').checked, first: i>-1?ps[i].first:null, comps: k?[...curK]:[]
             };
             if(k && !d.comps.length) return openK();
-            if(i == -1) { if(k && !sub(d.comps, d.stock)) return; ps.push(d); } else ps[i] = d;
+            if(i == -1) ps.push(d); else ps[i] = d;
             save(); reset(); render();
-        };
-
-        const sub = (cs, q) => {
-            for(let c of cs) { const p = ps.find(x=>x.code==c.code); if(!p || p.stock < c.qty*q) { alert('Estoque insuficiente: '+c.code); return 0; } }
-            cs.forEach(c => ps.find(x=>x.code==c.code).stock -= c.qty*q); return 1;
         };
 
         const reset = () => { $('f').reset(); $('idx').value = -1; $('sb').innerText = 'Salvar Produto'; curK = []; updC(); };
@@ -286,13 +293,13 @@
 
         const addO = () => {
             const p = ps.find(x=>x.code==$('os').value), q = parseInt($('oq').value) || 1;
-            if(!p || p.stock < q) return alert('Estoque insuficiente!');
+            if(!p) return alert('Produto não encontrado!');
             const ex = curO.find(x=>x.code==p.code); if(ex) ex.qty += q; else curO.push({code:p.code, name:p.name, price:p.sale, qty:q, isK:p.isK, comps:p.comps});
             renderO();
         };
 
         const renderO = () => {
-            let t = 0; if(!curO.length) { $('ol').innerHTML = '<p class="text-center text-slate-400 py-10 italic">Nenhum item adicionado...</p>'; $('ov').innerText = 'R$ 0,00'; return; }
+            let t = 0; if(!curO.length) { $('ol').innerHTML = '<p class="text-center text-slate-400 py-14 italic">Nenhum item adicionado...</p>'; $('ov').innerText = 'R$ 0,00'; return; }
             $('ol').innerHTML = curO.map((i,x) => {
                 t += i.price*i.qty; return `<div class="p-3 border-b border-slate-100 flex justify-between items-center bg-white">
                     <div class="leading-tight"><b class="text-slate-800">${i.qty}x ${i.name}</b><br><span class="text-[10px] text-slate-400 font-black">UNID: R$${i.price.toFixed(2)}</span></div>
@@ -304,37 +311,119 @@
 
         const finO = () => {
             if(!curO.length) return alert('Carrinho vazio!');
+            const cli = $('o-cli').value;
             const obs = $('o-obs').value;
-            curO.forEach(i => { const p = ps.find(x=>x.code==i.code); p.stock -= i.qty; if(p.isT && !p.first) p.first = Date.now(); });
-            const n = { id: Date.now(), code: getON(), date: new Date().toLocaleDateString('pt-BR'), time: new Date().toLocaleTimeString('pt-BR'), items: [...curO], total: curO.reduce((a,b)=>a+(b.price*b.qty),0), obs: obs };
-            ords.push(n); curO = []; $('o-obs').value = ''; save(); render(); renderO(); renderOH(); prt(n);
+            const n = { 
+                id: Date.now(), 
+                code: getON(), 
+                date: new Date().toLocaleDateString('pt-BR'), 
+                time: new Date().toLocaleTimeString('pt-BR'), 
+                clientCode: cli,
+                items: [...curO], 
+                total: curO.reduce((a,b)=>a+(b.price*b.qty),0), 
+                obs: obs,
+                processed: false 
+            };
+            ords.push(n); curO = []; $('o-cli').value = ''; $('o-obs').value = ''; save(); render(); renderO(); renderOH(); prt(n);
         };
 
         const renderOH = () => {
             const t = new Date().toLocaleDateString('pt-BR');
             const filtered = ords.filter(o=>o.date==t).reverse();
             $('oh').innerHTML = filtered.length ? filtered.map(o => `
-                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3 shadow-sm group">
-                    <input type="checkbox" class="order-select w-5 h-5 rounded border-slate-300 text-blue-600" data-id="${o.id}">
-                    <div class="flex-1 flex flex-col">
-                        <span class="text-[10px] text-slate-400 font-black uppercase">${o.time}</span>
-                        <span class="font-black text-slate-800">#${o.code}</span>
-                        ${o.obs ? `<span class="text-[9px] text-orange-600 font-bold truncate max-w-[120px] italic">${o.obs}</span>` : ''}
+                <div class="p-4 bg-white border border-slate-200 rounded-xl flex flex-col gap-3 shadow-sm group relative">
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="order-select w-5 h-5 rounded border-slate-300 text-blue-600" data-id="${o.id}">
+                        <div class="flex-1 flex flex-col">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-slate-400 font-black uppercase">${o.time}</span>
+                                ${o.processed ? '<span class="text-[10px] bg-green-100 text-green-700 px-1.5 rounded-md font-bold">✅ PROCESSADO</span>' : ''}
+                            </div>
+                            <span class="font-black text-slate-800">#${o.code}</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-1">
+                            <span class="text-blue-600 font-black text-sm">R$ ${o.total.toFixed(2)}</span>
+                            <div class="flex gap-1">
+                                <button onclick="prtByObj('${o.id}')" class="bg-slate-50 border p-1.5 rounded-lg text-xs hover:bg-slate-100 transition">🖨️</button>
+                                <button onclick="delOrder('${o.id}')" class="bg-red-50 text-red-400 border border-red-100 p-1.5 rounded-lg text-xs hover:bg-red-100 transition">🗑️</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span class="text-blue-600 font-black text-sm">R$ ${o.total.toFixed(2)}</span>
-                        <button onclick="prtByObj('${o.id}')" class="bg-white border p-2 rounded-lg text-xs">🖨️</button>
+                    <div class="grid grid-cols-2 gap-2 border-t pt-2">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-400 uppercase">Cód. Cliente</label>
+                            <input type="text" value="${o.clientCode || ''}" onchange="updateField('${o.id}', 'clientCode', this.value)" placeholder="Vazio" class="text-[11px] bg-slate-50 border-none p-1.5 rounded-lg focus:ring-1 focus:ring-blue-400 font-bold text-blue-700">
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[9px] font-black text-slate-400 uppercase">Observação</label>
+                            <input type="text" value="${o.obs || ''}" onchange="updateField('${o.id}', 'obs', this.value)" placeholder="Vazio" class="text-[11px] bg-slate-50 border-none p-1.5 rounded-lg focus:ring-1 focus:ring-blue-400 font-medium italic text-slate-600">
+                        </div>
                     </div>
-                </div>`).join('') : '<p class="text-center text-slate-400 text-xs py-4">Sem pedidos hoje.</p>';
+                </div>`).join('') : '<p class="text-center text-slate-400 text-xs py-10">Nenhum pedido hoje.</p>';
+        };
+
+        const updateField = (id, field, val) => {
+            const o = ords.find(x => x.id == id);
+            if(o) { o[field] = val; save(); }
+        };
+
+        const delOrder = id => {
+            if(confirm('Excluir este pedido permanentemente?')) {
+                ords = ords.filter(o => o.id != id);
+                save(); renderOH();
+            }
+        };
+
+        const deleteSelected = () => {
+            const checks = document.querySelectorAll('.order-select:checked');
+            if(!checks.length) return alert("Selecione pedidos para excluir.");
+            if(confirm(`Excluir ${checks.length} pedidos selecionados?`)) {
+                const ids = Array.from(checks).map(c => parseInt(c.dataset.id));
+                ords = ords.filter(o => !ids.includes(o.id));
+                save(); renderOH();
+            }
         };
 
         const exportSelected = () => {
             const checks = document.querySelectorAll('.order-select:checked');
             if(!checks.length) return alert("Selecione ao menos um pedido no histórico!");
+            
             const ids = Array.from(checks).map(c => parseInt(c.dataset.id));
             const selectedOrds = ords.filter(o => ids.includes(o.id));
+            
+            let countProcessed = 0;
+
+            selectedOrds.forEach(o => {
+                if(!o.processed) {
+                    o.items.forEach(item => {
+                        const p = ps.find(x => x.code == item.code);
+                        if(p) {
+                            if(p.isK && p.comps) {
+                                p.comps.forEach(c => {
+                                    const compP = ps.find(cp => cp.code == c.code);
+                                    if(compP) compP.stock -= (c.qty * item.qty);
+                                });
+                            }
+                            p.stock -= item.qty;
+                            if(p.isT && !p.first) p.first = Date.now();
+                        }
+                    });
+                    o.processed = true;
+                    countProcessed++;
+                }
+            });
+
+            save();
+            render();
+            renderOH();
+
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(selectedOrds));
-            const dl = document.createElement('a'); dl.href = dataStr; dl.download = `pedidos_selecionados_${new Date().toISOString().slice(0,10)}.json`; dl.click();
+            const dl = document.createElement('a');
+            dl.href = dataStr;
+            dl.download = `export_pedidos_${new Date().toISOString().slice(0,10)}.json`;
+            dl.click();
+
+            if(countProcessed > 0) alert(`${countProcessed} novos pedidos tiveram o estoque baixado!`);
         };
 
         const prtByObj = id => { const o = ords.find(x => x.id == id); if(o) prt(o); };
@@ -355,12 +444,13 @@
                 .huge{font-size:46x; display:block; margin:2mm 0; line-height:1} 
                 .item-font{font-size:22px; line-height:1.1; margin-bottom:1mm}
                 .kit-item-font{font-size:20px; line-height:1.2; margin-bottom:1.5mm; font-weight:bold; padding-left:1mm}
-                .obs-font{font-size:14px; line-height:1.2; border:2px solid #000; padding:2mm; margin-top:2mm; font-weight:bold}
+                .info-box{font-size:16px; border:2px solid #000; padding:2mm; margin:2mm 0; font-weight:bold}
             </style></head><body>
                 <div class="c b" style="font-size:18px">SEPARAÇÃO DE PEDIDO</div>
                 <div class="c">${o.date} ${o.time}</div>
                 <div class="c b huge">#${o.code}</div>
-                ${o.obs ? `<div class="c b obs-font">OBS: ${o.obs}</div>` : ''}
+                ${o.clientCode ? `<div class="c info-box">CLIENTE: ${o.clientCode}</div>` : ''}
+                ${o.obs ? `<div class="c info-box">OBS: ${o.obs}</div>` : ''}
                 <div class="s"></div>
                 ${itemsHtml}
                 <div class="s"></div>
