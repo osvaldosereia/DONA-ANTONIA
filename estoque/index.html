@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA V2 | Enterprise Core</title>
+    <title>SISTEMA V3 | Enterprise Core</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
-        
-        /* Sistema de Abas Estrito */
         .view-content { display: none !important; }
         .view-content.active { display: flex !important; }
-        
         .nav-link.active { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-
         @media print {
             body * { visibility: hidden; }
             #print-area, #print-area * { visibility: visible; }
@@ -54,7 +50,6 @@
     </aside>
 
     <div class="flex-1 flex flex-col overflow-hidden">
-        <!-- HEADER GLOBAL -->
         <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print flex-shrink-0">
             <h2 id="view-title" class="text-xl font-bold text-slate-800 tracking-tight">Clientes</h2>
             <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">AD</div>
@@ -103,7 +98,7 @@
                 <form id="form-produto" onsubmit="App.handleSave('produto', event)" class="p-5 space-y-3 overflow-y-auto custom-scroll">
                     <input type="hidden" id="p-id">
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="p-codigo" readonly placeholder="V000" class="bg-slate-100 border rounded-lg px-3 py-2 text-xs font-bold text-slate-500">
+                        <input type="text" id="p-codigo" readonly placeholder="P000" class="bg-slate-100 border rounded-lg px-3 py-2 text-xs font-bold text-slate-500">
                         <input type="text" id="p-ean" placeholder="EAN" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none">
                     </div>
                     <input type="text" id="p-nome" required placeholder="Nome do Produto" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
@@ -114,7 +109,7 @@
                     <div class="grid grid-cols-3 gap-2">
                         <input type="number" id="p-custo" step="0.01" placeholder="Custo" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs">
                         <input type="number" id="p-valor" step="0.01" required placeholder="Venda" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs font-bold text-emerald-600">
-                        <input type="number" id="p-estoque" placeholder="Estoque" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs">
+                        <input type="number" id="p-estoque" required placeholder="Estoque" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs font-bold">
                     </div>
                     <div class="flex items-center gap-2 px-1">
                         <input type="checkbox" id="p-isTemp" class="rounded border-slate-300">
@@ -124,8 +119,7 @@
                         <option value="normal">Normal</option><option value="kit">Kit</option>
                     </select>
                     <div id="p-kit-area" class="hidden space-y-3">
-                        <textarea id="p-kit-bulk" rows="2" class="w-full p-2 text-[10px] font-mono border rounded outline-none bg-slate-50" placeholder="V001 | 2"></textarea>
-                        <div id="p-kit-list" class="max-h-24 overflow-y-auto custom-scroll space-y-1"></div>
+                        <div id="p-kit-list" class="max-h-32 overflow-y-auto custom-scroll space-y-1 bg-slate-50 p-2 rounded-lg border"></div>
                     </div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-xs uppercase">Salvar Produto</button>
                 </form>
@@ -136,7 +130,12 @@
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-produto" class="text-slate-700">0</b></span>
                 </div>
                 <div class="flex-1 overflow-auto custom-scroll">
-                    <table class="w-full text-left text-sm"><tbody id="table-produto" class="divide-y divide-slate-100"></tbody></table>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
+                            <tr><th class="p-4">Produto</th><th class="p-4">Estoque</th><th class="p-4">Preço</th><th class="p-4 text-right">Ações</th></tr>
+                        </thead>
+                        <tbody id="table-produto" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </section>
         </main>
@@ -159,7 +158,7 @@
                         </div>
                         <div class="grid grid-cols-4 gap-2">
                             <select id="v-produto" required class="col-span-3 bg-white border rounded-lg px-3 py-2 text-sm outline-none"></select>
-                            <input type="number" id="v-qty" value="1" min="1" class="bg-white border rounded-lg px-3 py-2 text-sm outline-none">
+                            <input type="number" id="v-qty" value="1" min="1" class="bg-white border rounded-lg px-3 py-2 text-sm outline-none font-bold">
                         </div>
                     </div>
 
@@ -202,9 +201,8 @@
             </section>
         </main>
         
-        <!-- VIEW: CRM -->
+        <!-- CRM (Visual only update) -->
         <main id="view-crm" class="view-content flex-1 overflow-auto p-6 flex flex-col gap-6">
-            <!-- HEADER CRM -->
             <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between flex-shrink-0 no-print">
                 <div>
                     <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest leading-none">Dashboard Analytics</h3>
@@ -212,64 +210,44 @@
                 </div>
                 <div class="flex gap-2 items-center">
                     <input type="date" id="crm-filter-start" class="text-[10px] p-2 border rounded-lg outline-none">
-                    <span class="text-[10px] text-slate-400 font-bold uppercase">a</span>
-                    <input type="date" id="crm-filter-end" class="text-[10px] p-2 border rounded-lg outline-none">
-                    <button onclick="UI.renderCRM()" class="bg-blue-600 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-100 uppercase">Atualizar</button>
+                    <button onclick="UI.renderCRM()" class="bg-blue-600 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition uppercase">Atualizar</button>
                 </div>
             </section>
-
-            <!-- CARDS KPI -->
             <section class="grid grid-cols-4 gap-4 flex-shrink-0">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Faturamento Líquido</span>
-                    <h3 id="crm-total-rev" class="text-2xl font-black text-emerald-600 leading-tight">R$ 0,00</h3>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Ticket Médio</span>
-                    <h3 id="crm-avg-ticket" class="text-2xl font-black text-blue-600 leading-tight">R$ 0,00</h3>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Volume Pedidos</span>
-                    <h3 id="crm-total-orders" class="text-2xl font-black text-slate-700 leading-tight">0</h3>
-                </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase">Clientes Impactados</span>
-                    <h3 id="crm-active-clients" class="text-2xl font-black text-orange-500 leading-tight">0</h3>
-                </div>
+                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Receita Bruta</span><h3 id="crm-total-rev" class="text-2xl font-black text-emerald-600 leading-tight">R$ 0,00</h3></div>
+                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Ticket Médio</span><h3 id="crm-avg-ticket" class="text-2xl font-black text-blue-600 leading-tight">R$ 0,00</h3></div>
+                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Pedidos</span><h3 id="crm-total-orders" class="text-2xl font-black text-slate-700 leading-tight">0</h3></div>
+                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Clientes</span><h3 id="crm-active-clients" class="text-2xl font-black text-orange-500 leading-tight">0</h3></div>
             </section>
-
-            <!-- RANKINGS -->
             <section class="grid grid-cols-2 gap-6 flex-shrink-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-3 bg-slate-50 border-b font-bold text-[10px] uppercase text-slate-500 tracking-widest">Top 5 Compradores</div>
-                    <table class="w-full text-xs text-left"><tbody id="crm-top-clients" class="divide-y"></tbody></table>
-                </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-3 bg-slate-50 border-b font-bold text-[10px] uppercase text-slate-500 tracking-widest">Top 5 Produtos</div>
-                    <table class="w-full text-xs text-left"><tbody id="crm-top-products" class="divide-y"></tbody></table>
-                </div>
-            </section>
-
-            <!-- ROTA BARS -->
-            <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex-shrink-0">
-                <div class="font-bold text-[10px] uppercase text-slate-500 mb-6 tracking-widest">Performance por Rota</div>
-                <div id="crm-route-bars" class="space-y-5"></div>
+                <div class="bg-white rounded-2xl border overflow-hidden"><div class="p-3 bg-slate-50 border-b font-bold text-[10px] uppercase text-slate-500">Top Compradores</div><table class="w-full text-xs text-left"><tbody id="crm-top-clients" class="divide-y"></tbody></table></div>
+                <div class="bg-white rounded-2xl border overflow-hidden"><div class="p-3 bg-slate-50 border-b font-bold text-[10px] uppercase text-slate-500">Top Produtos</div><table class="w-full text-xs text-left"><tbody id="crm-top-products" class="divide-y"></tbody></table></div>
             </section>
         </main>
     </div>
 
-    <!-- AREA DE IMPRESSÃO (MODO TÉRMICO) -->
     <div id="print-area"></div>
 
     <script>
         const DB = {
-            key: 'enterprise_v4_db',
-            load: () => JSON.parse(localStorage.getItem(DB.key) || '{"cliente":[], "produto":[], "venda":[]}'),
+            key: 'enterprise_v5_db',
+            load: () => {
+                const data = JSON.parse(localStorage.getItem(DB.key) || '{"cliente":[], "produto":[], "venda":[], "counters":{"cliente":0, "produto":0, "prodTemp":0, "venda":0}}');
+                if(!data.counters) data.counters = {cliente:0, produto:0, prodTemp:0, venda:0};
+                return data;
+            },
             saveAll: (data) => localStorage.setItem(DB.key, JSON.stringify(data)),
-            genId: (type) => {
-                const list = DB.load()[type];
-                const count = list.length + 1;
-                return type === 'cliente' ? `C${String(count).padStart(4, '0')}` : `V${String(count).padStart(3, '0')}`;
+            genCode: (type, options = {}) => {
+                const db = DB.load();
+                let code = "";
+                if(type === 'cliente') { db.counters.cliente++; code = `C${String(db.counters.cliente).padStart(4, '0')}`; }
+                else if(type === 'produto') {
+                    if(options.isTemp) { db.counters.prodTemp++; code = `PT${String(db.counters.prodTemp).padStart(3, '0')}`; }
+                    else { db.counters.produto++; code = `P${String(db.counters.produto).padStart(3, '0')}`; }
+                }
+                else if(type === 'venda') { db.counters.venda++; code = `V${String(db.counters.venda).padStart(4, '0')}`; }
+                DB.saveAll(db);
+                return code;
             },
             save: (type, obj) => {
                 const db = DB.load();
@@ -277,7 +255,7 @@
                 if (idx !== -1) { db[type][idx] = obj; } 
                 else {
                     if(!obj.id) obj.id = Date.now().toString();
-                    if(type !== 'venda' && !obj.codigo) obj.codigo = DB.genId(type);
+                    if(!obj.codigo) obj.codigo = DB.genCode(type, {isTemp: obj.isTemp});
                     db[type].push(obj);
                 }
                 DB.saveAll(db);
@@ -288,16 +266,11 @@
         const UI = {
             get: (id) => document.getElementById(id),
             switchView: (view, btn) => {
-                // Auditoria visual: Esconde todos os containers 'main' de conteúdo
                 document.querySelectorAll('.view-content').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
-                
-                const target = UI.get(`view-${view}`);
-                if(target) target.classList.add('active');
+                UI.get(`view-${view}`).classList.add('active');
                 if(btn) btn.classList.add('active');
-                
                 UI.get('view-title').innerText = view.charAt(0).toUpperCase() + view.slice(1);
-                
                 if(view === 'venda') UI.renderVendaOptions();
                 if(view === 'produto') UI.renderKitOptions();
                 if(view === 'crm') UI.renderCRM();
@@ -306,74 +279,56 @@
             toggleKit: (val) => UI.get('p-kit-area').classList.toggle('hidden', val !== 'kit'),
             renderKitOptions: () => {
                 const prods = DB.load().produto.filter(p => p.tipo !== 'kit');
-                UI.get('p-kit-list').innerHTML = prods.map(p => `<div class="flex items-center gap-2 p-1 text-[10px]"><input type="checkbox" data-pid="${p.id}" class="kit-check"><span class="flex-1">${p.codigo}-${p.nome}</span><input type="number" data-pid="${p.id}" value="1" class="kit-qty w-8 border rounded outline-none px-1"></div>`).join('');
+                UI.get('p-kit-list').innerHTML = prods.map(p => `<div class="flex items-center gap-2 p-1 text-[10px]"><input type="checkbox" data-pid="${p.id}" class="kit-check"><span class="flex-1 font-bold">${p.codigo} - ${p.nome}</span><input type="number" data-pid="${p.id}" value="1" class="kit-qty w-10 border rounded outline-none px-1 font-bold"></div>`).join('');
             },
             renderVendaOptions: (filter = '') => {
                 const db = DB.load();
-                const prods = db.produto.sort((a,b) => a.nome.localeCompare(b.nome));
                 UI.get('v-cliente').innerHTML = '<option value="">Selecionar Cliente</option>' + db.cliente.map(c => `<option value="${c.id}">${c.codigo} - ${c.nome}</option>`).join('');
-                UI.get('v-produto').innerHTML = '<option value="">Selecionar Produto</option>' + prods
+                UI.get('v-produto').innerHTML = '<option value="">Selecionar Produto</option>' + db.produto
                     .filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || p.codigo.toLowerCase().includes(filter.toLowerCase()))
-                    .map(p => `<option value="${p.id}" data-price="${p.valor}">${p.codigo} - ${p.nome} (R$ ${p.valor})</option>`).join('');
+                    .map(p => `<option value="${p.id}" data-price="${p.valor}">${p.codigo} - ${p.nome} (Est: ${p.estoque})</option>`).join('');
             },
             searchProduct: (val) => UI.renderVendaOptions(val),
             render: (type) => {
-                if(type === 'crm') return; // Renderização dedicada do CRM
-                const db = DB.load(); 
-                let data = db[type];
-                
+                if(type === 'crm') return;
+                const db = DB.load(); let data = db[type];
                 if(type === 'venda') {
                     const s = UI.get('v-filter-start').value; const e = UI.get('v-filter-end').value;
                     if(s) data = data.filter(v => v.date >= new Date(s).getTime());
                     if(e) data = data.filter(v => v.date <= new Date(e).getTime() + 86399999);
                 }
-
                 UI.get(`count-${type}`).innerText = data.length;
                 UI.get(`table-${type}`).innerHTML = data.map(i => {
-                    if(type === 'cliente') return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 text-[10px] font-bold uppercase">${i.cidade}<br><span class="opacity-50 font-normal tracking-tight">${i.bairro||'-'}</span></td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.edit('cliente','${i.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('cliente','${i.id}')" class="text-red-400 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
-                    if(type === 'produto') return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 text-[10px] font-bold text-emerald-600">R$ ${Number(i.valor).toFixed(2)}</td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.duplicate('${i.id}')" class="text-emerald-500 hover:bg-emerald-50 p-2 rounded-lg transition" title="Clonar"><i class="fa-solid fa-copy text-xs"></i></button><button onclick="App.edit('produto','${i.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('produto','${i.id}')" class="text-red-400 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
+                    if(type === 'cliente') return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 text-[10px] font-bold uppercase">${i.cidade}</td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.edit('cliente','${i.id}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('cliente','${i.id}')" class="text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
+                    if(type === 'produto') {
+                        const estColor = i.estoque <= 0 ? 'text-red-600' : 'text-slate-700';
+                        return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 font-black text-xs ${estColor}">${i.estoque} <span class="text-[8px] opacity-40">un</span></td><td class="p-4 text-[10px] font-bold text-emerald-600">R$ ${Number(i.valor).toFixed(2)}</td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.edit('produto','${i.id}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('produto','${i.id}')" class="text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
+                    }
                     if(type === 'venda') {
                         const c = db.cliente.find(x => x.id === i.cliId); const p = db.produto.find(x => x.id === i.prodId);
-                        return `<tr class="hover:bg-slate-50 text-[11px]"><td class="p-4"><b>#${i.id.slice(-5)} | ${c?.nome||'Excluído'}</b><br>${p?.nome||'Excluído'} (x${i.qty})</td><td class="p-4 font-bold text-slate-700">R$ ${i.total.toFixed(2)}<br><span class="opacity-50 text-[9px] uppercase">${i.pag} | ${i.rota}</span></td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.printVenda('${i.id}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg transition" title="Imprimir Separador"><i class="fa-solid fa-print text-xs"></i></button><button onclick="App.edit('venda','${i.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('venda','${i.id}')" class="text-red-300 hover:bg-red-100 p-2 rounded-lg transition"><i class="fa-solid fa-times text-xs"></i></button></td></tr>`;
+                        return `<tr class="hover:bg-slate-50 text-[11px]"><td class="p-4 font-bold">#${i.codigo} | ${c?.nome||'Excl'}</td><td class="p-4 font-bold text-emerald-700">R$ ${i.total.toFixed(2)}<br><span class="opacity-50 text-[9px] uppercase">${i.pag} | ${i.rota}</span></td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.printVenda('${i.id}')" class="text-slate-500 p-2"><i class="fa-solid fa-print text-xs"></i></button><button onclick="App.delete('venda','${i.id}')" class="text-red-300 p-2"><i class="fa-solid fa-times text-xs"></i></button></td></tr>`;
                     }
                 }).join('');
             },
             renderCRM: () => {
                 const db = DB.load();
-                const s = UI.get('crm-filter-start').value; const e = UI.get('crm-filter-end').value;
-                let subset = db.venda;
-                if(s) subset = subset.filter(v => v.date >= new Date(s).getTime());
-                if(e) subset = subset.filter(v => v.date <= new Date(e).getTime() + 86399999);
-
-                const totalRev = subset.reduce((acc, v) => acc + v.total, 0);
-                const avgTicket = subset.length ? totalRev / subset.length : 0;
+                const totalRev = db.venda.reduce((acc, v) => acc + v.total, 0);
                 UI.get('crm-total-rev').innerText = `R$ ${totalRev.toFixed(2)}`;
-                UI.get('crm-avg-ticket').innerText = `R$ ${avgTicket.toFixed(2)}`;
-                UI.get('crm-total-orders').innerText = subset.length;
-                UI.get('crm-active-clients').innerText = [...new Set(subset.map(v => v.cliId))].length;
-
-                const clientMap = {}; subset.forEach(v => clientMap[v.cliId] = (clientMap[v.cliId]||0) + v.total);
-                UI.get('crm-top-clients').innerHTML = Object.entries(clientMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([id,v])=>`<tr><td class="p-2 uppercase font-semibold">${db.cliente.find(x=>x.id===id)?.nome||'Excluído'}</td><td class="p-2 text-right font-bold text-emerald-600">R$ ${v.toFixed(2)}</td></tr>`).join('');
-
-                const prodMap = {}; subset.forEach(v => prodMap[v.prodId] = (prodMap[v.prodId]||0) + v.qty);
-                UI.get('crm-top-products').innerHTML = Object.entries(prodMap).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([id,q])=>`<tr><td class="p-2 uppercase font-semibold">${db.produto.find(x=>x.id===id)?.nome||'Excluído'}</td><td class="p-2 text-right font-bold text-blue-600">${q} un</td></tr>`).join('');
-
-                const routes = { CX: 0, VF: 0, CBA: 0, CPA: 0 }; subset.forEach(v => routes[v.rota] ? routes[v.rota]++ : routes[v.rota]=1);
-                const max = Math.max(...Object.values(routes), 1);
-                UI.get('crm-route-bars').innerHTML = Object.entries(routes).map(([n,c])=>`<div><div class="flex justify-between text-[10px] font-bold uppercase mb-1"><span>${n}</span><span>${c} Pedidos</span></div><div class="w-full bg-slate-100 rounded-full h-1.5"><div class="bg-blue-600 h-1.5 rounded-full" style="width: ${(c/max)*100}%"></div></div></div>`).join('');
+                UI.get('crm-avg-ticket').innerText = `R$ ${(totalRev / (db.venda.length || 1)).toFixed(2)}`;
+                UI.get('crm-total-orders').innerText = db.venda.length;
+                UI.get('crm-active-clients').innerText = [...new Set(db.venda.map(v => v.cliId))].length;
             },
             resetForm: (t) => {
                 UI.get(`form-${t}`).reset(); UI.get(`${t[0]}-id`).value = '';
                 if(t !== 'venda') UI.get(`${t[0]}-codigo`).value = '';
                 UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
-                if(t === 'produto') UI.toggleKit('normal'); 
+                if(t === 'produto') UI.toggleKit('normal');
                 if(t === 'venda') { UI.get('v-total').innerText = 'R$ 0,00'; UI.renderVendaOptions(); }
             },
             fillForm: (t, i) => {
-                const p = t[0]; UI.get(`${p}-id`).value = i.id; 
+                const p = t[0]; UI.get(`${p}-id`).value = i.id; UI.get(`${p}-codigo`).value = i.codigo;
                 if(t === 'cliente') { UI.get('c-nome').value = i.nome; UI.get('c-tel').value = i.tel; UI.get('c-cidade').value = i.cidade; UI.get('c-bairro').value = i.bairro || ''; UI.get('c-endereco').value = i.endereco; }
                 else if(t === 'produto') { UI.get('p-nome').value = i.nome; ['ean','ncm','categoria','custo','valor','estoque','tipo'].forEach(k => UI.get(`p-${k}`).value = i[k]); UI.get('p-isTemp').checked = !!i.isTemp; UI.toggleKit(i.tipo); }
-                else if(t === 'venda') { UI.get('v-cliente').value = i.cliId; UI.get('v-produto').value = i.prodId; UI.get('v-qty').value = i.qty; UI.get('v-pagamento').value = i.pag; UI.get('v-rota').value = i.rota; UI.get('v-desconto').value = i.desc; UI.get('v-obs').value = i.obs; App.calcVenda(); }
                 UI.get(`formLabel-${t}`).innerText = `Editando ${t}`;
             }
         };
@@ -383,9 +338,7 @@
                 const db = DB.load(); const now = Date.now();
                 db.produto = db.produto.filter(p => !p.deleteAt || p.deleteAt > now);
                 DB.saveAll(db); UI.render('cliente');
-                ['v-qty', 'v-desconto', 'v-produto'].forEach(id => {
-                    const el = UI.get(id); if(el) el.addEventListener('input', App.calcVenda);
-                });
+                ['v-qty', 'v-desconto', 'v-produto'].forEach(id => UI.get(id).addEventListener('input', App.calcVenda));
             },
             calcVenda: () => {
                 const p = UI.get('v-produto'); const price = p.options[p.selectedIndex]?.dataset.price || 0;
@@ -394,57 +347,37 @@
             },
             handleSave: (t, e) => {
                 e.preventDefault(); const p = t[0];
-                if(t === 'venda' && (!UI.get('v-cliente').value || !UI.get('v-produto').value)) return alert('Erro: Selecione Cliente e Produto!');
-                
-                let obj = { id: UI.get(`${p}-id`).value || Date.now().toString() };
+                let obj = { id: UI.get(`${p}-id`).value || Date.now().toString(), codigo: UI.get(`${p}-codigo`).value };
                 if(t !== 'venda') obj.nome = UI.get(`${p}-nome`).value;
 
                 if(t === 'cliente') Object.assign(obj, { tel: UI.get('c-tel').value, cidade: UI.get('c-cidade').value, bairro: UI.get('c-bairro').value, endereco: UI.get('c-endereco').value });
                 else if(t === 'produto') {
-                    Object.assign(obj, { ean: UI.get('p-ean').value, ncm: UI.get('p-ncm').value, categoria: UI.get('p-categoria').value, custo: UI.get('p-custo').value, valor: UI.get('p-valor').value, estoque: UI.get('p-estoque').value, tipo: UI.get('p-tipo').value, isTemp: UI.get('p-isTemp').checked });
-                    if(obj.tipo === 'kit') {
-                        let kit = Array.from(document.querySelectorAll('.kit-check:checked')).map(ck => ({ id: ck.dataset.pid, qty: document.querySelector(`.kit-qty[data-pid="${ck.dataset.pid}"]`).value }));
-                        UI.get('p-kit-bulk').value.split('\n').forEach(l => { const [c, q] = l.split('|').map(s=>s.trim()); const f = DB.load().produto.find(x=>x.codigo===c); if(f) kit.push({id:f.id, qty:q||1}); });
-                        obj.items = kit;
-                    }
+                    Object.assign(obj, { ean: UI.get('p-ean').value, ncm: UI.get('p-ncm').value, categoria: UI.get('p-categoria').value, custo: UI.get('p-custo').value, valor: UI.get('p-valor').value, estoque: Number(UI.get('p-estoque').value), tipo: UI.get('p-tipo').value, isTemp: UI.get('p-isTemp').checked });
+                    if(obj.tipo === 'kit') obj.items = Array.from(document.querySelectorAll('.kit-check:checked')).map(ck => ({ id: ck.dataset.pid, qty: Number(document.querySelector(`.kit-qty[data-pid="${ck.dataset.pid}"]`).value) }));
                 } else if(t === 'venda') {
                     const prod = DB.load().produto.find(x => x.id === UI.get('v-produto').value);
-                    Object.assign(obj, { cliId: UI.get('v-cliente').value, prodId: prod.id, qty: Number(UI.get('v-qty').value), pag: UI.get('v-pagamento').value, rota: UI.get('v-rota').value, desc: Number(UI.get('v-desconto').value||0), obs: UI.get('v-obs').value, total: (prod.valor * Number(UI.get('v-qty').value)) - Number(UI.get('v-desconto').value||0), date: Date.now() });
-                    if(prod.isTemp) { prod.deleteAt = Date.now() + 86400000; DB.save('produto', prod); }
+                    if(!prod) return;
+                    Object.assign(obj, { cliId: UI.get('v-cliente').value, prodId: prod.id, qty: Number(UI.get('v-qty').value), pag: UI.get('v-pagamento').value, rota: UI.get('v-rota').value, total: (prod.valor * Number(UI.get('v-qty').value)) - Number(UI.get('v-desconto').value||0), date: Date.now() });
+                    
+                    // Baixa de Estoque
+                    const db = DB.load();
+                    const deduct = (id, q) => {
+                        const target = db.produto.find(x => x.id === id);
+                        if(target) target.estoque -= q;
+                    };
+                    if(prod.tipo === 'kit' && prod.items) prod.items.forEach(ki => deduct(ki.id, ki.qty * obj.qty));
+                    else deduct(prod.id, obj.qty);
+                    DB.saveAll(db);
                 }
                 DB.save(t, obj); UI.resetForm(t); UI.render(t);
             },
             printVenda: (id) => {
                 const db = DB.load(); const v = db.venda.find(x => x.id === id); const c = db.cliente.find(x => x.id === v.cliId); const p = db.produto.find(x => x.id === v.prodId);
-                let kitHtml = ""; 
-                if(p.tipo === 'kit' && p.items) {
-                    kitHtml = `<div style="border-top:1px dashed #000; padding-top:5px; margin-top:5px; font-size:10px;"><b>LISTA DE SEPARAÇÃO (COMPONENTES):</b><br>` + 
-                        p.items.map(ki => {
-                            const sub = db.produto.find(x => x.id === ki.id);
-                            return `${ki.qty}x [${sub?.codigo || '?'}] ${sub?.nome || 'ITEM EXCLUÍDO'}`;
-                        }).join('<br>') + `</div>`;
-                }
-                UI.get('print-area').innerHTML = `
-                    <div style="font-family:monospace; font-size:12px; border:1px solid #ddd; padding:10px;">
-                        <center><b style="font-size:22px;">#${v.id.slice(-6)}</b><br>GUIA DE LOGÍSTICA</center>
-                        <hr style="margin:5px 0">
-                        <b>ROTA:</b> ${v.rota} | <b>PAG:</b> ${v.pag}<br>
-                        <b>CLIENTE:</b> ${c?.nome||'Excl'}<br>
-                        <hr style="margin:5px 0">
-                        <div style="font-size:14px; margin: 10px 0; border:1px solid #000; padding:5px;">
-                            <b>${v.qty}x ${p?.codigo}</b><br>
-                            ${p?.nome||'Excl'}
-                        </div>
-                        ${kitHtml}
-                        <hr style="margin:5px 0">
-                        <b>OBSERVAÇÃO:</b><br>${v.obs||'-'}
-                        <div style="font-size:8px; text-align:right; margin-top:10px;">EMITIDO EM: ${new Date().toLocaleString()}</div>
-                    </div>`;
+                UI.get('print-area').innerHTML = `<div style="font-family:monospace; padding:10px;"><b>#${v.codigo}</b><br>CLI: ${c?.nome||'Excl'}<br>PROD: ${v.qty}x ${p?.nome||'Excl'}<br>ROTA: ${v.rota} | PAG: ${v.pag}</div>`;
                 window.print();
             },
-            duplicate: (id) => { const p = {...DB.load().produto.find(x => x.id === id)}; delete p.id; delete p.codigo; p.nome += " (CÓPIA)"; DB.save('produto', p); UI.render('produto'); },
             edit: (t, id) => { const i = DB.load()[t].find(x => x.id === id); if(i) UI.fillForm(t, i); },
-            delete: (t, id) => { if(confirm('Confirmar exclusão definitiva?')) { DB.delete(t, id); UI.render(t); } }
+            delete: (t, id) => { if(confirm('Excluir definitivamente?')) { DB.delete(t, id); UI.render(t); } }
         };
 
         const ExportEngine = { export: () => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(DB.load())], {type: 'application/json'})), download: 'backup.json' }); a.click(); } };
