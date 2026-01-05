@@ -3,700 +3,459 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Controle de Estoque Pro</title>
+    <title>Estoque Pro Elite</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .custom-scroll::-webkit-scrollbar {
-            height: 8px;
-            width: 8px;
-        }
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 4px;
-        }
-        .modal-active {
-            display: flex !important;
-        }
+        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .modal { display:none; align-items:center; justify-content:center; position:fixed; inset:0; background:rgba(15, 23, 42, 0.75); z-index:100; backdrop-filter: blur(4px); }
+        .active { display:flex !important; }
+        .btn-transition { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-transition:active { transform: scale(0.95); }
+        input:focus, select:focus { outline: none; ring: 2px; ring-color: #3b82f6; border-color: #3b82f6; }
+        @media print { .no-print { display: none; } }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     </style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-900">
+<body class="bg-slate-50 text-slate-900 min-h-screen pb-10">
 
-    <!-- Header -->
-    <header class="bg-blue-600 text-white p-4 shadow-md">
-        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-xl font-bold flex items-center gap-2">
-                <span>📦 EstoquePrático</span>
-            </h1>
-            
+    <!-- Header Modernizado -->
+    <header class="bg-blue-600 text-white shadow-lg no-print sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-2">
-                <button onclick="exportDatabase()" class="bg-blue-500 hover:bg-blue-400 text-white text-xs font-bold py-2 px-3 rounded flex items-center gap-1 transition">
-                    📥 Exportar Backup
+                <span class="text-2xl">📦</span>
+                <h1 class="text-xl font-bold tracking-tight">Estoque<span class="font-light">Prático</span></h1>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <div class="hidden md:block text-right mr-2">
+                    <p id="clock" class="text-xs font-medium opacity-80 uppercase tracking-widest"></p>
+                </div>
+                <button onclick="db('exp')" class="bg-white/10 hover:bg-white/20 btn-transition px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 border border-white/20">
+                    📥 Backup
                 </button>
-                <label class="bg-white hover:bg-gray-100 text-blue-600 text-xs font-bold py-2 px-3 rounded cursor-pointer flex items-center gap-1 transition">
+                <label class="bg-white text-blue-600 hover:bg-slate-100 btn-transition px-4 py-2 rounded-lg text-sm font-bold cursor-pointer shadow-sm">
                     📤 Importar
-                    <input type="file" id="importInput" class="hidden" accept=".json" onchange="importDatabase(event)">
+                    <input type="file" class="hidden" onchange="db('imp', event)">
                 </label>
-                <span id="clock" class="text-xs opacity-80 hidden lg:block border-l pl-4 ml-2 border-blue-400"></span>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto p-4 md:p-8 space-y-8">
+    <main class="max-w-7xl mx-auto p-4 md:p-6 space-y-6 no-print">
         
-        <!-- Navegação de Abas -->
-        <div class="flex border-b border-gray-200">
-            <button onclick="switchTab('produtos')" id="tab-produtos" class="py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600">Produtos</button>
-            <button onclick="switchTab('pedidos')" id="tab-pedidos" class="py-2 px-4 font-semibold text-gray-500 hover:text-blue-600">Pedidos / Vendas</button>
-        </div>
+        <!-- Navegação Estilo Pill -->
+        <nav class="flex bg-slate-200/50 p-1.5 rounded-xl w-fit mx-auto md:mx-0">
+            <button onclick="tab('p')" id="tp" class="py-2.5 px-6 rounded-lg font-bold text-sm btn-transition bg-white text-blue-600 shadow-sm">
+                Produtos
+            </button>
+            <button onclick="tab('o')" id="to" class="py-2.5 px-6 rounded-lg font-bold text-sm btn-transition text-slate-600">
+                Pedidos
+            </button>
+        </nav>
 
-        <!-- SEÇÃO DE PRODUTOS -->
-        <div id="section-produtos" class="space-y-8">
-            <section class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                <h2 class="text-lg font-semibold mb-4 flex items-center justify-between">
-                    <span>📝 Cadastro de Produto</span>
-                    <button onclick="resetForm()" class="text-sm text-blue-600 hover:underline">Limpar Formulário</button>
-                </h2>
-                <form id="productForm" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <input type="hidden" id="editIndex" value="-1">
+        <!-- SEÇÃO PRODUTOS -->
+        <section id="sp" class="space-y-6 animate-in fade-in duration-500">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                        <span class="w-2 h-6 bg-blue-600 rounded-full"></span>
+                        Cadastro de Produto
+                    </h2>
+                    <button onclick="reset()" class="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-blue-50 px-3 py-1.5 rounded-full transition">Limpar</button>
+                </div>
+                
+                <form id="f" class="grid grid-cols-1 md:grid-cols-12 gap-5" onsubmit="saveP(event)">
+                    <input type="hidden" id="idx" value="-1">
                     
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Nome do Produto</label>
-                        <input type="text" id="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Código</label>
-                        <input type="text" id="code" readonly class="mt-1 block w-full bg-gray-100 border-gray-300 rounded-md shadow-sm p-2 border font-mono text-blue-600">
+                    <div class="md:col-span-6">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Nome Completo</label>
+                        <input type="text" id="n" placeholder="Ex: Cerveja Lata 350ml" required class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white transition-all">
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-4 mt-6">
-                        <div class="flex items-center">
-                            <input type="checkbox" id="isKit" class="h-4 w-4 text-blue-600 border-gray-300 rounded">
-                            <label for="isKit" class="ml-2 block text-sm font-medium text-gray-700">É um Kit?</label>
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Código ID</label>
+                        <input type="text" id="c" readonly class="w-full bg-slate-100 border-slate-200 border-2 p-3.5 rounded-xl font-mono text-blue-600 font-bold">
+                    </div>
+
+                    <div class="md:col-span-3 flex items-center gap-4 pt-4 md:pt-0">
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="ik" class="w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            <span class="text-sm font-semibold text-slate-700 group-hover:text-blue-600 transition">Kit</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer group">
+                            <input type="checkbox" id="it" class="w-5 h-5 rounded border-slate-300 text-orange-600 focus:ring-orange-500">
+                            <span class="text-sm font-semibold text-orange-700 group-hover:text-orange-600 transition">Temp.</span>
+                        </label>
+                    </div>
+
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Preço Custo</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">R$</span>
+                            <input type="number" step="0.01" id="ct" placeholder="0,00" required class="w-full border-slate-200 border-2 p-3.5 pl-11 rounded-xl bg-slate-50 focus:bg-white transition-all">
                         </div>
-                        <div class="flex items-center">
-                            <input type="checkbox" id="isTemp" class="h-4 w-4 text-orange-600 border-gray-300 rounded">
-                            <label for="isTemp" class="ml-2 block text-sm font-medium text-orange-700 font-semibold">Produto Temporário (24h)</label>
+                    </div>
+
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Preço Venda</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">R$</span>
+                            <input type="number" step="0.01" id="vd" placeholder="0,00" required class="w-full border-slate-200 border-2 p-3.5 pl-11 rounded-xl bg-slate-50 focus:bg-white transition-all">
                         </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Custo (R$)</label>
-                        <input type="number" step="0.01" id="cost" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
+                    <div class="md:col-span-3">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Qtd em Estoque</label>
+                        <input type="number" id="st" placeholder="0" required class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white transition-all">
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Venda (R$)</label>
-                        <input type="number" step="0.01" id="sale" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Estoque Inicial</label>
-                        <input type="number" id="stock" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
-                    </div>
-
-                    <div class="md:col-span-1 flex items-end">
-                        <button type="submit" id="submitBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition">
-                            Salvar Produto
+                    <div class="md:col-span-3">
+                        <button type="submit" id="sb" class="w-full h-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md hover:shadow-lg btn-transition flex items-center justify-center gap-2">
+                            <span>Salvar Produto</span>
                         </button>
                     </div>
                 </form>
-            </section>
+            </div>
 
-            <section class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                    <h2 class="font-semibold">📋 Lista de Produtos</h2>
-                    <div class="text-sm text-gray-500" id="stats">Total: 0 produtos</div>
-                </div>
-                <div class="overflow-x-auto custom-scroll">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50 text-gray-500 uppercase text-xs">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Cód.</th>
-                                <th class="px-6 py-3 text-left">Nome</th>
-                                <th class="px-6 py-3 text-left">Tipo / Status</th>
-                                <th class="px-6 py-3 text-left">Custo</th>
-                                <th class="px-6 py-3 text-left">Venda</th>
-                                <th class="px-6 py-3 text-left">Estoque</th>
-                                <th class="px-6 py-3 text-center">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="productTableBody" class="divide-y divide-gray-200 bg-white"></tbody>
-                    </table>
-                </div>
-            </section>
-        </div>
-
-        <!-- SEÇÃO DE PEDIDOS -->
-        <div id="section-pedidos" class="hidden space-y-8">
-            <section class="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-lg font-semibold">🛒 Novo Pedido</h2>
-                    <div class="text-blue-600 font-mono font-bold bg-blue-50 px-3 py-1 rounded border border-blue-100">
-                        Nº Pedido: <span id="orderNextId">--</span>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div class="md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700">Selecionar Produto / Kit</label>
-                        <select id="orderProductSelect" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
-                            <option value="">Selecione um item...</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Quantidade</label>
-                        <div class="flex gap-2">
-                            <input type="number" id="orderProductQty" min="1" value="1" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm p-2 bg-gray-50 border">
-                            <button onclick="addItemToOrder()" class="mt-1 bg-green-600 text-white px-4 rounded hover:bg-green-700 transition">Adicionar</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="border rounded-lg overflow-hidden mb-4">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-100">
-                            <tr>
-                                <th class="px-4 py-2 text-left">Item</th>
-                                <th class="px-4 py-2 text-center">Qtd</th>
-                                <th class="px-4 py-2 text-right">Unitário</th>
-                                <th class="px-4 py-2 text-right">Subtotal</th>
-                                <th class="px-4 py-2 text-center">Ação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orderItemsList">
-                            <!-- Itens do pedido atual -->
-                        </tbody>
-                        <tfoot class="bg-gray-50 font-bold">
-                            <tr>
-                                <td colspan="3" class="px-4 py-2 text-right">TOTAL:</td>
-                                <td class="px-4 py-2 text-right text-blue-600" id="orderTotalValue">R$ 0,00</td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-                
-                <div class="flex justify-end">
-                    <button onclick="finalizeOrder()" class="bg-blue-600 text-white px-8 py-2 rounded-lg font-bold hover:bg-blue-800 shadow-md transition">
-                        Finalizar e Dar Baixa
-                    </button>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-                <div class="p-4 bg-gray-50 border-b border-gray-200">
-                    <h2 class="font-semibold">📜 Histórico de Pedidos (Hoje)</h2>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-4 bg-slate-50/80 border-b border-slate-200 flex justify-between items-center">
+                    <h3 class="font-bold text-slate-700">Inventário Geral</h3>
+                    <div id="p-count" class="text-xs font-bold bg-slate-200 text-slate-600 px-3 py-1 rounded-full uppercase tracking-tighter">0 Produtos</div>
                 </div>
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200 text-sm">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left">Hora</th>
-                                <th class="px-6 py-3 text-left">Pedido</th>
-                                <th class="px-6 py-3 text-left">Itens</th>
-                                <th class="px-6 py-3 text-right">Valor</th>
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase font-black">
+                                <th class="p-4">Cód</th>
+                                <th class="p-4">Descrição</th>
+                                <th class="p-4">Status</th>
+                                <th class="p-4 text-right">Venda</th>
+                                <th class="p-4 text-center">Estoque</th>
+                                <th class="p-4 text-center">Gestão</th>
                             </tr>
                         </thead>
-                        <tbody id="ordersHistoryBody" class="bg-white divide-y divide-gray-200"></tbody>
+                        <tbody id="tb" class="divide-y divide-slate-100 text-sm"></tbody>
                     </table>
                 </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Modal para Configuração de Kit (Cadastro) -->
-    <div id="kitModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl overflow-hidden">
-            <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-blue-50">
-                <h3 class="font-bold text-blue-800">🛠️ Configurar Itens do Kit</h3>
-                <button onclick="closeKitModal()" class="text-gray-500 hover:text-red-500">✕</button>
             </div>
-            <div class="p-6">
-                <div class="space-y-2 max-h-96 overflow-y-auto pr-2 custom-scroll" id="kitSelectionList"></div>
-                <div class="mt-6 flex justify-between items-center border-t pt-4">
-                    <div id="kitCountLabel" class="text-sm font-medium text-blue-600">0 itens selecionados</div>
-                    <div class="flex gap-3">
-                        <button onclick="closeKitModal()" class="px-4 py-2 border rounded text-gray-700">Fechar</button>
-                        <button onclick="saveKitConfig()" class="px-4 py-2 bg-blue-600 text-white rounded font-bold">Confirmar Seleção</button>
+        </section>
+
+        <!-- SEÇÃO PEDIDOS -->
+        <section id="so" class="hidden space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <div class="lg:col-span-8 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-lg font-bold flex items-center gap-2 text-slate-800">
+                            <span class="w-2 h-6 bg-green-500 rounded-full"></span>
+                            Novo Pedido
+                        </h2>
+                        <div class="bg-blue-50 text-blue-700 font-mono font-black px-4 py-2 rounded-xl text-lg border border-blue-100 shadow-sm">
+                            #<span id="on">00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                        <div class="md:col-span-8">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Buscar Produto</label>
+                            <select id="os" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white h-[54px]"></select>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5 ml-1">Qtd</label>
+                            <input type="number" id="oq" value="1" min="1" class="w-full border-slate-200 border-2 p-3.5 rounded-xl bg-slate-50 focus:bg-white text-center font-bold h-[54px]">
+                        </div>
+                        <div class="md:col-span-2 flex items-end">
+                            <button onclick="addO()" class="w-full bg-green-500 hover:bg-green-600 text-white font-black h-[54px] rounded-xl shadow-sm btn-transition text-xl">+</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Itens no Carrinho</label>
+                        <div class="border-2 border-slate-100 rounded-2xl min-h-[150px] max-h-[400px] overflow-y-auto bg-slate-50/30" id="ol">
+                            <p class="text-center text-slate-400 py-10 italic">Nenhum item adicionado...</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 flex flex-col md:flex-row gap-4 items-center justify-between bg-slate-900 p-6 rounded-2xl text-white">
+                        <div>
+                            <p class="text-xs uppercase font-bold text-slate-400">Total a Pagar</p>
+                            <h3 class="text-3xl font-black text-white" id="ov">R$ 0,00</h3>
+                        </div>
+                        <button onclick="finO()" class="w-full md:w-auto bg-blue-500 hover:bg-blue-400 text-white font-black px-10 py-4 rounded-xl shadow-lg btn-transition text-lg uppercase tracking-tight">
+                            Finalizar Pedido
+                        </button>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-4 space-y-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-800 border-b pb-3 mb-4 flex items-center gap-2">
+                            🕒 Histórico Recente
+                        </h3>
+                        <div id="oh" class="space-y-3 max-h-[600px] overflow-y-auto pr-1"></div>
                     </div>
                 </div>
             </div>
+        </section>
+    </main>
+
+    <!-- MODAL KIT -->
+    <div id="km" class="modal">
+        <div class="bg-white p-6 rounded-3xl w-full max-w-lg shadow-2xl mx-4 animate-in zoom-in-95 duration-200">
+            <div class="flex justify-between items-center border-b pb-4 mb-4">
+                <h3 class="text-xl font-black text-slate-800">Compor Kit</h3>
+                <button onclick="closeK()" class="text-slate-400 hover:text-slate-600 p-2">✕</button>
+            </div>
+            <p class="text-sm text-slate-500 mb-4 bg-blue-50 p-3 rounded-xl border border-blue-100">
+                Os itens abaixo serão descontados do estoque quando este kit for vendido.
+            </p>
+            <div id="kl" class="space-y-2 max-h-[40vh] overflow-y-auto pr-2"></div>
+            <button onclick="closeK()" class="w-full bg-slate-900 text-white mt-6 py-4 rounded-2xl font-black btn-transition shadow-lg">
+                Confirmar Composição
+            </button>
         </div>
     </div>
 
     <script>
-        // --- Estado Global ---
-        let products = [];
-        let orders = [];
-        let currentKitComponents = []; 
-        let currentOrderItems = [];
+        let ps = [], ords = [], curK = [], curO = [];
+        const $ = i => document.getElementById(i);
 
-        // --- Inicialização ---
         window.onload = () => {
-            loadFromLocalStorage();
-            checkTemporaryExpirations();
-            updateCode();
-            renderProducts();
-            renderOrders();
-            updateOrderSelect();
-            updateOrderCodeDisplay();
-            updateClock();
+            try {
+                const sp = localStorage.getItem('p'), so = localStorage.getItem('o');
+                if(sp) ps = JSON.parse(sp); 
+                if(so) ords = JSON.parse(so);
+            } catch(e) { console.error("Erro no DB"); }
             
-            // Ciclo de atualização e verificação
-            setInterval(updateClock, 1000);
-            setInterval(checkTemporaryExpirations, 60000); // Verifica expiração a cada minuto
-            setInterval(renderProducts, 30000); // Re-renderiza para atualizar cronómetros visuais
+            setInterval(() => { 
+                const now = new Date();
+                $('clock').innerText = now.toLocaleDateString('pt-BR') + " • " + now.toLocaleTimeString('pt-BR'); 
+                checkExp(); 
+            }, 1000);
+            
+            updC(); render(); renderOH();
         };
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleString('pt-BR');
-        }
+        const updC = () => { if($('idx').value == -1) $('c').value = String(ps.reduce((m, p) => Math.max(m, parseInt(p.code) || 0), 0) + 1).padStart(4, '0'); };
+        
+        const tab = t => { 
+            $('sp').classList.toggle('hidden', t=='o'); 
+            $('so').classList.toggle('hidden', t=='p'); 
+            $('tp').className = t=='p' ? "py-2.5 px-6 rounded-lg font-bold text-sm btn-transition bg-white text-blue-600 shadow-sm" : "py-2.5 px-6 rounded-lg font-bold text-sm btn-transition text-slate-600"; 
+            $('to').className = t=='o' ? "py-2.5 px-6 rounded-lg font-bold text-sm btn-transition bg-white text-blue-600 shadow-sm" : "py-2.5 px-6 rounded-lg font-bold text-sm btn-transition text-slate-600"; 
+            if(t=='o') { updOS(); renderOH(); }
+            updC();
+        };
 
-        // --- Lógica de Produtos Temporários ---
-        function checkTemporaryExpirations() {
-            const now = Date.now();
-            let changed = false;
-            const EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 horas em milisegundos
-
-            const filteredProducts = products.filter(p => {
-                if (p.isTemp && p.firstSaleAt) {
-                    const elapsed = now - p.firstSaleAt;
-                    if (elapsed >= EXPIRY_TIME) {
-                        changed = true;
-                        console.log(`Produto ${p.name} expirou e foi removido.`);
-                        return false;
-                    }
-                }
-                return true;
-            });
-
-            if (changed) {
-                products = filteredProducts;
-                saveToLocalStorage();
-                renderProducts();
-                updateOrderSelect();
-            }
-        }
-
-        // --- Persistência ---
-        function saveToLocalStorage() {
-            localStorage.setItem('inventory_db_app', JSON.stringify(products));
-            localStorage.setItem('orders_db_app', JSON.stringify(orders));
-        }
-
-        function loadFromLocalStorage() {
-            const pSaved = localStorage.getItem('inventory_db_app');
-            const oSaved = localStorage.getItem('orders_db_app');
-            if (pSaved) products = JSON.parse(pSaved);
-            if (oSaved) orders = JSON.parse(oSaved);
-        }
-
-        // --- Navegação ---
-        function switchTab(tab) {
-            document.getElementById('section-produtos').classList.toggle('hidden', tab !== 'produtos');
-            document.getElementById('section-pedidos').classList.toggle('hidden', tab !== 'pedidos');
-            
-            const btnProd = document.getElementById('tab-produtos');
-            const btnPed = document.getElementById('tab-pedidos');
-            
-            if(tab === 'produtos') {
-                btnProd.className = "py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600";
-                btnPed.className = "py-2 px-4 font-semibold text-gray-500 hover:text-blue-600";
-            } else {
-                btnPed.className = "py-2 px-4 font-semibold text-blue-600 border-b-2 border-blue-600";
-                btnProd.className = "py-2 px-4 font-semibold text-gray-500 hover:text-blue-600";
-                updateOrderSelect();
-                updateOrderCodeDisplay();
-            }
-        }
-
-        // --- Geração de Códigos ---
-        function getNextProductCode() {
-            if (products.length === 0) return "0001";
-            const lastCode = products.reduce((max, p) => Math.max(max, parseInt(p.code)), 0);
-            return String(lastCode + 1).padStart(4, '0');
-        }
-
-        function updateCode() {
-            if (document.getElementById('editIndex').value == "-1") {
-                document.getElementById('code').value = getNextProductCode();
-            }
-        }
-
-        function getNextOrderCode() {
-            const today = new Date().toISOString().slice(0, 10);
-            const todayOrders = orders.filter(o => o.date === today);
-            if (todayOrders.length === 0) return "01";
-            const lastCode = todayOrders.reduce((max, o) => Math.max(max, parseInt(o.code)), 0);
-            return String(lastCode + 1).padStart(2, '0');
-        }
-
-        function updateOrderCodeDisplay() {
-            document.getElementById('orderNextId').innerText = getNextOrderCode();
-        }
-
-        // --- Módulo de Pedidos ---
-        function updateOrderSelect() {
-            const select = document.getElementById('orderProductSelect');
-            select.innerHTML = '<option value="">Selecione um item...</option>';
-            products.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = p.code;
-                opt.innerText = `[${p.code}] ${p.name} (Estoque: ${p.stock})`;
-                select.appendChild(opt);
-            });
-        }
-
-        function addItemToOrder() {
-            const code = document.getElementById('orderProductSelect').value;
-            const qty = parseInt(document.getElementById('orderProductQty').value);
-            if (!code || qty <= 0) return;
-            const product = products.find(p => p.code === code);
-            if (!product) return;
-            if (product.stock < qty) {
-                alert("Quantidade indisponível no estoque!");
-                return;
-            }
-            const existing = currentOrderItems.find(i => i.code === code);
-            if (existing) {
-                existing.quantity += qty;
-            } else {
-                currentOrderItems.push({
-                    code: product.code,
-                    name: product.name,
-                    price: product.sale,
-                    quantity: qty,
-                    isKit: product.isKit,
-                    components: product.isKit ? product.components : []
-                });
-            }
-            renderCurrentOrder();
-        }
-
-        function renderCurrentOrder() {
-            const tbody = document.getElementById('orderItemsList');
-            tbody.innerHTML = '';
-            let total = 0;
-            currentOrderItems.forEach((item, index) => {
-                const subtotal = item.price * item.quantity;
-                total += subtotal;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-4 py-2">
-                        <div class="font-bold text-gray-800">${item.name}</div>
-                        ${item.isKit ? '<div class="text-[10px] text-purple-600 font-bold uppercase">Inclui Itens do Kit ↓</div>' : ''}
-                    </td>
-                    <td class="px-4 py-2 text-center">${item.quantity}</td>
-                    <td class="px-4 py-2 text-right">R$ ${item.price.toFixed(2)}</td>
-                    <td class="px-4 py-2 text-right font-bold">R$ ${subtotal.toFixed(2)}</td>
-                    <td class="px-4 py-2 text-center">
-                        <button onclick="removeOrderItem(${index})" class="text-red-500 font-bold">✕</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-                if (item.isKit && item.components) {
-                    item.components.forEach(comp => {
-                        const compData = products.find(p => p.code === comp.code);
-                        const trComp = document.createElement('tr');
-                        trComp.className = "bg-purple-50 text-[11px] text-purple-800 border-l-4 border-purple-400";
-                        trComp.innerHTML = `
-                            <td class="px-6 py-1 italic">└─ [${comp.code}] ${compData ? compData.name : 'Item não encontrado'}</td>
-                            <td class="px-4 py-1 text-center">${comp.quantity * item.quantity} total</td>
-                            <td colspan="3"></td>
-                        `;
-                        tbody.appendChild(trComp);
-                    });
-                }
-            });
-            document.getElementById('orderTotalValue').innerText = `R$ ${total.toFixed(2)}`;
-        }
-
-        function removeOrderItem(index) {
-            currentOrderItems.splice(index, 1);
-            renderCurrentOrder();
-        }
-
-        function finalizeOrder() {
-            if (currentOrderItems.length === 0) return;
-            const orderCode = getNextOrderCode();
-            const today = new Date().toISOString().slice(0, 10);
-            const time = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
-            // Reduzir estoque e marcar primeira venda de produtos temporários
-            for (const item of currentOrderItems) {
-                const prod = products.find(p => p.code === item.code);
-                if (prod) {
-                    prod.stock -= item.quantity;
-                    // Se for temporário e for a primeira venda, marca o timestamp
-                    if (prod.isTemp && !prod.firstSaleAt) {
-                        prod.firstSaleAt = Date.now();
-                    }
-                }
-            }
-
-            const newOrder = {
-                code: orderCode,
-                date: today,
-                time: time,
-                items: [...currentOrderItems],
-                total: currentOrderItems.reduce((acc, i) => acc + (i.price * i.quantity), 0)
-            };
-
-            orders.push(newOrder);
-            currentOrderItems = [];
-            saveToLocalStorage();
-            renderProducts();
-            renderOrders();
-            renderCurrentOrder();
-            updateOrderCodeDisplay();
-            updateOrderSelect();
-            alert(`Pedido ${orderCode} finalizado!`);
-        }
-
-        function renderOrders() {
-            const tbody = document.getElementById('ordersHistoryBody');
-            tbody.innerHTML = '';
-            const today = new Date().toISOString().slice(0, 10);
-            const todayOrders = orders.filter(o => o.date === today).reverse();
-            todayOrders.forEach(o => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="px-6 py-4 text-xs text-gray-500">${o.time}</td>
-                    <td class="px-6 py-4 font-bold text-blue-700">${o.code}</td>
-                    <td class="px-6 py-4">${o.items.map(i => `${i.quantity}x ${i.name}`).join(', ')}</td>
-                    <td class="px-6 py-4 text-right font-bold">R$ ${o.total.toFixed(2)}</td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // --- CRUD Produtos ---
-        const form = document.getElementById('productForm');
-        form.onsubmit = (e) => {
+        const saveP = e => {
             e.preventDefault();
-            const editIndex = parseInt(document.getElementById('editIndex').value);
-            const isKit = document.getElementById('isKit').checked;
-            const isTemp = document.getElementById('isTemp').checked;
-            
-            const productData = {
-                name: document.getElementById('name').value,
-                code: document.getElementById('code').value,
-                cost: parseFloat(document.getElementById('cost').value),
-                sale: parseFloat(document.getElementById('sale').value),
-                stock: parseInt(document.getElementById('stock').value),
-                isKit: isKit,
-                isTemp: isTemp,
-                firstSaleAt: editIndex > -1 ? products[editIndex].firstSaleAt : null, // Preserva data se estiver editando
-                components: isKit ? [...currentKitComponents] : []
+            const i = parseInt($('idx').value), k = $('ik').checked, d = {
+                name: $('n').value, code: $('c').value, cost: parseFloat($('ct').value), sale: parseFloat($('vd').value), 
+                stock: parseInt($('st').value), isK: k, isT: $('it').checked, first: i>-1?ps[i].first:null, comps: k?[...curK]:[]
             };
-
-            if (isKit && productData.components.length === 0) {
-                alert("Kits precisam de componentes!");
-                openKitModal();
-                return;
-            }
-
-            if (editIndex === -1) {
-                if (isKit && !applyStockReduction(productData.components, productData.stock)) return;
-                products.push(productData);
-            } else {
-                products[editIndex] = productData;
-            }
-
-            saveToLocalStorage();
-            resetForm();
-            renderProducts();
+            if(k && !d.comps.length) return openK();
+            if(i == -1) { if(k && !sub(d.comps, d.stock)) return; ps.push(d); } else ps[i] = d;
+            save(); reset(); render();
         };
 
-        function applyStockReduction(components, kitQuantity) {
-            for (const comp of components) {
-                const prod = products.find(p => p.code === comp.code);
-                if (!prod || prod.stock < (comp.quantity * kitQuantity)) {
-                    alert(`Estoque insuficiente de ${prod?.name || comp.code}`);
-                    return false;
-                }
-            }
-            components.forEach(comp => {
-                const prod = products.find(p => p.code === comp.code);
-                prod.stock -= (comp.quantity * kitQuantity);
-            });
-            return true;
-        }
+        const sub = (cs, q) => {
+            for(let c of cs) { const p = ps.find(x=>x.code==c.code); if(!p || p.stock < c.qty*q) { alert('Estoque insuficiente: '+c.code); return 0; } }
+            cs.forEach(c => ps.find(x=>x.code==c.code).stock -= c.qty*q); return 1;
+        };
 
-        function resetForm() {
-            form.reset();
-            document.getElementById('editIndex').value = "-1";
-            document.getElementById('submitBtn').innerText = "Salvar Produto";
-            currentKitComponents = [];
-            updateCode();
-        }
+        const reset = () => { $('f').reset(); $('idx').value = -1; $('sb').innerText = 'Salvar Produto'; curK = []; updC(); };
+        const save = () => { localStorage.setItem('p', JSON.stringify(ps)); localStorage.setItem('o', JSON.stringify(ords)); };
 
-        function renderProducts() {
-            const tbody = document.getElementById('productTableBody');
-            tbody.innerHTML = '';
-            const now = Date.now();
-
-            products.forEach((p, index) => {
-                let statusBadge = "";
-                if (p.isKit) {
-                    statusBadge += `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-100 text-purple-700 mr-1">KIT</span>`;
-                } else {
-                    statusBadge += `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-700 mr-1">INDIV.</span>`;
-                }
-
-                if (p.isTemp) {
-                    if (!p.firstSaleAt) {
-                        statusBadge += `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-orange-100 text-orange-700">TEMP (Aguardando Venda)</span>`;
-                    } else {
-                        const timeLeft = (p.firstSaleAt + (24 * 60 * 60 * 1000)) - now;
-                        const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-                        const mins = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                        statusBadge += `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700">EXPIRA EM ${hours}h ${mins}m</span>`;
-                    }
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50";
-                tr.innerHTML = `
-                    <td class="px-6 py-4 font-mono">${p.code}</td>
-                    <td class="px-6 py-4 font-medium">${p.name}</td>
-                    <td class="px-6 py-4 flex flex-col gap-1">${statusBadge}</td>
-                    <td class="px-6 py-4 text-gray-500">R$ ${p.cost.toFixed(2)}</td>
-                    <td class="px-6 py-4 text-gray-500">R$ ${p.sale.toFixed(2)}</td>
-                    <td class="px-6 py-4 font-bold ${p.stock <= 5 ? 'text-red-600' : ''}">${p.stock}</td>
-                    <td class="px-6 py-4 text-center space-x-2">
-                        <button onclick="editProduct(${index})" class="text-blue-600 hover:underline">Editar</button>
-                        <button onclick="duplicateProduct(${index})" class="text-green-600 hover:underline">Duplicar</button>
-                        <button onclick="deleteProduct(${index})" class="text-red-600 hover:underline">Excluir</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            document.getElementById('stats').innerText = `Total: ${products.length} produtos`;
-        }
-
-        function editProduct(index) {
-            const p = products[index];
-            document.getElementById('editIndex').value = index;
-            document.getElementById('name').value = p.name;
-            document.getElementById('code').value = p.code;
-            document.getElementById('cost').value = p.cost;
-            document.getElementById('sale').value = p.sale;
-            document.getElementById('stock').value = p.stock;
-            document.getElementById('isKit').checked = p.isKit;
-            document.getElementById('isTemp').checked = p.isTemp || false;
-            currentKitComponents = p.isKit ? [...p.components] : [];
-            document.getElementById('submitBtn').innerText = "Atualizar Produto";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            if (p.isKit) openKitModal();
-        }
-
-        function duplicateProduct(index) {
-            const p = JSON.parse(JSON.stringify(products[index]));
-            p.code = getNextProductCode();
-            p.name += " (Cópia)";
-            p.firstSaleAt = null; // Reinicia expiração na cópia
-            products.push(p);
-            saveToLocalStorage();
-            renderProducts();
-            updateCode();
-        }
-
-        function deleteProduct(index) {
-            if (confirm("Excluir produto?")) {
-                products.splice(index, 1);
-                saveToLocalStorage();
-                renderProducts();
-                updateCode();
-                updateOrderSelect();
-            }
-        }
-
-        // --- Kit Modal ---
-        const kitCheckbox = document.getElementById('isKit');
-        kitCheckbox.onchange = () => { if (kitCheckbox.checked) openKitModal(); };
-
-        function openKitModal() {
-            const listDiv = document.getElementById('kitSelectionList');
-            listDiv.innerHTML = '';
-            const curCode = document.getElementById('code').value;
-            const available = products.filter(p => !p.isKit && p.code !== curCode);
-            if (available.length === 0) {
-                listDiv.innerHTML = '<p class="text-center text-gray-400">Cadastre produtos individuais primeiro.</p>';
-            } else {
-                available.forEach(item => {
-                    const saved = currentKitComponents.find(c => c.code === item.code);
-                    const qty = saved ? saved.quantity : 0;
-                    const row = document.createElement('div');
-                    row.className = `flex items-center justify-between p-3 border rounded-lg ${qty > 0 ? 'bg-blue-50 border-blue-400' : ''}`;
-                    row.innerHTML = `
-                        <div class="text-sm font-bold">${item.name} <span class="text-xs text-gray-400 font-normal">(Estoque: ${item.stock})</span></div>
-                        <div class="flex items-center gap-2">
-                            <button type="button" onclick="changeKitQty('${item.code}', -1)" class="w-8 h-8 bg-gray-200 rounded">-</button>
-                            <input type="number" value="${qty}" id="kq-${item.code}" class="w-10 text-center border-none bg-transparent" readonly>
-                            <button type="button" onclick="changeKitQty('${item.code}', 1)" class="w-8 h-8 bg-gray-200 rounded">+</button>
+        const render = () => {
+            $('tb').innerHTML = ps.length ? ps.map((p, i) => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="p-4 font-mono font-bold text-blue-600">#${p.code}</td>
+                    <td class="p-4 font-semibold text-slate-700">${p.name}</td>
+                    <td class="p-4">
+                        <div class="flex flex-wrap gap-1">
+                            ${p.isK?'<span class="bg-purple-100 text-purple-700 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">Kit</span>':''} 
+                            ${p.isT? (p.first?'<span class="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">Expirando</span>':'<span class="bg-orange-100 text-orange-700 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">Temp</span>'):''}
+                            ${!p.isK && !p.isT ? '<span class="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-full font-black uppercase">Padrão</span>' : ''}
                         </div>
-                    `;
-                    listDiv.appendChild(row);
-                });
-            }
-            updateKitCounter();
-            document.getElementById('kitModal').classList.add('modal-active');
-        }
+                    </td>
+                    <td class="p-4 text-right font-black text-slate-900">R$ ${p.sale.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                    <td class="p-4 text-center">
+                        <span class="inline-block px-3 py-1 rounded-lg font-black ${p.stock<5?'bg-red-50 text-red-600':'bg-slate-100 text-slate-700'}">${p.stock}</span>
+                    </td>
+                    <td class="p-4 text-center">
+                        <div class="flex justify-center gap-1">
+                            <button onclick="editP(${i})" title="Editar" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg btn-transition">✏️</button>
+                            <button onclick="dupP(${i})" title="Duplicar" class="p-2 hover:bg-green-50 text-green-600 rounded-lg btn-transition">📂</button>
+                            <button onclick="delP(${i})" title="Excluir" class="p-2 hover:bg-red-50 text-red-600 rounded-lg btn-transition">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') : `<tr><td colspan="6" class="p-10 text-center text-slate-400 font-medium italic">Nenhum produto cadastrado</td></tr>`;
+            $('p-count').innerText = `${ps.length} Produtos`;
+            $('on').innerText = getON();
+        };
 
-        function changeKitQty(code, delta) {
-            const input = document.getElementById(`kq-${code}`);
-            let val = parseInt(input.value) + delta;
-            if (val < 0) val = 0;
-            input.value = val;
-            const idx = currentKitComponents.findIndex(c => c.code === code);
-            if (val > 0) {
-                if (idx > -1) currentKitComponents[idx].quantity = val;
-                else currentKitComponents.push({ code, quantity: val });
-                input.closest('.border').classList.add('bg-blue-50', 'border-blue-400');
-            } else {
-                if (idx > -1) currentKitComponents.splice(idx, 1);
-                input.closest('.border').classList.remove('bg-blue-50', 'border-blue-400');
-            }
-            updateKitCounter();
-        }
+        const dupP = i => {
+            const next = String(ps.reduce((m, x) => Math.max(m, parseInt(x.code) || 0), 0) + 1).padStart(4, '0');
+            const p = {...ps[i], code: next, name: ps[i].name + ' (Cópia)', first: null};
+            ps.push(p); save(); render();
+        };
 
-        function updateKitCounter() {
-            document.getElementById('kitCountLabel').innerText = `${currentKitComponents.length} itens no kit`;
-        }
+        const editP = i => {
+            const p = ps[i]; $('idx').value = i; $('n').value = p.name; $('c').value = p.code; $('ct').value = p.cost;
+            $('vd').value = p.sale; $('st').value = p.stock; $('ik').checked = p.isK; $('it').checked = p.isT;
+            curK = p.isK ? [...p.comps] : []; $('sb').innerText = 'Atualizar'; if(p.isK) openK();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        };
 
-        function saveKitConfig() {
-            if (currentKitComponents.length === 0) document.getElementById('isKit').checked = false;
-            closeKitModal();
-        }
+        const delP = i => { if(confirm('Excluir este produto permanentemente?')) { ps.splice(i,1); save(); render(); } };
 
-        function closeKitModal() { document.getElementById('kitModal').classList.remove('modal-active'); }
+        const openK = () => {
+            const av = ps.filter(p => !p.isK && p.code != $('c').value);
+            $('kl').innerHTML = av.length ? av.map(p => {
+                const s = curK.find(c=>c.code==p.code);
+                return `<div class="flex justify-between items-center p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                    <div class="flex flex-col"><span class="font-bold text-slate-700 truncate max-w-[200px]">${p.name}</span><span class="text-[10px] font-mono text-slate-400">#${p.code}</span></div>
+                    <input type="number" min="0" value="${s?s.qty:0}" onchange="updK('${p.code}',this.value)" class="w-16 border-2 border-slate-200 p-2 rounded-lg text-center font-bold focus:border-blue-500">
+                </div>`;
+            }).join('') : `<p class="text-center text-slate-400 py-4">Cadastre produtos individuais antes.</p>`;
+            $('km').classList.add('active');
+        };
 
-        // --- Import/Export ---
-        function exportDatabase() {
-            const db = { products, orders };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const dlAnchorElem = document.createElement('a');
-            dlAnchorElem.setAttribute("href", dataStr);
-            dlAnchorElem.setAttribute("download", `backup_estoque_${new Date().toISOString().slice(0,10)}.json`);
-            dlAnchorElem.click();
-        }
+        const updK = (c, q) => { const i = curK.findIndex(x=>x.code==c); const val = parseInt(q) || 0; if(val>0) { if(i>-1) curK[i].qty=val; else curK.push({code:c, qty:val}); } else if(i>-1) curK.splice(i,1); };
+        const closeK = () => $('km').classList.remove('active');
 
-        function importDatabase(event) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = JSON.parse(e.target.result);
-                if (data.products) products = data.products;
-                if (data.orders) orders = data.orders;
-                saveToLocalStorage();
-                renderProducts();
-                renderOrders();
-                updateCode();
+        const updOS = () => { $('os').innerHTML = ps.length ? ps.map(p => `<option value="${p.code}">${p.name} (Disp: ${p.stock})</option>`).join('') : '<option value="">Sem produtos</option>'; };
+        const getON = () => { const t = new Date().toLocaleDateString('pt-BR'); return String(ords.filter(o=>o.date==t).length + 1).padStart(2,'0'); };
+
+        const addO = () => {
+            const p = ps.find(x=>x.code==$('os').value), q = parseInt($('oq').value) || 1;
+            if(!p || p.stock < q) return alert('Estoque insuficiente!');
+            const ex = curO.find(x=>x.code==p.code); if(ex) ex.qty += q; else curO.push({code:p.code, name:p.name, price:p.sale, qty:q, isK:p.isK, comps:p.comps});
+            renderO();
+        };
+
+        const renderO = () => {
+            let t = 0; 
+            if(!curO.length) { $('ol').innerHTML = '<p class="text-center text-slate-400 py-10 italic">Nenhum item adicionado...</p>'; $('ov').innerText = 'R$ 0,00'; return; }
+            $('ol').innerHTML = curO.map((i,x) => {
+                t += i.price*i.qty; 
+                return `<div class="p-3 border-b border-slate-100 flex justify-between items-center group transition-colors">
+                    <div class="leading-tight">
+                        <b class="text-slate-800">${i.qty}x ${i.name}</b><br>
+                        <span class="text-[10px] text-slate-400 uppercase font-black">UNID: R$${i.price.toFixed(2)}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <b class="text-slate-900 font-mono">R$${(i.price*i.qty).toFixed(2)}</b>
+                        <button onclick="curO.splice(${x},1);renderO()" class="p-2 text-red-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
+            $('ov').innerText = 'R$ ' + t.toLocaleString('pt-BR', {minimumFractionDigits: 2});
+        };
+
+        const finO = () => {
+            if(!curO.length) return alert('O carrinho está vazio!');
+            curO.forEach(i => { const p = ps.find(x=>x.code==i.code); p.stock -= i.qty; if(p.isT && !p.first) p.first = Date.now(); });
+            const n = {
+                code: getON(), 
+                date: new Date().toLocaleDateString('pt-BR'), 
+                time: new Date().toLocaleTimeString('pt-BR'), 
+                items: [...curO], 
+                total: curO.reduce((a,b)=>a+(b.price*b.qty),0)
             };
-            reader.readAsText(event.target.files[0]);
-        }
+            ords.push(n); curO = []; save(); render(); renderO(); tab('o'); prt(n);
+        };
+
+        const renderOH = () => {
+            const t = new Date().toLocaleDateString('pt-BR');
+            const filtered = ords.filter(o=>o.date==t).reverse();
+            $('oh').innerHTML = filtered.length ? filtered.map(o => `
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl flex justify-between items-center shadow-sm">
+                    <div class="flex flex-col">
+                        <span class="text-[10px] text-slate-400 font-black uppercase tracking-widest">${o.time}</span>
+                        <span class="font-black text-slate-800">PEDIDO #${o.code}</span>
+                        <span class="text-blue-600 font-bold text-sm">R$ ${o.total.toFixed(2)}</span>
+                    </div>
+                    <button onclick="prtByObj('${o.code}', '${o.time}')" class="bg-white border-2 border-slate-200 hover:border-blue-400 hover:text-blue-600 btn-transition px-4 py-2 rounded-xl text-sm font-black shadow-sm">
+                        🖨️
+                    </button>
+                </div>
+            `).join('') : '<p class="text-center text-slate-400 text-xs py-4">Sem pedidos hoje.</p>';
+        };
+
+        const prtByObj = (c, time) => { 
+            const o = ords.find(x => x.code == c && x.time == time); 
+            if(o) prt(o); 
+        };
+
+        const prt = o => {
+            const w = window.open('', '', 'width=300,height=600');
+            const itemsHtml = o.items.map(i => {
+                let kitLines = '';
+                if(i.isK && i.comps) {
+                    kitLines = i.comps.map(c => {
+                        const compData = ps.find(x => x.code == c.code);
+                        return `<div style="padding-left:3mm; font-size:10px; opacity:0.7">- [${c.code}] ${compData ? compData.name : ''} (${c.qty * i.qty})</div>`;
+                    }).join('');
+                }
+                return `
+                    <div style="margin-bottom: 2mm">
+                        <div class="b">${i.qty}x ${i.name}</div>
+                        ${kitLines}
+                    </div>
+                `;
+            }).join('');
+
+            w.document.write(`<html><head><style>
+                body{width:58mm;font-family:monospace;font-size:12px;margin:0;padding:2mm;line-height:1.2;color:#000}
+                .c{text-align:center} .b{font-weight:bold} .r{text-align:right} .s{border-top:2px dashed #000;margin:2mm 0}
+                .huge{font-size:36px; display:block; margin:2mm 0; line-height:1}
+            </style></head><body>
+                <div class="c b">SEPARAÇÃO DE PEDIDO</div>
+                <div class="c">${o.date} ${o.time}</div>
+                <div class="c b huge">#${o.code}</div>
+                <div class="s"></div>
+                ${itemsHtml}
+                <div class="s"></div>
+                <div class="c b" style="font-size:14px">TOTAL: ${o.items.length} ITENS</div>
+                <script>setTimeout(()=>{window.print();window.close()},600)<\/script>
+            </body></html>`);
+            w.document.close();
+        };
+
+        const checkExp = () => {
+            const n = Date.now(), e = 24*3600*1000;
+            const len = ps.length;
+            ps = ps.filter(p => !(p.isT && p.first && (n - p.first >= e)));
+            if(ps.length !== len) { save(); render(); updOS(); }
+        };
+
+        const db = (a, e) => {
+            if(a=='exp') {
+                const data = {ps, ords};
+                const l = document.createElement('a'); 
+                l.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
+                l.download = `backup_estoque_${new Date().toISOString().slice(0,10)}.json`; 
+                l.click();
+            } else {
+                const r = new FileReader(); 
+                r.onload = x => { 
+                    try {
+                        const d = JSON.parse(x.target.result); 
+                        ps = d.ps || []; 
+                        ords = d.ords || []; 
+                        save(); render(); renderOH(); tab('p');
+                        alert("Banco de dados importado com sucesso!");
+                    } catch(err) { alert("Arquivo inválido!"); }
+                };
+                r.readAsText(e.target.files[0]);
+            }
+        };
     </script>
 </body>
 </html>
