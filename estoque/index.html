@@ -1,315 +1,198 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Cestas Básicas - Offline</title>
+    <title>SISTEMA V2 | Enterprise</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Estilo para esconder scrollbar mantendo funcionalidade */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; }
+        .view-content { display: none; }
+        .view-content.active { display: flex; }
+        .nav-link.active { background: #2563eb; color: white; shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
     </style>
 </head>
-<body class="bg-gray-100 text-gray-900 overflow-hidden font-sans">
+<body class="h-screen flex overflow-hidden">
 
-    <div id="app">
-        <!-- O conteúdo será injetado pelo JavaScript -->
+    <!-- MENU LATERAL -->
+    <aside class="w-64 bg-slate-900 flex flex-col p-4 gap-2 no-print">
+        <div class="flex items-center gap-3 px-2 mb-8 text-white">
+            <i class="fa-solid fa-rocket text-blue-500 text-2xl"></i>
+            <h1 class="font-bold tracking-tight">CORE ERP</h1>
+        </div>
+        
+        <nav class="flex-1 space-y-1">
+            <button onclick="UI.switchView('cliente', this)" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all duration-200">
+                <i class="fa-solid fa-users w-5"></i> <span class="font-medium">Clientes</span>
+            </button>
+            <button onclick="UI.switchView('produto', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
+                <i class="fa-solid fa-box w-5"></i> <span class="font-medium">Produtos</span>
+            </button>
+            <button onclick="UI.switchView('venda', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
+                <i class="fa-solid fa-cart-shopping w-5"></i> <span class="font-medium">Vendas</span>
+            </button>
+            <button onclick="UI.switchView('crm', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
+                <i class="fa-solid fa-chart-line w-5"></i> <span class="font-medium">CRM</span>
+            </button>
+        </nav>
+
+        <div class="pt-4 border-t border-slate-800">
+            <button onclick="ExportEngine.export()" class="w-full flex items-center gap-3 px-4 py-2 text-slate-500 hover:text-emerald-400 text-sm transition">
+                <i class="fa-solid fa-database"></i> Backup Dados
+            </button>
+        </div>
+    </aside>
+
+    <!-- AREA PRINCIPAL -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        
+        <!-- HEADER -->
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print">
+            <h2 id="view-title" class="text-xl font-bold text-slate-800">Gestão de Clientes</h2>
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('importInput').click()" class="text-xs bg-slate-100 text-slate-600 px-3 py-2 rounded-lg font-bold hover:bg-slate-200">IMPORTAR</button>
+                <input type="file" id="importInput" class="hidden" accept=".json" onchange="ExportEngine.import(event)">
+                <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs">AD</div>
+            </div>
+        </header>
+
+        <!-- VIEW: CLIENTE (CORE) -->
+        <main id="view-cliente" class="view-content active flex-1 overflow-hidden p-6 gap-6">
+            <!-- FORM -->
+            <section class="w-80 lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                    <span id="formLabel" class="text-[10px] font-bold text-blue-600 uppercase">Novo Registro</span>
+                    <button onclick="UI.resetForm()" class="text-[10px] text-slate-400 hover:text-red-500">LIMPAR</button>
+                </div>
+                <form id="mainForm" onsubmit="App.handleSave(event)" class="p-5 space-y-4 overflow-y-auto">
+                    <input type="hidden" id="field-id">
+                    <input type="text" id="field-nome" required placeholder="Nome Completo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:border-blue-500 outline-none">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="tel" id="field-tel" required placeholder="Telefone" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                        <input type="text" id="field-bairro" placeholder="Bairro" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
+                    <select id="field-cidade" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                        <option value="Cuiabá">Cuiabá</option>
+                        <option value="Várzea Grande">Várzea Grande</option>
+                    </select>
+                    <textarea id="field-endereco" rows="2" placeholder="Endereço Completo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"></textarea>
+                    <input type="url" id="field-maps" placeholder="Link Maps" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition">SALVAR</button>
+                </form>
+            </section>
+
+            <!-- LIST -->
+            <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                    <input type="text" oninput="UI.filter(this.value)" placeholder="Buscar..." class="pl-4 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Total: <b id="count-total" class="text-slate-700">0</b></span>
+                </div>
+                <div class="flex-1 overflow-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50 sticky top-0 text-[10px] font-bold text-slate-500 uppercase">
+                            <tr>
+                                <th class="p-4 border-b">Cliente</th>
+                                <th class="p-4 border-b">Cidade/Bairro</th>
+                                <th class="p-4 border-b text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- PLACEHOLDERS PARA OUTRAS VIEWS -->
+        <main id="view-produto" class="view-content flex-1 p-20 flex-col items-center justify-center text-slate-300">
+            <i class="fa-solid fa-box-open text-6xl mb-4"></i>
+            <p>Módulo de Produtos em Breve</p>
+        </main>
+        <main id="view-venda" class="view-content flex-1 p-20 flex-col items-center justify-center text-slate-300">
+            <i class="fa-solid fa-hand-holding-dollar text-6xl mb-4"></i>
+            <p>Módulo de Vendas em Breve</p>
+        </main>
+        <main id="view-crm" class="view-content flex-1 p-20 flex-col items-center justify-center text-slate-300">
+            <i class="fa-solid fa-chart-pie text-6xl mb-4"></i>
+            <p>Dashboard CRM em Breve</p>
+        </main>
+
     </div>
 
     <script>
-        // --- ESTADO DA APLICAÇÃO (LocalStorage) ---
-        // Recupera os dados salvos ou inicia um objeto vazio se for a primeira vez
-        let db = JSON.parse(localStorage.getItem('cestas_db')) || {
-            produtos: {}, // Chave: codigo_interno
-            montagens: []  // Lista de históricos
+        const DB = {
+            key: 'enterprise_core_db',
+            getAll: () => JSON.parse(localStorage.getItem(DB.key) || '[]'),
+            saveAll: (data) => localStorage.setItem(DB.key, JSON.stringify(data)),
+            save: (obj) => {
+                const data = DB.getAll();
+                if (obj.id) { const idx = data.findIndex(i => i.id === obj.id); data[idx] = obj; }
+                else { obj.id = Date.now().toString(); data.push(obj); }
+                DB.saveAll(data);
+            },
+            delete: (id) => {
+                const data = DB.getAll().filter(i => i.id !== id);
+                DB.saveAll(data);
+            }
         };
 
-        let currentView = 'dashboard';
-
-        // Função para salvar qualquer alteração no LocalStorage do navegador
-        function persist() {
-            localStorage.setItem('cestas_db', JSON.stringify(db));
-        }
-
-        // --- LÓGICA DE NEGÓCIO ---
-
-        function handleSaveProduct(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const cod = formData.get('codigo_interno').trim();
-            const nome = formData.get('nome').trim();
-            const barcode = formData.get('barcode').trim();
-            const ncm = formData.get('ncm').trim();
-            const qtdEntrada = parseInt(formData.get('estoque')) || 0;
-
-            if (!cod || !nome) return alert("Código e Nome são obrigatórios!");
-
-            if (db.produtos[cod]) {
-                // Atualiza existente e soma estoque
-                db.produtos[cod].nome = nome;
-                db.produtos[cod].barcode = barcode;
-                db.produtos[cod].ncm = ncm;
-                db.produtos[cod].estoque += qtdEntrada;
-            } else {
-                // Cria novo
-                db.produtos[cod] = {
-                    nome,
-                    barcode,
-                    ncm,
-                    estoque: qtdEntrada
-                };
+        const UI = {
+            get: (id) => document.getElementById(id),
+            switchView: (view, btn) => {
+                document.querySelectorAll('.view-content').forEach(v => v.classList.remove('active'));
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                UI.get(`view-${view}`).classList.add('active');
+                btn.classList.add('active');
+                UI.get('view-title').innerText = `Gestão de ${view.charAt(0).toUpperCase() + view.slice(1)}s`;
+            },
+            render: (data = DB.getAll()) => {
+                UI.get('count-total').innerText = data.length;
+                UI.get('table-body').innerHTML = data.map(c => `
+                    <tr class="hover:bg-slate-50 transition group">
+                        <td class="p-4"><div class="font-bold text-slate-800">${c.nome}</div><div class="text-[11px] text-slate-500">${c.tel}</div></td>
+                        <td class="p-4"><div class="text-xs font-semibold uppercase">${c.cidade}</div><div class="text-[10px] text-slate-400 italic">${c.bairro || '-'}</div></td>
+                        <td class="p-4 text-right">
+                            <button onclick="App.edit('${c.id}')" class="w-8 h-8 text-blue-600 hover:bg-blue-50 rounded-lg"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="App.delete('${c.id}')" class="w-8 h-8 text-red-400 hover:bg-red-50 rounded-lg ml-1"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            },
+            filter: (val) => UI.render(DB.getAll().filter(c => c.nome.toLowerCase().includes(val.toLowerCase()) || c.tel.includes(val))),
+            resetForm: () => { UI.get('mainForm').reset(); UI.get('field-id').value = ''; UI.get('formLabel').innerText = 'Novo Registro'; },
+            fillForm: (c) => {
+                UI.get('field-id').value = c.id; UI.get('field-nome').value = c.nome; UI.get('field-tel').value = c.tel;
+                UI.get('field-cidade').value = c.cidade; UI.get('field-bairro').value = c.bairro || '';
+                UI.get('field-endereco').value = c.endereco; UI.get('field-maps').value = c.maps || '';
+                UI.get('formLabel').innerText = 'Editando Registro';
             }
+        };
 
-            persist();
-            showToast("Produto atualizado com sucesso!");
-            e.target.reset();
-            render();
-        }
-
-        function handleDeleteProduct(cod) {
-            if (!confirm(`Deseja realmente excluir o produto ${cod}?`)) return;
-            delete db.produtos[cod];
-            persist();
-            render();
-        }
-
-        function handleProcessAssembly(e) {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const nomeCesta = formData.get('nome_cesta');
-            const qtdLote = parseInt(formData.get('quantidade_cestas'));
-            const listaTexto = formData.get('lista_produtos').trim();
-            const valor = formData.get('valor_cesta');
-
-            if (!listaTexto) return alert("A lista de produtos está vazia!");
-
-            const linhas = listaTexto.split('\n');
-            const itensBaixa = [];
-
-            try {
-                // 1. Validar disponibilidade
-                for (let linha of linhas) {
-                    const partes = linha.split('|');
-                    if (partes.length < 2) continue;
-                    
-                    const cod = partes[0].trim();
-                    const qtdPorCesta = parseInt(partes[1].trim());
-                    
-                    if (!db.produtos[cod]) throw new Error(`Produto não cadastrado: ${cod}`);
-                    
-                    const totalNecessario = qtdPorCesta * qtdLote;
-                    if (db.produtos[cod].estoque < totalNecessario) {
-                        throw new Error(`Estoque insuficiente: ${db.produtos[cod].nome}. Necessário: ${totalNecessario}, Disponível: ${db.produtos[cod].estoque}`);
-                    }
-
-                    itensBaixa.push({ cod, total: totalNecessario });
-                }
-
-                // 2. Executar baixa
-                itensBaixa.forEach(item => {
-                    db.produtos[item.cod].estoque -= item.total;
-                });
-
-                // 3. Registrar histórico
-                db.montagens.push({
-                    nome: nomeCesta,
-                    quantidade: qtdLote,
-                    valor: valor,
-                    data: new Date().toLocaleString()
-                });
-
-                persist();
-                showToast(`${qtdLote} cestas montadas e estoque baixado!`);
-                e.target.reset();
-                navigateTo('dashboard');
-
-            } catch (err) {
-                alert(err.message);
+        const ExportEngine = {
+            export: () => {
+                const blob = new Blob([JSON.stringify(DB.getAll(), null, 2)], { type: 'application/json' });
+                const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `backup_core.json` });
+                a.click();
+            },
+            import: (e) => {
+                const reader = new FileReader();
+                reader.onload = (ev) => { DB.saveAll(JSON.parse(ev.target.result)); UI.render(); alert('Sucesso!'); };
+                reader.readAsText(e.target.files[0]);
             }
-        }
+        };
 
-        // --- INTERFACE (UI) ---
-
-        function navigateTo(view) {
-            currentView = view;
-            render();
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.remove('hidden');
-            setTimeout(() => toast.classList.add('hidden'), 3000);
-        }
-
-        function render() {
-            const app = document.getElementById('app');
-            
-            app.innerHTML = `
-                <div class="flex h-screen bg-gray-100">
-                    <!-- Sidebar -->
-                    <div class="w-64 bg-slate-900 text-white flex flex-col shadow-xl">
-                        <div class="p-6 text-xl font-black border-b border-slate-800 tracking-tighter text-blue-400 italic">CESTA_PRO</div>
-                        <nav class="flex-1 p-4 space-y-2">
-                            <button onclick="navigateTo('dashboard')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition flex items-center gap-3 ${currentView === 'dashboard' ? 'bg-slate-800 border-l-4 border-blue-500' : ''}">
-                                📦 Estoque Atual
-                            </button>
-                            <button onclick="navigateTo('add_product')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition flex items-center gap-3 ${currentView === 'add_product' ? 'bg-slate-800 border-l-4 border-blue-500' : ''}">
-                                ➕ Entrada / Cadastro
-                            </button>
-                            <button onclick="navigateTo('assemble')" class="w-full text-left p-3 rounded-lg hover:bg-slate-800 transition flex items-center gap-3 ${currentView === 'assemble' ? 'bg-slate-800 border-l-4 border-blue-500' : ''}">
-                                🧺 Montar Cestas
-                            </button>
-                        </nav>
-                        <div class="p-4 border-t border-slate-800 text-center">
-                            <button onclick="exportData()" class="text-[10px] text-slate-500 hover:text-white uppercase tracking-widest font-bold">Backup (Exportar JSON)</button>
-                        </div>
-                    </div>
-
-                    <!-- Main Content -->
-                    <div class="flex-1 flex flex-col overflow-hidden">
-                        <header class="bg-white shadow-sm p-4 px-8 flex justify-between items-center border-b">
-                            <h2 class="text-xl font-bold text-gray-800 uppercase tracking-tight">${getViewTitle()}</h2>
-                            <div class="text-xs font-mono text-gray-400">GITHUB PAGES MODE (LOCALSTORAGE)</div>
-                        </header>
-                        <main class="flex-1 overflow-y-auto p-8 hide-scrollbar">
-                            ${renderView()}
-                        </main>
-                    </div>
-                </div>
-                <div id="toast" class="fixed bottom-8 right-8 bg-blue-600 text-white px-6 py-3 rounded-xl shadow-2xl hidden z-50 font-bold border border-blue-400"></div>
-            `;
-        }
-
-        function getViewTitle() {
-            const titles = { 'dashboard': 'Painel de Inventário', 'add_product': 'Gerenciar Produtos', 'assemble': 'Nova Montagem de Cestas' };
-            return titles[currentView];
-        }
-
-        function renderView() {
-            if (currentView === 'dashboard') {
-                const lista = Object.keys(db.produtos);
-                return `
-                    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                        <table class="w-full text-left border-collapse">
-                            <thead class="bg-gray-50 text-gray-400 text-[10px] uppercase font-black border-b">
-                                <tr>
-                                    <th class="p-4 px-6">Código</th>
-                                    <th class="p-4 px-6">Nome do Produto</th>
-                                    <th class="p-4 px-6 text-center">Saldo Estoque</th>
-                                    <th class="p-4 px-6 text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y">
-                                ${lista.map(cod => {
-                                    const p = db.produtos[cod];
-                                    return `
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="p-4 px-6 font-mono font-bold text-blue-600 text-sm">${cod}</td>
-                                            <td class="p-4 px-6">
-                                                <div class="font-bold text-gray-800">${p.nome}</div>
-                                                <div class="text-[10px] text-gray-400 uppercase tracking-tighter">${p.barcode || 'S/ EAN'} | ${p.ncm || 'S/ NCM'}</div>
-                                            </td>
-                                            <td class="p-4 px-6 text-center">
-                                                <span class="inline-block px-3 py-1 rounded-full text-xs font-black ${p.estoque < 10 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-700'}">
-                                                    ${p.estoque} UN
-                                                </span>
-                                            </td>
-                                            <td class="p-4 px-6 text-right">
-                                                <button onclick="handleDeleteProduct('${cod}')" class="text-gray-300 hover:text-red-500 transition">
-                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    `;
-                                }).join('')}
-                                ${lista.length === 0 ? '<tr><td colspan="4" class="p-20 text-center text-gray-400 italic font-light">Nenhum produto em estoque. Clique em "Entrada" para começar.</td></tr>' : ''}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-            }
-
-            if (currentView === 'add_product') {
-                return `
-                    <div class="max-w-xl bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                        <form onsubmit="handleSaveProduct(event)" class="space-y-6">
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">Código Interno</label>
-                                    <input type="text" name="codigo_interno" required class="w-full border-2 border-gray-100 rounded-lg p-3 focus:border-blue-500 outline-none transition font-bold">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">Cód. Barras (EAN)</label>
-                                    <input type="text" name="barcode" class="w-full border-2 border-gray-100 rounded-lg p-3 focus:border-blue-500 outline-none transition">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-1">Nome do Produto</label>
-                                <input type="text" name="nome" required class="w-full border-2 border-gray-100 rounded-lg p-3 focus:border-blue-500 outline-none transition">
-                            </div>
-                            <div class="grid grid-cols-2 gap-6">
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">NCM</label>
-                                    <input type="text" name="ncm" class="w-full border-2 border-gray-100 rounded-lg p-3 focus:border-blue-500 outline-none transition">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1 text-blue-500">Qtd p/ Adicionar</label>
-                                    <input type="number" name="estoque" required class="w-full border-2 border-blue-100 bg-blue-50 rounded-lg p-3 focus:border-blue-500 outline-none transition font-black text-blue-600">
-                                </div>
-                            </div>
-                            <button type="submit" class="w-full bg-blue-600 text-white p-4 rounded-xl font-black text-lg hover:bg-blue-700 shadow-xl shadow-blue-100 transition active:scale-[0.98]">REGISTRAR ENTRADA</button>
-                        </form>
-                    </div>
-                `;
-            }
-
-            if (currentView === 'assemble') {
-                return `
-                    <div class="max-w-3xl bg-white p-8 rounded-xl shadow-lg border border-gray-100">
-                        <form onsubmit="handleProcessAssembly(event)" class="space-y-6">
-                            <div class="grid grid-cols-3 gap-6">
-                                <div class="col-span-1">
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">Nome da Cesta</label>
-                                    <input type="text" name="nome_cesta" placeholder="Ex: Cesta Especial" required class="w-full border-2 border-gray-100 rounded-lg p-3 outline-none focus:border-blue-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">Qtd de Cestas</label>
-                                    <input type="number" name="quantidade_cestas" value="1" min="1" required class="w-full border-2 border-gray-100 rounded-lg p-3 outline-none focus:border-blue-500 font-bold">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-black text-gray-400 uppercase mb-1">Valor Unitário</label>
-                                    <input type="number" step="0.01" name="valor_cesta" class="w-full border-2 border-gray-100 rounded-lg p-3 outline-none focus:border-blue-500">
-                                </div>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-xs font-black text-gray-400 uppercase mb-2">Composição do Lote (CÓDIGO | QUANTIDADE POR CESTA)</label>
-                                <textarea name="lista_produtos" rows="8" required placeholder="COD_001 | 2&#10;COD_002 | 1" class="w-full border-2 border-gray-100 rounded-lg p-4 font-mono text-sm outline-none focus:border-blue-500 bg-gray-50"></textarea>
-                                <p class="text-[10px] text-gray-400 mt-2 tracking-wide uppercase italic">O sistema multiplicará a qtd de cestas pelos itens da lista e dará baixa no estoque automaticamente.</p>
-                            </div>
-
-                            <button type="submit" class="w-full bg-slate-900 text-white p-4 rounded-xl font-black text-lg hover:bg-slate-800 shadow-2xl transition active:scale-[0.98]">MONTAR LOTE E BAIXAR ESTOQUE</button>
-                        </form>
-                    </div>
-                `;
-            }
-        }
-
-        // Função de Backup para não perder dados se limpar o cache do navegador
-        function exportData() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "backup_estoque_" + new Date().toLocaleDateString() + ".json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
-        }
-
-        // Início
-        window.onload = render;
+        const App = {
+            init: () => UI.render(),
+            handleSave: (e) => {
+                e.preventDefault();
+                const c = { id: UI.get('field-id').value, nome: UI.get('field-nome').value, tel: UI.get('field-tel').value, cidade: UI.get('field-cidade').value, bairro: UI.get('field-bairro').value, endereco: UI.get('field-endereco').value, maps: UI.get('field-maps').value };
+                DB.save(c); UI.resetForm(); UI.render();
+            },
+            edit: (id) => { const c = DB.getAll().find(i => i.id === id); if(c) UI.fillForm(c); },
+            delete: (id) => { if(confirm('Excluir?')) { DB.delete(id); UI.render(); } }
+        };
+        window.onload = App.init;
     </script>
 </body>
 </html>
