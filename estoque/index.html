@@ -83,7 +83,16 @@
                 </div>
                 <form id="form-cliente" onsubmit="App.handleSave('cliente', event)" class="p-5 space-y-4 overflow-y-auto custom-scroll">
                     <input type="hidden" id="c-id">
-                    <input type="text" id="c-codigo" readonly placeholder="C0000" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500">
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" id="c-codigo" readonly placeholder="C0000" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500">
+                        <select id="c-rota" required class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none font-bold text-blue-700">
+                            <option value="">ROTA</option>
+                            <option value="CX">CX</option>
+                            <option value="VG">VG</option>
+                            <option value="CBA">CBA</option>
+                            <option value="CPA">CPA</option>
+                        </select>
+                    </div>
                     <input type="text" id="c-nome" required placeholder="Nome do Cliente" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
                     <div class="grid grid-cols-2 gap-2">
                         <input type="tel" id="c-tel" required placeholder="WhatsApp" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
@@ -93,6 +102,12 @@
                         <option value="Cuiabá">Cuiabá</option><option value="Várzea Grande">Várzea Grande</option>
                     </select>
                     <textarea id="c-endereco" rows="2" placeholder="Endereço Completo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"></textarea>
+                    
+                    <div class="space-y-1">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Dados de Busca Maps</label>
+                        <input type="text" id="c-maps" placeholder="Cole coordenadas ou link aqui..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-400">
+                    </div>
+
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition uppercase text-xs">Salvar Cliente</button>
                 </form>
             </section>
@@ -102,7 +117,16 @@
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-cliente" class="text-slate-700">0</b></span>
                 </div>
                 <div class="flex-1 overflow-auto custom-scroll">
-                    <table class="w-full text-left text-sm"><tbody id="table-cliente" class="divide-y divide-slate-100"></tbody></table>
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold sticky top-0 z-10">
+                            <tr>
+                                <th class="p-4">Cliente</th>
+                                <th class="p-4">Local/Rota</th>
+                                <th class="p-4 text-right">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-cliente" class="divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </section>
         </main>
@@ -138,6 +162,8 @@
                         <option value="normal">Normal</option><option value="kit">Kit</option>
                     </select>
                     <div id="p-kit-area" class="hidden space-y-3">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Colar Lista (CÓDIGO | QUANTIDADE)</label>
+                        <textarea id="p-kit-bulk" rows="2" class="w-full p-2 text-[10px] font-mono border rounded outline-none bg-slate-50" placeholder="P001 | 2"></textarea>
                         <div id="p-kit-list" class="max-h-32 overflow-y-auto custom-scroll space-y-1 bg-slate-50 p-2 rounded-lg border"></div>
                     </div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-xs uppercase">Salvar Produto</button>
@@ -333,7 +359,10 @@
                 }
                 UI.get(`count-${type}`).innerText = data.length;
                 UI.get(`table-${type}`).innerHTML = data.map(i => {
-                    if(type === 'cliente') return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 text-[10px] font-bold uppercase">${i.cidade}</td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.edit('cliente','${i.id}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('cliente','${i.id}')" class="text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
+                    if(type === 'cliente') {
+                        const mapsBtn = i.maps ? `<button onclick="window.open('https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(i.maps)}', '_blank')" class="text-emerald-500 p-2" title="Abrir no Maps"><i class="fa-solid fa-map-location-dot text-xs"></i></button>` : '';
+                        return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 text-[10px] font-bold uppercase">${i.cidade}<br><span class="text-blue-600">ROTA: ${i.rota || '-'}</span></td><td class="p-4 text-right flex justify-end gap-1">${mapsBtn}<button onclick="App.edit('cliente','${i.id}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('cliente','${i.id}')" class="text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
+                    }
                     if(type === 'produto') {
                         const estColor = i.estoque <= 0 ? 'text-red-600' : 'text-slate-700';
                         return `<tr class="hover:bg-slate-50 transition"><td class="p-4 font-bold text-xs">${i.codigo}-${i.nome}</td><td class="p-4 font-black text-xs ${estColor}">${i.estoque} <span class="text-[8px] opacity-40">un</span></td><td class="p-4 text-[10px] font-bold text-emerald-600">R$ ${Number(i.valor).toFixed(2)}</td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.edit('produto','${i.id}')" class="text-blue-600 p-2"><i class="fa-solid fa-pen text-xs"></i></button><button onclick="App.delete('produto','${i.id}')" class="text-red-400 p-2"><i class="fa-solid fa-trash text-xs"></i></button></td></tr>`;
@@ -364,13 +393,27 @@
                 UI.get(`form-${t}`).reset(); UI.get(`${t[0]}-id`).value = '';
                 if(t !== 'venda') UI.get(`${t[0]}-codigo`).value = '';
                 UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
-                if(t === 'produto') UI.toggleKit('normal');
+                if(t === 'produto') { UI.toggleKit('normal'); UI.get('p-kit-bulk').value = ''; }
                 if(t === 'venda') { UI.get('v-total').innerText = 'R$ 0,00'; UI.renderVendaOptions(); }
             },
             fillForm: (t, i) => {
                 const p = t[0]; UI.get(`${p}-id`).value = i.id; UI.get(`${p}-codigo`).value = i.codigo;
-                if(t === 'cliente') { UI.get('c-nome').value = i.nome; UI.get('c-tel').value = i.tel; UI.get('c-cidade').value = i.cidade; UI.get('c-bairro').value = i.bairro || ''; UI.get('c-endereco').value = i.endereco; }
-                else if(t === 'produto') { UI.get('p-nome').value = i.nome; ['ean','ncm','categoria','custo','valor','estoque','tipo'].forEach(k => UI.get(`p-${k}`).value = i[k]); UI.get('p-isTemp').checked = !!i.isTemp; UI.toggleKit(i.tipo); }
+                if(t === 'cliente') { 
+                    UI.get('c-nome').value = i.nome; 
+                    UI.get('c-tel').value = i.tel; 
+                    UI.get('c-cidade').value = i.cidade; 
+                    UI.get('c-bairro').value = i.bairro || ''; 
+                    UI.get('c-endereco').value = i.endereco;
+                    UI.get('c-rota').value = i.rota || '';
+                    UI.get('c-maps').value = i.maps || '';
+                }
+                else if(t === 'produto') { 
+                    UI.get('p-nome').value = i.nome; 
+                    ['ean','ncm','categoria','custo','valor','estoque','tipo'].forEach(k => UI.get(`p-${k}`).value = i[k]); 
+                    UI.get('p-isTemp').checked = !!i.isTemp; 
+                    UI.toggleKit(i.tipo); 
+                    UI.get('p-kit-bulk').value = '';
+                }
                 UI.get(`formLabel-${t}`).innerText = `Editando ${t}`;
             }
         };
@@ -395,10 +438,24 @@
                     obj.nome = UI.get(`${p}-nome`).value;
                     obj.codigo = UI.get(`${p}-codigo`).value;
                 }
-                if(t === 'cliente') Object.assign(obj, { tel: UI.get('c-tel').value, cidade: UI.get('c-cidade').value, bairro: UI.get('c-bairro').value, endereco: UI.get('c-endereco').value });
+                if(t === 'cliente') {
+                    Object.assign(obj, { tel: UI.get('c-tel').value, cidade: UI.get('c-cidade').value, bairro: UI.get('c-bairro').value, endereco: UI.get('c-endereco').value, rota: UI.get('c-rota').value, maps: UI.get('c-maps').value });
+                }
                 else if(t === 'produto') {
+                    const db = DB.load();
                     Object.assign(obj, { ean: UI.get('p-ean').value, ncm: UI.get('p-ncm').value, categoria: UI.get('p-categoria').value, custo: UI.get('p-custo').value, valor: UI.get('p-valor').value, estoque: Number(UI.get('p-estoque').value), tipo: UI.get('p-tipo').value, isTemp: UI.get('p-isTemp').checked });
-                    if(obj.tipo === 'kit') obj.items = Array.from(document.querySelectorAll('.kit-check:checked')).map(ck => ({ id: ck.dataset.pid, qty: Number(document.querySelector(`.kit-qty[data-pid="${ck.dataset.pid}"]`).value) }));
+                    if(obj.tipo === 'kit') {
+                        let kitItems = Array.from(document.querySelectorAll('.kit-check:checked')).map(ck => ({ id: ck.dataset.pid, qty: Number(document.querySelector(`.kit-qty[data-pid="${ck.dataset.pid}"]`).value) }));
+                        const bulkText = UI.get('p-kit-bulk').value.trim();
+                        if(bulkText) {
+                            bulkText.split('\n').forEach(line => {
+                                const [code, qty] = line.split('|').map(s => s.trim());
+                                const found = db.produto.find(x => x.codigo === code);
+                                if(found) kitItems.push({ id: found.id, qty: Number(qty) || 1 });
+                            });
+                        }
+                        obj.items = kitItems;
+                    }
                 } else if(t === 'venda') {
                     const prodSelect = UI.get('v-produto');
                     const prodId = prodSelect.value;
@@ -414,16 +471,13 @@
                     else deduct(prod.id, obj.qty);
                     DB.saveAll(db);
                 }
-                DB.save(t, obj); 
-                UI.resetForm(t); 
-                UI.render(t);
+                DB.save(t, obj); UI.resetForm(t); UI.render(t);
             },
             printVenda: (id) => {
                 const db = DB.load(); 
                 const v = db.venda.find(x => x.id === id); 
                 const c = db.cliente.find(x => x.id === v.cliId); 
                 const p = db.produto.find(x => x.id === v.prodId);
-                
                 let kitHtml = ""; 
                 if(p && p.tipo === 'kit' && p.items) {
                     kitHtml = `<div style="border-top:1px dashed #000; padding-top:5px; margin-top:5px; font-size:11px;"><b>SEPARAÇÃO (Kits):</b><br>` + 
