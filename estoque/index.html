@@ -14,6 +14,17 @@
         .nav-link.active { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Estilo para Impressora Térmica 76mm */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { 
+                position: absolute; left: 0; top: 0; width: 76mm; 
+                padding: 0; margin: 0; color: black; background: white;
+            }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden">
@@ -42,7 +53,7 @@
         <!-- VIEW: CLIENTE -->
         <main id="view-cliente" class="view-content active flex-1 overflow-hidden p-6 gap-6">
             <section class="w-80 lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
-                <div class="p-4 border-b border-slate-100 flex justify-between">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between">
                     <span id="formLabel-cliente" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Novo Cliente</span>
                     <button onclick="UI.resetForm('cliente')" class="text-[10px] text-slate-400 hover:text-red-500">LIMPAR</button>
                 </div>
@@ -124,15 +135,25 @@
         <main id="view-venda" class="view-content flex-1 overflow-hidden p-6 gap-6">
             <section class="w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between">
-                    <span class="text-[10px] font-bold text-orange-600 uppercase">Novo Pedido</span>
+                    <span id="formLabel-venda" class="text-[10px] font-bold text-orange-600 uppercase">Novo Pedido</span>
                     <button onclick="UI.resetForm('venda')" class="text-[10px] text-slate-400 hover:text-red-500">CANCELAR</button>
                 </div>
                 <form id="form-venda" onsubmit="App.handleSave('venda', event)" class="p-5 space-y-3 overflow-y-auto custom-scroll">
+                    <input type="hidden" id="v-id">
                     <select id="v-cliente" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></select>
-                    <div class="grid grid-cols-4 gap-2">
-                        <select id="v-produto" required class="col-span-3 bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></select>
-                        <input type="number" id="v-qty" value="1" min="1" class="bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                    
+                    <!-- Busca e Seleção de Produto -->
+                    <div class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-[10px]"></i>
+                            <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Buscar produto por nome ou código..." class="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:border-orange-400">
+                        </div>
+                        <div class="grid grid-cols-4 gap-2">
+                            <select id="v-produto" required class="col-span-3 bg-white border rounded-lg px-3 py-2 text-sm outline-none"></select>
+                            <input type="number" id="v-qty" value="1" min="1" class="bg-white border rounded-lg px-3 py-2 text-sm outline-none">
+                        </div>
                     </div>
+
                     <div class="grid grid-cols-2 gap-2">
                         <select id="v-pagamento" required class="bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
                             <option value="Dinheiro">Dinheiro</option><option value="Cartão">Cartão</option>
@@ -149,7 +170,7 @@
                         <span class="text-xs uppercase font-bold text-slate-400">Total Líquido</span>
                         <span id="v-total" class="text-xl font-bold">R$ 0,00</span>
                     </div>
-                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-xs uppercase">Finalizar Venda</button>
+                    <button type="submit" class="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-xl shadow-lg transition text-xs uppercase">Salvar Pedido</button>
                 </form>
             </section>
             <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
@@ -165,6 +186,9 @@
         
         <main id="view-crm" class="view-content flex-1 p-20 flex-col items-center justify-center text-slate-300"><i class="fa-solid fa-chart-line text-6xl mb-4"></i><p>Relatórios em Breve</p></main>
     </div>
+
+    <!-- AREA DE IMPRESSÃO (Oculta na Tela) -->
+    <div id="print-area"></div>
 
     <script>
         const DB = {
@@ -200,11 +224,16 @@
                 const prods = DB.load().produto.filter(p => p.tipo !== 'kit');
                 UI.get('p-kit-list').innerHTML = prods.map(p => `<div class="flex items-center gap-2 p-1 text-[10px]"><input type="checkbox" data-pid="${p.id}" class="kit-check"><span class="flex-1">${p.codigo}-${p.nome}</span><input type="number" data-pid="${p.id}" value="1" class="kit-qty w-8 border rounded"></div>`).join('');
             },
-            renderVendaOptions: () => {
+            renderVendaOptions: (filter = '') => {
                 const db = DB.load();
+                // Ordenar Produtos Alfabeticamente
+                const prods = db.produto.sort((a,b) => a.nome.localeCompare(b.nome));
                 UI.get('v-cliente').innerHTML = '<option value="">Selecionar Cliente</option>' + db.cliente.map(c => `<option value="${c.id}">${c.codigo} - ${c.nome}</option>`).join('');
-                UI.get('v-produto').innerHTML = '<option value="">Selecionar Produto</option>' + db.produto.map(p => `<option value="${p.id}" data-price="${p.valor}">${p.codigo} - ${p.nome} (R$ ${p.valor})</option>`).join('');
+                UI.get('v-produto').innerHTML = '<option value="">Selecionar Produto</option>' + prods
+                    .filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || p.codigo.toLowerCase().includes(filter.toLowerCase()))
+                    .map(p => `<option value="${p.id}" data-price="${p.valor}">${p.codigo} - ${p.nome} (R$ ${p.valor})</option>`).join('');
             },
+            searchProduct: (val) => UI.renderVendaOptions(val),
             render: (type) => {
                 const db = DB.load(); const data = db[type];
                 UI.get(`count-${type}`).innerText = data.length;
@@ -213,21 +242,31 @@
                     if(type === 'produto') return `<tr class="hover:bg-slate-50 transition"><td class="p-4"><div class="font-bold">${i.codigo}-${i.nome}</div>${i.isTemp ? '<span class="text-[9px] bg-orange-100 text-orange-600 px-1 rounded">TEMP</span>':''}</td><td class="p-4 text-xs font-bold text-emerald-600">R$ ${Number(i.valor).toFixed(2)}<br><span class="text-slate-400 font-normal">Estoque: ${i.estoque||0}</span></td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.duplicate('${i.id}')" class="text-emerald-500 hover:bg-emerald-50 p-2 rounded-lg" title="Duplicar"><i class="fa-solid fa-copy"></i></button><button onclick="App.edit('produto','${i.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg"><i class="fa-solid fa-pen"></i></button><button onclick="App.delete('produto','${i.id}')" class="text-red-400 hover:bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                     if(type === 'venda') {
                         const c = db.cliente.find(x => x.id === i.cliId); const p = db.produto.find(x => x.id === i.prodId);
-                        return `<tr class="hover:bg-slate-50 text-[11px]"><td class="p-4"><b>${c?.nome||'Excluído'}</b><br>${p?.nome||'Excluído'} (x${i.qty})</td><td class="p-4 font-bold text-slate-700">R$ ${i.total.toFixed(2)}<br><span class="text-slate-400 font-normal text-[9px] uppercase">${i.pag} | ${i.rota}</span></td><td class="p-4 text-right"><button onclick="App.delete('venda','${i.id}')" class="text-red-300 hover:text-red-500 p-2"><i class="fa-solid fa-times"></i></button></td></tr>`;
+                        return `<tr class="hover:bg-slate-50 text-[11px]"><td class="p-4"><b>#${i.id.slice(-5)} | ${c?.nome||'Excl'}</b><br>${p?.nome||'Excl'} (x${i.qty})</td><td class="p-4 font-bold text-slate-700">R$ ${i.total.toFixed(2)}<br><span class="text-slate-400 font-normal text-[9px] uppercase">${i.pag} | ${i.rota}</span></td><td class="p-4 text-right flex justify-end gap-1"><button onclick="App.printVenda('${i.id}')" class="text-slate-500 hover:bg-slate-100 p-2 rounded-lg" title="Imprimir Romaneio"><i class="fa-solid fa-print"></i></button><button onclick="App.edit('venda','${i.id}')" class="text-blue-600 hover:bg-blue-50 p-2 rounded-lg"><i class="fa-solid fa-pen"></i></button><button onclick="App.delete('venda','${i.id}')" class="text-red-300 hover:bg-red-100 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`;
                     }
                 }).join('');
             },
             resetForm: (t) => {
-                UI.get(`form-${t}`).reset(); if(t !== 'venda') { UI.get(`${t[0]}-id`).value = ''; UI.get(`${t[0]}-codigo`).value = ''; UI.get(`formLabel-${t}`).innerText = `Novo ${t}`; }
-                if(t === 'produto') UI.toggleKit('normal'); if(t === 'venda') UI.get('v-total').innerText = 'R$ 0,00';
+                UI.get(`form-${t}`).reset(); UI.get(`${t[0]}-id`).value = '';
+                if(t !== 'venda') { UI.get(`${t[0]}-codigo`).value = ''; }
+                UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
+                if(t === 'produto') UI.toggleKit('normal'); 
+                if(t === 'venda') { UI.get('v-total').innerText = 'R$ 0,00'; UI.renderVendaOptions(); }
             },
             fillForm: (t, i) => {
-                const p = t[0]; UI.get(`${p}-id`).value = i.id; UI.get(`${p}-codigo`).value = i.codigo; UI.get(`${p}-nome`).value = i.nome;
+                const p = t[0]; UI.get(`${p}-id`).value = i.id; 
+                if(t !== 'venda') UI.get(`${p}-codigo`).value = i.codigo;
+                UI.get(`${p}-nome`) ? UI.get(`${p}-nome`).value = i.nome : null;
+                
                 if(t === 'cliente') { UI.get('c-tel').value = i.tel; UI.get('c-cidade').value = i.cidade; UI.get('c-bairro').value = i.bairro || ''; UI.get('c-endereco').value = i.endereco; }
-                else {
+                else if(t === 'produto') {
                     ['ean','ncm','categoria','custo','valor','estoque','tipo'].forEach(k => UI.get(`p-${k}`).value = i[k]);
                     UI.get('p-isTemp').checked = !!i.isTemp; UI.toggleKit(i.tipo);
                     if(i.tipo === 'kit' && i.items) i.items.forEach(ki => { const ck = document.querySelector(`.kit-check[data-pid="${ki.id}"]`); const qy = document.querySelector(`.kit-qty[data-pid="${ki.id}"]`); if(ck) ck.checked = true; if(qy) qy.value = ki.qty; });
+                } else if(t === 'venda') {
+                    UI.get('v-cliente').value = i.cliId; UI.get('v-produto').value = i.prodId; UI.get('v-qty').value = i.qty;
+                    UI.get('v-pagamento').value = i.pag; UI.get('v-rota').value = i.rota; UI.get('v-desconto').value = i.desc;
+                    UI.get('v-obs').value = i.obs; App.calcVenda();
                 }
                 UI.get(`formLabel-${t}`).innerText = `Editando ${t}`;
             }
@@ -248,7 +287,9 @@
             },
             handleSave: (t, e) => {
                 e.preventDefault(); const p = t[0];
-                const obj = { id: UI.get(`${p}-id`)?.value, nome: UI.get(`${p}-nome`)?.value, codigo: UI.get(`${p}-codigo`)?.value };
+                const obj = { id: UI.get(`${p}-id`)?.value };
+                if(t !== 'venda') obj.nome = UI.get(`${p}-nome`).value;
+
                 if(t === 'cliente') Object.assign(obj, { tel: UI.get('c-tel').value, cidade: UI.get('c-cidade').value, bairro: UI.get('c-bairro').value, endereco: UI.get('c-endereco').value });
                 else if(t === 'produto') {
                     Object.assign(obj, { ean: UI.get('p-ean').value, ncm: UI.get('p-ncm').value, categoria: UI.get('p-categoria').value, custo: UI.get('p-custo').value, valor: UI.get('p-valor').value, estoque: UI.get('p-estoque').value, tipo: UI.get('p-tipo').value, isTemp: UI.get('p-isTemp').checked });
@@ -257,21 +298,53 @@
                         UI.get('p-kit-bulk').value.split('\n').forEach(l => { const [c, q] = l.split('|').map(s=>s.trim()); const f = DB.load().produto.find(x=>x.codigo===c); if(f) kit.push({id:f.id, qty:q||1}); });
                         obj.items = kit;
                     }
-                } else {
+                } else if(t === 'venda') {
                     const db = DB.load(); const prod = db.produto.find(x => x.id === UI.get('v-produto').value);
-                    const v = { id: Date.now().toString(), cliId: UI.get('v-cliente').value, prodId: prod.id, qty: Number(UI.get('v-qty').value), pag: UI.get('v-pagamento').value, rota: UI.get('v-rota').value, desc: Number(UI.get('v-desconto').value||0), obs: UI.get('v-obs').value, total: (prod.valor * Number(UI.get('v-qty').value)) - Number(UI.get('v-desconto').value||0), date: Date.now() };
+                    const v = { id: obj.id || Date.now().toString(), cliId: UI.get('v-cliente').value, prodId: prod.id, qty: Number(UI.get('v-qty').value), pag: UI.get('v-pagamento').value, rota: UI.get('v-rota').value, desc: Number(UI.get('v-desconto').value||0), obs: UI.get('v-obs').value, total: (prod.valor * Number(UI.get('v-qty').value)) - Number(UI.get('v-desconto').value||0), date: Date.now() };
                     if(prod.isTemp) { prod.deleteAt = Date.now() + 86400000; DB.save('produto', prod); }
                     DB.save('venda', v); UI.resetForm('venda'); UI.render('venda'); return;
                 }
                 DB.save(t, obj); UI.resetForm(t); UI.render(t);
             },
+            printVenda: (id) => {
+                const db = DB.load(); const v = db.venda.find(x => x.id === id);
+                const c = db.cliente.find(x => x.id === v.cliId); const p = db.produto.find(x => x.id === v.prodId);
+                const area = UI.get('print-area');
+                
+                let kitContent = "";
+                if(p.tipo === 'kit' && p.items) {
+                    kitContent = `<div style="margin-top:5px; border-top:1px dashed #000; padding-top:5px;"><b>COMPOSIÇÃO:</b><br>` + 
+                        p.items.map(ki => {
+                            const sub = db.produto.find(x => x.id === ki.id);
+                            return `${ki.qty}x ${sub?.codigo} - ${sub?.nome}`;
+                        }).join('<br>') + `</div>`;
+                }
+
+                area.innerHTML = `
+                    <div style="font-family:monospace; font-size:12px; line-height:1.2;">
+                        <center><b style="font-size:20px;">#${v.id.slice(-6)}</b></center>
+                        <center><b>ROMANEIO DE SEPARAÇÃO</b></center>
+                        <hr style="border:1px solid #000">
+                        <b>ROTA:</b> ${v.rota}<br>
+                        <b>CLIENTE:</b> ${c?.nome || 'EXCLUÍDO'}<br>
+                        <hr style="border:1px dashed #000">
+                        <div style="font-size:14px; margin: 10px 0;">
+                            <b>${v.qty}x ${p?.codigo}</b><br>
+                            ${p?.nome || 'EXCLUÍDO'}
+                        </div>
+                        ${kitContent}
+                        <hr style="border:1px solid #000">
+                        <div style="font-size:10px">
+                            Emissão: ${new Date().toLocaleString()}<br>
+                            OBS: ${v.obs || '-'}
+                        </div>
+                    </div>
+                `;
+                window.print();
+            },
             duplicate: (id) => { const p = {...DB.load().produto.find(x => x.id === id)}; delete p.id; delete p.codigo; p.nome += " (CÓPIA)"; DB.save('produto', p); UI.render('produto'); },
             edit: (t, id) => { const i = DB.load()[t].find(x => x.id === id); if(i) UI.fillForm(t, i); },
             delete: (t, id) => { if(confirm('Excluir?')) { DB.delete(t, id); UI.render(t); } }
-        };
-
-        const ExportEngine = {
-            export: () => { const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(new Blob([JSON.stringify(DB.load())], {type: 'application/json'})), download: 'backup.json' }); a.click(); }
         };
 
         window.onload = App.init;
