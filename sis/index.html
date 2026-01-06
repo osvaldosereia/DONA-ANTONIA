@@ -615,6 +615,8 @@
         </main>
     </div>
 
+    <div id="print-area"></div>
+
     <script>
         const storageAvailable = (type) => { try { var storage = window[type], x = '__storage_test__'; storage.setItem(x, x); storage.removeItem(x); return true; } catch (e) { return false; } };
 
@@ -1016,10 +1018,62 @@
                 DB.save(t, obj); UI.render(t === 'produto' ? 'catalogo' : t); UI.resetForm(t);
             },
             printVenda: (id) => {
-                const db = DB.load(); const v = db.venda.find(x => x.id === id); const c = db.cliente.find(x => x.id === v.cliId); const p = db.produto.find(x => x.id === v.prodId);
-                let kitHtml = ""; if(p && p.tipo === 'kit' && p.items) { kitHtml = `<div style="border-top:1px dashed #000; padding-top:5px; margin-top:5px; font-size:11px;"><b>SEPARAÇÃO:</b><br>` + p.items.map(ki => { const sub = db.produto.find(x => x.id === ki.id); return `• ${ki.qty * v.qty}x ${sub?.nome || 'Item Excl'}`; }).join('<br>') + `</div>`; }
-                UI.get('print-area').innerHTML = `<div class="no-print" style="margin-bottom: 20px; text-align: right;"><button onclick="UI.get('print-area').innerHTML=''" class="bg-red-600 text-white py-2 px-6 rounded-lg text-xs uppercase font-bold">Fechar</button></div><div style="font-family:monospace; width: 100%; max-width: 320px; padding: 10px; border: 1px solid #eee;"><center><h1 style="font-size: 24px; margin-bottom: 2px;">PEDIDO #${v.codigo}</h1><div style="background:#000; color:#fff; padding:10px 0; margin-top:5px; font-size: 38px; font-weight: 900;">ROTA: ${v.rota}</div></center><br><div style="font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 5px;"><b>CLI:</b> [${c?.codigo}] - ${c?.nome}</div><div style="margin-top: 5px; font-size: 12px;"><b>CIDADE:</b> ${c?.cidade}/${c?.bairro}<br><b>END:</b> ${c?.endereco}</div><hr style="border:1px solid #000;margin:10px 0"><div style="font-size:16px;"><b>${v.qty}x ${p?.nome}</b></div>${kitHtml}<hr style="border:1px solid #000;margin:10px 0"><b>PGTO:</b> <span style="font-size: 16px;">${v.pag.toUpperCase()}</span><br>${v.brinde ? `<b>BRINDE:</b> <span style="font-size: 14px; color:#5b21b6;">${v.brinde.toUpperCase()}</span><br>` : ''}<div style="font-size:22px; text-align:right; margin-top: 5px;"><b>TOTAL: R$ ${v.total.toFixed(2)}</b></div><br><b>OBS:</b> ${v.obs || '-'}<br><center style="font-size: 10px; margin-top: 20px;">ENTERPRISE CORE - LOGÍSTICA<br>${new Date().toLocaleString('pt-BR')}</center></div>`;
-                window.print();
+                const db = DB.load(); 
+                const v = db.venda.find(x => x.id === id); 
+                if(!v) return alert('Venda não encontrada.');
+
+                const c = db.cliente.find(x => x.id === v.cliId); 
+                const p = db.produto.find(x => x.id === v.prodId);
+                
+                let kitHtml = ""; 
+                if(p && p.tipo === 'kit' && p.items) { 
+                    kitHtml = `<div style="border-top:1px dashed #000; padding-top:5px; margin-top:5px; font-size:11px;"><b>SEPARAÇÃO:</b><br>` + 
+                        p.items.map(ki => { 
+                            const sub = db.produto.find(x => x.id === ki.id); 
+                            return `• ${ki.qty * v.qty}x ${sub?.nome || 'Item Excl'}`; 
+                        }).join('<br>') + `</div>`; 
+                }
+                
+                const printArea = UI.get('print-area');
+                printArea.innerHTML = `
+                    <div class="no-print" style="margin-bottom: 20px; text-align: right;">
+                        <button onclick="UI.get('print-area').innerHTML=''" class="bg-red-600 text-white py-2 px-6 rounded-lg text-xs uppercase font-bold">Fechar</button>
+                    </div>
+                    <div id="coupon" style="font-family:monospace; width: 100%; max-width: 300px; padding: 10px; border: 1px solid #eee; background: white;">
+                        <center>
+                            <h1 style="font-size: 24px; margin-bottom: 2px; font-weight: bold;">PEDIDO #${v.codigo}</h1>
+                            <div style="background:#000; color:#fff; padding:5px 0; margin-top:5px; font-size: 32px; font-weight: 900;">ROTA: ${v.rota}</div>
+                        </center>
+                        <br>
+                        <div style="font-size: 14px; border-bottom: 1px solid #000; padding-bottom: 5px;">
+                            <b>CLI:</b> [${c?.codigo || '?'}] - ${c?.nome || 'Consumidor'}
+                        </div>
+                        <div style="margin-top: 5px; font-size: 12px;">
+                            <b>CIDADE:</b> ${c?.cidade || '-'}/${c?.bairro || '-'}<br>
+                            <b>END:</b> ${c?.endereco || '-'}
+                        </div>
+                        <hr style="border:1px solid #000;margin:10px 0">
+                        <div style="font-size:16px; font-weight: bold;">
+                            ${v.qty}x ${p?.nome || 'Produto Excluído'}
+                        </div>
+                        ${kitHtml}
+                        <hr style="border:1px solid #000;margin:10px 0">
+                        <b>PGTO:</b> <span style="font-size: 16px;">${v.pag.toUpperCase()}</span><br>
+                        ${v.brinde ? `<b>BRINDE:</b> <span style="font-size: 14px; color:#5b21b6;">${v.brinde.toUpperCase()}</span><br>` : ''}
+                        <div style="font-size:22px; text-align:right; margin-top: 5px; font-weight: bold;">
+                            TOTAL: R$ ${v.total.toFixed(2)}
+                        </div>
+                        <br>
+                        <b>OBS:</b> ${v.obs || '-'}
+                        <br>
+                        <center style="font-size: 10px; margin-top: 20px;">
+                            SISTEMA V3 - LOGÍSTICA<br>${new Date().toLocaleString('pt-BR')}
+                        </center>
+                    </div>`;
+                
+                setTimeout(() => {
+                    window.print();
+                }, 500);
             },
             edit: (t, id) => { 
                 const dbType = t === 'catalogo' ? 'produto' : t;
