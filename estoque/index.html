@@ -70,6 +70,9 @@
             <button onclick="UI.switchView('expedicao', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
                 <i class="fa-solid fa-truck-fast w-5"></i> <span>Expedição</span>
             </button>
+            <button onclick="UI.switchView('entrada', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
+                <i class="fa-solid fa-dolly w-5"></i> <span>Estoque (Entrada)</span>
+            </button>
             <button onclick="UI.switchView('crm', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
                 <i class="fa-solid fa-chart-line w-5"></i> <span>CRM</span>
             </button>
@@ -298,28 +301,78 @@
                 </div>
                 <!-- 4 Colunas FIXAS -->
                 <div class="flex-1 grid grid-cols-4 h-full divide-x divide-slate-200 overflow-hidden">
-                    <!-- COXIPÓ -->
+                    <!-- ROTA CX -->
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-blue-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">COXIPÓ</div>
+                        <div class="bg-blue-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CX</div>
                         <div id="col-CX" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
                     </div>
-                    <!-- VG -->
+                    <!-- ROTA VG -->
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-emerald-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">VG</div>
+                        <div class="bg-emerald-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA VG</div>
                         <div id="col-VG" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
                     </div>
                     <!-- ROTA CBA -->
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-orange-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">CUIABÁ</div>
+                        <div class="bg-orange-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CBA</div>
                         <div id="col-CBA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
                     </div>
                     <!-- ROTA CPA/OUTROS -->
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-purple-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">CPA</div>
+                        <div class="bg-purple-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CPA/VF</div>
                         <div id="col-CPA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
                     </div>
                 </div>
             </div>
+        </main>
+
+        <!-- VIEW: ENTRADA (NOVA ABA) -->
+        <main id="view-entrada" class="view-content flex-1 overflow-hidden p-6 gap-6">
+            <section class="w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <span id="formLabel-entrada" class="text-[10px] font-bold text-indigo-600 uppercase">Nova Entrada</span>
+                    <button onclick="UI.resetForm('entrada')" class="text-[10px] text-slate-400 hover:text-red-500 font-bold">LIMPAR</button>
+                </div>
+                <form id="form-entrada" onsubmit="App.handleSave('entrada', event)" class="p-5 space-y-3 overflow-y-auto custom-scroll">
+                    <div class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Produto</label>
+                        <select id="e-produto" required class="w-full bg-white border rounded-lg px-3 py-2 text-sm outline-none"></select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Qtd</label>
+                            <input type="number" id="e-qty" required min="1" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none font-bold">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Custo Unit (R$)</label>
+                            <input type="number" id="e-custo" required step="0.01" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Fornecedor</label>
+                        <input type="text" id="e-fornecedor" placeholder="Nome do Fornecedor" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-xs uppercase">Registrar Entrada</button>
+                </form>
+            </section>
+            <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
+                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">Histórico de Entradas</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-entrada" class="text-slate-700">0</b></span>
+                </div>
+                <div class="flex-1 overflow-auto custom-scroll">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold sticky top-0">
+                            <tr>
+                                <th class="p-4">Data</th>
+                                <th class="p-4">Produto</th>
+                                <th class="p-4">Fornecedor</th>
+                                <th class="p-4">Qtd / Custo</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-entrada" class="divide-y divide-slate-100"></tbody>
+                    </table>
+                </div>
+            </section>
         </main>
 
         <main id="view-crm" class="view-content flex-1 overflow-auto p-6 flex flex-col gap-6">
@@ -377,7 +430,7 @@
         const DB = {
             key: 'enterprise_v5_db',
             load: () => {
-                const defaults = {cliente:[], produto:[], venda:[]};
+                const defaults = {cliente:[], produto:[], venda:[], entrada:[]};
                 if (!storageAvailable('localStorage')) return defaults;
                 return JSON.parse(localStorage.getItem(DB.key) || JSON.stringify(defaults));
             },
@@ -449,6 +502,7 @@
                 if(view === 'produto') UI.renderKitOptions();
                 if(view === 'crm') UI.renderCRM();
                 if(view === 'expedicao') UI.renderExpedicao();
+                if(view === 'entrada') UI.renderEntradaOptions();
             },
             toggleKit: (val) => UI.get('p-kit-area').classList.toggle('hidden', val !== 'kit'),
             renderKitOptions: () => {
@@ -461,6 +515,10 @@
                 UI.get('v-produto').innerHTML = '<option value="">Selecionar Produto</option>' + db.produto
                     .filter(p => p.nome.toLowerCase().includes(filter.toLowerCase()) || p.codigo.toLowerCase().includes(filter.toLowerCase()))
                     .map(p => `<option value="${p.id}" data-price="${p.valor}">${p.codigo} - ${p.nome} (Est: ${p.estoque})</option>`).join('');
+            },
+            renderEntradaOptions: () => {
+                const db = DB.load();
+                UI.get('e-produto').innerHTML = '<option value="">Selecionar Produto</option>' + db.produto.map(p => `<option value="${p.id}">${p.codigo} - ${p.nome}</option>`).join('');
             },
             searchProduct: (val) => UI.renderVendaOptions(val),
             toggleSelectAllSales: (master) => {
@@ -484,6 +542,24 @@
                     if(s) data = data.filter(v => v.date >= new Date(s).getTime());
                     if(e) data = data.filter(v => v.date <= new Date(e).getTime() + 86399999);
                 }
+                
+                if(type === 'entrada') {
+                    // Sort by date desc
+                    data = data.sort((a,b) => b.date - a.date);
+                    UI.get(`count-${type}`).innerText = data.length;
+                    UI.get(`table-${type}`).innerHTML = data.map(i => {
+                         const p = db.produto.find(x => x.id === i.prodId);
+                         const date = new Date(i.date).toLocaleDateString('pt-BR') + ' ' + new Date(i.date).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+                         return `<tr class="hover:bg-slate-50 text-xs">
+                             <td class="p-4 text-slate-500">${date}</td>
+                             <td class="p-4 font-bold">${p ? p.codigo + ' - ' + p.nome : 'Excluído'}</td>
+                             <td class="p-4 text-slate-600">${i.fornecedor || '-'}</td>
+                             <td class="p-4 font-bold"><span class="text-emerald-600">+${i.qty}</span> <span class="text-slate-400 text-[10px]">UN</span> | R$ ${Number(i.custo).toFixed(2)}</td>
+                         </tr>`;
+                    }).join('');
+                    return;
+                }
+
                 UI.get(`count-${type}`).innerText = data.length;
                 UI.get(`table-${type}`).innerHTML = data.map(i => {
                     if(type === 'cliente') {
@@ -590,8 +666,11 @@
                 const form = UI.get(`form-${t}`);
                 if(!form) return;
                 form.reset();
-                UI.get(`${t[0]}-id`).value = '';
-                UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
+                
+                if (t !== 'entrada') {
+                    UI.get(`${t[0]}-id`).value = '';
+                    UI.get(`formLabel-${t}`).innerText = `Novo ${t}`;
+                }
                 
                 if(t === 'cliente') {
                     UI.get('c-codigo').value = DB.getNextCode('cliente');
@@ -642,10 +721,13 @@
             },
             handleSave: (t, e) => {
                 e.preventDefault(); const p = t[0];
-                let objId = UI.get(`${p}-id`).value;
+                let objId = null;
+                if(t !== 'entrada') {
+                    objId = UI.get(`${p}-id`).value;
+                }
                 let obj = { id: objId || null }; 
 
-                if(t !== 'venda') {
+                if(t !== 'venda' && t !== 'entrada') {
                     obj.nome = UI.get(`${p}-nome`).value;
                     if(objId) obj.codigo = UI.get(`${p}-codigo`).value;
                 }
@@ -691,6 +773,31 @@
                     if(prod.tipo === 'kit' && prod.items) prod.items.forEach(ki => deduct(ki.id, ki.qty * obj.qty));
                     else deduct(prod.id, obj.qty);
                     DB.saveAll(db);
+                } else if(t === 'entrada') {
+                    const prodId = UI.get('e-produto').value;
+                    const qty = Number(UI.get('e-qty').value);
+                    const custo = Number(UI.get('e-custo').value);
+                    const fornecedor = UI.get('e-fornecedor').value;
+                    
+                    const db = DB.load();
+                    const prod = db.produto.find(p => p.id === prodId);
+                    
+                    if(prod) {
+                        prod.estoque += qty;
+                        prod.custo = custo; // Atualiza custo
+                        db.entrada.push({
+                            id: Date.now().toString(),
+                            date: Date.now(),
+                            prodId: prodId,
+                            qty: qty,
+                            custo: custo,
+                            fornecedor: fornecedor
+                        });
+                        DB.saveAll(db);
+                    }
+                    UI.render(t);
+                    UI.resetForm(t);
+                    return;
                 }
                 
                 DB.save(t, obj); 
