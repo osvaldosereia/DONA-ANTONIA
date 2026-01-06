@@ -3,7 +3,7 @@
 <head>
     <!-- 
         ================================================================
-        PILLAR 1: HIGH-PERFORMANCE LOCAL SEO (DOMINATION MODE)
+        PILLAR 1: EXTREME PERFORMANCE & LOCAL SEO
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -11,27 +11,28 @@
     
     <title>Cestas Básicas em Cuiabá e VG | Dona Antônia | Entrega Grátis Hoje</title>
     <meta name="description" content="Procurando Cesta Básica em Cuiabá ou Várzea Grande com menor preço? A Dona Antônia entrega hoje! Atacado e Varejo. Pague somente na entrega.">
-    <meta name="keywords" content="cesta básica cuiabá, cesta básica várzea grande, comprar alimentos online cuiabá, sacolão cuiabá, entrega de alimentos cuiabá, cesta básica preço">
+    
+    <!-- OTIMIZAÇÃO DE CONEXÕES (Preconnect) -->
+    <!-- Abre conexão com servidores críticos antes de solicitar arquivos -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
     <meta name="theme-color" content="#ffffff">
     <meta name="robots" content="index, follow">
-    <meta name="author" content="Super Cestas Básicas Dona Antônia">
     
-    <!-- Canonical & Geo Tags (Sinal Forte para o Google Maps) -->
     <link rel="canonical" href="https://www.donaantonia.com.br">
     <meta name="geo.region" content="BR-MT" />
     <meta name="geo.placename" content="Cuiabá" />
     <meta name="geo.position" content="-15.6025;-56.0968" />
     <meta name="ICBM" content="-15.6025, -56.0968" />
 
-    <!-- Open Graph / Social -->
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Cestas Básicas em Cuiabá e VG | Dona Antônia" />
-    <meta property="og:description" content="Cestas completas a partir de R$ 85,00. Entrega grátis em toda Cuiabá e Várzea Grande. Pague ao receber!" />
     <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" />
-    <meta property="og:site_name" content="Dona Antônia Alimentos" />
 
-    <!-- Tailwind CSS v3.4 -->
+    <!-- Tailwind CSS (Script CDN Otimizado) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -43,7 +44,6 @@
                             darkBlue: '#1D4ED8',
                             green: '#10B981',
                             darkGreen: '#047857',
-                            dark: '#111827',
                             bg: '#F3F4F6'
                         }
                     },
@@ -51,7 +51,7 @@
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     boxShadow: {
-                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
                         'float': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
                     }
                 }
@@ -59,11 +59,13 @@
         }
     </script>
 
-    <!-- Libs Leves: Phosphor Icons -->
-    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    <!-- Fonte com display=swap para evitar texto invisível -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Ícones (Carregamento diferido para não bloquear renderização) -->
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <!-- Schema Markup Híbrido (JSON-LD) - Mantido Original por Qualidade -->
+    <!-- Schema Markup -->
     <script type="application/ld+json">
     [
       {
@@ -71,9 +73,7 @@
         "@type": "GroceryStore",
         "name": "Super Cestas Dona Antônia",
         "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
-        "description": "Distribuidora de Cestas Básicas e Sacolão com entrega grátis em Cuiabá e Várzea Grande.",
         "telephone": "+5565998150975",
-        "priceRange": "$$",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "R. Trinta, 105 - Jardim Nossa Sra. Aparecida",
@@ -90,53 +90,34 @@
             "opens": "07:30",
             "closes": "18:00"
           }
-        ],
-        "areaServed": ["Cuiabá", "Várzea Grande"],
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "Cestas Básicas",
-          "itemListElement": [
-            { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Cesta Econômica" }, "price": "85.00", "priceCurrency": "BRL" },
-            { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Cesta Grande Completa" }, "price": "380.00", "priceCurrency": "BRL" }
-          ]
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          { "@type": "Question", "name": "Vocês entregam em Várzea Grande?", "acceptedAnswer": { "@type": "Answer", "text": "Sim! Realizamos entrega grátis de cestas básicas em toda Várzea Grande e Cuiabá." } },
-          { "@type": "Question", "name": "O pagamento é na entrega?", "acceptedAnswer": { "@type": "Answer", "text": "Sim, para sua segurança, você só paga a sua cesta básica no momento que receber ela na sua casa." } }
         ]
       }
     ]
     </script>
 
     <style>
-        /* Ajustes finos de CSS */
         body { -webkit-tap-highlight-color: transparent; }
-        .product-img-blend { mix-blend-mode: multiply; }
-        /* Esconder scrollbar em listas horizontais se houver */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         
-        /* Animações de Modal */
-        .modal-enter { opacity: 0; transform: scale(0.95); }
-        .modal-enter-active { opacity: 1; transform: scale(1); transition: opacity 300ms, transform 300ms; }
-        .modal-exit { opacity: 1; transform: scale(1); }
-        .modal-exit-active { opacity: 0; transform: scale(0.95); transition: opacity 200ms, transform 200ms; }
+        /* Otimização de LCP: Previne salto de layout na imagem hero */
+        .hero-img-placeholder { background-color: #f3f4f6; position: relative; overflow: hidden; }
+        .hero-img-placeholder::before { content: ""; display: block; padding-top: 56.25%; /* Aspect Ratio 16:9 */ }
+        .hero-img-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body class="bg-brand-bg text-gray-900 font-sans antialiased pb-24 lg:pb-0">
 
-    <!-- HEADER (Sticky & Glassmorphism) -->
-    <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all duration-300">
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 lg:px-8 h-[70px] flex items-center justify-between">
-            <!-- Logo Area -->
             <div class="flex items-center gap-3">
-                <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                <!-- Logo com fetchpriority high para LCP -->
+                <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100">
                     <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
                          alt="Dona Antônia" 
+                         width="48" height="48"
+                         fetchpriority="high"
                          class="w-full h-full object-cover"
                          onerror="this.src='https://placehold.co/48x48?text=DA'">
                 </div>
@@ -145,7 +126,6 @@
                 </h1>
             </div>
 
-            <!-- Desktop Nav -->
             <nav class="hidden lg:flex items-center gap-4">
                 <button onclick="App.ui.openModal('company')" class="px-5 py-2.5 rounded-full bg-gray-800 text-white font-bold text-sm hover:bg-gray-700 transition flex items-center gap-2">
                     <i class="ph-bold ph-buildings text-lg"></i> Contatos
@@ -155,8 +135,7 @@
                 </a>
             </nav>
 
-            <!-- Mobile Action (Hidden on Desktop) -->
-            <button onclick="App.ui.openModal('company')" class="lg:hidden p-2 text-gray-600 hover:text-brand-blue">
+            <button onclick="App.ui.openModal('company')" class="lg:hidden p-2 text-gray-600 hover:text-brand-blue" aria-label="Abrir Menu">
                 <i class="ph-bold ph-list text-2xl"></i>
             </button>
         </div>
@@ -170,41 +149,35 @@
         </p>
     </div>
 
-    <!-- MAIN CONTAINER (GRID) -->
+    <!-- MAIN CONTAINER -->
     <main id="catalog-mount" class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
         
-        <!-- SIDEBAR (Didactic Info - Sticky on Desktop) -->
+        <!-- SIDEBAR -->
         <aside class="lg:col-span-4 lg:sticky lg:top-24 order-2 lg:order-1">
             <div id="didactic-section-mount"></div>
-            
-            <!-- Payment & Delivery Info (Desktop Only Place) -->
-            <div class="hidden lg:block mt-6 space-y-6">
-                 <div class="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-2xl">💳</span>
-                        <h3 class="text-lg font-bold text-gray-900">Formas de Pagamento</h3>
-                    </div>
-                    <ul class="space-y-3 text-sm text-gray-600">
-                        <li class="flex items-center gap-2 pb-2 border-b border-gray-50"><i class="ph-fill ph-money text-green-600"></i> Dinheiro</li>
-                        <li class="flex items-center gap-2 pb-2 border-b border-gray-50"><i class="ph-bold ph-lightning text-yellow-500"></i> Pix</li>
-                        <li class="flex items-center gap-2 pb-2 border-b border-gray-50"><i class="ph-fill ph-credit-card text-blue-600"></i> Cartão (Débito/Crédito)</li>
-                        <li class="flex items-center gap-2"><i class="ph-fill ph-fork-knife text-orange-500"></i> Alimentação: Alelo, Sodexo, Pluxee</li>
-                    </ul>
-                 </div>
+            <div class="hidden lg:block mt-6 bg-white rounded-2xl p-6 shadow-card border border-gray-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl">💳</span>
+                    <h3 class="text-lg font-bold text-gray-900">Formas de Pagamento</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-gray-600">
+                    <li class="flex items-center gap-2"><i class="ph-fill ph-money text-green-600"></i> Dinheiro</li>
+                    <li class="flex items-center gap-2"><i class="ph-bold ph-lightning text-yellow-500"></i> Pix</li>
+                    <li class="flex items-center gap-2"><i class="ph-fill ph-credit-card text-blue-600"></i> Cartão</li>
+                    <li class="flex items-center gap-2"><i class="ph-fill ph-fork-knife text-orange-500"></i> Alimentação</li>
+                </ul>
             </div>
         </aside>
 
         <!-- PRODUCT CATALOG -->
         <section id="products-list" class="lg:col-span-8 space-y-6 order-1 lg:order-2">
-            <!-- JS Injection -->
             <div class="flex justify-center p-12">
-                <i class="ph-bold ph-spinner ph-spin text-3xl text-brand-blue"></i>
+                <div class="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
             </div>
         </section>
 
-        <!-- MOBILE EXTRAS (Payment/Delivery) -->
+        <!-- MOBILE EXTRAS -->
         <section class="lg:hidden order-3 space-y-6">
-            <!-- Pagamento Mobile -->
             <div class="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="text-center mb-4">
                     <span class="text-3xl block mb-2">💳</span>
@@ -216,25 +189,12 @@
                     <div class="bg-gray-50 p-2 rounded text-center">Cartões</div>
                     <div class="bg-gray-50 p-2 rounded text-center">Alimentação</div>
                 </div>
-                <p class="text-center text-xs font-bold text-red-500 mt-4">⚠️ Não vendemos a prazo.</p>
-            </div>
-
-            <!-- Entrega Mobile -->
-            <div class="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
-                <div class="text-center mb-4">
-                    <span class="text-3xl block mb-2">🚚</span>
-                    <h3 class="text-lg font-bold text-yellow-600">Entrega Grátis</h3>
-                </div>
-                <p class="text-sm text-center text-gray-600 mb-4">Atendemos toda Cuiabá e Várzea Grande.</p>
-                <div class="bg-yellow-50 text-yellow-800 p-3 rounded-lg text-xs font-bold text-center flex items-center justify-center gap-2">
-                    <i class="ph-bold ph-clock"></i> Pedindo até as 10h, recebe hoje!
-                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- SEO FOOTER -->
+    <!-- SEO FOOTER OTIMIZADO (MAPA SOB DEMANDA) -->
     <footer class="bg-gray-900 text-gray-400 py-10 lg:py-16 text-center text-sm">
         <div class="max-w-4xl mx-auto px-4">
             <p class="text-white font-bold text-lg mb-2">Super Cestas Básicas Dona Antônia</p>
@@ -242,9 +202,16 @@
                 R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>
                 Cuiabá - MT, 78090-660
             </address>
-            <!-- Mapa Lazy Loaded -->
-            <div class="rounded-xl overflow-hidden shadow-lg border border-gray-700 h-64 w-full max-w-2xl mx-auto">
-                <iframe class="w-full h-full" src="https://maps.google.com/maps?q=9W4X%2BGX%20Jardim%20Nossa%20Sra.%20Aparecida%2C%20Cuiabá%20-%20MT&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen="" loading="lazy"></iframe>
+            
+            <!-- MAPA FACHADA (Performance Hack: Só carrega o iframe pesado ao clicar) -->
+            <div id="map-container" class="rounded-xl overflow-hidden shadow-lg border border-gray-700 h-64 w-full max-w-2xl mx-auto relative bg-gray-800 flex items-center justify-center cursor-pointer group" onclick="App.ui.loadMap()">
+                <div class="text-center group-hover:scale-105 transition-transform duration-300">
+                    <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 text-white shadow-lg">
+                        <i class="ph-fill ph-map-pin text-3xl"></i>
+                    </div>
+                    <p class="text-white font-bold">Ver Localização no Mapa</p>
+                    <p class="text-xs text-gray-400 mt-1">Clique para carregar</p>
+                </div>
             </div>
         </div>
     </footer>
@@ -259,387 +226,192 @@
         </a>
     </div>
 
-    <!-- MODAL OVERLAY (Shared) -->
+    <!-- MODAL OVERLAY -->
     <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden opacity-0 transition-opacity duration-300" onclick="if(event.target===this) App.ui.closeModal()">
-        <!-- Modal Content Container -->
         <div id="modal-content" class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl lg:rounded-2xl lg:bottom-auto lg:top-1/2 lg:left-1/2 lg:-translate-x-1/2 lg:-translate-y-1/2 w-full lg:max-w-2xl max-h-[90vh] overflow-y-auto transform transition-transform duration-300 translate-y-full lg:translate-y-10 shadow-2xl">
-            <!-- Content Injected via JS -->
+            <!-- Content -->
         </div>
     </div>
 
-    <!-- APPLICATION LOGIC -->
     <script>
-        // --- DATA LAYER ---
         const DB = {
             baskets: {
-                'GRANDE': {
-                    id: 'GRANDE', name: 'Cesta Grande',
-                    img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif',
-                    opts: [
-                        { n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', desc: 'R$ 355,00', sel: true },
-                        { n: 'Com Arroz Koblenz', norm: 'R$ 390,00', desc: 'R$ 365,00' }
-                    ],
-                    items: [
-                        {q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'},
-                        {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'},
-                        {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'},
-                        {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'},
-                        {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'},
-                        {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'},
-                        {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'},
-                        {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'},
-                        {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}
-                    ]
-                },
-                'MEDIA': {
-                    id: 'MEDIA', name: 'Cesta Média',
-                    img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
-                    opts: [
-                        { n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', desc: 'R$ 300,00', sel: true },
-                        { n: 'Com Arroz Koblenz', norm: 'R$ 325,00', desc: 'R$ 305,00' }
-                    ],
-                    items: [
-                        {q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'},
-                        {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'},
-                        {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'},
-                        {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'},
-                        {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'},
-                        {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'},
-                        {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'},
-                        {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'},
-                        {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}
-                    ]
-                },
-                'PEQUENA': {
-                    id: 'PEQUENA', name: 'Cesta Pequena',
-                    img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif',
-                    opts: [
-                        { n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', desc: 'R$ 200,00', sel: true },
-                        { n: 'Com Arroz Koblenz', norm: 'R$ 220,00', desc: 'R$ 205,00' }
-                    ],
-                    items: [
-                        {q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'},
-                        {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'},
-                        {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'},
-                        {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'},
-                        {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'},
-                        {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'},
-                        {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'},
-                        {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'},
-                        {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}
-                    ]
-                },
-                'MINI': {
-                    id: 'MINI', name: 'Cesta Mini',
-                    img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
-                    opts: [
-                        { n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', desc: 'R$ 155,00', sel: true },
-                        { n: 'Com Arroz Koblenz', norm: 'R$ 170,00', desc: 'R$ 160,00' }
-                    ],
-                    items: [
-                        {q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'},
-                        {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'},
-                        {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'},
-                        {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'},
-                        {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'},
-                        {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'},
-                        {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'},
-                        {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}
-                    ]
-                },
-                'ECONOMICA': {
-                    id: 'ECONOMICA', name: 'Cesta Econômica',
-                    img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
-                    opts: [{ n: 'Valor Único', norm: 'R$ 85,00', desc: 'R$ 80,00', sel: true }],
-                    items: [
-                        {q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'},
-                        {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'},
-                        {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'},
-                        {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'},
-                        {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}
-                    ]
-                }
+                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', desc: 'R$ 355,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 390,00', desc: 'R$ 365,00' }], items: [{q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'}, {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', desc: 'R$ 300,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 325,00', desc: 'R$ 305,00' }], items: [{q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'}, {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', desc: 'R$ 200,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 220,00', desc: 'R$ 205,00' }], items: [{q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', desc: 'R$ 155,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 170,00', desc: 'R$ 160,00' }], items: [{q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', norm: 'R$ 85,00', desc: 'R$ 80,00', sel: true }], items: [{q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'}, {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}] }
             },
             keys: ['ECONOMICA', 'MINI', 'PEQUENA', 'MEDIA', 'GRANDE']
         };
 
-        // --- APP CONTROLLER ---
         const App = {
             state: {
-                revealed: {}, // Stores which cards are expanded on mobile
+                revealed: {},
                 phone: "5565998150975"
             },
-
             init() {
                 this.ui.renderDidactic();
                 this.ui.renderCatalog();
             },
-
             actions: {
                 toggleReveal(id) {
-                    if (window.innerWidth >= 1024) {
-                        // Desktop: Abre modal direto
-                        this.openProductModal(id);
-                    } else {
-                        // Mobile: Toggle expand
+                    if (window.innerWidth >= 1024) { this.openProductModal(id); } 
+                    else { 
                         App.state.revealed[id] = !App.state.revealed[id];
-                        App.ui.renderCatalog(); // Re-render to show expansion
+                        App.ui.renderCatalog(); 
                     }
                 },
-                
-                selectOption(basketId, optIndex) {
-                    DB.baskets[basketId].opts.forEach((o, i) => o.sel = (i === optIndex));
+                selectOption(basketId, idx) {
+                    DB.baskets[basketId].opts.forEach((o, i) => o.sel = (i === idx));
                     App.ui.renderCatalog();
                 },
-
                 order(basketId) {
-                    const basket = DB.baskets[basketId];
-                    const opt = basket.opts.find(o => o.sel);
-                    const msg = `Olá, gostaria de encomendar a ${basket.name} (${opt.n}) por ${opt.norm}.`;
-                    const url = `https://api.whatsapp.com/send?phone=${App.state.phone}&text=${encodeURIComponent(msg)}`;
-                    
-                    // Track conversion (simulated)
-                    console.log('Conversion:', basket.name, opt.norm);
-                    window.open(url, '_blank');
+                    const b = DB.baskets[basketId];
+                    const o = b.opts.find(o => o.sel);
+                    const msg = `Olá, gostaria de encomendar a ${b.name} (${o.n}) por ${o.norm}.`;
+                    window.open(`https://api.whatsapp.com/send?phone=${App.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
                 },
-
+                viewImage(img, title) {
+                    const content = `
+                        <div class="p-4 flex flex-col items-center justify-center h-full relative">
+                            <img src="${img}" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl mb-4">
+                            <h3 class="text-xl font-bold text-gray-900">${title}</h3>
+                            <button onclick="App.ui.closeModal()" class="absolute top-0 right-0 m-4 bg-white/90 text-gray-800 p-3 rounded-full shadow-lg hover:bg-gray-100 z-50">
+                                <i class="ph-bold ph-x text-xl"></i>
+                            </button>
+                        </div>
+                    `;
+                    App.ui.openModal(null, content);
+                },
                 openProductModal(basketId) {
-                    const basket = DB.baskets[basketId];
-                    const opt = basket.opts.find(o => o.sel);
-                    
-                    const itemsHtml = basket.items.map(i => {
-                        let displayName = i.n;
-                        // Lógica de Marca de Arroz
-                        if(i.n.toLowerCase().includes('arroz')) {
-                            if(opt.n.includes('Tio Alvino')) displayName = 'Arroz Tio Alvino';
-                            if(opt.n.includes('Koblenz')) displayName = 'Arroz Koblenz';
+                    const b = DB.baskets[basketId];
+                    const o = b.opts.find(o => o.sel);
+                    const itemsHtml = b.items.map(i => {
+                        let n = i.n;
+                        if(n.toLowerCase().includes('arroz')) {
+                            if(o.n.includes('Tio Alvino')) n = 'Arroz Tio Alvino';
+                            if(o.n.includes('Koblenz')) n = 'Arroz Koblenz';
                         }
-                        const imgUrl = App.helpers.getImage(displayName);
-                        
                         return `
-                            <div class="flex flex-col items-center bg-gray-50 rounded-lg p-2 border border-gray-100 text-center">
-                                <img src="${imgUrl}" class="w-16 h-16 object-contain mix-blend-multiply mb-2" loading="lazy" alt="${displayName}">
-                                <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full mb-1">${i.q}x</span>
-                                <span class="text-xs font-medium text-gray-700 leading-tight">${displayName}</span>
-                            </div>
-                        `;
+                        <div class="flex flex-col items-center bg-gray-50 rounded-lg p-2 border border-gray-100 text-center relative">
+                            <img src="${App.helpers.getImage(n)}" class="w-16 h-16 object-contain mix-blend-multiply mb-2" loading="lazy">
+                            <div class="absolute top-1 right-1 bg-blue-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm border border-white z-10">${i.q}</div>
+                            <span class="text-xs font-medium text-gray-700 leading-tight">${n}</span>
+                        </div>`;
                     }).join('');
 
-                    const content = `
+                    App.ui.openModal(null, `
                         <div class="p-6">
                             <div class="flex justify-between items-start mb-6 pb-4 border-b border-gray-100">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-gray-900">${basket.name}</h3>
-                                    <p class="text-gray-500 text-sm">${opt.n}</p>
-                                </div>
-                                <div class="text-xl font-bold text-green-600">${opt.norm}</div>
+                                <div><h3 class="text-2xl font-bold text-gray-900">${b.name}</h3><p class="text-gray-500 text-sm">${o.n}</p></div>
+                                <div class="text-xl font-bold text-green-600">${o.norm}</div>
                             </div>
-                            
-                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
-                                ${itemsHtml}
-                            </div>
-
+                            <div class="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">${itemsHtml}</div>
                             <div class="mt-6 pt-4 border-t border-gray-100">
                                 <button onclick="App.actions.order('${basketId}')" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-green-200">
                                     <i class="ph-bold ph-whatsapp-logo text-xl"></i> PEDIR AGORA
                                 </button>
                             </div>
-                            
-                            <button onclick="App.ui.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2">
-                                <i class="ph-bold ph-x text-2xl"></i>
-                            </button>
+                            <button onclick="App.ui.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500 p-2"><i class="ph-bold ph-x text-2xl"></i></button>
                         </div>
-                    `;
-                    App.ui.openModal(null, content);
+                    `);
                 }
             },
-
             ui: {
                 renderDidactic() {
-                    const html = `
+                    const list = ['Entregamos em <strong>Cuiabá e VG</strong>.', 'Pague <strong>só na entrega</strong>.', 'Entrega Grátis no <strong>mesmo dia</strong>.', 'Pode <strong>trocar produtos</strong>.', 'Marcas de <strong>qualidade</strong>.', 'Parcelamos em <strong>3x sem juros</strong>.'];
+                    document.getElementById('didactic-section-mount').innerHTML = `
                         <article class="bg-white rounded-2xl p-6 shadow-card border border-gray-100 relative overflow-hidden">
                             <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-green-500"></div>
-                            <h2 class="text-lg font-bold text-gray-900 mb-4 leading-tight">6 coisas que você precisa saber:</h2>
-                            <ul class="space-y-4">
-                                ${[
-                                    'Entregamos em <strong>Cuiabá e VG</strong> (Consulte seu bairro).',
-                                    'Você só paga a sua cesta <strong>quando ela chega</strong> na sua casa.',
-                                    'Não cobramos taxa de entrega. Encomende pela manhã que <strong>vai no mesmo dia.</strong>',
-                                    'Você pode <strong>personalizar a sua cesta</strong> trocando produtos.',
-                                    'Só usamos <strong>marcas boas</strong>. Você economiza tempo e dinheiro.',
-                                    'Parcelamos em <strong>3x sem juros</strong> no cartão e aceitamos Alimentação.'
-                                ].map((text, i) => `
-                                    <li class="flex gap-3 text-sm text-gray-600 leading-relaxed">
-                                        <span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-xs border border-blue-100">${i+1}</span>
-                                        <span>${text}</span>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </article>
-                    `;
-                    document.getElementById('didactic-section-mount').innerHTML = html;
+                            <h2 class="text-lg font-bold text-gray-900 mb-4">6 coisas que você precisa saber:</h2>
+                            <ul class="space-y-4">${list.map((t,i)=>`<li class="flex gap-3 text-sm text-gray-600"><span class="flex-shrink-0 w-6 h-6 rounded-full bg-blue-50 text-blue-600 font-bold flex items-center justify-center text-xs border border-blue-100">${i+1}</span><span>${t}</span></li>`).join('')}</ul>
+                        </article>`;
                 },
-
                 renderCatalog() {
-                    const mount = document.getElementById('products-list');
-                    mount.innerHTML = DB.keys.map(key => this.cardTemplate(DB.baskets[key])).join('');
+                    document.getElementById('products-list').innerHTML = DB.keys.map(k => this.card(DB.baskets[k])).join('');
                 },
-
-                cardTemplate(basket) {
-                    const isRevealed = App.state.revealed[basket.id];
+                card(b) {
+                    const revealed = App.state.revealed[b.id];
+                    const opts = b.opts.map((o, idx) => `
+                        <div onclick="App.actions.selectOption('${b.id}', ${idx})" class="cursor-pointer flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${o.sel ? 'bg-green-50 border-green-500 ring-1 ring-green-500' : 'bg-white border-gray-200'}">
+                            <div><div class="text-xs font-bold text-gray-500 uppercase mb-0.5">${o.n.replace('Com ', '')}</div><div class="flex items-center gap-2"><span class="text-lg font-extrabold text-gray-900">${o.norm}</span>${o.desc?`<span class="text-xs text-gray-400 line-through">${o.desc}</span>`:''}</div></div>
+                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${o.sel?'border-green-500 bg-green-500 text-white':'border-gray-300'}"><i class="ph-bold ph-check text-sm"></i></div>
+                        </div>`).join('');
                     
-                    const optsHtml = basket.opts.map((o, idx) => `
-                        <div onclick="App.actions.selectOption('${basket.id}', ${idx})" class="cursor-pointer flex items-center justify-between p-3 rounded-xl border transition-all duration-200 ${o.sel ? 'bg-green-50 border-green-500 ring-1 ring-green-500' : 'bg-white border-gray-200 hover:border-gray-300'}">
-                            <div>
-                                <div class="text-xs font-bold text-gray-500 uppercase tracking-wide mb-0.5">${o.n.replace('Com ', '')}</div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-lg font-extrabold text-gray-900">${o.norm}</span>
-                                    ${o.desc ? `<span class="text-xs text-gray-400 line-through decoration-red-400">${o.desc}</span>` : ''}
-                                </div>
-                            </div>
-                            <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center ${o.sel ? 'border-green-500 bg-green-500 text-white' : 'border-gray-300 text-transparent'}">
-                                <i class="ph-bold ph-check text-sm"></i>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    // Mobile: Show items if revealed. Desktop: Always handled via Modal, so this part is for mobile expansion visualization
-                    const itemsPreview = isRevealed ? `
+                    const items = revealed ? `
                         <div class="mt-4 pt-4 border-t border-gray-100 bg-gray-50/50 -mx-4 px-4 pb-4 animate-fade-in">
                             <p class="text-center text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Itens Inclusos</p>
                             <div class="grid grid-cols-3 gap-2">
-                                ${basket.items.slice(0, 6).map(i => `<div class="text-center"><div class="bg-white p-1 rounded border border-gray-100 mb-1"><img src="${App.helpers.getImage(i.n)}" class="w-full aspect-square object-contain mix-blend-multiply" loading="lazy"></div><span class="text-[10px] text-gray-600 block truncate">${i.n}</span></div>`).join('')}
+                                ${b.items.map(i => `<div class="text-center"><div class="relative bg-white p-1 rounded border border-gray-100 mb-1"><img src="${App.helpers.getImage(i.n)}" class="w-full aspect-square object-contain mix-blend-multiply" loading="lazy"><div class="absolute -top-1.5 -right-1.5 bg-blue-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm border border-white">${i.q}</div></div><span class="text-[10px] text-gray-600 block truncate">${i.n}</span></div>`).join('')}
                             </div>
-                            <div class="text-center mt-2 text-xs text-blue-600 font-bold">+ ${basket.items.length - 6} itens...</div>
-                            <button onclick="App.actions.order('${basket.id}')" class="mt-4 w-full bg-green-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-green-100">
-                                <i class="ph-bold ph-whatsapp-logo text-lg"></i> PEDIR AGORA
-                            </button>
-                        </div>
-                    ` : '';
-
-                    const btnAction = isRevealed 
-                        ? '' // Button is inside the revealed area for mobile flow
-                        : `<button onclick="App.actions.toggleReveal('${basket.id}')" class="w-full mt-4 bg-brand-blue hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition shadow-lg shadow-blue-100">
-                            <i class="ph-bold ${window.innerWidth >= 1024 ? 'ph-list-magnifying-glass' : 'ph-caret-down'} text-xl"></i>
-                            ${window.innerWidth >= 1024 ? 'VER DETALHES COMPLETOS' : 'VER PRODUTOS'}
-                           </button>`;
+                            <button onclick="App.actions.order('${b.id}')" class="mt-4 w-full bg-green-500 text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg"><i class="ph-bold ph-whatsapp-logo text-lg"></i> PEDIR AGORA</button>
+                        </div>` : '';
 
                     return `
-                        <article class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden transform transition-all hover:scale-[1.01] duration-300">
+                        <article class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
                             <div class="p-5">
                                 <div class="flex justify-between items-start mb-4">
-                                    <div>
-                                        <h3 class="text-xl font-extrabold text-gray-900 leading-none">${basket.name}</h3>
-                                        <span class="inline-block mt-1 bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Entrega Grátis</span>
-                                    </div>
-                                    <!-- Mobile Only Image Thumbnail -->
-                                    <div class="lg:hidden w-16 h-16 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden">
-                                        <img src="${basket.img}" alt="${basket.name}" class="w-full h-full object-cover">
-                                    </div>
+                                    <div><h3 class="text-xl font-extrabold text-gray-900 leading-none">${b.name}</h3><span class="inline-block mt-1 bg-green-100 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Entrega Grátis</span></div>
+                                    <div class="lg:hidden w-16 h-16 rounded-lg bg-gray-50 flex items-center justify-center overflow-hidden cursor-zoom-in" onclick="App.actions.viewImage('${b.img}', '${b.name}')"><img src="${b.img}" alt="${b.name}" class="w-full h-full object-cover"></div>
                                 </div>
-
-                                <!-- Desktop Hero Image -->
-                                <div class="hidden lg:block relative w-full aspect-video bg-gray-50 rounded-xl mb-5 overflow-hidden group cursor-pointer" onclick="App.actions.toggleReveal('${basket.id}')">
-                                    <img src="${basket.img}" alt="${basket.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                                    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                        <span class="bg-white/90 backdrop-blur text-gray-900 px-4 py-2 rounded-full font-bold text-sm shadow-lg">Ver Itens</span>
-                                    </div>
+                                <div class="hidden lg:block hero-img-placeholder rounded-xl mb-5 group cursor-pointer" onclick="App.actions.toggleReveal('${b.id}')">
+                                    <img src="${b.img}" alt="${b.name}" class="hero-img-content group-hover:scale-105 transition-transform duration-500">
                                 </div>
-                                
-                                <div class="space-y-2">
-                                    ${optsHtml}
-                                </div>
-
-                                ${btnAction}
-                                ${itemsPreview}
+                                <div class="space-y-2">${opts}</div>
+                                ${revealed ? '' : `<button onclick="App.actions.toggleReveal('${b.id}')" class="w-full mt-4 bg-brand-blue text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg"><i class="ph-bold ${window.innerWidth>=1024?'ph-list-magnifying-glass':'ph-caret-down'} text-xl"></i>${window.innerWidth>=1024?'VER DETALHES':'VER PRODUTOS'}</button>`}
+                                ${items}
                             </div>
-                        </article>
-                    `;
+                        </article>`;
                 },
-
-                openModal(type, customContent = null) {
+                loadMap() {
+                    const c = document.getElementById('map-container');
+                    c.innerHTML = '<iframe class="w-full h-full" src="https://maps.google.com/maps?q=9W4X%2BGX%20Jardim%20Nossa%20Sra.%20Aparecida%2C%20Cuiabá%20-%20MT&t=&z=13&ie=UTF8&iwloc=&output=embed" allowfullscreen></iframe>';
+                    c.classList.remove('cursor-pointer', 'group', 'bg-gray-800');
+                    c.onclick = null;
+                },
+                openModal(type, content) {
                     const overlay = document.getElementById('modal-overlay');
-                    const container = document.getElementById('modal-content');
+                    const cont = document.getElementById('modal-content');
                     
                     if (type === 'company') {
-                        container.innerHTML = `
-                            <div class="relative pt-12 pb-8 px-6 text-center">
-                                <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-t-2xl"></div>
-                                <div class="relative w-24 h-24 mx-auto bg-white rounded-full p-1 shadow-xl mb-4">
-                                    <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="w-full h-full rounded-full object-cover">
-                                </div>
-                                <h2 class="text-2xl font-bold text-gray-900 mb-1">Dona Antônia</h2>
-                                <p class="text-sm text-gray-500 mb-6">Super Cestas Básicas • Desde 2023</p>
-                                
-                                <div class="space-y-3">
-                                    <a href="https://api.whatsapp.com/send?phone=${App.state.phone}" class="block w-full bg-green-50 border border-green-200 p-4 rounded-xl flex items-center gap-4 hover:bg-green-100 transition">
-                                        <div class="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center"><i class="ph-bold ph-whatsapp-logo text-xl"></i></div>
-                                        <div class="text-left">
-                                            <div class="text-xs font-bold text-green-600 uppercase">Falar no WhatsApp</div>
-                                            <div class="font-bold text-green-800 text-lg">(65) 99815-0975</div>
-                                        </div>
-                                    </a>
-                                    
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <a href="https://www.facebook.com/super.cestas.cuiaba" target="_blank" class="p-4 bg-blue-50 text-blue-700 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-blue-100 transition">
-                                            <i class="ph-bold ph-facebook-logo text-2xl"></i> Facebook
-                                        </a>
-                                        <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="p-4 bg-pink-50 text-pink-600 rounded-xl font-bold flex flex-col items-center justify-center gap-2 hover:bg-pink-100 transition">
-                                            <i class="ph-bold ph-instagram-logo text-2xl"></i> Instagram
-                                        </a>
-                                    </div>
-                                </div>
-                                <button onclick="App.ui.closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-red-500"><i class="ph-bold ph-x text-2xl"></i></button>
-                            </div>
-                        `;
-                    } else if (customContent) {
-                        container.innerHTML = customContent;
-                    }
+                        cont.innerHTML = `
+                        <div class="relative pt-12 pb-8 px-6 text-center">
+                            <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-blue-100 to-purple-100 rounded-t-2xl"></div>
+                            <div class="relative w-24 h-24 mx-auto bg-white rounded-full p-1 shadow-xl mb-4"><img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="w-full h-full rounded-full object-cover"></div>
+                            <h2 class="text-2xl font-bold text-gray-900">Dona Antônia</h2>
+                            <p class="text-sm text-gray-500 mb-6">Super Cestas Básicas</p>
+                            <a href="https://api.whatsapp.com/send?phone=${App.state.phone}" class="block w-full bg-green-50 border border-green-200 p-4 rounded-xl flex items-center gap-4 mb-3"><div class="bg-green-500 text-white w-10 h-10 rounded-full flex items-center justify-center"><i class="ph-bold ph-whatsapp-logo text-xl"></i></div><div class="text-left"><div class="text-xs font-bold text-green-600 uppercase">WhatsApp</div><div class="font-bold text-green-800 text-lg">(65) 99815-0975</div></div></a>
+                            <button onclick="App.ui.closeModal()" class="absolute top-4 right-4 text-gray-400"><i class="ph-bold ph-x text-2xl"></i></button>
+                        </div>`;
+                    } else if (content) { cont.innerHTML = content; }
 
                     overlay.classList.remove('hidden');
-                    // Force reflow
                     void overlay.offsetWidth;
                     overlay.classList.remove('opacity-0');
-                    
-                    if (window.innerWidth >= 1024) {
-                        container.classList.remove('translate-y-full');
-                        container.classList.remove('lg:translate-y-10');
-                        container.classList.add('lg:translate-y-0');
-                    } else {
-                        container.classList.remove('translate-y-full');
-                    }
+                    if(window.innerWidth>=1024) { cont.classList.remove('translate-y-full'); cont.classList.add('lg:translate-y-0'); }
+                    else { cont.classList.remove('translate-y-full'); }
                 },
-
                 closeModal() {
-                    const overlay = document.getElementById('modal-overlay');
-                    const container = document.getElementById('modal-content');
-                    
-                    overlay.classList.add('opacity-0');
-                    container.classList.add('translate-y-full');
-                    
-                    setTimeout(() => {
-                        overlay.classList.add('hidden');
-                    }, 300);
+                    const o = document.getElementById('modal-overlay');
+                    const c = document.getElementById('modal-content');
+                    o.classList.add('opacity-0');
+                    c.classList.add('translate-y-full');
+                    setTimeout(() => o.classList.add('hidden'), 300);
                 }
             },
-
             helpers: {
                 getImage(n) {
                     const low = n.toLowerCase();
-                    // Fallbacks inteligentes usando placehold.co se não tiver imagem mapeada
-                    // Em produção, isso seria mapeado corretamente
                     if(low.includes('arroz')) return 'https://donaantonia.com.br/descontos/img/alimento/Arroz%20Koblenz%205kg.webp';
                     if(low.includes('açúcar')) return 'https://donaantonia.com.br/descontos/img/alimento/açucar%20doce%20dia%202%20kg.webp';
                     if(low.includes('óleo')) return 'https://donaantonia.com.br/descontos/img/alimento/oleo%20de%20soja%20liza.webp';
                     if(low.includes('feijão')) return 'https://donaantonia.com.br/descontos/img/alimento/feijão%20da%20casa.webp';
                     if(low.includes('café')) return 'https://donaantonia.com.br/descontos/img/alimento/cafe%20caboclo%20500g.webp';
-                    // ... fallback genérico
                     return `https://placehold.co/100x100/f3f4f6/94a3b8?text=${encodeURIComponent(n.substring(0,3))}`;
                 }
             }
         };
-
-        // --- INIT ---
         document.addEventListener('DOMContentLoaded', () => App.init());
         window.addEventListener('resize', () => App.ui.renderCatalog());
     </script>
