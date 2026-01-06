@@ -9,10 +9,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; }
+        /* Removed h-screen and overflow-hidden to allow full page scrolling */
         .view-content { display: none !important; }
         .view-content.active { display: flex !important; }
         .nav-link.active { background: #2563eb; color: white; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
 
@@ -28,7 +29,7 @@
             border-left: 4px solid #2563eb;
         }
 
-        #expedicao-panel:fullscreen { background-color: #0f172a; padding: 20px; overflow: hidden; }
+        #expedicao-panel:fullscreen { background-color: #0f172a; padding: 20px; overflow-y: auto; }
         
         .spinner {
             border: 3px solid rgba(255,255,255,0.3); border-radius: 50%;
@@ -45,11 +46,11 @@
         }
     </style>
 </head>
-<body class="h-screen flex overflow-hidden">
+<body class="min-h-screen flex bg-slate-50">
 
     <!-- Modal Gerenciador de Categorias -->
     <div id="cat-modal" class="fixed inset-0 z-[80] hidden modal-overlay flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden modal-content h-[80vh] flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden modal-content max-h-[80vh] flex flex-col">
             <div class="bg-slate-800 p-4 flex justify-between items-center text-white">
                 <h3 class="font-bold uppercase tracking-widest text-xs">Gestão de Categorias</h3>
                 <button onclick="document.getElementById('cat-modal').classList.add('hidden')" class="hover:text-red-400 transition"><i class="fa-solid fa-times"></i></button>
@@ -134,7 +135,8 @@
         </div>
     </div>
 
-    <aside class="w-64 bg-slate-900 flex flex-col p-4 gap-2 no-print flex-shrink-0">
+    <!-- SIDEBAR FIXA -->
+    <aside class="fixed top-0 left-0 h-screen w-64 bg-slate-900 flex flex-col p-4 gap-2 no-print z-50">
         <div class="flex items-center gap-3 px-2 mb-8 text-white">
             <i class="fa-solid fa-cubes-stacked text-blue-500 text-2xl"></i>
             <div>
@@ -142,7 +144,7 @@
                 <p class="text-[10px] text-slate-400">Dual Stock Engine</p>
             </div>
         </div>
-        <nav class="flex-1 space-y-1">
+        <nav class="flex-1 space-y-1 overflow-y-auto custom-scroll">
             <button onclick="UI.switchView('cliente', this)" class="nav-link active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
                 <i class="fa-solid fa-users w-5"></i> <span>Clientes</span>
             </button>
@@ -162,25 +164,27 @@
                 <i class="fa-solid fa-chart-line w-5"></i> <span>CRM</span>
             </button>
         </nav>
-        <button onclick="ExportEngine.exportAll()" class="text-left px-4 py-2 text-slate-500 hover:text-emerald-400 text-xs transition">
+        <button onclick="ExportEngine.exportAll()" class="text-left px-4 py-2 text-slate-500 hover:text-emerald-400 text-xs transition mt-auto">
             <i class="fa-solid fa-database mr-2"></i> Backup Geral (DB)
         </button>
     </aside>
 
-    <div class="flex-1 flex flex-col overflow-hidden">
-        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print flex-shrink-0">
+    <!-- CONTEÚDO PRINCIPAL COM MARGEM PARA A SIDEBAR -->
+    <div class="ml-64 flex-1 flex flex-col min-h-screen">
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex justify-between items-center no-print sticky top-0 z-40 shadow-sm">
             <h2 id="view-title" class="text-xl font-bold text-slate-800 tracking-tight">Clientes</h2>
             <div class="h-8 w-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs uppercase">AD</div>
         </header>
 
         <!-- VIEW: CLIENTE -->
-        <main id="view-cliente" class="view-content active flex-1 overflow-hidden p-6 gap-6">
-            <section class="w-80 lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0">
+        <main id="view-cliente" class="view-content active flex-col lg:flex-row items-start p-6 gap-6 w-full">
+            <!-- Formulário Sticky -->
+            <section class="w-full lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0 sticky top-24">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                     <span id="formLabel-cliente" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Novo Cliente</span>
                     <button onclick="UI.resetForm('cliente')" class="text-[10px] text-slate-400 hover:text-red-500 font-bold">LIMPAR</button>
                 </div>
-                <form id="form-cliente" onsubmit="App.handleSave('cliente', event)" class="p-5 space-y-4 overflow-y-auto custom-scroll">
+                <form id="form-cliente" onsubmit="App.handleSave('cliente', event)" class="p-5 space-y-4">
                     <input type="hidden" id="c-id">
                     <div class="grid grid-cols-2 gap-2">
                         <input type="text" id="c-codigo" readonly placeholder="C0001" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500">
@@ -210,14 +214,16 @@
                     <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition uppercase text-xs">Salvar Cliente</button>
                 </form>
             </section>
-            <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+            
+            <!-- Tabela Expandida -->
+            <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-2xl">
                     <input type="text" oninput="UI.filter('cliente', this.value)" placeholder="Filtrar clientes..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-cliente" class="text-slate-700">0</b></span>
                 </div>
-                <div class="flex-1 overflow-auto custom-scroll">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold sticky top-0 z-10">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
                             <tr>
                                 <th class="p-4">Cliente</th>
                                 <th class="p-4">Local/Rota</th>
@@ -231,13 +237,13 @@
         </main>
 
         <!-- VIEW: CATÁLOGO (PRODUTO ATUALIZADO COM CATEGORIAS) -->
-        <main id="view-catalogo" class="view-content flex-1 overflow-hidden p-6 gap-6">
-            <section class="w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0">
+        <main id="view-catalogo" class="view-content flex-col lg:flex-row items-start p-6 gap-6 w-full">
+            <section class="w-full lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0 sticky top-24">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                     <span id="formLabel-produto" class="text-[10px] font-bold text-emerald-600 uppercase">Cadastro de Produto</span>
                     <button onclick="UI.resetForm('produto')" class="text-[10px] text-slate-400 hover:text-red-500 font-bold">LIMPAR</button>
                 </div>
-                <form id="form-produto" onsubmit="App.handleSave('produto', event)" class="p-5 space-y-3 overflow-y-auto custom-scroll">
+                <form id="form-produto" onsubmit="App.handleSave('produto', event)" class="p-5 space-y-3">
                     <input type="hidden" id="p-id">
                     
                     <!-- Dados Básicos -->
@@ -308,15 +314,15 @@
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-xs uppercase">Salvar Produto</button>
                 </form>
             </section>
-            <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+            <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-2xl">
                     <div class="flex gap-2 items-center">
                         <input type="text" oninput="UI.filter('produto', this.value)" placeholder="Buscar catálogo..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
                         <button onclick="CategoryApp.openModal()" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-xs font-bold hover:bg-blue-200 transition"><i class="fa-solid fa-tags mr-1"></i> Categorias</button>
                     </div>
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-produto" class="text-slate-700">0</b></span>
                 </div>
-                <div class="flex-1 overflow-auto custom-scroll">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
                             <tr>
@@ -335,10 +341,10 @@
         </main>
 
         <!-- VIEW: LOGÍSTICA & ENTRADAS -->
-        <main id="view-logistica" class="view-content flex-1 overflow-hidden p-6 gap-6 flex-col">
+        <main id="view-logistica" class="view-content flex-col p-6 gap-6 w-full">
             
             <!-- Linha Superior -->
-            <div class="flex gap-6 flex-shrink-0 h-1/2 min-h-[300px]">
+            <div class="flex flex-col lg:flex-row gap-6 w-full">
                 
                 <!-- Leitor Fiscal XML (Atualizado para Entrada/Saída) -->
                 <section class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col">
@@ -382,7 +388,7 @@
                     </div>
 
                     <!-- Mini Lista de Preview -->
-                    <div class="flex-1 overflow-auto custom-scroll mt-4 border rounded-lg">
+                    <div class="w-full overflow-auto custom-scroll mt-4 border rounded-lg max-h-60">
                         <table class="w-full text-left text-[10px]">
                             <thead class="bg-slate-100 sticky top-0"><tr class="text-slate-500 font-bold"><th class="p-2">Item XML</th><th class="p-2">Tipo NF</th><th class="p-2 text-right">Qtd</th><th class="p-2 text-center">Ver</th></tr></thead>
                             <tbody id="f-tableBody"></tbody>
@@ -391,7 +397,7 @@
                 </section>
 
                 <!-- Entrada Manual Avulsa -->
-                <section class="w-96 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col">
+                <section class="w-full lg:w-96 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col h-auto">
                     <h3 class="font-bold text-slate-700 uppercase text-xs mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-orange-500"></i> Movimento Manual</h3>
                     <form id="form-entrada-manual" onsubmit="App.handleSave('entrada', event)" class="flex-1 flex flex-col gap-3">
                          <div class="space-y-1">
@@ -428,14 +434,14 @@
             </div>
 
             <!-- Tabela Unificada de Histórico -->
-            <section class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                <div class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center">
+            <section class="flex-1 w-full bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center sticky top-0 z-10 rounded-t-xl">
                     <span class="text-[10px] font-bold text-slate-500 uppercase">Histórico Geral de Movimentação</span>
                     <span class="text-[10px] font-bold text-slate-400 uppercase">Itens: <b id="count-entrada" class="text-slate-700">0</b></span>
                 </div>
-                <div class="flex-1 overflow-auto custom-scroll">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold sticky top-0">
+                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
                             <tr>
                                 <th class="p-3">Data</th>
                                 <th class="p-3">Produto</th>
@@ -451,13 +457,13 @@
         </main>
 
         <!-- VIEW: VENDAS -->
-        <main id="view-venda" class="view-content flex-1 overflow-hidden p-6 gap-6">
-            <section class="w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0">
+        <main id="view-venda" class="view-content flex-col lg:flex-row items-start p-6 gap-6 w-full">
+            <section class="w-full lg:w-96 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col flex-shrink-0 sticky top-24">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
                     <span id="formLabel-venda" class="text-[10px] font-bold text-orange-600 uppercase">Novo Pedido</span>
                     <button onclick="UI.resetForm('venda')" class="text-[10px] text-slate-400 hover:text-red-500 font-bold">CANCELAR</button>
                 </div>
-                <form id="form-venda" onsubmit="App.handleSave('venda', event)" class="p-5 space-y-3 overflow-y-auto custom-scroll">
+                <form id="form-venda" onsubmit="App.handleSave('venda', event)" class="p-5 space-y-3">
                     <input type="hidden" id="v-id">
                     <select id="v-cliente" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></select>
                     
@@ -501,8 +507,8 @@
                 </form>
             </section>
             
-            <section class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden">
-                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-3">
+            <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
+                <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex flex-col gap-3 sticky top-0 bg-white z-10 rounded-t-2xl">
                     <div class="flex justify-between items-center">
                         <h3 class="text-xs font-bold uppercase text-slate-500 tracking-tighter">Histórico de Vendas</h3>
                         <div class="flex gap-2">
@@ -519,7 +525,7 @@
                         <button onclick="UI.render('venda')" class="bg-slate-200 hover:bg-slate-300 text-[10px] font-bold px-3 py-1.5 rounded transition uppercase">Filtrar</button>
                     </div>
                 </div>
-                <div class="flex-1 overflow-auto custom-scroll">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold sticky top-0">
                             <tr>
@@ -536,9 +542,9 @@
         </main>
         
         <!-- VIEW: EXPEDIÇÃO -->
-        <main id="view-expedicao" class="view-content flex-1 overflow-hidden p-0 bg-slate-100">
-            <div id="expedicao-panel" class="w-full h-full flex flex-col">
-                <div class="bg-slate-900 p-4 flex justify-between items-center flex-shrink-0">
+        <main id="view-expedicao" class="view-content flex-col w-full min-h-screen p-0 bg-slate-100">
+            <div id="expedicao-panel" class="w-full min-h-screen flex flex-col">
+                <div class="bg-slate-900 p-4 flex justify-between items-center flex-shrink-0 sticky top-0 z-20">
                     <h3 class="text-lg font-bold text-white uppercase tracking-widest flex items-center gap-3">
                         <i class="fa-solid fa-tv text-emerald-400"></i> Monitor de Expedição
                     </h3>
@@ -550,29 +556,29 @@
                     </div>
                 </div>
                 <!-- 4 Colunas FIXAS -->
-                <div class="flex-1 grid grid-cols-4 h-full divide-x divide-slate-200 overflow-hidden">
+                <div class="flex-1 grid grid-cols-4 min-h-0 divide-x divide-slate-200">
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-blue-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CX</div>
-                        <div id="col-CX" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
+                        <div class="bg-blue-600 text-white p-3 text-center font-black text-xl uppercase shadow-md sticky top-0 z-10">ROTA CX</div>
+                        <div id="col-CX" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start"></div>
                     </div>
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-emerald-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA VG</div>
-                        <div id="col-VG" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
+                        <div class="bg-emerald-600 text-white p-3 text-center font-black text-xl uppercase shadow-md sticky top-0 z-10">ROTA VG</div>
+                        <div id="col-VG" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start"></div>
                     </div>
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-orange-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CBA</div>
-                        <div id="col-CBA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
+                        <div class="bg-orange-600 text-white p-3 text-center font-black text-xl uppercase shadow-md sticky top-0 z-10">ROTA CBA</div>
+                        <div id="col-CBA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start"></div>
                     </div>
                     <div class="flex flex-col h-full bg-slate-100">
-                        <div class="bg-purple-600 text-white p-3 text-center font-black text-xl uppercase shadow-md relative z-10">ROTA CPA/VF</div>
-                        <div id="col-CPA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start overflow-y-auto custom-scroll"></div>
+                        <div class="bg-purple-600 text-white p-3 text-center font-black text-xl uppercase shadow-md sticky top-0 z-10">ROTA CPA/VF</div>
+                        <div id="col-CPA" class="flex-1 p-2 grid grid-cols-2 gap-2 content-start"></div>
                     </div>
                 </div>
             </div>
         </main>
 
         <!-- VIEW: CRM -->
-        <main id="view-crm" class="view-content flex-1 overflow-auto p-6 flex flex-col gap-6">
+        <main id="view-crm" class="view-content flex-col p-6 gap-6 w-full">
             <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between flex-shrink-0 no-print">
                 <div>
                     <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest leading-none">Dashboard Analytics</h3>
@@ -588,11 +594,11 @@
                 <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Pedidos</span><h3 id="crm-total-orders" class="text-2xl font-black text-slate-700 leading-tight">0</h3></div>
                 <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Clientes</span><h3 id="crm-active-clients" class="text-2xl font-black text-orange-500 leading-tight">0</h3></div>
             </section>
-            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex-1 flex flex-col">
                 <div class="p-4 border-b bg-slate-50/50 flex justify-between items-center">
                     <h3 class="text-xs font-bold uppercase text-slate-500 tracking-tighter">Performance e Resultado por Produto</h3>
                 </div>
-                <div class="overflow-x-auto">
+                <div class="w-full overflow-x-auto">
                     <table class="w-full text-left text-sm">
                         <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
                             <tr>
