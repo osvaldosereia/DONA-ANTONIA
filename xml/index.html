@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFe Parser Pro | Leitor XML Client-Side</title>
+    <!-- Framework CSS Minimalista (Pico.css) para UI profissional imediata -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Otimizações Específicas */
+        :root { --spacing: 0.5rem; }
+        body { padding: 1rem; font-size: 0.9rem; }
+        header { border-bottom: 1px solid var(--muted-border-color); margin-bottom: 1rem; padding-bottom: 0.5rem; }
+        
+        /* Layout Grid para Filtros */
+        .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1rem; align-items: end; }
+        
+        /* Tabela com Scroll Horizontal e Sticky Header */
+        .table-container { overflow-x: auto; max-height: 60vh; border: 1px solid var(--muted-border-color); border-radius: 4px; }
+        thead th { position: sticky; top: 0; background: var(--card-background-color); z-index: 1; text-align: left; }
+        
+        /* Utilitários Visuais */
+        .badge { background: var(--primary); color: var(--primary-inverse); padding: 2px 6px; border-radius: 4px; font-size: 0.75em; }
+        .text-right { text-align: right; }
+        .hidden { display: none !important; }
+        input[type="file"] { padding: 0.5rem; border: 1px dashed var(--secondary); width: 100%; }
+        
+        /* Feedback de Carregamento */
+        #loading { position: fixed; top: 10px; right: 10px; background: var(--contrast); color: white; padding: 10px; border-radius: 4px; z-index: 99; display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loading">Processando...</div>
+
+    <header>
+        <hgroup>
+            <h1>NFe Parser Pro</h1>
+            <h2>Gerenciador de Notas Fiscais e Itens (Client-Side)</h2>
+        </hgroup>
+    </header>
+
+    <main>
+        <!-- Área de Upload -->
+        <section>
+            <label for="fileInput"><strong>1. Importar XMLs</strong> (Selecione múltiplos arquivos)</label>
+            <input type="file" id="fileInput" multiple accept=".xml, text/xml">
+            <small>Os dados são processados localmente e salvos no navegador.</small>
+        </section>
+
+        <hr>
+
+        <!-- Controles e Filtros -->
+        <section>
+            <strong>2. Filtros e Exportação</strong>
+            <div class="controls">
+                <label>
+                    Buscar (Emitente/Produto)
+                    <input type="text" id="searchInput" placeholder="Ex: Supermercado...">
+                </label>
+                <label>
+                    Data Início
+                    <input type="date" id="dateStart">
+                </label>
+                <label>
+                    Data Fim
+                    <input type="date" id="dateEnd">
+                </label>
+                <button onclick="app.resetFilters()" class="secondary outline">Limpar Filtros</button>
+            </div>
+            
+            <div class="grid">
+                <button onclick="app.exportData('json')">📥 Baixar JSON (Filtrado)</button>
+                <button onclick="app.clearData()" class="contrast outline">🗑️ Apagar Tudo</button>
+            </div>
+        </section>
+
+        <!-- Tabela de Resultados -->
+        <section>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong>3. Visualização Detalhada (<span id="countDisplay">0</span> itens)</strong>
+                <small>Total Filtrado: <strong id="totalValueDisplay">R$ 0,00</strong></small>
+            </div>
+            <div class="table-container">
+                <table role="grid">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Nº Nota</th>
+                            <th>Emitente</th>
+                            <th>Produto (Item)</th>
+                            <th class="text-right">Qtd</th>
+                            <th class="text-right">Unitário</th>
+                            <th class="text-right">Total Item</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Dados injetados via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /**
+         * SISTEMAS - Core Application Logic
+         * Padrão Singleton para organização e encapsulamento.
+         */
+        const app = {
+            data: [], // Armazena todos os itens de todas as notas
+            storageKey: 'nfe_sys_data_v1',
+
+            init() {
+                this.cacheDOM();
+                this.bindEvents();
+                this.loadFromStorage();
+            },
+
+            cacheDOM() {
+                this.dom = {
+                    fileInput: document.getElementById('fileInput'),
+                    tableBody: document.getElementById('tableBody'),
+                    searchInput: document.getElementById('searchInput'),
+                    dateStart: document.getElementById('dateStart'),
+                    dateEnd: document.getElementById('dateEnd'),
+                    countDisplay: document.getElementById('countDisplay'),
+                    totalDisplay: document.getElementById('totalValueDisplay'),
+                    loading: document.getElementById('loading')
+                };
+            },
+
+            bindEvents() {
+                this.dom.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
+                this.dom.searchInput.addEventListener('input', () => this.render());
+                this.dom.dateStart.addEventListener('change', () => this.render());
+                this.dom.dateEnd.addEventListener('change', () => this.render());
+            },
+
+            // --- Gerenciamento de Dados (CRUD / Persistence) ---
+
+            saveToStorage() {
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.data));
+                } catch (e) {
+                    alert('Aviso: Limite do LocalStorage atingido. Os dados estão disponíveis apenas nesta sessão.');
+                    console.error('Storage limit exceeded', e);
+                }
+            },
+
+            loadFromStorage() {
+                const stored = localStorage.getItem(this.storageKey);
+                if (stored) {
+                    try {
+                        this.data = JSON.parse(stored);
+                        this.render();
+                    } catch (e) {
+                        console.error('Dados corrompidos, limpando...', e);
+                        localStorage.removeItem(this.storageKey);
+                    }
+                }
+            },
+
+            clearData() {
+                if (confirm('Tem certeza que deseja apagar todos os dados importados?')) {
+                    this.data = [];
+                    localStorage.removeItem(this.storageKey);
+                    this.render();
+                    this.dom.fileInput.value = ''; // Reset input
+                }
+            },
+
+            // --- Lógica de Processamento de XML (Parser) ---
+
+            async handleFileUpload(event) {
+                const files = Array.from(event.target.files);
+                if (files.length === 0) return;
+
+                this.toggleLoading(true);
+
+                // Processamento assíncrono para não travar a UI
+                const promises = files.map(file => this.readFileAsText(file));
+                
+                try {
+                    const contents = await Promise.all(promises);
+                    let newItems = [];
+                    
+                    contents.forEach(xmlString => {
+                        const parsedItems = this.parseXML(xmlString);
+                        if (parsedItems) newItems.push(...parsedItems);
+                    });
+
+                    // Merge e deduplicação simples baseada em ID único (Chave NFe + Num Item)
+                    this.data = [...this.data, ...newItems];
+                    
+                    this.saveToStorage();
+                    this.render();
+                    alert(`${newItems.length} itens importados de ${files.length} arquivos com sucesso.`);
+                } catch (error) {
+                    console.error(error);
+                    alert('Erro ao processar arquivos. Verifique se são XMLs de NFe válidos.');
+                } finally {
+                    this.toggleLoading(false);
+                    this.dom.fileInput.value = ''; // Permite subir os mesmos arquivos novamente se precisar
+                }
+            },
+
+            readFileAsText(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => reject(e);
+                    reader.readAsText(file);
+                });
+            },
+
+            parseXML(xmlString) {
+                try {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+                    
+                    // Tratamento de erros de parse do navegador
+                    if (xmlDoc.getElementsByTagName("parsererror").length > 0) return null;
+
+                    // Helpers de extração (ignora namespace para compatibilidade)
+                    const getTag = (parent, tag) => {
+                        const els = parent.getElementsByTagName(tag);
+                        return els.length ? els[0].textContent : '';
+                    };
+
+                    const infNFe = xmlDoc.getElementsByTagName('infNFe')[0];
+                    if (!infNFe) return null; // Não é uma NFe válida
+
+                    // Dados do Cabeçalho
+                    const nNF = getTag(infNFe, 'nNF');
+                    const dhEmiRaw = getTag(infNFe, 'dhEmi') || getTag(infNFe, 'dEmi'); // Data Emissão
+                    const emitente = getTag(infNFe, 'xNome');
+                    const chave = infNFe.getAttribute('Id') || '';
+
+                    const dateObj = new Date(dhEmiRaw);
+                    const formattedDate = !isNaN(dateObj) ? dateObj.toISOString().split('T')[0] : '';
+
+                    // Processar Itens (Produtos)
+                    const detTags = xmlDoc.getElementsByTagName('det');
+                    const items = [];
+
+                    for (let i = 0; i < detTags.length; i++) {
+                        const prod = detTags[i].getElementsByTagName('prod')[0];
+                        const nItem = detTags[i].getAttribute('nItem');
+                        
+                        items.push({
+                            id: `${chave}-${nItem}`, // ID Único
+                            nNF: nNF,
+                            dataEmissao: formattedDate,
+                            emitente: emitente,
+                            produto: getTag(prod, 'xProd'),
+                            qtd: parseFloat(getTag(prod, 'qCom')),
+                            vUnit: parseFloat(getTag(prod, 'vUnCom')),
+                            vTotal: parseFloat(getTag(prod, 'vProd'))
+                        });
+                    }
+
+                    return items;
+                } catch (e) {
+                    console.warn("Falha ao ler um XML específico", e);
+                    return [];
+                }
+            },
+
+            // --- Renderização e Filtros ---
+
+            getFilteredData() {
+                const search = this.dom.searchInput.value.toLowerCase();
+                const start = this.dom.dateStart.value;
+                const end = this.dom.dateEnd.value;
+
+                return this.data.filter(item => {
+                    const matchText = item.emitente.toLowerCase().includes(search) || 
+                                      item.produto.toLowerCase().includes(search) ||
+                                      item.nNF.includes(search);
+                    
+                    let matchDate = true;
+                    if (start) matchDate = matchDate && item.dataEmissao >= start;
+                    if (end) matchDate = matchDate && item.dataEmissao <= end;
+
+                    return matchText && matchDate;
+                }).sort((a, b) => b.dataEmissao.localeCompare(a.dataEmissao)); // Ordem decrescente
+            },
+
+            render() {
+                const filtered = this.getFilteredData();
+                const tbody = this.dom.tableBody;
+                tbody.innerHTML = '';
+
+                // Performance: Renderização limitada se houver muitos dados para não travar
+                // (Em produção real, implementar paginação virtual. Aqui limitamos a 500 para visualização)
+                const limit = 500; 
+                const renderSet = filtered.slice(0, limit);
+
+                const fragment = document.createDocumentFragment();
+
+                renderSet.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${this.formatDate(item.dataEmissao)}</td>
+                        <td>${item.nNF}</td>
+                        <td>${item.emitente}</td>
+                        <td title="${item.produto}">${item.produto.substring(0, 40)}${item.produto.length > 40 ? '...' : ''}</td>
+                        <td class="text-right">${item.qtd}</td>
+                        <td class="text-right">${this.formatMoney(item.vUnit)}</td>
+                        <td class="text-right"><strong>${this.formatMoney(item.vTotal)}</strong></td>
+                    `;
+                    fragment.appendChild(tr);
+                });
+
+                tbody.appendChild(fragment);
+
+                // Atualizar totais
+                const totalValue = filtered.reduce((acc, curr) => acc + curr.vTotal, 0);
+                this.dom.countDisplay.textContent = filtered.length;
+                this.dom.totalDisplay.textContent = this.formatMoney(totalValue);
+
+                if (filtered.length > limit) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td colspan="7" style="text-align:center; color: var(--secondary)">...e mais ${filtered.length - limit} itens ocultos para performance (exporte para ver tudo)...</td>`;
+                    tbody.appendChild(tr);
+                }
+            },
+
+            resetFilters() {
+                this.dom.searchInput.value = '';
+                this.dom.dateStart.value = '';
+                this.dom.dateEnd.value = '';
+                this.render();
+            },
+
+            // --- Exportação ---
+
+            exportData(type) {
+                const dataToExport = this.getFilteredData();
+                
+                if (dataToExport.length === 0) {
+                    alert("Nenhum dado para exportar com os filtros atuais.");
+                    return;
+                }
+
+                let content = '';
+                let filename = `relatorio_nfe_${new Date().getTime()}`;
+                let mimeType = '';
+
+                if (type === 'json') {
+                    content = JSON.stringify(dataToExport, null, 2);
+                    mimeType = 'application/json';
+                    filename += '.json';
+                }
+
+                // Criação do Blob e Download
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            },
+
+            // --- Helpers ---
+
+            formatMoney(value) {
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            },
+
+            formatDate(isoDate) {
+                if (!isoDate) return '-';
+                const [year, month, day] = isoDate.split('-');
+                return `${day}/${month}/${year}`;
+            },
+
+            toggleLoading(show) {
+                this.dom.loading.style.display = show ? 'block' : 'none';
+            }
+        };
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', () => app.init());
+
+    </script>
+</body>
+</html>
