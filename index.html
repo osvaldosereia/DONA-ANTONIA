@@ -301,7 +301,7 @@
             <div class="mb-8 bg-blue-50 border border-blue-100 rounded-2xl p-6">
                 <h2 class="text-xl font-bold text-brand-darkBlue mb-2">Sacolão e Cesta Básica em Cuiabá</h2>
                 <p class="text-gray-700 text-sm leading-relaxed">
-                    A Dona Antônia é a sua <strong>distribuidora de alimentos</strong> completa. Montamos cestas ideais para <strong>famílias grandes</strong>, <strong>estudantes</strong>, <strong>casais</strong> e para <strong>doação de alimentos</strong>. Se você procura <strong>onde comprar cesta básica em Cuiabá e Várzea Grande</strong> ou precisa fazer a <strong>compra do mês online</strong> sem sair de casa, nós levamos os <strong>alimentos</strong> completos até você com <strong>entrega grátis</strong>.
+                    A Dona Antônia é a sua <strong>distribuidora de alimentos</strong> completa. Montamos cestas ideais para <strong>famílias grandes</strong>, <strong>estudantes</strong>, <strong>casais</strong> e para <strong>doação de alimentos</strong>. Se você procura <strong>onde comprar cesta básica em Várzea Grande</strong> ou precisa fazer a <strong>compra do mês online</strong> sem sair de casa, nós levamos os <strong>alimentos</strong> completos até você com <strong>entrega grátis</strong>.
                 </p>
             </div>
 
@@ -434,14 +434,36 @@
         </div>
     </div>
 
+    <!-- CONFIRMATION MODAL (NOVO) -->
+    <div id="confirm-modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[110] hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform duration-300" id="confirm-modal-content">
+            <div class="text-center">
+                <h3 class="text-xl font-bold text-gray-900 mb-4" id="confirm-basket-name">Confirmar Pedido</h3>
+                <p class="text-gray-500 text-sm mb-4">Escolha sua opção preferida:</p>
+                
+                <!-- Container para opções de arroz -->
+                <div id="confirm-options-container" class="space-y-3 mb-6">
+                    <!-- Opções injetadas via JS -->
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="App.ui.closeConfirmModal()" class="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition">Cancelar</button>
+                    <button id="confirm-btn-action" class="flex-1 py-3 rounded-xl font-bold text-white bg-green-500 hover:bg-green-600 shadow-lg shadow-green-200 transition flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-whatsapp-logo text-lg"></i> Pedir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const DB = {
             baskets: {
-                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 390,00' }], items: [{q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'}, {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 325,00' }], items: [{q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'}, {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 220,00' }], items: [{q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 170,00' }], items: [{q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', norm: 'R$ 85,00', sel: true }], items: [{q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'}, {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}] }
+                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', desc: 'R$ 355,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 390,00', desc: 'R$ 365,00' }], items: [{q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'}, {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', desc: 'R$ 300,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 325,00', desc: 'R$ 305,00' }], items: [{q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'}, {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', desc: 'R$ 200,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 220,00', desc: 'R$ 205,00' }], items: [{q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', desc: 'R$ 155,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 170,00', desc: 'R$ 160,00' }], items: [{q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', norm: 'R$ 85,00', desc: 'R$ 80,00', sel: true }], items: [{q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'}, {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}] }
             },
             keys: ['ECONOMICA', 'MINI', 'PEQUENA', 'MEDIA', 'GRANDE']
         };
@@ -449,7 +471,9 @@
         const App = {
             state: {
                 revealed: {},
-                phone: "5565998150975"
+                phone: "5565998150975",
+                tempBasket: null,
+                tempSelectedIdx: 0
             },
             init() {
                 this.ui.renderDidactic();
@@ -471,6 +495,14 @@
                     const b = DB.baskets[basketId];
                     const o = b.opts.find(o => o.sel);
                     
+                    if (basketId === 'ECONOMICA') {
+                        this.finalizeOrder(b, o);
+                    } else {
+                        // Open the new confirmation modal
+                        App.ui.openConfirmModal(b);
+                    }
+                },
+                finalizeOrder(b, o) {
                     // INTEGRAÇÃO ADS: Dispara evento de conversão
                     try {
                         const numericPrice = parseFloat(o.norm.replace('R$', '').replace('.', '').replace(',', '.').trim());
@@ -483,7 +515,8 @@
                                     'items': [{
                                         'item_name': b.name,
                                         'item_category': 'Cesta Básica',
-                                        'price': numericPrice
+                                        'price': numericPrice,
+                                        'item_variant': o.n
                                     }]
                                 }
                             });
@@ -492,6 +525,7 @@
 
                     const msg = `Olá, gostaria de encomendar a ${b.name} (${o.n}) por ${o.norm}.`;
                     window.open(`https://api.whatsapp.com/send?phone=${App.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
+                    App.ui.closeConfirmModal();
                 },
                 viewImage(img, title) {
                     const content = `
@@ -660,6 +694,70 @@
                     o.classList.add('opacity-0');
                     c.classList.add('translate-y-full');
                     setTimeout(() => o.classList.add('hidden'), 300);
+                },
+                // NOVOS MÉTODOS PARA CONFIRMAÇÃO
+                openConfirmModal(b) {
+                    const modal = document.getElementById('confirm-modal-overlay');
+                    const container = document.getElementById('confirm-options-container');
+                    
+                    document.getElementById('confirm-basket-name').innerText = b.name;
+                    
+                    // Render Options
+                    container.innerHTML = b.opts.map((o, idx) => `
+                        <div onclick="App.ui.selectConfirmOption(${idx})" id="conf-opt-${idx}" class="cursor-pointer border-2 rounded-xl p-3 flex justify-between items-center transition-all ${o.sel ? 'border-green-500 bg-green-50 ring-1 ring-green-500' : 'border-gray-200 hover:border-green-200'}">
+                            <div class="text-left">
+                                <div class="font-bold text-sm text-gray-800">${o.n}</div>
+                                <div class="text-green-600 font-bold">${o.norm}</div>
+                            </div>
+                            <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${o.sel ? 'border-green-500 bg-green-500' : 'border-gray-300'}">
+                                <div class="w-2 h-2 bg-white rounded-full ${o.sel ? '' : 'hidden'}"></div>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    App.state.tempBasket = b;
+                    App.state.tempSelectedIdx = b.opts.findIndex(o => o.sel);
+                    
+                    const btn = document.getElementById('confirm-btn-action');
+                    btn.onclick = () => {
+                        const selectedIdx = App.state.tempSelectedIdx !== undefined ? App.state.tempSelectedIdx : b.opts.findIndex(o => o.sel);
+                        const selectedOpt = b.opts[selectedIdx];
+                        App.actions.finalizeOrder(b, selectedOpt);
+                    };
+
+                    modal.classList.remove('hidden');
+                    void modal.offsetWidth;
+                    modal.classList.remove('opacity-0');
+                    document.getElementById('confirm-modal-content').classList.remove('scale-95');
+                    document.getElementById('confirm-modal-content').classList.add('scale-100');
+                },
+                selectConfirmOption(idx) {
+                    App.state.tempSelectedIdx = idx;
+                    const opts = App.state.tempBasket.opts;
+                    opts.forEach((_, i) => {
+                        const el = document.getElementById(`conf-opt-${i}`);
+                        const circle = el.querySelector('.w-5');
+                        const dot = circle.querySelector('.w-2');
+                        
+                        if (i === idx) {
+                            el.className = "cursor-pointer border-2 rounded-xl p-3 flex justify-between items-center transition-all border-green-500 bg-green-50 ring-1 ring-green-500";
+                            circle.className = "w-5 h-5 rounded-full border-2 flex items-center justify-center border-green-500 bg-green-500";
+                            dot.classList.remove('hidden');
+                        } else {
+                            el.className = "cursor-pointer border-2 rounded-xl p-3 flex justify-between items-center transition-all border-gray-200 hover:border-green-200";
+                            circle.className = "w-5 h-5 rounded-full border-2 flex items-center justify-center border-gray-300";
+                            dot.classList.add('hidden');
+                        }
+                    });
+                },
+                closeConfirmModal() {
+                    const modal = document.getElementById('confirm-modal-overlay');
+                    const content = document.getElementById('confirm-modal-content');
+                    
+                    modal.classList.add('opacity-0');
+                    content.classList.remove('scale-100');
+                    content.classList.add('scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
                 }
             },
             helpers: {
