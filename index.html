@@ -3,7 +3,7 @@
 <head>
     <!-- 
         ================================================================
-        PILLAR 1: EXTREME PERFORMANCE & LOCAL SEO
+        PILLAR 1: EXTREME PERFORMANCE & LOCAL SEO STRATEGY
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -12,8 +12,14 @@
     <title>Cestas Básicas em Cuiabá e VG | Dona Antônia | Entrega Grátis Hoje</title>
     <meta name="description" content="Procurando Cesta Básica em Cuiabá ou Várzea Grande com menor preço? A Dona Antônia entrega hoje! Atacado e Varejo. Pague somente na entrega.">
     
+    <!-- DATALAYER INIT (Marketing Intelligence) -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        // O GTM será injetado aqui posteriormente quando você fornecer o ID
+    </script>
+
     <!-- OTIMIZAÇÃO DE CONEXÕES (Preconnect) -->
-    <!-- Abre conexão com servidores críticos antes de solicitar arquivos -->
     <link rel="preconnect" href="https://cdn.tailwindcss.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +38,7 @@
     <meta property="og:title" content="Cestas Básicas em Cuiabá e VG | Dona Antônia" />
     <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" />
 
-    <!-- Tailwind CSS (Script CDN Otimizado) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -59,13 +65,10 @@
         }
     </script>
 
-    <!-- Fonte com display=swap para evitar texto invisível -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Ícones (Carregamento diferido para não bloquear renderização) -->
     <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
 
-    <!-- Schema Markup -->
+    <!-- Schema Markup Avançado (Store + Products) -->
     <script type="application/ld+json">
     [
       {
@@ -74,6 +77,8 @@
         "name": "Super Cestas Dona Antônia",
         "image": "https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif",
         "telephone": "+5565998150975",
+        "url": "https://www.donaantonia.com.br",
+        "priceRange": "$$",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "R. Trinta, 105 - Jardim Nossa Sra. Aparecida",
@@ -90,7 +95,53 @@
             "opens": "07:30",
             "closes": "18:00"
           }
+        ],
+        "areaServed": [
+            { "@type": "City", "name": "Cuiabá" },
+            { "@type": "City", "name": "Várzea Grande" }
         ]
+      },
+      {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "Cesta Básica Grande Completa",
+        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif",
+        "description": "Cesta completa com arroz 5kg, feijão, óleo e kit de limpeza incluso.",
+        "brand": { "@type": "Brand", "name": "Dona Antônia" },
+        "offers": {
+            "@type": "Offer",
+            "url": "https://www.donaantonia.com.br",
+            "priceCurrency": "BRL",
+            "price": "380.00",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition",
+            "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": { "@type": "MonetaryAmount", "value": 0, "currency": "BRL" },
+            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "BR", "addressRegion": "MT" }
+            }
+        }
+      },
+      {
+        "@context": "https://schema.org/",
+        "@type": "Product",
+        "name": "Cesta Básica Econômica",
+        "image": "https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif",
+        "description": "Cesta básica essencial com melhor custo benefício de Cuiabá.",
+        "brand": { "@type": "Brand", "name": "Dona Antônia" },
+        "offers": {
+            "@type": "Offer",
+            "url": "https://www.donaantonia.com.br",
+            "priceCurrency": "BRL",
+            "price": "85.00",
+            "availability": "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition",
+            "shippingDetails": {
+            "@type": "OfferShippingDetails",
+            "shippingRate": { "@type": "MonetaryAmount", "value": 0, "currency": "BRL" },
+            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "BR", "addressRegion": "MT" }
+            }
+        }
       }
     ]
     </script>
@@ -99,10 +150,8 @@
         body { -webkit-tap-highlight-color: transparent; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Otimização de LCP: Previne salto de layout na imagem hero */
         .hero-img-placeholder { background-color: #f3f4f6; position: relative; overflow: hidden; }
-        .hero-img-placeholder::before { content: ""; display: block; padding-top: 56.25%; /* Aspect Ratio 16:9 */ }
+        .hero-img-placeholder::before { content: ""; display: block; padding-top: 56.25%; }
         .hero-img-content { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
@@ -112,7 +161,6 @@
     <header class="sticky top-0 z-50 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 lg:px-8 h-[70px] flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <!-- Logo com fetchpriority high para LCP -->
                 <div class="relative w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md bg-gray-100">
                     <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
                          alt="Dona Antônia" 
@@ -155,6 +203,23 @@
         <!-- SIDEBAR -->
         <aside class="lg:col-span-4 lg:sticky lg:top-24 order-2 lg:order-1">
             <div id="didactic-section-mount"></div>
+            
+            <!-- SEO LOCAL: BAIRROS ATENDIDOS -->
+            <div class="mt-6 bg-white rounded-2xl p-6 shadow-card border border-gray-100">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-2xl text-red-500">📍</span>
+                    <h3 class="text-lg font-bold text-gray-900">Regiões Atendidas</h3>
+                </div>
+                <div class="text-sm text-gray-600 space-y-2">
+                    <p class="font-semibold text-gray-800">Cuiabá (Principais):</p>
+                    <p class="leading-relaxed">CPA (I, II, III, IV), Tijucal, Pedra 90, Osmar Cabral, Parque Cuiabá, Coxipó, Centro, Porto, Jardim Imperial, Morada da Serra.</p>
+                    <div class="border-t border-gray-100 my-2"></div>
+                    <p class="font-semibold text-gray-800">Várzea Grande:</p>
+                    <p class="leading-relaxed">Cristo Rei, Centro, Mapim, Glória, São Mateus e região.</p>
+                    <p class="text-xs text-green-600 font-bold mt-2 check-pulse">✓ Entrega Grátis em todos esses bairros!</p>
+                </div>
+            </div>
+
             <div class="hidden lg:block mt-6 bg-white rounded-2xl p-6 shadow-card border border-gray-100">
                 <div class="flex items-center gap-3 mb-4">
                     <span class="text-2xl">💳</span>
@@ -169,7 +234,7 @@
             </div>
         </aside>
 
-        <!-- PRODUCT CATALOG (GRID 3 COLUNAS NO DESKTOP) -->
+        <!-- PRODUCT CATALOG -->
         <section id="products-list" class="lg:col-span-8 order-1 lg:order-2 grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="flex justify-center p-12 col-span-1 lg:col-span-3">
                 <div class="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
@@ -194,7 +259,7 @@
 
     </main>
 
-    <!-- SEO FOOTER OTIMIZADO (MAPA SOB DEMANDA) -->
+    <!-- SEO FOOTER -->
     <footer class="bg-gray-900 text-gray-400 py-10 lg:py-16 text-center text-sm">
         <div class="max-w-4xl mx-auto px-4">
             <p class="text-white font-bold text-lg mb-2">Super Cestas Básicas Dona Antônia</p>
@@ -202,8 +267,6 @@
                 R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>
                 Cuiabá - MT, 78090-660
             </address>
-            
-            <!-- MAPA FACHADA (Performance Hack: Só carrega o iframe pesado ao clicar) -->
             <div id="map-container" class="rounded-xl overflow-hidden shadow-lg border border-gray-700 h-64 w-full max-w-2xl mx-auto relative bg-gray-800 flex items-center justify-center cursor-pointer group" onclick="App.ui.loadMap()">
                 <div class="text-center group-hover:scale-105 transition-transform duration-300">
                     <div class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3 text-white shadow-lg">
@@ -226,9 +289,8 @@
         </a>
     </div>
 
-    <!-- MODAL OVERLAY (CORRIGIDO) -->
+    <!-- MODAL OVERLAY -->
     <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] hidden flex items-end lg:items-center justify-center opacity-0 transition-opacity duration-300" onclick="if(event.target===this) App.ui.closeModal()">
-        <!-- Modal Content Container - FIX POSICIONAMENTO -->
         <div id="modal-content" class="w-full bg-white rounded-t-3xl lg:rounded-2xl lg:max-w-2xl max-h-[90vh] overflow-y-auto transform transition-transform duration-300 translate-y-full shadow-2xl">
             <!-- Content -->
         </div>
@@ -270,6 +332,26 @@
                 order(basketId) {
                     const b = DB.baskets[basketId];
                     const o = b.opts.find(o => o.sel);
+                    
+                    // INTEGRAÇÃO ADS: Dispara evento de conversão
+                    try {
+                        const numericPrice = parseFloat(o.norm.replace('R$', '').replace('.', '').replace(',', '.').trim());
+                        if (window.dataLayer) {
+                            window.dataLayer.push({
+                                'event': 'conversion_whatsapp',
+                                'ecommerce': {
+                                    'currency': 'BRL',
+                                    'value': numericPrice,
+                                    'items': [{
+                                        'item_name': b.name,
+                                        'item_category': 'Cesta Básica',
+                                        'price': numericPrice
+                                    }]
+                                }
+                            });
+                        }
+                    } catch(e) { console.warn('Erro ao registrar conversão', e); }
+
                     const msg = `Olá, gostaria de encomendar a ${b.name} (${o.n}) por ${o.norm}.`;
                     window.open(`https://api.whatsapp.com/send?phone=${App.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
                 },
