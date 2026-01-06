@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotação Carvalima - 06/01/2026</title>
+    <!-- Pico.css: Framework minimalista -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <style>
+        /* Otimizações Específicas */
+        body { --spacing: 0.5rem; font-size: 0.95rem; }
+        header { padding-bottom: 0; border-bottom: 1px solid #e5e5e5; margin-bottom: 1rem; }
+        hgroup h2 { font-weight: 300; color: #555; }
+        
+        /* Tabela Compacta */
+        table { width: 100%; border-collapse: collapse; }
+        td, th { padding: 0.5rem; vertical-align: middle; }
+        input[type="text"], input[type="number"] { margin-bottom: 0; height: 2rem; font-size: 0.9rem; }
+        button { cursor: pointer; }
+        
+        /* Utilitários */
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .font-bold { font-weight: bold; }
+        .text-red { color: #c92a2a; }
+        .text-green { color: #2b8a3e; }
+        
+        /* Totais */
+        .summary-card { background: #f9f9f9; padding: 1rem; border-radius: 8px; margin-top: 1rem; text-align: right; }
+        
+        /* Estilos de Impressão */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+            table { border: 1px solid #000; }
+            th, td { border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho -->
+    <header class="container">
+        <hgroup>
+            <h1>Cotação Carvalima</h1>
+            <h2>Data base: 6 de janeiro de 2026</h2>
+        </hgroup>
+        <nav class="no-print">
+            <ul>
+                <li><strong id="mode-display">Modo: Cliente</strong></li>
+            </ul>
+            <ul>
+                <li><button class="outline secondary" onclick="app.toggleMode()" id="btn-mode">Acessar Admin</button></li>
+                <li><button onclick="window.print()">Imprimir / PDF</button></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Área Principal -->
+    <main class="container">
+        
+        <!-- Formulário de Adição (Apenas Admin) -->
+        <section id="admin-controls" class="no-print" style="display: none;">
+            <article>
+                <header><strong>Adicionar Novo Item</strong></header>
+                <div class="grid">
+                    <input type="text" id="inp-product" placeholder="Nome do Produto">
+                    <input type="number" id="inp-qty" placeholder="Qtd" value="1" style="max-width: 80px;">
+                    <input type="number" id="inp-cost" placeholder="Custo (R$)" step="0.01">
+                    <input type="number" id="inp-price" placeholder="Venda (R$)" step="0.01">
+                    <button onclick="app.addItem()">Adicionar</button>
+                </div>
+            </article>
+        </section>
+
+        <!-- Tabela de Dados -->
+        <figure>
+            <table>
+                <thead>
+                    <tr id="table-header">
+                        <!-- Renderizado via JS -->
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Renderizado via JS -->
+                </tbody>
+            </table>
+        </figure>
+
+        <!-- Totais -->
+        <div class="summary-card">
+            <h3 id="total-display">Total Geral: R$ 0,00</h3>
+            <small id="profit-display" style="display: none;" class="text-green no-print"></small>
+        </div>
+
+        <!-- Rodapé do Admin -->
+        <footer class="text-center no-print" style="margin-top: 2rem; font-size: 0.8rem; color: #888;">
+            <p>Sistema Carvalima SFA v1.1 • Dados salvos localmente.</p>
+            <button class="outline contrast" onclick="app.clearData()" style="width: auto; padding: 0.2rem 1rem; font-size: 0.7rem;">Limpar Tudo</button>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * SISTEMA SFA - Lógica Central Corrigida (v1.1)
+         * Uso de window.app garante visibilidade global dos eventos
+         */
+        window.app = {
+            data: [],
+            isAdmin: false,
+            STORAGE_KEY: 'carvalima_orcamento_2026',
+            PASSWORD_HASH: '090479',
+
+            // Inicialização
+            init() {
+                this.load();
+                this.render();
+                console.log("Sistema Carvalima Iniciado. Clique em 'Acessar Admin' para começar.");
+            },
+
+            // Persistência
+            load() {
+                const stored = localStorage.getItem(this.STORAGE_KEY);
+                try {
+                    this.data = stored ? JSON.parse(stored) : [];
+                } catch (e) {
+                    console.error("Erro ao carregar dados", e);
+                    this.data = [];
+                }
+            },
+
+            save() {
+                localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.data));
+                this.render();
+            },
+
+            // Lógica de Negócio
+            addItem() {
+                const name = document.getElementById('inp-product').value;
+                const qty = parseFloat(document.getElementById('inp-qty').value) || 1;
+                const cost = parseFloat(document.getElementById('inp-cost').value) || 0;
+                const price = parseFloat(document.getElementById('inp-price').value) || 0;
+
+                if (!name) return alert('Digite o nome do produto.');
+
+                this.data.push({
+                    id: Date.now(),
+                    name,
+                    qty,
+                    cost,
+                    price
+                });
+
+                // Limpar campos e focar
+                document.getElementById('inp-product').value = '';
+                document.getElementById('inp-cost').value = '';
+                document.getElementById('inp-price').value = '';
+                document.getElementById('inp-product').focus();
+                
+                this.save();
+            },
+
+            deleteItem(id) {
+                if(confirm('Remover este item?')) {
+                    this.data = this.data.filter(item => item.id !== id);
+                    this.save();
+                }
+            },
+
+            updateItem(id, field, value) {
+                const item = this.data.find(i => i.id === id);
+                if (item) {
+                    item[field] = parseFloat(value) || 0;
+                    this.save();
+                }
+            },
+
+            updateName(id, newName) {
+                const item = this.data.find(i => i.id === id);
+                if (item) {
+                    item.name = newName;
+                    this.save();
+                }
+            },
+
+            // Gestão de Acesso Corrigida
+            toggleMode() {
+                if (this.isAdmin) {
+                    this.isAdmin = false;
+                    this.render();
+                } else {
+                    // Timeout pequeno garante que a UI atualize antes do prompt travar a tela
+                    setTimeout(() => {
+                        let pass = prompt("Digite a senha de administrador:");
+                        // .trim() remove espaços acidentais antes ou depois da senha
+                        if (pass && pass.trim() === this.PASSWORD_HASH) {
+                            this.isAdmin = true;
+                            this.render();
+                        } else if (pass !== null) {
+                            alert("Senha incorreta.");
+                        }
+                    }, 50);
+                }
+            },
+
+            clearData() {
+                if (confirm('ATENÇÃO: Isso apagará toda a planilha. Continuar?')) {
+                    localStorage.removeItem(this.STORAGE_KEY);
+                    this.data = [];
+                    this.render();
+                }
+            },
+
+            // Renderização
+            formatMoney(value) {
+                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            },
+
+            render() {
+                const tbody = document.getElementById('table-body');
+                const thead = document.getElementById('table-header');
+                const adminControls = document.getElementById('admin-controls');
+                const btnMode = document.getElementById('btn-mode');
+                const modeDisplay = document.getElementById('mode-display');
+                const profitDisplay = document.getElementById('profit-display');
+
+                if (this.isAdmin) {
+                    modeDisplay.innerText = "Modo: ADMIN";
+                    modeDisplay.className = "text-red";
+                    btnMode.innerText = "Sair do Admin";
+                    adminControls.style.display = 'block';
+                    profitDisplay.style.display = 'block';
+                    
+                    thead.innerHTML = `
+                        <th>Produto</th>
+                        <th width="80">Qtd</th>
+                        <th width="120" class="text-right">Custo Unit.</th>
+                        <th width="120" class="text-right">Venda Unit.</th>
+                        <th width="120" class="text-right">Total</th>
+                        <th width="50" class="no-print">Ação</th>
+                    `;
+                } else {
+                    modeDisplay.innerText = "Modo: Cliente";
+                    modeDisplay.className = "text-green";
+                    btnMode.innerText = "Acessar Admin";
+                    adminControls.style.display = 'none';
+                    profitDisplay.style.display = 'none';
+
+                    thead.innerHTML = `
+                        <th>Produto</th>
+                        <th width="80" class="text-center">Qtd</th>
+                        <th width="150" class="text-right">Valor Total</th>
+                    `;
+                }
+
+                tbody.innerHTML = '';
+                let grandTotal = 0;
+                let totalCost = 0;
+
+                this.data.forEach(item => {
+                    const totalLine = item.qty * item.price;
+                    grandTotal += totalLine;
+                    totalCost += (item.qty * item.cost);
+
+                    const tr = document.createElement('tr');
+                    
+                    if (this.isAdmin) {
+                        tr.innerHTML = `
+                            <td><input type="text" value="${item.name}" onchange="app.updateName(${item.id}, this.value)"></td>
+                            <td><input type="number" value="${item.qty}" onchange="app.updateItem(${item.id}, 'qty', this.value)"></td>
+                            <td><input type="number" value="${item.cost}" step="0.01" onchange="app.updateItem(${item.id}, 'cost', this.value)"></td>
+                            <td><input type="number" value="${item.price}" step="0.01" onchange="app.updateItem(${item.id}, 'price', this.value)"></td>
+                            <td class="text-right font-bold">${this.formatMoney(totalLine)}</td>
+                            <td class="no-print"><button class="outline secondary" onclick="app.deleteItem(${item.id})" style="padding:0.2rem 0.5rem; border:none;">🗑️</button></td>
+                        `;
+                    } else {
+                        tr.innerHTML = `
+                            <td>${item.name}</td>
+                            <td class="text-center">${item.qty}</td>
+                            <td class="text-right font-bold">${this.formatMoney(totalLine)}</td>
+                        `;
+                    }
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('total-display').innerText = `Total Geral: ${this.formatMoney(grandTotal)}`;
+                
+                if (this.isAdmin) {
+                    const profit = grandTotal - totalCost;
+                    profitDisplay.innerText = `Lucro Estimado: ${this.formatMoney(profit)}`;
+                }
+            }
+        };
+
+        // Iniciar
+        app.init();
+    </script>
+</body>
+</html>
