@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotação Carvalima - 06/01/2026</title>
-    <!-- Pico.css: Framework minimalista -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
     <style>
         /* Otimizações Específicas */
@@ -24,6 +23,8 @@
         .font-bold { font-weight: bold; }
         .text-red { color: #c92a2a; }
         .text-green { color: #2b8a3e; }
+        .w-small { width: 70px; }
+        .w-med { width: 100px; }
         
         /* Totais */
         .summary-card { background: #f9f9f9; padding: 1rem; border-radius: 8px; margin-top: 1rem; text-align: right; }
@@ -64,11 +65,14 @@
             <article>
                 <header><strong>Adicionar Novo Item</strong></header>
                 <div class="grid">
-                    <input type="text" id="inp-product" placeholder="Nome do Produto">
-                    <input type="number" id="inp-qty" placeholder="Qtd" value="1" style="max-width: 80px;">
-                    <input type="number" id="inp-cost" placeholder="Custo (R$)" step="0.01">
-                    <input type="number" id="inp-price" placeholder="Venda (R$)" step="0.01">
-                    <button onclick="app.addItem()">Adicionar</button>
+                    <input type="text" id="inp-product" placeholder="Nome do Produto" style="flex-grow: 2;">
+                    <div class="grid" style="grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;">
+                        <input type="number" id="inp-qty" placeholder="Qtd" value="1">
+                        <input type="number" id="inp-cost" placeholder="Custo (R$)" step="0.01" oninput="app.calcNewItem('cost')">
+                        <input type="number" id="inp-margin" placeholder="Margem %" step="0.1" oninput="app.calcNewItem('margin')">
+                        <input type="number" id="inp-price" placeholder="Venda (R$)" step="0.01" oninput="app.calcNewItem('price')">
+                    </div>
+                    <button onclick="app.addItem()" style="width: auto;">Adicionar</button>
                 </div>
             </article>
         </section>
@@ -95,36 +99,38 @@
 
         <!-- Rodapé do Admin -->
         <footer class="text-center no-print" style="margin-top: 2rem; font-size: 0.8rem; color: #888;">
-            <p>Sistema Carvalima SFA v1.1 • Dados salvos localmente.</p>
+            <p>Sistema Carvalima SFA v1.2 • Persistência Local</p>
             <button class="outline contrast" onclick="app.clearData()" style="width: auto; padding: 0.2rem 1rem; font-size: 0.7rem;">Limpar Tudo</button>
         </footer>
     </main>
 
     <script>
-        /**
-         * SISTEMA SFA - Lógica Central Corrigida (v1.1)
-         * Uso de window.app garante visibilidade global dos eventos
-         */
         window.app = {
             data: [],
             isAdmin: false,
             STORAGE_KEY: 'carvalima_orcamento_2026',
             PASSWORD_HASH: '090479',
 
-            // Inicialização
             init() {
                 this.load();
                 this.render();
-                console.log("Sistema Carvalima Iniciado. Clique em 'Acessar Admin' para começar.");
             },
 
-            // Persistência
             load() {
                 const stored = localStorage.getItem(this.STORAGE_KEY);
                 try {
                     this.data = stored ? JSON.parse(stored) : [];
+                    // Migração de dados antigos (calcular margem se não existir)
+                    this.data.forEach(item => {
+                        if (item.margin === undefined) {
+                            if (item.cost > 0) {
+                                item.margin = ((item.price - item.cost) / item.cost) * 100;
+                            } else {
+                                item.margin = 0;
+                            }
+                        }
+                    });
                 } catch (e) {
-                    console.error("Erro ao carregar dados", e);
                     this.data = [];
                 }
             },
@@ -134,28 +140,47 @@
                 this.render();
             },
 
-            // Lógica de Negócio
+            // Lógica de Cálculo Dinâmico no Formulário de Adição
+            calcNewItem(source) {
+                const cost = parseFloat(document.getElementById('inp-cost').value) || 0;
+                let margin = parseFloat(document.getElementById('inp-margin').value) || 0;
+                let price = parseFloat(document.getElementById('inp-price').value) || 0;
+
+                const costEl = document.getElementById('inp-cost');
+                const marginEl = document.getElementById('inp-margin');
+                const priceEl = document.getElementById('inp-price');
+
+                if (source === 'cost' || source === 'margin') {
+                    // Custo ou Margem mudou -> Calcula Preço
+                    price = cost * (1 + (margin / 100));
+                    priceEl.value = price.toFixed(2);
+                } else if (source === 'price') {
+                    // Preço mudou -> Calcula Margem (Engenharia Reversa)
+                    if (cost > 0) {
+                        margin = ((price - cost) / cost) * 100;
+                        marginEl.value = margin.toFixed(2);
+                    }
+                }
+            },
+
             addItem() {
                 const name = document.getElementById('inp-product').value;
                 const qty = parseFloat(document.getElementById('inp-qty').value) || 1;
                 const cost = parseFloat(document.getElementById('inp-cost').value) || 0;
+                const margin = parseFloat(document.getElementById('inp-margin').value) || 0;
                 const price = parseFloat(document.getElementById('inp-price').value) || 0;
 
                 if (!name) return alert('Digite o nome do produto.');
 
-                this.data.push({
-                    id: Date.now(),
-                    name,
-                    qty,
-                    cost,
-                    price
-                });
+                this.data.push({ id: Date.now(), name, qty, cost, margin, price });
 
-                // Limpar campos e focar
+                // Limpar campos
                 document.getElementById('inp-product').value = '';
-                document.getElementById('inp-cost').value = '';
-                document.getElementById('inp-price').value = '';
                 document.getElementById('inp-product').focus();
+                // Opcional: manter os valores numéricos ou limpar? Limpando por segurança.
+                document.getElementById('inp-cost').value = '';
+                document.getElementById('inp-margin').value = '';
+                document.getElementById('inp-price').value = '';
                 
                 this.save();
             },
@@ -167,32 +192,53 @@
                 }
             },
 
+            // Lógica Reativa: Edição na Tabela
             updateItem(id, field, value) {
                 const item = this.data.find(i => i.id === id);
-                if (item) {
-                    item[field] = parseFloat(value) || 0;
+                if (!item) return;
+
+                const val = parseFloat(value) || 0;
+
+                if (field === 'qty') {
+                    item.qty = val;
+                } 
+                else if (field === 'name') {
+                    item.name = value; // Texto direto, não float
                     this.save();
+                    return; 
                 }
+                else if (field === 'cost') {
+                    item.cost = val;
+                    // Mudou custo -> Mantém margem, atualiza preço
+                    item.price = item.cost * (1 + (item.margin / 100));
+                }
+                else if (field === 'margin') {
+                    item.margin = val;
+                    // Mudou margem -> Mantém custo, atualiza preço
+                    item.price = item.cost * (1 + (item.margin / 100));
+                }
+                else if (field === 'price') {
+                    item.price = val;
+                    // Mudou preço -> Mantém custo, atualiza margem
+                    if (item.cost > 0) {
+                        item.margin = ((item.price - item.cost) / item.cost) * 100;
+                    }
+                }
+
+                // Normalização para evitar dizimas infinitas
+                item.price = parseFloat(item.price.toFixed(2));
+                item.margin = parseFloat(item.margin.toFixed(2));
+                
+                this.save();
             },
 
-            updateName(id, newName) {
-                const item = this.data.find(i => i.id === id);
-                if (item) {
-                    item.name = newName;
-                    this.save();
-                }
-            },
-
-            // Gestão de Acesso Corrigida
             toggleMode() {
                 if (this.isAdmin) {
                     this.isAdmin = false;
                     this.render();
                 } else {
-                    // Timeout pequeno garante que a UI atualize antes do prompt travar a tela
                     setTimeout(() => {
                         let pass = prompt("Digite a senha de administrador:");
-                        // .trim() remove espaços acidentais antes ou depois da senha
                         if (pass && pass.trim() === this.PASSWORD_HASH) {
                             this.isAdmin = true;
                             this.render();
@@ -211,7 +257,6 @@
                 }
             },
 
-            // Renderização
             formatMoney(value) {
                 return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             },
@@ -233,11 +278,12 @@
                     
                     thead.innerHTML = `
                         <th>Produto</th>
-                        <th width="80">Qtd</th>
-                        <th width="120" class="text-right">Custo Unit.</th>
-                        <th width="120" class="text-right">Venda Unit.</th>
-                        <th width="120" class="text-right">Total</th>
-                        <th width="50" class="no-print">Ação</th>
+                        <th class="w-small">Qtd</th>
+                        <th class="text-right w-med">Custo</th>
+                        <th class="text-right w-small">Mg(%)</th>
+                        <th class="text-right w-med">Venda</th>
+                        <th class="text-right w-med">Total</th>
+                        <th width="40" class="no-print">🗑️</th>
                     `;
                 } else {
                     modeDisplay.innerText = "Modo: Cliente";
@@ -266,12 +312,13 @@
                     
                     if (this.isAdmin) {
                         tr.innerHTML = `
-                            <td><input type="text" value="${item.name}" onchange="app.updateName(${item.id}, this.value)"></td>
-                            <td><input type="number" value="${item.qty}" onchange="app.updateItem(${item.id}, 'qty', this.value)"></td>
-                            <td><input type="number" value="${item.cost}" step="0.01" onchange="app.updateItem(${item.id}, 'cost', this.value)"></td>
-                            <td><input type="number" value="${item.price}" step="0.01" onchange="app.updateItem(${item.id}, 'price', this.value)"></td>
+                            <td><input type="text" value="${item.name}" onchange="app.updateItem(${item.id}, 'name', this.value)"></td>
+                            <td><input type="number" value="${item.qty}" class="text-center" onchange="app.updateItem(${item.id}, 'qty', this.value)"></td>
+                            <td><input type="number" value="${item.cost}" step="0.01" class="text-right" onchange="app.updateItem(${item.id}, 'cost', this.value)"></td>
+                            <td><input type="number" value="${item.margin}" step="0.1" class="text-right" onchange="app.updateItem(${item.id}, 'margin', this.value)"></td>
+                            <td><input type="number" value="${item.price}" step="0.01" class="text-right" onchange="app.updateItem(${item.id}, 'price', this.value)"></td>
                             <td class="text-right font-bold">${this.formatMoney(totalLine)}</td>
-                            <td class="no-print"><button class="outline secondary" onclick="app.deleteItem(${item.id})" style="padding:0.2rem 0.5rem; border:none;">🗑️</button></td>
+                            <td class="no-print"><button class="outline secondary" onclick="app.deleteItem(${item.id})" style="padding:0.2rem; border:none;">✕</button></td>
                         `;
                     } else {
                         tr.innerHTML = `
@@ -287,12 +334,11 @@
                 
                 if (this.isAdmin) {
                     const profit = grandTotal - totalCost;
-                    profitDisplay.innerText = `Lucro Estimado: ${this.formatMoney(profit)}`;
+                    const marginTotal = grandTotal > 0 ? (profit / grandTotal * 100) : 0;
+                    profitDisplay.innerHTML = `Custo Total: ${this.formatMoney(totalCost)} | <strong>Lucro: ${this.formatMoney(profit)} (${marginTotal.toFixed(1)}%)</strong>`;
                 }
             }
         };
-
-        // Iniciar
         app.init();
     </script>
 </body>
