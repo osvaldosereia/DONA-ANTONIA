@@ -3,14 +3,14 @@
     "id": "001",
     "cat": "alimentos",
     "name": "Arroz Tio Alvino 5kg",
-    "price": 15.90,
+    "price": 13.90,
     "img": "../descontos/img/alimento/arroztioalvino.jpg"
   },
   {
     "id": "002",
     "cat": "alimentos",
     "name": "Arroz Koblenz 5kg",
-    "price": 17.90,
+    "price": 16.90,
     "img": "../descontos/img/alimento/Arroz Koblenz 5kg.webp"
   },
   {
@@ -24,7 +24,7 @@
     "id": "004",
     "cat": "alimentos",
     "name": "Óleo de Soja Liza",
-    "price": 8.90,
+    "price": 7.90,
     "img": "../descontos/img/alimento/oleo de soja liza.webp"
   },
   {
@@ -45,7 +45,7 @@
     "id": "007",
     "cat": "alimentos",
     "name": "Espaguete Q'Delícia",
-    "price": 4.50,
+    "price": 3.50,
     "img": "../descontos/img/alimento/espaguete qdelicia.webp",
     "vars": [
       "Espaguete",
