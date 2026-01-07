@@ -177,8 +177,8 @@
         
         .btn-finish {
             /* Cor padrão (clicável, mas visualmente diferente) */
-            background: var(--text-light); color: white; border: none; padding: 0 16px;
-            height: 48px; border-radius: 12px; font-weight: 700; font-size: 14px;
+            background: var(--text-light); color: white; border: none; padding: 4px 16px;
+            min-height: 48px; height: auto; border-radius: 12px; font-weight: 700; font-size: 14px;
             cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
         }
         /* Estado Ativo (Sempre ativo se tiver itens) */
@@ -304,9 +304,12 @@
                 </div>
                 <div class="track"><div id="prog-bar" class="bar"></div></div>
             </div>
-            <!-- Botão com Total -->
+            <!-- Botão com Total e Frete em linhas separadas -->
             <button id="btn-checkout" class="btn-finish" type="button" onclick="checkout()" aria-label="Ver resumo e finalizar">
-                <span id="btn-total-val" style="margin-right: 5px;">R$ 0,00</span>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; margin-right:8px; text-align:right;">
+                    <span id="btn-total-val" style="font-size:15px; line-height:1.2;">R$ 0,00</span>
+                    <span id="btn-frete-val" style="font-size:10px; font-weight:500; opacity:0.9;">Entrega: R$ 10,00</span>
+                </div>
                 <svg viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
             </button>
         </div>
@@ -456,6 +459,7 @@
             const parcela = (p.price / 4).toFixed(2).replace('.', ',');
 
             let controls = '';
+            // Verificação se tem vars e se é array com itens
             if(p.vars && p.vars.length > 0) {
                 controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars('${p.id}')" aria-label="Escolher ${p.name}">ESCOLHER</button>`;
             } else {
@@ -547,18 +551,22 @@
             const countTxt = document.getElementById('prog-count');
             const btnFinish = document.getElementById('btn-checkout');
             const btnTotalVal = document.getElementById('btn-total-val');
+            const btnFreteVal = document.getElementById('btn-frete-val');
 
             btnTotalVal.innerText = `R$ ${total.toFixed(2).replace('.',',')}`;
-
-            if(subtotal >= FRETE_GRATIS_MIN) {
+            
+            // ATUALIZAÇÃO DO STATUS DE ENTREGA NO BOTÃO
+            if (subtotal >= FRETE_GRATIS_MIN) {
                 bar.classList.add('ready');
                 msgTxt.innerHTML = `<b style="color:var(--success)">Frete Grátis Conquistado! 🎉</b>`;
                 countTxt.innerText = "100%";
+                btnFreteVal.innerText = "Entrega: Grátis";
             } else {
                 bar.classList.remove('ready');
                 const faltam = FRETE_GRATIS_MIN - subtotal;
                 msgTxt.innerHTML = `Faltam <b>R$ ${faltam.toFixed(2).replace('.',',')}</b> para entrega grátis`;
                 countTxt.innerText = `${Math.floor(pct)}%`;
+                btnFreteVal.innerText = "Entrega: R$ 10,00";
             }
 
             if(Object.keys(cart).length > 0) {
@@ -582,16 +590,28 @@
             const p = PRODUTOS.find(x => x.id === pid);
             const body = document.getElementById('vars-body');
             body.innerHTML = `<h4 style="margin-top:0">${p.name}</h4>`;
-            p.vars.forEach(v => {
-                const key = `${pid}::${v}`;
+            
+            p.vars.forEach(vObj => {
+                // Suporte robusto: se o JSON antigo (string) ainda existir, trata. Se for objeto, usa propriedades.
+                const vName = typeof vObj === 'object' ? vObj.name : vObj;
+                const vImg = (typeof vObj === 'object' && vObj.img) ? vObj.img : p.img;
+
+                const key = `${pid}::${vName}`;
                 const q = cart[key] || 0;
+                
                 body.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
-                        <span>${v}</span>
+                        <button type="button" onclick="viewImg('${vImg}')" style="position:relative; background:none; border:none; padding:0; cursor:pointer; margin-right:8px;" aria-label="Ver foto">
+                            <img src="${vImg}" style="width:44px; height:44px; object-fit:contain; border-radius:6px; border:1px solid #eee; background:white;" onerror="this.src='https://placehold.co/40x40?text=Foto'">
+                            <div style="position:absolute; bottom:-4px; right:-4px; background:var(--primary); color:white; border-radius:50%; width:20px; height:20px; display:flex; align-items:center; justify-content:center; border:2px solid white; box-shadow:0 2px 4px rgba(0,0,0,0.15);">
+                                <svg viewBox="0 0 256 256" style="width:12px; height:12px; fill:currentColor;"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
+                            </div>
+                        </button>
+                        <span style="flex-grow:1;">${vName}</span>
                         <div class="controls" style="width:110px; margin-top:0;">
-                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${v}', -1)">-</button>
-                            <span class="qty-val" id="var-qty-${pid}-${v.replace(/\s/g,'')}">${q}</span>
-                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${v}', 1)">+</button>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${vName}', -1)">-</button>
+                            <span class="qty-val" id="var-qty-${pid}-${vName.replace(/\s/g,'')}">${q}</span>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${vName}', 1)">+</button>
                         </div>
                     </div>
                 `;
@@ -626,8 +646,20 @@
                     const totalItem = p.price * q;
                     subtotal += totalItem;
 
-                    const imgUrl = p.img || 'https://placehold.co/200x200?text=Sem+Foto';
-                    const displayName = v !== 'def' ? `${p.name} (${v})` : p.name;
+                    // Lógica para pegar imagem da variação
+                    let imgUrl = p.img || 'https://placehold.co/200x200?text=Sem+Foto';
+                    let displayName = p.name;
+
+                    if (v !== 'def') {
+                        displayName = `${p.name} (${v})`;
+                        // Procura a imagem específica da variação
+                        if (p.vars) {
+                            const variantObj = p.vars.find(vo => (typeof vo === 'object' ? vo.name : vo) === v);
+                            if (variantObj && typeof variantObj === 'object' && variantObj.img) {
+                                imgUrl = variantObj.img;
+                            }
+                        }
+                    }
 
                     rows.innerHTML += `
                         <tr>
