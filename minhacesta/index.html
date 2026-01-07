@@ -29,7 +29,7 @@
 
         body {
             margin: 0; background-color: var(--bg); font-family: var(--font-main);
-            color: var(--text); padding-bottom: 100px;
+            color: var(--text); padding-bottom: 110px; /* Espaço extra para footer */
         }
 
         /* HEADER & SEARCH - COMPACTO */
@@ -37,24 +37,22 @@
             position: sticky; top: 0; z-index: 100;
             background: rgba(255,255,255,0.98);
             border-bottom: 1px solid var(--border);
-            padding: 8px 16px; /* Padding reduzido */
+            padding: 8px 16px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* Container centralizado do header */
         .header-content {
             max-width: var(--max-w);
             margin: 0 auto;
             display: flex; flex-direction: column; gap: 8px;
         }
 
-        /* Linha Superior: Logo + Busca + Histórico juntos */
+        /* Linha Superior */
         .header-top { 
             display: flex; align-items: center; gap: 12px; 
             height: 44px;
         }
         
-        /* Logo reduzido apenas ícone */
         .brand-compact { 
             flex-shrink: 0;
             width: 40px; height: 40px; 
@@ -63,7 +61,6 @@
         }
         .brand-compact img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Busca Expandida */
         .search-box { 
             flex-grow: 1; position: relative; 
         }
@@ -76,24 +73,38 @@
         .search-input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
         .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-light); width: 18px; height: 18px;}
 
-        /* Botão Histórico Compacto */
+        /* Botão Histórico com Rótulo (Melhoria de Usabilidade) */
         .btn-hist-compact {
-            flex-shrink: 0; width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            background: none; border: none; color: var(--text-light);
-            cursor: pointer; padding: 0;
+            flex-shrink: 0; height: 40px; padding: 0 12px;
+            display: flex; align-items: center; gap: 6px;
+            background: var(--surface); border: 1px solid var(--border); 
+            border-radius: 20px; color: var(--text);
+            cursor: pointer; font-size: 13px; font-weight: 600;
+        }
+        .btn-hist-text { display: none; }
+        @media(min-width: 360px) { .btn-hist-text { display: inline; } }
+
+        /* NAVEGAÇÃO DE CATEGORIAS COM INDICAÇÃO DE SCROLL */
+        .nav-wrapper {
+            position: relative;
+            overflow: hidden;
+        }
+        /* Sombra na direita para indicar que tem mais itens */
+        .nav-wrapper::after {
+            content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 30px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.9));
+            pointer-events: none;
         }
 
-        /* NAVEGAÇÃO DE CATEGORIAS */
-        .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+        .nav-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; padding-right: 20px; }
         .nav-scroll::-webkit-scrollbar { display: none; }
         
         .cat-chip {
-            padding: 6px 14px; border-radius: 16px;
+            padding: 8px 16px; border-radius: 20px;
             background: var(--surface); border: 1px solid var(--border);
-            font-size: 13px; font-weight: 600; color: var(--text-light);
+            font-size: 14px; font-weight: 600; color: var(--text-light);
             white-space: nowrap; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 4px;
+            display: flex; align-items: center; gap: 6px;
         }
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
@@ -129,22 +140,22 @@
 
         /* TEXTOS */
         .info { flex-grow: 1; margin-bottom: 8px; }
-        .prod-name { font-size: 14px; font-weight: 600; line-height: 1.3; color: var(--text); margin-bottom: 4px; }
-        .prod-price { font-size: 16px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; margin-bottom: 2px; }
-        .installment { font-size: 10px; color: var(--text-light); font-weight: 500; }
-        .free-delivery { font-size: 9px; color: var(--success); font-weight: 700; margin-top: 2px; display: block; }
+        .prod-name { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--text); margin-bottom: 4px; }
+        .prod-price { font-size: 17px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; margin-bottom: 2px; }
+        .installment { font-size: 11px; color: var(--text-light); font-weight: 500; }
+        .free-delivery { font-size: 10px; color: var(--success); font-weight: 700; margin-top: 2px; display: block; }
 
         /* CONTROLES */
         .controls { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-radius: 8px; padding: 3px; margin-top: auto; }
         .btn-qty {
-            width: 32px; height: 32px; border: none; border-radius: 6px;
-            background: white; color: var(--text); font-size: 18px; font-weight: 700;
+            width: 36px; height: 36px; border: none; border-radius: 6px;
+            background: white; color: var(--text); font-size: 20px; font-weight: 700;
             cursor: pointer; box-shadow: 0 1px 2px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center;
         }
         .btn-qty:focus, button:focus { outline: 2px solid var(--primary); outline-offset: 2px; }
-        .qty-val { font-size: 14px; font-weight: 700; width: 24px; text-align: center; }
+        .qty-val { font-size: 15px; font-weight: 700; width: 26px; text-align: center; }
 
-        .btn-var { width: 100%; padding: 8px; background: white; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; border-radius: 8px; cursor: pointer; margin-top: 8px; font-size: 12px;}
+        .btn-var { width: 100%; padding: 10px; background: white; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; border-radius: 8px; cursor: pointer; margin-top: 8px; font-size: 13px;}
         .btn-var.active { background: var(--primary); color: white; }
 
         /* BARRA INFERIOR */
@@ -153,53 +164,57 @@
             padding: 12px 16px; border-top: 1px solid var(--border); z-index: 90;
             box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
         }
-        /* Container interno da barra para alinhar com o conteúdo */
         .bottom-content {
             max-width: var(--max-w); margin: 0 auto;
             display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center;
         }
         
         .progress-wrap { display: flex; flex-direction: column; justify-content: center; }
-        .prog-txt { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text-light); display: flex; justify-content: space-between; }
-        .track { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
-        .bar { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+        .prog-txt { font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-light); display: flex; justify-content: space-between; }
+        .track { height: 10px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+        .bar { height: 100%; background: var(--text-light); width: 0%; transition: 0.3s; } /* Cor padrão */
+        .bar.ready { background: var(--primary); } /* Cor sucesso */
         
         .btn-finish {
-            background: var(--text-light); color: white; border: none; padding: 0 20px;
-            height: 44px; border-radius: 10px; font-weight: 700; font-size: 13px;
-            cursor: not-allowed; display: flex; align-items: center; gap: 8px;
+            /* Cor padrão (clicável, mas visualmente diferente) */
+            background: var(--text-light); color: white; border: none; padding: 0 24px;
+            height: 48px; border-radius: 12px; font-weight: 700; font-size: 14px;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;
         }
-        .btn-finish.ready { background: var(--primary); cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+        /* Estado Pronto */
+        .btn-finish.ready { background: var(--primary); box-shadow: 0 4px 12px rgba(37,99,235,0.4); transform: scale(1.02); }
 
         /* MODAIS */
         dialog { 
             border: none; border-radius: 16px 16px 0 0; width: 100%; max-width: 600px; 
             margin: auto auto 0 auto; padding: 0; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
-            display: none; /* CORREÇÃO: Default hidden */
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3); 
+            display: none; 
             flex-direction: column; 
             max-height: 85vh; 
         }
-        dialog[open] { display: flex; } /* Só vira flex quando OPEN */
+        dialog[open] { display: flex; animation: slideUp 0.3s; } 
         dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
         
-        /* ESTILO ESPECÍFICO PARA HISTÓRICO (CENTRALIZADO) */
-        #modal-history {
-            margin: auto; /* Centraliza total */
-            border-radius: 16px; /* Bordas completas */
-            width: 90%; max-width: 400px;
-            max-height: 80vh;
+        @keyframes slideUp { from {transform: translateY(100%)} to {transform: translateY(0)}}
+
+        /* Modal Histórico e Alerta (Centralizados) */
+        #modal-history, #modal-alert {
+            margin: auto; border-radius: 16px; width: 90%; max-width: 400px;
+            max-height: auto; animation: popIn 0.3s;
         }
+        @keyframes popIn { from {opacity:0; transform: scale(0.9)} to {opacity:1; transform: scale(1)}}
 
         .modal-head { 
             padding: 16px; border-bottom: 1px solid var(--border); 
             display: flex; justify-content: space-between; align-items: center; 
             background: white; z-index: 10; flex-shrink: 0;
         }
+        .modal-title { margin: 0; font-size: 18px; font-weight: 700; }
         .modal-body { padding: 0; overflow-y: auto; flex-grow: 1; }
         .modal-foot { padding: 16px; border-top: 1px solid var(--border); background: #F9FAFB; flex-shrink: 0; }
 
-        /* TABELA DE RESUMO (NOVO ESTILO) */
+        /* TABELA DE RESUMO */
         .summary-table { width: 100%; border-collapse: collapse; }
         .summary-table th { 
             text-align: left; font-size: 12px; color: var(--text-light); 
@@ -214,7 +229,7 @@
         .td-icon { width: 50px; text-align: center; }
         .btn-view-img {
             background: none; border: none; cursor: pointer; color: var(--text-light);
-            padding: 4px; border-radius: 4px; transition: 0.2s;
+            padding: 8px; border-radius: 4px;
         }
         .btn-view-img:hover { background: #e5e7eb; color: var(--primary); }
         
@@ -223,16 +238,12 @@
             background: transparent; box-shadow: none; 
             align-items: center; justify-content: center;
         }
-        /* Quando aberto, display flex para centralizar */
         #modal-img-preview[open] { display: flex; }
-        
         .preview-content { 
             background: white; padding: 10px; border-radius: 12px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.4); max-width: 90%; 
-            position: relative; animation: popIn 0.2s;
             display: flex; flex-direction: column;
         }
-        @keyframes popIn { from {transform: scale(0.9); opacity:0} to {transform: scale(1); opacity:1} }
 
         /* UTIL */
         .hidden { display: none !important; }
@@ -252,16 +263,20 @@
                 
                 <div class="search-box">
                     <svg class="search-icon" viewBox="0 0 256 256"><path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path></svg>
-                    <input type="text" class="search-input" placeholder="Buscar..." aria-label="Buscar produto" oninput="filterProducts(this.value)">
+                    <input type="text" class="search-input" placeholder="Buscar produto..." aria-label="Buscar produto" oninput="filterProducts(this.value)">
                 </div>
 
-                <button class="btn-hist-compact" type="button" onclick="showHistory()" aria-label="Histórico">
+                <!-- Botão Histórico com Rótulo -->
+                <button class="btn-hist-compact" type="button" onclick="showHistory()" aria-label="Ver Meus Pedidos">
                     <svg viewBox="0 0 256 256"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A96,96,0,1,0,224,128,96.11,96.11,0,0,0,128,32Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,208Z"></path></svg>
+                    <span class="btn-hist-text">Pedidos</span>
                 </button>
             </div>
 
-            <!-- Linha 2: Categorias -->
-            <nav class="nav-scroll" id="category-nav"></nav>
+            <!-- Linha 2: Categorias (com Wrapper para indicação de scroll) -->
+            <div class="nav-wrapper">
+                <nav class="nav-scroll" id="category-nav"></nav>
+            </div>
         </div>
     </header>
 
@@ -278,6 +293,7 @@
                 </div>
                 <div class="track"><div id="prog-bar" class="bar"></div></div>
             </div>
+            <!-- Botão sempre clicável -->
             <button id="btn-checkout" class="btn-finish" type="button" onclick="checkout()" aria-label="Ver resumo e finalizar">
                 RESUMO
                 <svg viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
@@ -288,8 +304,8 @@
     <!-- MODAL OPÇÕES -->
     <dialog id="modal-vars" onclick="handleBackdrop(event)">
         <div class="modal-head">
-            <h3 style="margin:0">Escolha o Tipo</h3>
-            <button onclick="closeModal('modal-vars')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
+            <h3 class="modal-title">Escolha o Tipo</h3>
+            <button onclick="closeModal('modal-vars')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:28px; padding:10px;">&times;</button>
         </div>
         <div class="modal-body" id="vars-body" style="padding:16px;"></div>
         <div class="modal-foot">
@@ -297,11 +313,26 @@
         </div>
     </dialog>
 
+    <!-- MODAL ALERTA (MÍNIMO DE ITENS) -->
+    <dialog id="modal-alert" onclick="handleBackdrop(event)">
+        <div class="modal-head">
+            <h3 class="modal-title" style="color:var(--danger)">Atenção</h3>
+            <button onclick="closeModal('modal-alert')" type="button" style="background:none;border:none;font-size:28px;">&times;</button>
+        </div>
+        <div class="modal-body" style="padding:20px; text-align:center;">
+            <p style="font-size:16px; margin-bottom:10px;">Para fechar a cesta, precisamos de pelo menos <strong>10 itens</strong>.</p>
+            <p id="alert-msg-count" style="font-size:18px; font-weight:bold; color:var(--text-light)"></p>
+        </div>
+        <div class="modal-foot">
+            <button onclick="closeModal('modal-alert')" type="button" class="btn-var active">OK, VOU ESCOLHER MAIS</button>
+        </div>
+    </dialog>
+
     <!-- MODAL RESUMO (PLANILHA) -->
     <dialog id="modal-summary" onclick="handleBackdrop(event)">
         <div class="modal-head">
-            <h3 style="margin:0">Resumo da Cesta</h3>
-            <button onclick="closeModal('modal-summary')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
+            <h3 class="modal-title">Resumo da Cesta</h3>
+            <button onclick="closeModal('modal-summary')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:28px; padding:10px;">&times;</button>
         </div>
         <div class="modal-body">
             <table class="summary-table">
@@ -312,9 +343,7 @@
                         <th class="td-icon">Ver</th>
                     </tr>
                 </thead>
-                <tbody id="summary-rows">
-                    <!-- Linhas geradas via JS -->
-                </tbody>
+                <tbody id="summary-rows"></tbody>
             </table>
         </div>
         <div class="modal-foot">
@@ -330,7 +359,7 @@
                 </div>
                 <div id="sum-installments" style="text-align:right; font-size:12px; color:var(--text-light); margin-top:2px;"></div>
             </div>
-            <button onclick="sendWhatsapp()" type="button" style="width:100%; padding:14px; border:none; background:#25D366; color:white; font-weight:bold; border-radius:10px; display:flex; justify-content:center; gap:8px;">
+            <button onclick="sendWhatsapp()" type="button" style="width:100%; padding:14px; border:none; background:#25D366; color:white; font-weight:bold; border-radius:10px; display:flex; justify-content:center; gap:8px; font-size:16px;">
                 <svg viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L100.8,118.2a8,8,0,0,0-.23,8.48,56.63,56.63,0,0,0,30.75,30.75,8,8,0,0,0,8.48-.23l14.7-9.93,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg>
                 ENVIAR PEDIDO
             </button>
@@ -341,12 +370,12 @@
     <dialog id="modal-img-preview" onclick="handleBackdrop(event)">
         <div class="preview-content">
             <img id="preview-img-src" src="" style="width:100%; height:auto; border-radius:8px;">
-            <button onclick="closeModal('modal-img-preview')" type="button" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee; border-radius:8px; cursor:pointer;">Fechar Foto</button>
+            <button onclick="closeModal('modal-img-preview')" type="button" style="width:100%; margin-top:10px; padding:12px; border:none; background:#eee; border-radius:8px; cursor:pointer; font-weight:bold; font-size:14px;">FECHAR FOTO</button>
         </div>
     </dialog>
 
     <dialog id="modal-history" onclick="handleBackdrop(event)">
-        <div class="modal-head"><h3>Histórico</h3><button onclick="closeModal('modal-history')" type="button" aria-label="Fechar" style="border:none; background:none; font-size: 24px;">&times;</button></div>
+        <div class="modal-head"><h3 class="modal-title">Meus Pedidos</h3><button onclick="closeModal('modal-history')" type="button" aria-label="Fechar" style="border:none; background:none; font-size: 28px; padding:10px;">&times;</button></div>
         <div class="modal-body" id="history-list" style="padding:16px;"></div>
     </dialog>
 
@@ -418,7 +447,8 @@
 
             let controls = '';
             if(p.vars && p.vars.length > 0) {
-                controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars(${p.id})" aria-label="Opções ${p.name}">OPÇÕES</button>`;
+                // Alterado "OPÇÕES" para "ESCOLHER"
+                controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars(${p.id})" aria-label="Escolher ${p.name}">ESCOLHER</button>`;
             } else {
                 controls = `
                     <div class="controls">
@@ -473,7 +503,8 @@
                             btn.innerText = `${totalItem} NA CESTA`;
                         } else {
                             btn.classList.remove('active');
-                            btn.innerText = 'OPÇÕES';
+                            // Reseta o texto se voltar a zero
+                            btn.innerText = 'ESCOLHER';
                         }
                     } else {
                         const qtySpan = document.getElementById(`qty-${pid}-def`);
@@ -487,15 +518,24 @@
             const uniqueItems = new Set(Object.keys(cart).map(k => k.split('::')[0])).size;
             const minItems = 10;
             const pct = Math.min((uniqueItems / minItems) * 100, 100);
-            document.getElementById('prog-bar').style.width = `${pct}%`;
-            document.getElementById('prog-count').innerText = `${uniqueItems}/${minItems}`;
+            
+            const bar = document.getElementById('prog-bar');
+            bar.style.width = `${pct}%`;
+            
+            const countTxt = document.getElementById('prog-count');
+            const msgTxt = document.getElementById('prog-msg');
             const btnFinish = document.getElementById('btn-checkout');
+
+            countTxt.innerText = `${uniqueItems}/${minItems}`;
+
             if(uniqueItems >= minItems) {
+                bar.classList.add('ready');
                 btnFinish.classList.add('ready');
-                document.getElementById('prog-msg').innerHTML = `<b style="color:var(--success)">Meta atingida!</b>`;
+                msgTxt.innerHTML = `<b style="color:var(--success)">Meta atingida!</b>`;
             } else {
-                btnFinish.classList.remove('ready');
-                document.getElementById('prog-msg').innerText = `Faltam ${minItems - uniqueItems} itens`;
+                bar.classList.remove('ready');
+                btnFinish.classList.remove('ready'); // Apenas remove estilo "verde", mas continua clicável
+                msgTxt.innerText = `Faltam ${minItems - uniqueItems} itens`;
             }
         }
 
@@ -537,6 +577,15 @@
         }
 
         function checkout() {
+            // VERIFICAÇÃO DE SEGURANÇA (Regra dos 10 itens)
+            const uniqueItems = new Set(Object.keys(cart).map(k => k.split('::')[0])).size;
+            if (uniqueItems < 10) {
+                const missing = 10 - uniqueItems;
+                document.getElementById('alert-msg-count').innerText = `Faltam ${missing} produto${missing>1?'s':''}!`;
+                document.getElementById('modal-alert').showModal();
+                return;
+            }
+
             const rows = document.getElementById('summary-rows');
             rows.innerHTML = '';
             
@@ -587,7 +636,6 @@
             const el = document.getElementById(id);
             if(el) {
                 el.close();
-                // Limpa a foto se for o modal de imagem para não "piscar" na próxima
                 if(id === 'modal-img-preview') {
                     setTimeout(() => { document.getElementById('preview-img-src').src = ''; }, 200);
                 }
@@ -595,7 +643,6 @@
         }
 
         function handleBackdrop(event) {
-            // Fecha se clicar no elemento dialog (que é o backdrop)
             if (event.target === event.currentTarget) {
                 closeModal(event.currentTarget.id);
             }
