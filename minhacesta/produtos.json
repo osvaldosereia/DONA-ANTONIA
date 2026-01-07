@@ -4,7 +4,15 @@
     "cat": "alimentos",
     "name": "Arroz Tio Alvino 5kg",
     "price": 15.90,
-    "img": "../descontos/img/alimento/arroztioalvino.jpg"
+    "img": "../descontos/img/alimento/arroztioalvino.jpg",
+    "gallery": [
+      "../descontos/img/alimento/arroztioalvino_frente.jpg",
+      "../descontos/img/alimento/arroztioalvino_verso.jpg",
+      "../descontos/img/alimento/arroztioalvino_preparo.jpg",
+      "../descontos/img/alimento/arroztioalvino_sugestao.jpg",
+      "../descontos/img/alimento/arroztioalvino_tabela.jpg"
+    ],
+    "video": "../descontos/video/arroz_alvino_promo.mp4"
   },
   {
     "id": "002",
@@ -47,6 +55,10 @@
     "name": "Espaguete Q'Delícia 500g",
     "price": 4.50,
     "img": "../descontos/img/alimento/espaguete qdelicia.webp",
+    "gallery": [
+      "../descontos/img/alimento/espaguete_embalagem.webp",
+      "../descontos/img/alimento/espaguete_prato_feito.webp"
+    ],
     "vars": [
       {
         "name": "Espaguete",
