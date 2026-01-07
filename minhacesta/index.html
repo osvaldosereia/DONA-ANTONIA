@@ -131,12 +131,41 @@
         }
         .card.in-cart { border-color: var(--primary); background: #EFF6FF; }
 
+        /* --- GALERIA E IMAGEM (NOVO CSS) --- */
         .img-box {
             width: 100%; aspect-ratio: 1/1; background: white;
-            border-radius: 8px; margin-bottom: 10px; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; margin-bottom: 10px; 
+            overflow: hidden; position: relative;
         }
-        .prod-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+
+        .media-scroll {
+            display: flex;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            width: 100%; height: 100%;
+            scrollbar-width: none; /* Firefox */
+        }
+        .media-scroll::-webkit-scrollbar { display: none; } /* Chrome */
+
+        .media-item {
+            flex: 0 0 100%;
+            width: 100%; height: 100%;
+            scroll-snap-align: center;
+            object-fit: contain;
+        }
+        
+        img.media-item { mix-blend-mode: multiply; }
+        video.media-item { mix-blend-mode: normal; background: #000; object-fit: cover; }
+
+        .media-badge {
+            position: absolute; bottom: 6px; right: 6px;
+            background: rgba(0,0,0,0.6); color: white;
+            font-size: 10px; font-weight: 700;
+            padding: 2px 6px; border-radius: 10px;
+            pointer-events: none; backdrop-filter: blur(2px);
+            display: flex; align-items: center; gap: 4px;
+        }
 
         /* TEXTOS */
         .info { flex-grow: 1; margin-bottom: 8px; }
@@ -455,11 +484,46 @@
 
         function createCardHTML(p) {
             const fallback = `https://placehold.co/200x200/eee/999?text=${encodeURIComponent(p.name)}`;
-            const imgUrl = p.img || fallback;
             const parcela = (p.price / 4).toFixed(2).replace('.', ',');
 
+            // --- LÓGICA DE GALERIA ---
+            // 1. Constroi lista de Mídias
+            let mediaItems = [];
+            
+            // Imagem Principal (Sempre a primeira)
+            mediaItems.push({ type: 'img', src: p.img || fallback });
+
+            // Galeria Adicional
+            if (p.gallery && Array.isArray(p.gallery)) {
+                p.gallery.forEach(imgSrc => mediaItems.push({ type: 'img', src: imgSrc }));
+            }
+
+            // Vídeo
+            if (p.video) {
+                mediaItems.push({ type: 'video', src: p.video });
+            }
+
+            // 2. Monta HTML do Carrossel
+            let mediaHtml = '';
+            mediaItems.forEach((item, idx) => {
+                const lazy = idx === 0 ? '' : 'loading="lazy"';
+                if(item.type === 'img') {
+                    mediaHtml += `<img src="${item.src}" class="media-item" ${lazy} alt="${p.name}" onerror="this.src='${fallback}'">`;
+                } else if(item.type === 'video') {
+                    mediaHtml += `<video src="${item.src}" class="media-item" controls preload="metadata"></video>`;
+                }
+            });
+
+            // 3. Badge (Indicador de várias fotos)
+            let badgeHtml = '';
+            if(mediaItems.length > 1) {
+                const hasVideo = p.video ? '🎥' : '📷';
+                badgeHtml = `<div class="media-badge">${hasVideo} ${mediaItems.length}</div>`;
+            }
+
+            // --- FIM GALERIA ---
+
             let controls = '';
-            // Verificação se tem vars e se é array com itens
             if(p.vars && p.vars.length > 0) {
                 controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars('${p.id}')" aria-label="Escolher ${p.name}">ESCOLHER</button>`;
             } else {
@@ -475,7 +539,10 @@
             return `
                 <article class="card data-item" id="card-${p.id}" data-name="${p.name.toLowerCase()}">
                     <div class="img-box">
-                        <img src="${imgUrl}" class="prod-img" loading="lazy" alt="${p.name}" onerror="this.src='${fallback}'">
+                        <div class="media-scroll">
+                            ${mediaHtml}
+                        </div>
+                        ${badgeHtml}
                     </div>
                     <div class="info">
                         <div class="prod-name">${p.name}</div>
