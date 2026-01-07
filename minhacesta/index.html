@@ -109,7 +109,7 @@
         .cat-chip.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* GRID PRODUTOS */
-        main { max-width: var(--max-w); margin: 0 auto; padding: 16px; }
+        main { max-width: var(--max-w); margin: 0 auto; padding: 16px; min-height: 60vh; }
         
         .section-title { 
             font-size: 18px; font-weight: 800; margin: 24px 0 12px; 
@@ -245,6 +245,11 @@
             display: flex; flex-direction: column;
         }
 
+        /* Loading */
+        #loading-state {
+            padding: 40px; text-align: center; color: var(--text-light); font-weight: 600;
+        }
+
         /* UTIL */
         .hidden { display: none !important; }
         svg { width: 20px; height: 20px; fill: currentColor; }
@@ -281,7 +286,13 @@
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main id="app-container"></main>
+    <main id="app-container">
+        <div id="loading-state">
+            <svg style="animation: spin 1s linear infinite; margin-bottom: 10px;" viewBox="0 0 256 256"><path d="M232,128a104,104,0,0,1-208,0c0-41,23.81-76.33,58.57-92.74a8,8,0,0,1,7.23,14.28C62.66,62.88,44,93,44,128a88,88,0,0,0,176,0c0-35-18.66-65.12-45.8-78.46a8,8,0,1,1,7.23-14.28C208.19,51.67,232,87,232,128Z"></path></svg>
+            <br>Carregando produtos...
+        </div>
+    </main>
+    <style> @keyframes spin { 100% { transform: rotate(360deg); } } </style>
 
     <!-- BARRA INFERIOR -->
     <div class="bottom-bar">
@@ -386,32 +397,29 @@
             { id: 'higiene', nome: 'Higiene', icon: '🧼' } 
         ];
 
-        const PRODUTOS = [
-            { id: 1,  cat: 'alimentos', name: "Arroz Tio Alvino 5kg", price: 15.90, img: "../descontos/img/alimento/arroztioalvino.jpg" },
-            { id: 2,  cat: 'alimentos', name: "Arroz Koblenz 5kg", price: 17.90, img: "../descontos/img/alimento/Arroz Koblenz 5kg.webp" },
-            { id: 3,  cat: 'alimentos', name: "Açúcar Doce Dia 2kg", price: 6.90, img: "../descontos/img/alimento/açucar doce dia 2 kg.webp" },
-            { id: 4,  cat: 'alimentos', name: "Óleo de Soja Liza", price: 8.90, img: "../descontos/img/alimento/oleo de soja liza.webp" },
-            { id: 5,  cat: 'alimentos', name: "Feijão da Casa 1kg", price: 6.90, img: "../descontos/img/alimento/feijão da casa.webp" },
-            { id: 6,  cat: 'alimentos', name: "Café Caboclo 500g", price: 29.50, img: "../descontos/img/alimento/cafe caboclo 500g.webp" },
-            { id: 7,  cat: 'alimentos', name: "Espaguete Q'Delícia", price: 4.50, img: "../descontos/img/alimento/espaguete qdelicia.webp", vars: ["Espaguete", "Parafuso", "Padre Nosso"] },
-            { id: 50, cat: 'limpeza', name: "Sabão em Barra Ypê", price: 14.50, img: "../descontos/img/limpeza/sabão barra ype 900g.webp" },
-            { id: 53, cat: 'limpeza', name: "Amaciante Ypê 2L", price: 10.90, img: "../descontos/img/limpeza/amaciante ype 2L.webp", vars: ["Azul", "Rosa", "Amarelo"] },
-            { id: 55, cat: 'limpeza', name: "Sabão em Pó OMO", price: 13.90, img: "../descontos/img/limpeza/sabão em pó omo 800g.webp" },
-            { id: 59, cat: 'limpeza', name: "Esponja Assolan", price: 2.50, img: "../descontos/img/limpeza/lã de aço assolan.webp" },
-            { id: 80, cat: 'higiene', name: "Creme Dental Sorriso", price: 3.50, img: "../descontos/img/limpeza/Creme Dental Sorriso 70g.webp" },
-            { id: 81, cat: 'higiene', name: "Sabonete Palmolive", price: 2.50, img: "../descontos/img/limpeza/sabonete palmolive 85g.webp", vars: ["Erva Doce", "Aloe Vera"] }
-        ];
+        // --- SISTEMAS: DADOS AGORA VÊM DO JSON EXTERNO ---
+        let PRODUTOS = [];
 
         let cart = {};
         const STORE_KEY = 'supercesta_v2';
         
-        function init() {
+        async function init() {
             try {
+                // Fetch dos dados (Performance: JSON deve estar na mesma pasta)
+                const response = await fetch('./produtos.json');
+                if(!response.ok) throw new Error("Erro ao carregar produtos");
+                PRODUTOS = await response.json();
+
+                // Recupera carrinho
                 const saved = localStorage.getItem(STORE_KEY);
                 if(saved) cart = JSON.parse(saved);
-            } catch(e) { console.error(e); }
-            renderApp();
-            updateUI();
+
+                renderApp();
+                updateUI();
+            } catch(e) { 
+                console.error(e); 
+                document.getElementById('loading-state').innerHTML = `<span style="color:var(--danger)">Erro ao carregar sistema. <br> Verifique se 'produtos.json' está na pasta.</span>`;
+            }
         }
 
         function renderApp() {
@@ -447,14 +455,13 @@
 
             let controls = '';
             if(p.vars && p.vars.length > 0) {
-                // Alterado "OPÇÕES" para "ESCOLHER"
-                controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars(${p.id})" aria-label="Escolher ${p.name}">ESCOLHER</button>`;
+                controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars('${p.id}')" aria-label="Escolher ${p.name}">ESCOLHER</button>`;
             } else {
                 controls = `
                     <div class="controls">
-                        <button class="btn-qty" type="button" onclick="add(${p.id}, 'def', -1)" aria-label="Menos">-</button>
+                        <button class="btn-qty" type="button" onclick="add('${p.id}', 'def', -1)" aria-label="Menos">-</button>
                         <span class="qty-val" id="qty-${p.id}-def">0</span>
-                        <button class="btn-qty" type="button" onclick="add(${p.id}, 'def', 1)" aria-label="Mais">+</button>
+                        <button class="btn-qty" type="button" onclick="add('${p.id}', 'def', 1)" aria-label="Mais">+</button>
                     </div>
                 `;
             }
@@ -560,9 +567,9 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
                         <span>${v}</span>
                         <div class="controls" style="width:110px; margin-top:0;">
-                            <button class="btn-qty" type="button" onclick="addVarWrapper(${pid}, '${v}', -1)">-</button>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${v}', -1)">-</button>
                             <span class="qty-val" id="var-qty-${pid}-${v.replace(/\s/g,'')}">${q}</span>
-                            <button class="btn-qty" type="button" onclick="addVarWrapper(${pid}, '${v}', 1)">+</button>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper('${pid}', '${v}', 1)">+</button>
                         </div>
                     </div>
                 `;
@@ -594,7 +601,7 @@
             
             keys.forEach(k => {
                 const [pid, v] = k.split('::');
-                const p = PRODUTOS.find(x => x.id == pid);
+                const p = PRODUTOS.find(x => x.id === pid);
                 const q = cart[k];
                 const totalItem = p.price * q;
                 subtotal += totalItem;
@@ -658,7 +665,7 @@
             let sub = 0;
             Object.keys(cart).forEach(k => {
                 const [pid, v] = k.split('::');
-                const p = PRODUTOS.find(x => x.id == pid);
+                const p = PRODUTOS.find(x => x.id === pid);
                 const q = cart[k];
                 sub += p.price * q;
                 msg += `[${q}] ${p.name} ${v!=='def' ? '('+v+')' : ''}\n`;
