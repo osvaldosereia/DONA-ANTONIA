@@ -83,13 +83,18 @@
         /* =========================================
            CSS CLASSLESS OTIMIZADO
            ========================================= */
+        
+        /* RESET GLOBAL CRÍTICO PARA MOBILE */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
         :root {
             --bg: #f9fafb;
             --surface: #ffffff;
             --text-main: #1f2937;
             --text-muted: #374151;
-            /* CORRIGIDO: Verde mais escuro para passar em testes de contraste WCAG AA */
-            --accent: #15803d; 
+            --accent: #15803d; /* Verde Escuro (Acessível) */
             --accent-hover: #166534;
             --brand-blue: #2563EB;
             --border: #e5e7eb;
@@ -97,16 +102,28 @@
             --radius: 12px;
         }
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: system-ui, -apple-system, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
-            margin: 0;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
         }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
 
-        /* --- HEADER OTIMIZADO MOBILE --- */
+        /* --- HEADER --- */
         header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
@@ -115,7 +132,6 @@
             width: 100%;
             z-index: 1000;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            box-sizing: border-box;
             display: flex;
             align-items: center;
         }
@@ -129,7 +145,6 @@
             align-items: center;
         }
         
-        /* Área da Logo */
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo-img { 
             width: 55px; height: 55px;
@@ -140,13 +155,11 @@
         .brand-name { font-size: 1.1rem; font-weight: 800; line-height: 1; color: var(--text-main); }
         .brand-subtitle { font-size: 0.75rem; color: var(--brand-blue); font-weight: 600; }
 
-        /* Área de Ações (Direita) */
         .header-actions {
             display: flex;
             align-items: center;
         }
 
-        /* Botões Compactos Header */
         .btn-header {
             background-color: var(--surface);
             color: var(--text-main);
@@ -166,8 +179,17 @@
 
         @media (max-width: 360px) { .brand-subtitle { display: none; } }
 
-        /* --- LAYOUT GRID INTELIGENTE --- */
-        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        /* --- LAYOUT GRID --- */
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            padding: 15px;
+            width: 100%;
+        }
+
+        @media (min-width: 768px) {
+            .container { padding: 20px; }
+        }
 
         .layout-grid {
             display: flex;
@@ -175,7 +197,6 @@
             gap: 30px;
         }
 
-        /* Desktop: Layout Grid com Áreas */
         @media (min-width: 1024px) {
             .layout-grid {
                 display: grid;
@@ -190,7 +211,6 @@
             #faq-section { grid-area: faq; }
         }
 
-        /* Mobile: Ordem com Flexbox */
         @media (max-width: 1023px) {
             #main-content { order: 1; }
             #sidebar-info { order: 2; margin-top: -10px; }
@@ -205,9 +225,10 @@
             padding: 24px;
             box-shadow: var(--shadow);
             margin-bottom: 24px;
+            word-wrap: break-word; 
+            overflow-wrap: break-word;
         }
 
-        /* Correção Hierarquia de Títulos */
         h1, h2, h3 { margin-top: 0; color: #111; line-height: 1.2; }
         h1 { font-size: 1.8rem; }
         h2 { font-size: 1.5rem; }
@@ -235,11 +256,11 @@
         
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
 
-        /* Lista de Produtos */
         .product-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
             gap: 20px; 
+            width: 100%;
         }
         
         .basket-img-container { 
@@ -248,7 +269,6 @@
             border-radius: 8px; 
             margin-bottom: 15px; 
             background: #f3f4f6;
-            /* Aspect Ratio para evitar CLS (Layout Shift) */
             aspect-ratio: 1 / 1; 
         }
         .basket-img { 
@@ -266,7 +286,6 @@
         .option-item.selected { border-color: var(--accent); background-color: #ecfdf5; ring: 1px solid var(--accent); }
         .option-price { font-weight: 800; color: var(--text-main); font-size: 1.1rem; }
 
-        /* Lista Limpa de Itens */
         .item-list-container {
             background-color: #f8fafc;
             border-radius: 8px;
@@ -286,13 +305,30 @@
             font-size: 0.95rem; color: #334155;
         }
         .clean-list li:last-child { border-bottom: none; }
+        
+        /* NOVO ESTILO PARA CABEÇALHO DE CATEGORIA */
+        .list-category-header {
+            background-color: #e5e7eb;
+            color: #1f2937;
+            font-weight: 800;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 6px 10px;
+            margin-top: 15px;
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            display: block !important; /* Sobrescreve flex do li padrão */
+            border-bottom: none !important;
+        }
+        /* Remove margem do primeiro item para ficar colado no topo */
+        .list-category-header:first-child { margin-top: 0; }
+
         .qty-badge {
             background: #e0f2fe; color: #0369a1; 
             font-weight: 700; font-size: 0.85rem;
             padding: 2px 8px; border-radius: 4px; min-width: 30px; text-align: center;
         }
 
-        /* FAQ */
         details {
             background: white; border: 1px solid var(--border);
             border-radius: 8px; margin-bottom: 10px; overflow: hidden;
@@ -302,7 +338,6 @@
         details[open] summary::after { content: "-"; }
         details > div { padding: 15px; border-top: 1px solid #f3f4f6; color: var(--text-muted); font-size: 0.95rem; }
 
-        /* Footer */
         footer { background: #111827; color: #9ca3af; padding: 40px 20px; text-align: center; font-size: 0.9rem; margin-top: 40px; }
         
         .footer-btn {
@@ -318,7 +353,6 @@
             min-width: 100px;
         }
         .footer-btn.primary {
-            /* CORRIGIDO: Verde escuro para contraste no botão do rodapé */
             background: #15803d; 
             border-color: #14532d;
             color: white;
@@ -360,7 +394,6 @@
         
         <!-- BLOCO 1: Sidebar (Cards Informativos) -->
         <aside id="sidebar-info">
-            <!-- Ajuste de Hierarquia H3 -> H2 -->
             <div class="card" style="border-top: 4px solid var(--brand-blue);">
                 <h2 class="sidebar-title">6 coisas que você precisa saber:</h2>
                 <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 12px;">
@@ -389,7 +422,6 @@
                         Cristo Rei, Mapim, Centro, Ipase, Jardim Glória, São Mateus, Paiaguás e região.
                     </p>
                 </div>
-                <!-- CORRIGIDO: Cor do texto escurecida para #064e3b (verde muito escuro) para contraste com fundo claro -->
                 <div style="margin-top: 15px; color: #064e3b; font-weight: bold; font-size: 0.9rem; text-align: center; background: #ecfdf5; padding: 8px; border-radius: 6px;">
                     ✅ Entrega Grátis em todos os bairros!
                 </div>
@@ -398,7 +430,6 @@
 
         <!-- BLOCO 2: Conteúdo Principal -->
         <main id="main-content">
-            <!-- Intro -->
             <div class="card" style="background: #eff6ff; border-color: #dbeafe;">
                 <h1 style="font-size: 1.4rem; color: #1e40af; border: none; margin-bottom: 10px;">Cestas Básicas em Cuiabá e VG</h1>
                 <p style="font-size: 0.95rem; color: #1e3a8a; margin: 0;">
@@ -470,13 +501,194 @@
     </dialog>
 
     <script>
+        // Dados Atualizados das Cestas com Separadores (Header)
         const DB = {
             baskets: {
-                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 390,00' }], items: [{q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'}, {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 325,00' }], items: [{q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'}, {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 220,00' }], items: [{q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 170,00' }], items: [{q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
-                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', norm: 'R$ 85,00', sel: true }], items: [{q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'}, {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}] }
+              'GRANDE': {
+                id: 'GRANDE',
+                name: 'Cesta Grande',
+                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif',
+                opts: [
+                  { n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', sel: true },
+                  { n: 'Com Arroz Koblenz', norm: 'R$ 390,00' }
+                ],
+                items: [
+                  { isHeader: true, label: 'Alimentos' },
+                  { q: 4, n: 'Arroz 5kg' },
+                  { q: 3, n: 'Açúcar 2kg' },
+                  { q: 4, n: 'Óleo 900ml' },
+                  { q: 4, n: 'Feijão Da Casa 1kg' },
+                  { q: 1, n: 'Café Caboclo 500g' },
+                  { q: 3, n: 'Espaguete Badotti 400g' },
+                  { q: 1, n: '12 Ovos' },
+                  { q: 1, n: 'Mistura Bolo Apti' },
+                  { q: 1, n: 'Trigo Vitoriosa 1kg' },
+                  { q: 1, n: 'Sal 1kg' },
+                  { q: 2, n: 'Molho Tomate Fugini' },
+                  { q: 1, n: 'Milho Lata Predilecta' },
+                  { q: 1, n: 'Tempero Tio Jonas 300g' },
+                  { q: 2, n: 'Bolacha Recheada My Bit' },
+                  { q: 2, n: 'Miojo Apti' },
+                  { q: 4, n: 'Suco em Pó Frisco' },
+                  { isHeader: true, label: 'Limpeza e Higiene' },
+                  { q: 1, n: 'Sabão Barra Ypê' },
+                  { q: 2, n: 'Creme Dental Sorriso 70g' },
+                  { q: 2, n: 'Papel Higiênico Soberano' },
+                  { q: 1, n: 'Amaciante Ypê 2L' },
+                  { q: 1, n: 'Desinfetante Remmus 2L' },
+                  { q: 1, n: 'Sabão Pó OMO 800g' },
+                  { q: 2, n: 'Detergente Ypê 500ml' },
+                  { q: 1, n: 'Qboa 1L' },
+                  { q: 4, n: 'Sabonete Palmolive' },
+                  { q: 1, n: 'Esponja Aço Assolan' },
+                  { q: 1, n: 'Esponja Louça' }
+                ]
+              },
+
+              'MEDIA': {
+                id: 'MEDIA',
+                name: 'Cesta Média',
+                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif',
+                opts: [
+                  { n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', sel: true },
+                  { n: 'Com Arroz Koblenz', norm: 'R$ 325,00' }
+                ],
+                items: [
+                  { isHeader: true, label: 'Alimentos' },
+                  { q: 3, n: 'Arroz 5kg' },
+                  { q: 2, n: 'Açúcar 2kg' },
+                  { q: 3, n: 'Óleo 900ml' },
+                  { q: 3, n: 'Feijão Da Casa 1kg' },
+                  { q: 1, n: 'Café Caboclo 500g' },
+                  { q: 2, n: 'Espaguete Badotti 500g' },
+                  { q: 1, n: '12 Ovos' },
+                  { q: 1, n: 'Mistura Bolo Apti' },
+                  { q: 1, n: 'Trigo 1kg' },
+                  { q: 1, n: 'Sal 1kg' },
+                  { q: 2, n: 'Molho Tomate Fugini' },
+                  { q: 1, n: 'Milho Lata Predilecta' },
+                  { q: 1, n: 'Tempero Tio Jonas 300g' },
+                  { q: 2, n: 'Bolacha Recheada My Bit' },
+                  { q: 2, n: 'Miojo Apti' },
+                  { q: 3, n: 'Suco em Pó Frisco' },
+                  { isHeader: true, label: 'Limpeza e Higiene' },
+                  { q: 1, n: 'Sabão Barra Ypê' },
+                  { q: 2, n: 'Creme Dental Sorriso 70g' },
+                  { q: 2, n: 'Papel Higiênico Soberano' },
+                  { q: 1, n: 'Amaciante Ypê 2L' },
+                  { q: 1, n: 'Desinfetante Remmus 2L' },
+                  { q: 1, n: 'Sabão Pó OMO 800g' },
+                  { q: 2, n: 'Detergente Ypê 500ml' },
+                  { q: 1, n: 'Qboa 1L' },
+                  { q: 3, n: 'Sabonete Palmolive' },
+                  { q: 1, n: 'Esponja Aço Assolan' },
+                  { q: 1, n: 'Esponja Louça' }
+                ]
+              },
+
+              'PEQUENA': {
+                id: 'PEQUENA',
+                name: 'Cesta Pequena',
+                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif',
+                opts: [
+                  { n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', sel: true },
+                  { n: 'Com Arroz Koblenz', norm: 'R$ 220,00' }
+                ],
+                items: [
+                  { isHeader: true, label: 'Alimentos' },
+                  { q: 2, n: 'Arroz 5kg' },
+                  { q: 1, n: 'Açúcar 2kg' },
+                  { q: 2, n: 'Óleo 900ml' },
+                  { q: 2, n: 'Feijão Da Casa 1kg' },
+                  { q: 1, n: 'Café Caboclo 250g' },
+                  { q: 1, n: 'Espaguete Badotti 500g' },
+                  { q: 1, n: '12 Ovos' },
+                  { q: 1, n: 'Mistura Bolo Apti' },
+                  { q: 1, n: 'Trigo 1kg' },
+                  { q: 1, n: 'Sal 1kg' },
+                  { q: 1, n: 'Molho Tomate Fugini' },
+                  { q: 1, n: 'Milho Lata Predilecta' },
+                  { q: 1, n: 'Tempero Tio Jonas 300g' },
+                  { q: 2, n: 'Bolacha Recheada My Bit' },
+                  { q: 2, n: 'Miojo Apti' },
+                  { q: 2, n: 'Suco em Pó Frisco' },
+                  { isHeader: true, label: 'Limpeza e Higiene' },
+                  { q: 1, n: 'Sabão Barra Ypê' },
+                  { q: 1, n: 'Creme Dental Sorriso 70g' },
+                  { q: 1, n: 'Papel Higiênico Soberano' },
+                  { q: 1, n: 'Amaciante Ypê 2L' },
+                  { q: 1, n: 'Desinfetante Remmus 2L' },
+                  { q: 1, n: 'Sabão Pó OMO 800g' },
+                  { q: 2, n: 'Detergente Ypê 500ml' },
+                  { q: 1, n: 'Qboa 1L' },
+                  { q: 2, n: 'Sabonete Palmolive' },
+                  { q: 1, n: 'Esponja Aço Assolan' },
+                  { q: 1, n: 'Esponja Louça' }
+                ]
+              },
+
+              'MINI': {
+                id: 'MINI',
+                name: 'Cesta Mini',
+                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif',
+                opts: [
+                  { n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', sel: true },
+                  { n: 'Com Arroz Koblenz', norm: 'R$ 170,00' }
+                ],
+                items: [
+                  { isHeader: true, label: 'Alimentos' },
+                  { q: 1, n: 'Arroz 5kg' },
+                  { q: 1, n: 'Açúcar 2kg' },
+                  { q: 2, n: 'Óleo 900ml' },
+                  { q: 2, n: 'Feijão Da Casa 1kg' },
+                  { q: 1, n: 'Café Caboclo 250g' },
+                  { q: 1, n: 'Espaguete Badotti 500g' },
+                  { q: 1, n: 'Sal 1kg' },
+                  { q: 1, n: 'Molho Tomate Fugini' },
+                  { q: 1, n: 'Milho Lata Predilecta' },
+                  { q: 1, n: 'Bolacha Recheada My Bit' },
+                  { q: 1, n: 'Miojo Apti' },
+                  { q: 2, n: 'Suco em Pó Frisco' },
+                  { isHeader: true, label: 'Limpeza e Higiene' },
+                  { q: 1, n: 'Sabão Barra Ypê' },
+                  { q: 1, n: 'Creme Dental Sorriso 70g' },
+                  { q: 1, n: 'Papel Higiênico Soberano' },
+                  { q: 1, n: 'Amaciante Ypê 2L' },
+                  { q: 1, n: 'Desinfetante Remmus 2L' },
+                  { q: 1, n: 'Sabão Pó OMO 800g' },
+                  { q: 1, n: 'Detergente Ypê 500ml' },
+                  { q: 1, n: 'Qboa 1L' },
+                  { q: 2, n: 'Sabonete Palmolive' },
+                  { q: 1, n: 'Esponja Aço Assolan' },
+                  { q: 1, n: 'Esponja Louça' }
+                ]
+              },
+
+              'ECONOMICA': {
+                id: 'ECONOMICA',
+                name: 'Cesta Econômica',
+                img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif',
+                opts: [
+                  { n: 'Valor Único', norm: 'R$ 85,00', sel: true }
+                ],
+                items: [
+                  { isHeader: true, label: 'Alimentos' },
+                  { q: 1, n: 'Arroz Tio Alvino 5kg' },
+                  { q: 1, n: 'Açúcar 2kg' },
+                  { q: 1, n: 'Óleo 900ml' },
+                  { q: 1, n: 'Feijão Da Casa 1kg' },
+                  { q: 1, n: 'Café Premiado 250g' },
+                  { q: 1, n: 'Espaguete Badotti 400g' },
+                  { q: 1, n: 'Trigo 1kg' },
+                  { q: 1, n: 'Farinha Mandioca 1kg' },
+                  { q: 1, n: 'Sal 1kg' },
+                  { q: 1, n: 'Molho Tomate Fugini' },
+                  { q: 1, n: 'Milho Lata Predilecta' },
+                  { q: 1, n: 'Bolacha Recheada My Bit' },
+                  { q: 1, n: 'Miojo Apti' },
+                  { q: 1, n: 'Suco em Pó Frisco' }
+                ]
+              }
             },
             keys: ['ECONOMICA', 'MINI', 'PEQUENA', 'MEDIA', 'GRANDE']
         };
@@ -492,7 +704,8 @@
 
             // Recebe index para otimizar LCP
             renderCard(basket, index) {
-                const totalItems = basket.items.reduce((acc, item) => acc + item.q, 0);
+                // Cálculo total ignora cabeçalhos
+                const totalItems = basket.items.reduce((acc, item) => item.isHeader ? acc : acc + item.q, 0);
                 
                 const optsHtml = basket.opts.map((opt, idx) => `
                     <div class="option-item ${opt.sel ? 'selected' : ''}" onclick="App.selectOption('${basket.id}', ${idx})">
@@ -501,14 +714,20 @@
                     </div>
                 `).join('');
 
-                const itemsListHtml = basket.items.map(i => `
-                    <li>
-                        <span>${i.n}</span>
-                        <span class="qty-badge">${i.q}x</span>
-                    </li>
-                `).join('');
+                const itemsListHtml = basket.items.map(i => {
+                    // Verifica se é cabeçalho ou item normal
+                    if (i.isHeader) {
+                        return `<li class="list-category-header">${i.label}</li>`;
+                    }
+                    return `
+                        <li>
+                            <span>${i.n}</span>
+                            <span class="qty-badge">${i.q}x</span>
+                        </li>
+                    `;
+                }).join('');
 
-                // Otimização LCP: A primeira cesta carrega rápido, as outras lazy
+                // Otimização LCP
                 const isLCP = index === 0;
                 const loadingAttr = isLCP ? 'fetchpriority="high"' : 'loading="lazy"';
 
@@ -519,7 +738,6 @@
                         <span style="position: absolute; top: 10px; right: 10px; background: #15803d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">Entrega Grátis</span>
                     </div>
                     
-                    <!-- CORRIGIDO: H3 alterado para H2 para corrigir ordem sequencial de títulos (H1 -> H2) -->
                     <h2 style="font-size: 1.4rem; margin-bottom: 5px;">${basket.name}</h2>
                     <p style="color: #6b7280; font-size: 0.9rem; margin-top: 0; margin-bottom: 15px;">Escolha a sua opção:</p>
                     
@@ -575,7 +793,6 @@
             selectOption(basketId, idx) {
                 DB.baskets[basketId].opts.forEach((o, i) => o.sel = (i === idx));
                 const container = document.getElementById('catalog-area');
-                // Mantém otimização de index ao re-renderizar
                 container.innerHTML = DB.keys.map((key, index) => this.renderCard(DB.baskets[key], index)).join('');
                 
                 if(document.getElementById('confirmDialog').open) {
