@@ -103,21 +103,19 @@
             margin: 0;
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
-            padding-top: 70px; /* Compensar Header Fixo */
+            /* padding-top removido pois o header não é mais fixo */
         }
 
         /* --- HEADER OTIMIZADO MOBILE --- */
         header {
             background: var(--surface);
             border-bottom: 1px solid var(--border);
-            padding: 8px 0; /* Padding reduzido */
-            position: fixed;
-            top: 0;
-            left: 0;
+            padding: 8px 0;
+            position: relative; /* Mudado de fixed para relative */
             width: 100%;
             z-index: 1000;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            height: 70px; /* Altura fixa controlada */
+            /* height: 70px; removido para fluidez */
             box-sizing: border-box;
             display: flex;
             align-items: center;
@@ -126,7 +124,7 @@
             width: 100%;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 15px;
+            padding: 5px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -135,7 +133,7 @@
         /* Área da Logo */
         .logo-area { display: flex; align-items: center; gap: 10px; }
         .logo-img { 
-            width: 55px; height: 55px; /* Logo maior */
+            width: 55px; height: 55px;
             border-radius: 50%; object-fit: cover; 
             border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
         }
@@ -146,38 +144,29 @@
         /* Área de Ações (Direita) */
         .header-actions {
             display: flex;
-            flex-direction: column; /* Empilha botões no mobile */
-            gap: 4px;
-            align-items: flex-end;
+            align-items: center;
         }
 
         /* Botões Compactos Header */
         .btn-header {
+            background-color: var(--surface);
+            color: var(--text-main);
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            padding: 4px 10px;
+            padding: 8px 16px;
             border-radius: 20px;
             display: inline-flex;
             align-items: center;
             gap: 4px;
             line-height: 1;
-            height: 24px;
-            white-space: nowrap;
+            border: 1px solid var(--border);
+            cursor: pointer;
         }
-        .btn-header.whatsapp { background-color: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
-        .btn-header.instagram { background: #fce7f3; color: #be185d; border: 1px solid #fbcfe8; }
+        .btn-header:hover { background-color: #f3f4f6; }
 
         /* Esconder subtítulo em telas muito pequenas para não quebrar layout */
         @media (max-width: 360px) { .brand-subtitle { display: none; } }
-
-        /* Layout Desktop do Header */
-        @media (min-width: 768px) {
-            .header-actions { flex-direction: row; gap: 10px; align-items: center; }
-            .btn-header { font-size: 0.9rem; padding: 6px 15px; height: auto; }
-            .brand-name { font-size: 1.3rem; }
-            .logo-img { width: 50px; height: 50px; }
-        }
 
         /* --- LAYOUT GRID INTELIGENTE --- */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -199,7 +188,7 @@
                 align-items: start;
             }
             /* Associa os elementos às áreas do Grid Desktop */
-            #sidebar-info { grid-area: sidebar; position: sticky; top: 90px; }
+            #sidebar-info { grid-area: sidebar; position: sticky; top: 20px; }
             #main-content { grid-area: main; }
             #faq-section { grid-area: faq; }
         }
@@ -302,6 +291,29 @@
         /* Footer */
         footer { background: #111827; color: #9ca3af; padding: 40px 20px; text-align: center; font-size: 0.9rem; margin-top: 40px; }
         
+        .footer-btn {
+            display: inline-block;
+            background: #1f2937;
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: 1px solid #374151;
+            font-weight: bold;
+            font-size: 0.95rem;
+            min-width: 100px;
+        }
+        .footer-btn.primary {
+            background: #059669;
+            border-color: #047857;
+            color: white;
+        }
+        .footer-btn.outline {
+            background: transparent;
+            border: 1px solid #374151;
+            color: #60a5fa;
+        }
+        
         /* Utilitários */
         .badge-number { background: #eff6ff; color: #1d4ed8; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold; margin-right: 8px; }
         
@@ -312,7 +324,7 @@
 </head>
 <body>
 
-    <!-- Header Fixo Otimizado -->
+    <!-- Header Normal (Não Fixo) -->
     <header>
         <div class="header-content">
             <div class="logo-area">
@@ -324,12 +336,9 @@
             </div>
             
             <nav class="header-actions">
-                <a href="https://api.whatsapp.com/send?phone=5565998150975" class="btn-header whatsapp">
-                    <span>📞 Contato</span>
-                </a>
-                <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="btn-header instagram">
-                    <span>📷 Instagram</span>
-                </a>
+                <button onclick="document.getElementById('footer-contacts').scrollIntoView({behavior: 'smooth'})" class="btn-header">
+                    Contato
+                </button>
             </nav>
         </div>
     </header>
@@ -432,12 +441,13 @@
         <p style="color: white; font-weight: bold; font-size: 1.1rem; margin-bottom: 10px;">Super Cestas Básicas Dona Antônia</p>
         <p>R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>Cuiabá - MT, 78090-660</p>
         
-        <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <a href="tel:65998150975" style="color: white; text-decoration: none; border: 1px solid #374151; padding: 8px 16px; border-radius: 20px;">(65) 99815-0975</a>
+        <div style="margin-top: 25px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <a href="https://api.whatsapp.com/send?phone=5565998150975" target="_blank" class="footer-btn primary">WhatsApp</a>
+            <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="footer-btn">Instagram</a>
         </div>
         
         <br>
-        <a href="https://maps.google.com/maps?q=9W4X%2BGX%20Jardim%20Nossa%20Sra.%20Aparecida%2C%20Cuiabá%20-%20MT" target="_blank" style="color: #60a5fa;">Ver no Google Maps</a>
+        <a href="https://maps.google.com/maps?q=9W4X%2BGX%20Jardim%20Nossa%20Sra.%20Aparecida%2C%20Cuiabá%20-%20MT" target="_blank" class="footer-btn outline">Abrir no Mapa</a>
     </footer>
 
     <!-- Modal de Pedido -->
