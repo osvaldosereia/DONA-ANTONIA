@@ -104,11 +104,14 @@
         /* TEXTOS MAIORES */
         .info { flex-grow: 1; margin-bottom: 12px; }
         .prod-name { font-size: 15px; font-weight: 600; line-height: 1.3; color: var(--text); margin-bottom: 4px; }
-        .prod-price { font-size: 18px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; }
-        .prod-price span { font-size: 12px; font-weight: 500; color: var(--text-light); }
+        .prod-price { font-size: 18px; font-weight: 800; color: var(--primary); letter-spacing: -0.5px; margin-bottom: 2px; }
+        
+        /* NOVOS TEXTOS DE MARKETING */
+        .installment { font-size: 11px; color: var(--text-light); font-weight: 500; }
+        .free-delivery { font-size: 10px; color: var(--success); font-weight: 700; margin-top: 2px; display: block; }
 
         /* CONTROLES */
-        .controls { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-radius: 8px; padding: 4px; }
+        .controls { display: flex; align-items: center; justify-content: space-between; background: var(--bg); border-radius: 8px; padding: 4px; margin-top: 8px; }
         .btn-qty {
             width: 36px; height: 36px; border: none; border-radius: 6px;
             background: white; color: var(--text); font-size: 20px; font-weight: 700;
@@ -117,7 +120,7 @@
         .qty-val { font-size: 16px; font-weight: 700; width: 30px; text-align: center; }
 
         /* VARIAÇÕES BTN */
-        .btn-var { width: 100%; padding: 10px; background: white; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; border-radius: 8px; cursor: pointer; }
+        .btn-var { width: 100%; padding: 10px; background: white; border: 1px solid var(--primary); color: var(--primary); font-weight: 700; border-radius: 8px; cursor: pointer; margin-top: 8px; }
         .btn-var.active { background: var(--primary); color: white; }
 
         /* BARRA INFERIOR */
@@ -142,7 +145,7 @@
         /* MODAIS */
         dialog { border: none; border-radius: 16px 16px 0 0; width: 100%; max-width: 600px; margin: auto auto 0 auto; padding: 0; box-shadow: 0 -10px 40px rgba(0,0,0,0.2); }
         dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
-        .modal-head { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; }
+        .modal-head { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: white; z-index: 10; }
         .modal-body { padding: 16px; max-height: 70vh; overflow-y: auto; }
         .modal-foot { padding: 16px; border-top: 1px solid var(--border); background: #F9FAFB; }
         
@@ -212,8 +215,10 @@
             <button onclick="closeModal('modal-summary')" style="background:none;border:none;font-size:24px;">&times;</button>
         </div>
         <div class="modal-body">
-            <div id="summary-list" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px;"></div>
-            <hr style="margin:16px 0; border-top:1px dashed #ddd;">
+            <!-- Grid de resumo ajustado para 2 colunas no mobile -->
+            <div id="summary-list" style="display:grid; grid-template-columns:1fr 1fr; gap:12px;"></div>
+            
+            <hr style="margin:20px 0; border-top:1px dashed #ddd;">
             <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
                 <span>Produtos:</span>
                 <b id="sum-prod">R$ 0,00</b>
@@ -244,15 +249,12 @@
         /* * ============================================================
          * 1. CONFIGURAÇÃO FÁCIL (EDITE AQUI OS PRODUTOS)
          * ============================================================
-         * img: Pode ser URL externa ou caminho local '../pasta/foto.jpg'
-         * cat: Tem que ser igual ao 'id' definido em CATEGORIAS
-         * vars: Se tiver opções, coloque ["Opção 1", "Opção 2"]. Se não, null.
          */
         
         const CATEGORIAS = [
             { id: 'alimentos', nome: 'Alimentos', icon: '🍲' },
             { id: 'limpeza', nome: 'Limpeza', icon: '✨' },
-            { id: 'higiene', nome: 'Higiene', icon: '🧼' } // Exemplo de nova seção
+            { id: 'higiene', nome: 'Higiene', icon: '🧼' } 
         ];
 
         const PRODUTOS = [
@@ -271,29 +273,25 @@
             { id: 55, cat: 'limpeza', name: "Sabão em Pó OMO", price: 13.90, img: "../descontos/img/limpeza/sabão em pó omo 800g.webp" },
             { id: 59, cat: 'limpeza', name: "Esponja Assolan", price: 2.50, img: "../descontos/img/limpeza/lã de aço assolan.webp" },
 
-            // HIGIENE (Exemplo para mostrar que funciona)
+            // HIGIENE 
             { id: 80, cat: 'higiene', name: "Creme Dental Sorriso", price: 3.50, img: "../descontos/img/limpeza/Creme Dental Sorriso 70g.webp" },
             { id: 81, cat: 'higiene', name: "Sabonete Palmolive", price: 2.50, img: "../descontos/img/limpeza/sabonete palmolive 85g.webp", vars: ["Erva Doce", "Aloe Vera"] }
         ];
 
         // ============================================================
-        // 2. SISTEMA (NÃO PRECISA MEXER MUITO AQUI)
+        // 2. SISTEMA 
         // ============================================================
 
         let cart = {};
         const STORE_KEY = 'supercesta_v2';
         
         function init() {
-            // 1. Restaurar Carrinho
             try {
                 const saved = localStorage.getItem(STORE_KEY);
                 if(saved) cart = JSON.parse(saved);
             } catch(e) { console.error(e); }
 
-            // 2. Gerar Navegação e Seções
             renderApp();
-            
-            // 3. Atualizar Totais
             updateUI();
         }
 
@@ -304,7 +302,6 @@
             nav.innerHTML = '';
             main.innerHTML = '';
 
-            // Gerar Botões de Navegação
             CATEGORIAS.forEach((cat, index) => {
                 nav.innerHTML += `
                     <button class="cat-chip ${index===0?'active':''}" onclick="scrollToCat('${cat.id}', this)">
@@ -312,19 +309,15 @@
                     </button>
                 `;
 
-                // Gerar Seção no Main
                 main.innerHTML += `
                     <section id="sec-${cat.id}">
                         <div class="section-title">
                             ${cat.icon} ${cat.nome}
                         </div>
-                        <div class="grid" id="grid-${cat.id}">
-                            <!-- Produtos entram aqui -->
-                        </div>
+                        <div class="grid" id="grid-${cat.id}"></div>
                     </section>
                 `;
 
-                // Preencher com Produtos
                 const grid = document.getElementById(`grid-${cat.id}`);
                 const items = PRODUTOS.filter(p => p.cat === cat.id);
                 
@@ -335,11 +328,12 @@
         }
 
         function createCardHTML(p) {
-            // Verifica se tem imagem válida ou usa placeholder
             const fallback = `https://placehold.co/200x200/eee/999?text=${encodeURIComponent(p.name)}`;
             const imgUrl = p.img || fallback;
             
-            // Controles: Simples ou Botão de Opções
+            // Cálculo do parcelamento
+            const parcela = (p.price / 4).toFixed(2).replace('.', ',');
+
             let controls = '';
             if(p.vars && p.vars.length > 0) {
                 controls = `<button class="btn-var" id="btn-opt-${p.id}" onclick="openVars(${p.id})">OPÇÕES</button>`;
@@ -361,6 +355,8 @@
                     <div class="info">
                         <div class="prod-name">${p.name}</div>
                         <div class="prod-price">R$ ${p.price.toFixed(2).replace('.',',')}</div>
+                        <div class="installment">4x R$ ${parcela} s/ juros</div>
+                        <div class="free-delivery">Entrega Grátis Cuiabá e VG</div>
                     </div>
                     ${controls}
                     <div id="tag-${p.id}" style="font-size:11px; color:var(--primary); font-weight:600; margin-top:6px; display:none;"></div>
@@ -377,19 +373,17 @@
             
             if(cart[key] <= 0) delete cart[key];
             
-            updateUI(pid); // Atualiza visual deste produto
+            updateUI(pid); 
             save();
         }
 
         function updateUI(pid) {
-            // Atualiza Card Específico (se passado)
             if(pid) {
                 const p = PRODUTOS.find(x => x.id === pid);
                 if(p) {
                     let totalItem = 0;
                     let summaryTxt = [];
 
-                    // Soma quantidades desse produto (todas as variantes)
                     for(let key in cart) {
                         if(key.startsWith(`${pid}::`)) {
                             const q = cart[key];
@@ -399,7 +393,6 @@
                         }
                     }
 
-                    // Atualiza Classes e Textos
                     const card = document.getElementById(`card-${pid}`);
                     if(totalItem > 0) card.classList.add('in-cart');
                     else card.classList.remove('in-cart');
@@ -423,11 +416,9 @@
                     }
                 }
             } else {
-                // Se não passou PID, atualiza TODOS (no load da pagina)
                 PRODUTOS.forEach(p => updateUI(p.id));
             }
 
-            // Atualiza Barra Inferior (Global)
             const uniqueItems = new Set(Object.keys(cart).map(k => k.split('::')[0])).size;
             const minItems = 10;
             const pct = Math.min((uniqueItems / minItems) * 100, 100);
@@ -475,7 +466,7 @@
                 body.innerHTML += `
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
                         <span>${v}</span>
-                        <div class="controls" style="width:110px">
+                        <div class="controls" style="width:110px; margin-top:0;">
                             <button class="btn-qty" onclick="addVarWrapper(${pid}, '${v}', -1)">-</button>
                             <span class="qty-val" id="var-qty-${pid}-${v.replace(/\s/g,'')}">${q}</span>
                             <button class="btn-qty" onclick="addVarWrapper(${pid}, '${v}', 1)">+</button>
@@ -488,7 +479,6 @@
 
         function addVarWrapper(pid, v, delta) {
             add(pid, v, delta);
-            // Atualiza numero dentro do modal em tempo real
             const key = `${pid}::${v}`;
             const el = document.getElementById(`var-qty-${pid}-${v.replace(/\s/g,'')}`);
             if(el) el.innerText = cart[key] || 0;
@@ -509,11 +499,12 @@
                 const totalItem = p.price * q;
                 subtotal += totalItem;
 
+                // Layout do card de resumo atualizado
                 list.innerHTML += `
-                    <div style="border:1px solid #eee; padding:8px; border-radius:8px; text-align:center; position:relative;">
-                        <span style="position:absolute; top:-5px; right:-5px; background:var(--primary); color:white; font-size:10px; padding:2px 6px; border-radius:10px;">${q}</span>
-                        <img src="${p.img || 'placeholder'}" style="width:100%; height:50px; object-fit:contain; mix-blend-mode:multiply">
-                        <div style="font-size:10px; line-height:1.1; margin-top:4px;">${p.name} <br> ${v!=='def' ? '('+v+')' : ''}</div>
+                    <div style="border:1px solid #eee; padding:8px; border-radius:8px; text-align:center; display:flex; flex-direction:column; justify-content:space-between;">
+                        <img src="${p.img || 'placeholder'}" style="width:100%; height:60px; object-fit:contain; mix-blend-mode:multiply; margin-bottom:4px;">
+                        <div style="font-size:12px; font-weight:600; line-height:1.2;">${p.name} <br> ${v!=='def' ? '<small style="color:var(--text-light)">('+v+')</small>' : ''}</div>
+                        <div style="font-size:12px; font-weight:700; color:var(--primary); margin-top:4px; background:#EFF6FF; padding:4px; border-radius:4px;">${q} unidades</div>
                     </div>
                 `;
             });
@@ -528,13 +519,11 @@
         }
 
         function sendWhatsapp() {
-            // Salvar no historico
             const total = document.getElementById('sum-total').innerText;
             const hist = JSON.parse(localStorage.getItem('sys_history') || '[]');
             hist.unshift({ date: new Date().toLocaleDateString(), total: total, cart: cart });
             localStorage.setItem('sys_history', JSON.stringify(hist));
 
-            // Montar Zap
             let msg = "*PEDIDO NOVA CESTA*\n------------------\n";
             let sub = 0;
             Object.keys(cart).forEach(k => {
@@ -552,7 +541,6 @@
             window.open(`https://api.whatsapp.com/send?phone=5565998150975&text=${encodeURIComponent(msg)}`);
         }
 
-        // --- UTILIDADES ---
         function scrollToCat(id, btn) {
             document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
             btn.classList.add('active');
@@ -573,7 +561,6 @@
             document.getElementById('modal-history').showModal();
         }
 
-        // Start
         init();
     </script>
 </body>
