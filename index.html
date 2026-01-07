@@ -27,6 +27,9 @@
     <meta property="og:title" content="Cestas Básicas em Cuiabá e VG | Dona Antônia" />
     <meta property="og:image" content="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" />
 
+    <!-- OTIMIZAÇÃO CRÍTICA LCP: Pré-carregar a imagem da primeira cesta (Econômica) -->
+    <link rel="preload" as="image" href="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif" fetchpriority="high">
+
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -299,10 +302,17 @@
             border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; margin-bottom: 8px;
         }
         .clean-list { list-style: none; padding: 0; margin: 0; }
+        
+        /* ATUALIZADO: Alinhamento para esquerda (flex-start) para formatar "4un - Produto" */
         .clean-list li {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 6px 0; border-bottom: 1px solid #e2e8f0;
-            font-size: 0.95rem; color: #334155;
+            display: flex; 
+            justify-content: flex-start; /* Alinha à esquerda */
+            align-items: center;
+            gap: 12px; /* Espaço entre a quantidade e o nome */
+            padding: 8px 0; 
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.95rem; 
+            color: #334155;
         }
         .clean-list li:last-child { border-bottom: none; }
         
@@ -317,16 +327,18 @@
             margin-top: 15px;
             border-radius: 4px;
             letter-spacing: 0.5px;
-            display: block !important; /* Sobrescreve flex do li padrão */
+            display: block !important; 
             border-bottom: none !important;
         }
-        /* Remove margem do primeiro item para ficar colado no topo */
         .list-category-header:first-child { margin-top: 0; }
 
         .qty-badge {
             background: #e0f2fe; color: #0369a1; 
             font-weight: 700; font-size: 0.85rem;
-            padding: 2px 8px; border-radius: 4px; min-width: 30px; text-align: center;
+            padding: 2px 8px; border-radius: 4px; 
+            min-width: 35px; /* Ligeiramente maior para caber "4un" */
+            text-align: center;
+            white-space: nowrap;
         }
 
         details {
@@ -802,17 +814,13 @@
                     }
                     return `
                         <li>
+                            <span class="qty-badge">${i.q}un</span>
                             <span>${i.n}</span>
-                            <span class="qty-badge">${i.q}x</span>
                         </li>
                     `;
                 }).join('');
 
                 content.innerHTML = `
-                    <div class="item-list-header">
-                        <span>Descrição do Produto</span>
-                        <span>Qtd.</span>
-                    </div>
                     <ul class="clean-list">
                         ${itemsListHtml}
                     </ul>
@@ -830,8 +838,6 @@
                 const container = document.getElementById('catalog-area');
                 container.innerHTML = DB.keys.map((key, index) => this.renderCard(DB.baskets[key], index)).join('');
                 
-                // Se algum modal estiver aberto, pode ser necessário lógica extra, 
-                // mas para "Ver Itens" não afeta o preço, então ok.
                 if(document.getElementById('confirmDialog').open) {
                     this.openOrderModal(basketId);
                 }
