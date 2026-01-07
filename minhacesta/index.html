@@ -176,11 +176,21 @@
             border: none; border-radius: 16px 16px 0 0; width: 100%; max-width: 600px; 
             margin: auto auto 0 auto; padding: 0; 
             box-shadow: 0 -10px 40px rgba(0,0,0,0.2); 
-            display: flex; flex-direction: column; 
+            display: none; /* CORREÇÃO: Default hidden */
+            flex-direction: column; 
             max-height: 85vh; 
         }
+        dialog[open] { display: flex; } /* Só vira flex quando OPEN */
         dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
         
+        /* ESTILO ESPECÍFICO PARA HISTÓRICO (CENTRALIZADO) */
+        #modal-history {
+            margin: auto; /* Centraliza total */
+            border-radius: 16px; /* Bordas completas */
+            width: 90%; max-width: 400px;
+            max-height: 80vh;
+        }
+
         .modal-head { 
             padding: 16px; border-bottom: 1px solid var(--border); 
             display: flex; justify-content: space-between; align-items: center; 
@@ -210,14 +220,17 @@
         
         /* Modal Simples de Imagem */
         #modal-img-preview { 
-            background: transparent; box-shadow: none; pointer-events: none; 
+            background: transparent; box-shadow: none; 
             align-items: center; justify-content: center;
         }
-        #modal-img-preview[open] { display: flex; pointer-events: auto; }
+        /* Quando aberto, display flex para centralizar */
+        #modal-img-preview[open] { display: flex; }
+        
         .preview-content { 
             background: white; padding: 10px; border-radius: 12px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.4); max-width: 90%; 
             position: relative; animation: popIn 0.2s;
+            display: flex; flex-direction: column;
         }
         @keyframes popIn { from {transform: scale(0.9); opacity:0} to {transform: scale(1); opacity:1} }
 
@@ -242,7 +255,7 @@
                     <input type="text" class="search-input" placeholder="Buscar..." aria-label="Buscar produto" oninput="filterProducts(this.value)">
                 </div>
 
-                <button class="btn-hist-compact" onclick="showHistory()" aria-label="Histórico">
+                <button class="btn-hist-compact" type="button" onclick="showHistory()" aria-label="Histórico">
                     <svg viewBox="0 0 256 256"><path d="M136,80v43.47l36.12,21.67a8,8,0,0,1-8.24,13.72l-40-24A8,8,0,0,1,120,128V80a8,8,0,0,1,16,0Zm-8-48A96,96,0,1,0,224,128,96.11,96.11,0,0,0,128,32Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,208Z"></path></svg>
                 </button>
             </div>
@@ -265,7 +278,7 @@
                 </div>
                 <div class="track"><div id="prog-bar" class="bar"></div></div>
             </div>
-            <button id="btn-checkout" class="btn-finish" onclick="checkout()" aria-label="Ver resumo e finalizar">
+            <button id="btn-checkout" class="btn-finish" type="button" onclick="checkout()" aria-label="Ver resumo e finalizar">
                 RESUMO
                 <svg viewBox="0 0 256 256"><path d="M221.66,133.66l-72,72a8,8,0,0,1-11.32-11.32L196.69,136H40a8,8,0,0,1,0-16H196.69L138.34,61.66a8,8,0,0,1,11.32-11.32l72,72A8,8,0,0,1,221.66,133.66Z"></path></svg>
             </button>
@@ -273,22 +286,22 @@
     </div>
 
     <!-- MODAL OPÇÕES -->
-    <dialog id="modal-vars">
+    <dialog id="modal-vars" onclick="handleBackdrop(event)">
         <div class="modal-head">
             <h3 style="margin:0">Escolha o Tipo</h3>
-            <button onclick="closeModal('modal-vars')" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
+            <button onclick="closeModal('modal-vars')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
         </div>
         <div class="modal-body" id="vars-body" style="padding:16px;"></div>
         <div class="modal-foot">
-            <button onclick="closeModal('modal-vars')" class="btn-var active">CONFIRMAR</button>
+            <button onclick="closeModal('modal-vars')" type="button" class="btn-var active">CONFIRMAR</button>
         </div>
     </dialog>
 
     <!-- MODAL RESUMO (PLANILHA) -->
-    <dialog id="modal-summary">
+    <dialog id="modal-summary" onclick="handleBackdrop(event)">
         <div class="modal-head">
             <h3 style="margin:0">Resumo da Cesta</h3>
-            <button onclick="closeModal('modal-summary')" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
+            <button onclick="closeModal('modal-summary')" type="button" aria-label="Fechar" style="background:none;border:none;font-size:24px;">&times;</button>
         </div>
         <div class="modal-body">
             <table class="summary-table">
@@ -317,7 +330,7 @@
                 </div>
                 <div id="sum-installments" style="text-align:right; font-size:12px; color:var(--text-light); margin-top:2px;"></div>
             </div>
-            <button onclick="sendWhatsapp()" style="width:100%; padding:14px; border:none; background:#25D366; color:white; font-weight:bold; border-radius:10px; display:flex; justify-content:center; gap:8px;">
+            <button onclick="sendWhatsapp()" type="button" style="width:100%; padding:14px; border:none; background:#25D366; color:white; font-weight:bold; border-radius:10px; display:flex; justify-content:center; gap:8px;">
                 <svg viewBox="0 0 256 256"><path d="M187.58,144.84l-32-16a8,8,0,0,0-8,.5l-14.69,9.8a40.55,40.55,0,0,1-16-16l9.8-14.69a8,8,0,0,0,.5-8l-16-32A8,8,0,0,0,104,64a40,40,0,0,0-40,40,88.1,88.1,0,0,0,88,88,40,40,0,0,0,40-40A8,8,0,0,0,187.58,144.84ZM152,176a72.08,72.08,0,0,1-72-72A24,24,0,0,1,99.29,80.46l11.48,23L100.8,118.2a8,8,0,0,0-.23,8.48,56.63,56.63,0,0,0,30.75,30.75,8,8,0,0,0,8.48-.23l14.7-9.93,23,11.48A24,24,0,0,1,152,176ZM128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"></path></svg>
                 ENVIAR PEDIDO
             </button>
@@ -325,15 +338,15 @@
     </dialog>
 
     <!-- PREVIEW DE IMAGEM -->
-    <dialog id="modal-img-preview" onclick="this.close()">
-        <div class="preview-content" onclick="event.stopPropagation()">
+    <dialog id="modal-img-preview" onclick="handleBackdrop(event)">
+        <div class="preview-content">
             <img id="preview-img-src" src="" style="width:100%; height:auto; border-radius:8px;">
-            <button onclick="document.getElementById('modal-img-preview').close()" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee; border-radius:8px;">Fechar</button>
+            <button onclick="closeModal('modal-img-preview')" type="button" style="width:100%; margin-top:10px; padding:10px; border:none; background:#eee; border-radius:8px; cursor:pointer;">Fechar Foto</button>
         </div>
     </dialog>
 
-    <dialog id="modal-history">
-        <div class="modal-head"><h3>Histórico</h3><button onclick="closeModal('modal-history')" aria-label="Fechar">x</button></div>
+    <dialog id="modal-history" onclick="handleBackdrop(event)">
+        <div class="modal-head"><h3>Histórico</h3><button onclick="closeModal('modal-history')" type="button" aria-label="Fechar" style="border:none; background:none; font-size: 24px;">&times;</button></div>
         <div class="modal-body" id="history-list" style="padding:16px;"></div>
     </dialog>
 
@@ -380,7 +393,7 @@
 
             CATEGORIAS.forEach((cat, index) => {
                 nav.innerHTML += `
-                    <button class="cat-chip ${index===0?'active':''}" onclick="scrollToCat('${cat.id}', this)">
+                    <button class="cat-chip ${index===0?'active':''}" type="button" onclick="scrollToCat('${cat.id}', this)">
                         ${cat.icon} ${cat.nome}
                     </button>
                 `;
@@ -405,13 +418,13 @@
 
             let controls = '';
             if(p.vars && p.vars.length > 0) {
-                controls = `<button class="btn-var" id="btn-opt-${p.id}" onclick="openVars(${p.id})" aria-label="Opções ${p.name}">OPÇÕES</button>`;
+                controls = `<button class="btn-var" type="button" id="btn-opt-${p.id}" onclick="openVars(${p.id})" aria-label="Opções ${p.name}">OPÇÕES</button>`;
             } else {
                 controls = `
                     <div class="controls">
-                        <button class="btn-qty" onclick="add(${p.id}, 'def', -1)" aria-label="Menos">-</button>
+                        <button class="btn-qty" type="button" onclick="add(${p.id}, 'def', -1)" aria-label="Menos">-</button>
                         <span class="qty-val" id="qty-${p.id}-def">0</span>
-                        <button class="btn-qty" onclick="add(${p.id}, 'def', 1)" aria-label="Mais">+</button>
+                        <button class="btn-qty" type="button" onclick="add(${p.id}, 'def', 1)" aria-label="Mais">+</button>
                     </div>
                 `;
             }
@@ -507,9 +520,9 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid #eee;">
                         <span>${v}</span>
                         <div class="controls" style="width:110px; margin-top:0;">
-                            <button class="btn-qty" onclick="addVarWrapper(${pid}, '${v}', -1)">-</button>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper(${pid}, '${v}', -1)">-</button>
                             <span class="qty-val" id="var-qty-${pid}-${v.replace(/\s/g,'')}">${q}</span>
-                            <button class="btn-qty" onclick="addVarWrapper(${pid}, '${v}', 1)">+</button>
+                            <button class="btn-qty" type="button" onclick="addVarWrapper(${pid}, '${v}', 1)">+</button>
                         </div>
                     </div>
                 `;
@@ -545,7 +558,7 @@
                         <td class="td-qty">${q}</td>
                         <td class="td-name">${displayName}</td>
                         <td class="td-icon">
-                            <button class="btn-view-img" onclick="viewImg('${imgUrl}')" aria-label="Ver foto">
+                            <button class="btn-view-img" type="button" onclick="viewImg('${imgUrl}')" aria-label="Ver foto">
                                 <svg viewBox="0 0 256 256"><path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm-4.69,160H44.69l46.14-61.51a8,8,0,0,1,11.83-1L128,160.8l50.34-67.11a8,8,0,0,1,11.83-1ZM216,180.8l-43.14-53.92L128,186.83,93.14,152,47.4,213.63A16,16,0,0,1,40,200V56H216V200a16,16,0,0,1-.57,4.09Z"></path></svg>
                             </button>
                         </td>
@@ -568,6 +581,24 @@
         function viewImg(url) {
             document.getElementById('preview-img-src').src = url;
             document.getElementById('modal-img-preview').showModal();
+        }
+
+        function closeModal(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.close();
+                // Limpa a foto se for o modal de imagem para não "piscar" na próxima
+                if(id === 'modal-img-preview') {
+                    setTimeout(() => { document.getElementById('preview-img-src').src = ''; }, 200);
+                }
+            }
+        }
+
+        function handleBackdrop(event) {
+            // Fecha se clicar no elemento dialog (que é o backdrop)
+            if (event.target === event.currentTarget) {
+                closeModal(event.currentTarget.id);
+            }
         }
 
         function sendWhatsapp() {
@@ -600,7 +631,6 @@
             const y = el.getBoundingClientRect().top + window.scrollY - 140;
             window.scrollTo({top: y, behavior: 'smooth'});
         }
-        function closeModal(id) { document.getElementById(id).close(); }
         
         function showHistory() {
             const hist = JSON.parse(localStorage.getItem('sys_history') || '[]');
