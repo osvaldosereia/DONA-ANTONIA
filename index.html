@@ -87,9 +87,10 @@
             --bg: #f9fafb;
             --surface: #ffffff;
             --text-main: #1f2937;
-            --text-muted: #374151; /* Escurecido para melhor contraste (Era #4b5563) */
-            --accent: #059669; /* Verde Vendas */
-            --accent-hover: #047857;
+            --text-muted: #374151;
+            /* CORRIGIDO: Verde mais escuro para passar em testes de contraste WCAG AA */
+            --accent: #15803d; 
+            --accent-hover: #166534;
             --brand-blue: #2563EB;
             --border: #e5e7eb;
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -317,8 +318,9 @@
             min-width: 100px;
         }
         .footer-btn.primary {
-            background: #059669;
-            border-color: #047857;
+            /* CORRIGIDO: Verde escuro para contraste no botão do rodapé */
+            background: #15803d; 
+            border-color: #14532d;
             color: white;
         }
         .footer-btn.outline {
@@ -387,7 +389,8 @@
                         Cristo Rei, Mapim, Centro, Ipase, Jardim Glória, São Mateus, Paiaguás e região.
                     </p>
                 </div>
-                <div style="margin-top: 15px; color: var(--accent); font-weight: bold; font-size: 0.9rem; text-align: center; background: #ecfdf5; padding: 8px; border-radius: 6px;">
+                <!-- CORRIGIDO: Cor do texto escurecida para #064e3b (verde muito escuro) para contraste com fundo claro -->
+                <div style="margin-top: 15px; color: #064e3b; font-weight: bold; font-size: 0.9rem; text-align: center; background: #ecfdf5; padding: 8px; border-radius: 6px;">
                     ✅ Entrega Grátis em todos os bairros!
                 </div>
             </div>
@@ -395,7 +398,7 @@
 
         <!-- BLOCO 2: Conteúdo Principal -->
         <main id="main-content">
-            <!-- Intro (Alterado H1 -> H2 para manter H1 único na página se preferir, mas deixaremos H1 aqui como título principal de conteúdo) -->
+            <!-- Intro -->
             <div class="card" style="background: #eff6ff; border-color: #dbeafe;">
                 <h1 style="font-size: 1.4rem; color: #1e40af; border: none; margin-bottom: 10px;">Cestas Básicas em Cuiabá e VG</h1>
                 <p style="font-size: 0.95rem; color: #1e3a8a; margin: 0;">
@@ -513,10 +516,11 @@
                 <article class="card">
                     <div class="basket-img-container">
                         <img src="${basket.img}" alt="${basket.name}" class="basket-img" ${loadingAttr} width="300" height="300">
-                        <span style="position: absolute; top: 10px; right: 10px; background: #059669; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">Entrega Grátis</span>
+                        <span style="position: absolute; top: 10px; right: 10px; background: #15803d; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase;">Entrega Grátis</span>
                     </div>
                     
-                    <h3 style="font-size: 1.4rem; margin-bottom: 5px;">${basket.name}</h3>
+                    <!-- CORRIGIDO: H3 alterado para H2 para corrigir ordem sequencial de títulos (H1 -> H2) -->
+                    <h2 style="font-size: 1.4rem; margin-bottom: 5px;">${basket.name}</h2>
                     <p style="color: #6b7280; font-size: 0.9rem; margin-top: 0; margin-bottom: 15px;">Escolha a sua opção:</p>
                     
                     <div class="basket-options">
