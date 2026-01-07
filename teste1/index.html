@@ -1,375 +1,329 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="scroll-smooth">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <title>Cestas Básicas em Cuiabá e VG | Dona Antônia | Entrega Grátis</title>
-    <meta name="description" content="Procurando Cesta Básica em Cuiabá ou Várzea Grande? A Dona Antônia entrega hoje! Atacado e Varejo. Pague na entrega.">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cestas Básicas Dona Antônia | Entrega Rápida</title>
+    <meta name="description" content="Cestas Básicas em Cuiabá e Várzea Grande. Entrega Grátis hoje!">
+
+    <!-- Google Tag Manager & Analytics (Mantidos do original) -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-P4WL7N93');</script>
+    
+    <!-- Meta Pixel Code (Mantido) -->
+    <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init', '1847274250009044');fbq('track', 'PageView');</script>
 
     <style>
-        /* Oculta o conteúdo até que o JS/Tailwind processe */
-        body { opacity: 0; transition: opacity 0.5s ease-in-out; visibility: hidden; }
-        body.loaded { opacity: 1; visibility: visible; }
-        
-        /* Estilos essenciais que independem do Tailwind */
-        .loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #2563EB; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Utilitários nativos para garantir performance na rolagem */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        details > summary { list-style: none; cursor: pointer; }
-        details > summary::-webkit-details-marker { display: none; }
-    </style>
+        /* =========================================
+           CSS CLASSLESS DE ALTA PERFORMANCE
+           ========================================= */
+        :root {
+            --bg: #ffffff;
+            --text: #222;
+            --accent: #059669; /* Verde marca */
+            --accent-hover: #047857;
+            --secondary: #2563EB; /* Azul marca */
+            --border: #e5e7eb;
+            --surface: #f9fafb;
+            --card-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+        }
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { blue: '#2563EB', darkBlue: '#1D4ED8', green: '#10B981', bg: '#F3F4F6' }
-                    },
-                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
-                    boxShadow: { 'card': '0 4px 6px -1px rgba(0,0,0,0.1)', 'float': '0 20px 25px -5px rgba(0,0,0,0.1)' }
-                }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #111;
+                --text: #eee;
+                --accent: #34d399;
+                --secondary: #60a5fa;
+                --border: #333;
+                --surface: #222;
             }
         }
-    </script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--text);
+            background: var(--bg);
+        }
 
-    <script>
-        // Google Tag Manager & Pixel inicializados de forma segura
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        setTimeout(() => {
-            // Insira aqui scripts pesados de terceiros se necessário
-            // Isso garante que o visual carregue primeiro
-        }, 3000);
-    </script>
+        /* Layout Principal */
+        header, footer { padding: 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+        footer { border-top: 1px solid var(--border); border-bottom: none; margin-top: 4rem; font-size: 0.9rem; opacity: 0.8; }
+        
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        /* Responsividade para Desktop */
+        @media (min-width: 900px) {
+            main { grid-template-columns: 300px 1fr; } /* Sidebar + Conteúdo */
+        }
+
+        /* Tipografia */
+        h1, h2, h3 { line-height: 1.2; margin-top: 0; }
+        h1 { font-size: 2rem; color: var(--secondary); }
+        a { color: var(--secondary); text-decoration: none; }
+        
+        /* Botões */
+        button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover { opacity: 0.9; }
+        button.secondary { background-color: var(--secondary); }
+        button.outline { background-color: transparent; border: 2px solid var(--border); color: var(--text); }
+
+        /* Imagens */
+        img { max-width: 100%; height: auto; border-radius: 8px; }
+
+        /* Componentes Específicos */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        /* Estilo para Opções de Cesta */
+        .option-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+        .option-row.selected {
+            border-color: var(--accent);
+            background-color: rgba(5, 150, 105, 0.1);
+        }
+
+        /* Detalhes (FAQ) */
+        details {
+            background: var(--surface);
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        summary { padding: 15px; cursor: pointer; font-weight: bold; }
+        details > div { padding: 15px; border-top: 1px solid var(--border); font-size: 0.95rem; }
+
+        /* Modal Simples */
+        dialog {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            max-width: 500px;
+            width: 90%;
+            padding: 20px;
+            background: var(--bg);
+            color: var(--text);
+        }
+        dialog::backdrop { background: rgba(0,0,0,0.6); }
+
+        /* Utilitários */
+        .badge { display: inline-block; background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-bottom: 10px; }
+        .price { font-size: 1.5rem; font-weight: bold; color: var(--text); }
+        .items-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; font-size: 0.8rem; text-align: center; margin-top: 15px; }
+    </style>
 </head>
+<body>
 
-<body class="bg-brand-bg text-gray-900 font-sans antialiased pb-24 lg:pb-0">
-
-    <div id="app-loader" class="loader-container">
-        <div class="spinner"></div>
-    </div>
-
-    <header class="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8 h-[70px] flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
-                    <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" 
-                         class="w-full h-full object-cover" 
-                         onerror="this.style.display='none'">
-                </div>
-                <h1 class="text-base lg:text-xl font-bold leading-tight">
-                    Dona Antônia <span class="text-brand-blue block lg:inline text-xs lg:text-base font-normal">Super Cestas</span>
-                </h1>
-            </div>
-            <nav class="hidden lg:flex gap-4">
-                <button onclick="App.ui.openModal('company')" class="px-5 py-2 rounded-full bg-gray-800 text-white font-bold text-sm hover:bg-gray-700 transition">Contatos</button>
-            </nav>
-            <button onclick="App.ui.openModal('company')" class="lg:hidden p-2 text-2xl text-gray-600"><i class="ph-bold ph-list"></i></button>
+    <header>
+        <img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" alt="Logo Dona Antônia" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;">
+        <h1>Dona Antônia</h1>
+        <p>Cestas Básicas em Cuiabá e Várzea Grande. Entrega Grátis!</p>
+        <div style="margin-top: 10px;">
+            <a href="https://api.whatsapp.com/send?phone=5565998150975" target="_blank">
+                <button style="width: auto;">WhatsApp (65) 99815-0975</button>
+            </a>
         </div>
     </header>
 
-    <div class="text-center pt-8 pb-4 px-4 bg-white border-b border-gray-100">
-        <h2 class="text-2xl lg:text-3xl font-extrabold tracking-tight">Cestas Básicas Cuiabá/VG</h2>
-        <p class="mt-2 text-gray-500 text-sm">Menor preço e <span class="text-green-600 font-bold">Entrega Grátis</span>.</p>
-    </div>
-
-    <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
-        
-        <aside class="lg:col-span-4 lg:sticky lg:top-24 order-2 lg:order-1 space-y-6">
-            <div class="bg-white rounded-2xl p-6 shadow-card border border-gray-100">
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="text-2xl text-red-500">📍</span>
-                    <h3 class="text-lg font-bold">Regiões Atendidas</h3>
-                </div>
-                <div class="text-sm text-gray-600 space-y-2">
-                    <p><strong>Cuiabá:</strong> Coxipó, CPA, Centro, Leste e Oeste.</p>
-                    <p><strong>Várzea Grande:</strong> Cristo Rei, Glória, Centro, Mapim.</p>
-                    <p class="text-green-600 font-bold flex items-center gap-1 pt-2"><i class="ph-bold ph-check-circle"></i> Entrega Grátis!</p>
-                </div>
+    <main>
+        <!-- BARRA LATERAL (Informações) -->
+        <aside>
+            <div class="card">
+                <h3>📍 Regiões Atendidas</h3>
+                <p><strong>Cuiabá:</strong> Coxipó, CPA, Centro, Porto, etc.</p>
+                <p><strong>Várzea Grande:</strong> Cristo Rei, Centro, Mapim, etc.</p>
+                <p class="badge">✅ Entrega Grátis</p>
             </div>
-            
-            <div class="hidden lg:block bg-white rounded-2xl p-6 shadow-card border border-gray-100">
-                <h3 class="text-lg font-bold mb-4">💳 Pagamento na Entrega</h3>
-                <ul class="text-sm text-gray-600 space-y-2">
-                    <li><i class="ph-fill ph-money text-green-600 mr-2"></i>Dinheiro ou Pix</li>
-                    <li><i class="ph-fill ph-credit-card text-blue-600 mr-2"></i>Cartão Crédito/Débito</li>
-                    <li><i class="ph-fill ph-fork-knife text-orange-500 mr-2"></i>Alelo / Sodexo / Pluxee</li>
+
+            <div class="card">
+                <h3>💳 Pagamento</h3>
+                <ul>
+                    <li>Dinheiro ou Pix</li>
+                    <li>Cartão (Crédito/Débito)</li>
+                    <li>Cartão Alimentação (Alelo, Sodexo, etc)</li>
                 </ul>
+                <small>Pagamento apenas na entrega.</small>
+            </div>
+
+            <div class="card">
+                <h3>🏆 Por que comprar?</h3>
+                <ol style="padding-left: 20px; margin: 0;">
+                    <li>Entrega no mesmo dia</li>
+                    <li>Produtos de qualidade</li>
+                    <li>Parcelamento em 3x s/ juros</li>
+                </ol>
             </div>
         </aside>
 
-        <section class="lg:col-span-8 order-1 lg:order-2">
-            <div id="products-list" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                </div>
-            
-            <div class="mt-12 space-y-3">
-                <h3 class="text-xl font-bold mb-4 flex items-center gap-2"><i class="ph-bold ph-question text-brand-blue"></i> Dúvidas</h3>
-                <details class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm group">
-                    <summary class="font-bold text-gray-800 flex justify-between">Como comprar? <i class="ph-bold ph-caret-down group-open:rotate-180 transition"></i></summary>
-                    <p class="mt-3 text-sm text-gray-600">Escolha sua cesta acima e clique em "Pedir". Você será redirecionado para o WhatsApp para confirmar o endereço. O pagamento é feito somente na entrega.</p>
-                </details>
-                <details class="bg-white rounded-xl border border-gray-200 p-4 shadow-sm group">
-                    <summary class="font-bold text-gray-800 flex justify-between">Aceita Vale Alimentação? <i class="ph-bold ph-caret-down group-open:rotate-180 transition"></i></summary>
-                    <p class="mt-3 text-sm text-gray-600">Aceitamos Alelo, Sodexo, Pluxee e outros. <strong>Não aceitamos Ticket Alimentação.</strong></p>
-                </details>
+        <!-- ÁREA DE PRODUTOS -->
+        <section>
+            <h2 style="border-bottom: 2px solid var(--border); padding-bottom: 10px;">Nossas Cestas</h2>
+            <div id="catalog-area" class="product-grid">
+                <!-- Os produtos serão carregados aqui pelo JavaScript -->
+                <p>Carregando catálogo...</p>
             </div>
+
+            <br><br>
+
+            <h2>Dúvidas Frequentes</h2>
+            
+            <details>
+                <summary>Entregam hoje?</summary>
+                <div>Sim! Pedidos feitos pela manhã geralmente são entregues no mesmo dia.</div>
+            </details>
+            <details>
+                <summary>Aceitam cartão alimentação?</summary>
+                <div>Aceitamos Alelo, Sodexo, Pluxee e outros. Não aceitamos Ticket Alimentação.</div>
+            </details>
+            <details>
+                <summary>Posso pagar na entrega?</summary>
+                <div>Sim, você só paga quando receber a cesta na sua casa.</div>
+            </details>
         </section>
     </main>
 
-    <div class="lg:hidden fixed bottom-4 left-4 right-4 z-30 flex gap-3">
-        <button onclick="App.ui.openModal('company')" class="flex-1 bg-gray-900 text-white py-3.5 rounded-full font-bold shadow-float flex items-center justify-center gap-2 text-sm">
-            <i class="ph-bold ph-buildings text-lg"></i> Contatos
-        </button>
-        <a href="https://api.whatsapp.com/send?phone=5565998150975" class="flex-1 bg-green-500 text-white py-3.5 rounded-full font-bold shadow-float flex items-center justify-center gap-2 text-sm">
-            <i class="ph-bold ph-whatsapp-logo text-lg"></i> WhatsApp
-        </a>
-    </div>
+    <footer>
+        <p>© 2024 Dona Antônia - Super Cestas Básicas</p>
+        <p>R. Trinta, 105 - Cuiabá - MT</p>
+    </footer>
 
-    <div id="modal-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 hidden flex items-end lg:items-center justify-center opacity-0 transition-opacity duration-300" onclick="if(event.target===this) App.ui.closeModal()">
-        <div id="modal-content" class="w-full bg-white rounded-t-3xl lg:rounded-2xl lg:max-w-2xl max-h-[90vh] overflow-y-auto transform transition-transform duration-300 translate-y-full shadow-2xl"></div>
-    </div>
-
-    <div id="confirm-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-sm rounded-2xl p-6 shadow-2xl transform scale-95 transition-transform" id="confirm-content">
-            <h3 class="text-xl font-bold text-gray-900 mb-1" id="conf-title">Confirmar</h3>
-            <p class="text-sm text-gray-500 mb-4">Selecione a variação desejada:</p>
-            <div id="conf-options" class="space-y-3 mb-6"></div>
-            <div class="flex gap-3">
-                <button onclick="App.ui.closeConfirm()" class="flex-1 py-3 rounded-xl font-bold bg-gray-100 text-gray-600">Cancelar</button>
-                <button id="conf-btn" class="flex-1 py-3 rounded-xl font-bold bg-green-500 text-white shadow-lg flex justify-center items-center gap-2"><i class="ph-bold ph-whatsapp-logo"></i> Pedir</button>
-            </div>
+    <!-- MODAL DE CONFIRMAÇÃO (Nativo do Navegador) -->
+    <dialog id="confirmDialog">
+        <h3 id="modalTitle">Confirmar Pedido</h3>
+        <p>Escolha a variação do arroz:</p>
+        <div id="modalOptions"></div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button class="outline" onclick="document.getElementById('confirmDialog').close()">Cancelar</button>
+            <button id="modalConfirmBtn">Pedir no WhatsApp</button>
         </div>
-    </div>
+    </dialog>
 
+    <!-- LÓGICA DO SITE (Javascript Limpo) -->
     <script>
-        /**
-         * SISTEMAS - CORE APPLICATION
-         * Single File, LocalStorage Persistent, Performance Oriented
-         */
+        // Dados originais preservados
         const DB = {
             baskets: {
-                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', price: 'R$ 355,00' }, { n: 'Com Arroz Koblenz', price: 'R$ 365,00' }], items: ['4 Arroz 5kg', '3 Açúcar 2kg', '4 Óleo 900ml', '4 Feijão 1kg', '1 Café 500g', '3 Espaguete', '12 Ovos', '2 Molho Tomate', 'Kit Limpeza Completo'] },
-                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', price: 'R$ 300,00' }, { n: 'Com Arroz Koblenz', price: 'R$ 305,00' }], items: ['3 Arroz 5kg', '2 Açúcar 2kg', '3 Óleo 900ml', '3 Feijão 1kg', '1 Café 500g', '12 Ovos', '2 Espaguete', '2 Molho Tomate', 'Kit Limpeza Básico'] },
-                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', price: 'R$ 200,00' }, { n: 'Com Arroz Koblenz', price: 'R$ 205,00' }], items: ['2 Arroz 5kg', '1 Açúcar 2kg', '2 Óleo 900ml', '2 Feijão 1kg', '1 Café 250g', '12 Ovos', '1 Espaguete', '1 Molho Tomate', 'Kit Limpeza Essencial'] },
-                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', price: 'R$ 155,00' }, { n: 'Com Arroz Koblenz', price: 'R$ 160,00' }], items: ['1 Arroz 5kg', '1 Açúcar 2kg', '2 Óleo 900ml', '2 Feijão 1kg', '1 Café 250g', '1 Espaguete', 'Itens Básicos de Limpeza'] },
-                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', price: 'R$ 80,00' }], items: ['1 Arroz Tio Alvino 5kg', '1 Açúcar 2kg', '1 Óleo 900ml', '1 Feijão 1kg', '1 Café 250g', '1 Espaguete', 'Sem itens de limpeza'] }
+                'GRANDE': { id: 'GRANDE', name: 'Cesta Grande', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 380,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 390,00' }], items: [{q:4, n:'Arroz 5kg'}, {q:3, n:'Açúcar 2kg'}, {q:4, n:'Óleo 900ml'}, {q:4, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:3, n:'Espaguete 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:4, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:4, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MEDIA': { id: 'MEDIA', name: 'Cesta Média', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 320,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 325,00' }], items: [{q:3, n:'Arroz 5kg'}, {q:2, n:'Açúcar 2kg'}, {q:3, n:'Óleo 900ml'}, {q:3, n:'Feijão 1kg'}, {q:1, n:'Café 500g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:2, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:2, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:3, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:2, n:'Creme Dental'}, {q:2, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:3, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'PEQUENA': { id: 'PEQUENA', name: 'Cesta Pequena', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 215,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 220,00' }], items: [{q:2, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'12 Ovos'}, {q:1, n:'Mistura Bolo'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Tempero'}, {q:2, n:'Bolacha Recheada'}, {q:2, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:2, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'MINI': { id: 'MINI', name: 'Cesta Mini', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif', opts: [{ n: 'Com Arroz Tio Alvino', norm: 'R$ 165,00', sel: true }, { n: 'Com Arroz Koblenz', norm: 'R$ 170,00' }], items: [{q:1, n:'Arroz 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:2, n:'Óleo 900ml'}, {q:2, n:'Feijão 1kg'}, {q:1, n:'Café 250g'}, {q:1, n:'Espaguete 500g'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:2, n:'Suco Pó'}, {q:1, n:'Sabão Barra'}, {q:1, n:'Creme Dental'}, {q:1, n:'Papel Higiênico'}, {q:1, n:'Amaciante 2L'}, {q:1, n:'Desinfetante 2L'}, {q:1, n:'Sabão Pó OMO'}, {q:1, n:'Detergente'}, {q:1, n:'Qboa 1L'}, {q:2, n:'Sabonete'}, {q:1, n:'Esponja Aço'}, {q:1, n:'Esponja Louça'}] },
+                'ECONOMICA': { id: 'ECONOMICA', name: 'Cesta Econômica', img: 'https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif', opts: [{ n: 'Valor Único', norm: 'R$ 85,00', sel: true }], items: [{q:1, n:'Arroz Tio Alvino 5kg'}, {q:1, n:'Açúcar 2kg'}, {q:1, n:'Óleo 900ml'}, {q:1, n:'Feijão 1kg'}, {q:1, n:'Café Premiado 250g'}, {q:1, n:'Espaguete 400g'}, {q:1, n:'Trigo 1kg'}, {q:1, n:'Farinha Mandioca'}, {q:1, n:'Sal 1kg'}, {q:1, n:'Molho Tomate'}, {q:1, n:'Milho Lata'}, {q:1, n:'Bolacha Recheada'}, {q:1, n:'Miojo'}, {q:1, n:'Suco Pó'}] }
             },
             keys: ['ECONOMICA', 'MINI', 'PEQUENA', 'MEDIA', 'GRANDE']
         };
 
         const App = {
-            data: {
-                phone: "5565998150975",
-                preferences: {} // Stores user choice per basket
-            },
+            state: { phone: "5565998150975" },
             
             init() {
-                this.storage.load();
-                this.ui.render();
-                this.ui.removeLoader();
+                const container = document.getElementById('catalog-area');
+                container.innerHTML = DB.keys.map(key => this.renderCard(DB.baskets[key])).join('');
             },
 
-            storage: {
-                load() {
-                    try {
-                        const saved = localStorage.getItem('da_prefs');
-                        if (saved) App.data.preferences = JSON.parse(saved);
-                    } catch (e) { console.warn('Storage error', e); }
-                },
-                save() {
-                    try {
-                        localStorage.setItem('da_prefs', JSON.stringify(App.data.preferences));
-                    } catch (e) { console.warn('Storage unavailable'); }
-                },
-                setPref(basketId, optIndex) {
-                    App.data.preferences[basketId] = optIndex;
-                    this.save();
-                }
+            renderCard(basket) {
+                // Seleciona o preço da primeira opção ou da selecionada
+                const currentOpt = basket.opts.find(o => o.sel) || basket.opts[0];
+                
+                // Gera a lista de itens (limitada visualmente para não ficar gigante)
+                const itemsHtml = basket.items.map(i => 
+                    `<span><strong>${i.q}x</strong> ${i.n}</span>`
+                ).join('');
+
+                return `
+                <article class="card">
+                    <img src="${basket.img}" alt="${basket.name}" loading="lazy">
+                    <h3>${basket.name}</h3>
+                    <span class="badge">Entrega Grátis</span>
+                    
+                    <div class="price">${currentOpt.norm}</div>
+                    <small style="color: gray; display: block; margin-bottom: 10px;">${currentOpt.n}</small>
+                    
+                    <details>
+                        <summary>Ver ${basket.items.length} Itens</summary>
+                        <div class="items-grid">${itemsHtml}</div>
+                    </details>
+
+                    <button onclick="App.openOrderModal('${basket.id}')">PEDIR AGORA</button>
+                </article>
+                `;
             },
 
-            actions: {
-                startOrder(basketId) {
-                    const b = DB.baskets[basketId];
-                    // Se só tem 1 opção, vai direto
-                    if (b.opts.length === 1) return this.sendWhatsApp(b, b.opts[0]);
-                    
-                    // Se tem mais opções, abre modal de confirmação
-                    App.ui.openConfirm(b);
-                },
-                sendWhatsApp(b, opt) {
-                    const msg = `Olá, gostaria de encomendar a *${b.name}* (${opt.n}) por *${opt.price}*.`;
-                    const url = `https://api.whatsapp.com/send?phone=${App.data.phone}&text=${encodeURIComponent(msg)}`;
-                    window.open(url, '_blank');
-                    App.ui.closeConfirm();
-                }
+            openOrderModal(basketId) {
+                const basket = DB.baskets[basketId];
+                const dialog = document.getElementById('confirmDialog');
+                const title = document.getElementById('modalTitle');
+                const optsContainer = document.getElementById('modalOptions');
+                const confirmBtn = document.getElementById('modalConfirmBtn');
+
+                title.innerText = basket.name;
+                
+                // Gera HTML das opções de preço
+                optsContainer.innerHTML = basket.opts.map((opt, idx) => `
+                    <div class="option-row ${opt.sel ? 'selected' : ''}" onclick="App.selectOption('${basketId}', ${idx})">
+                        <span>${opt.n}</span>
+                        <strong>${opt.norm}</strong>
+                    </div>
+                `).join('');
+
+                // Ação do botão confirmar
+                confirmBtn.onclick = () => {
+                    const selectedOpt = basket.opts.find(o => o.sel);
+                    const msg = `Olá, gostaria de encomendar a ${basket.name} (${selectedOpt.n}) por ${selectedOpt.norm}.`;
+                    window.open(`https://api.whatsapp.com/send?phone=${this.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
+                    dialog.close();
+                };
+
+                dialog.showModal();
             },
 
-            ui: {
-                removeLoader() {
-                    // Timeout de segurança caso o CSS falhe, libera a tela em 3s max
-                    const forceShow = setTimeout(() => document.body.classList.add('loaded'), 3000);
-                    
-                    window.addEventListener('load', () => {
-                        clearTimeout(forceShow);
-                        document.getElementById('app-loader').style.opacity = '0';
-                        setTimeout(() => {
-                            document.getElementById('app-loader').style.display = 'none';
-                            document.body.classList.add('loaded');
-                        }, 500);
-                    });
-                },
-
-                render() {
-                    const container = document.getElementById('products-list');
-                    container.innerHTML = DB.keys.map(k => {
-                        const b = DB.baskets[k];
-                        const savedIdx = App.data.preferences[k] || 0;
-                        const currentOpt = b.opts[savedIdx] || b.opts[0];
-                        
-                        return `
-                        <article class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden flex flex-col h-full hover:shadow-float transition-shadow duration-300">
-                            <div class="relative bg-gray-50">
-                                <img src="${b.img}" alt="${b.name}" loading="lazy" class="w-full h-48 lg:h-56 object-contain mix-blend-multiply p-4">
-                                <div class="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded shadow">FRETE GRÁTIS</div>
-                            </div>
-                            <div class="p-5 flex flex-col flex-1">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="text-xl font-bold text-gray-900">${b.name}</h3>
-                                    <div class="text-right">
-                                        <p class="text-xs text-gray-400">A partir de</p>
-                                        <p class="text-xl font-extrabold text-green-600">${currentOpt.price}</p>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-500 mb-4 h-10 overflow-hidden">${currentOpt.n}</p>
-                                
-                                <div class="flex-1">
-                                    <ul class="text-sm text-gray-600 space-y-1 mb-4">
-                                        ${b.items.slice(0, 4).map(i => `<li class="flex items-center gap-2"><i class="ph-bold ph-check text-green-500 text-xs"></i> ${i}</li>`).join('')}
-                                        ${b.items.length > 4 ? `<li class="text-xs text-gray-400 font-bold">+ ${b.items.length - 4} outros itens...</li>` : ''}
-                                    </ul>
-                                </div>
-
-                                <button onclick="App.actions.startOrder('${b.id}')" class="w-full bg-brand-blue hover:bg-brand-darkBlue text-white font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition active:scale-95">
-                                    <i class="ph-bold ph-whatsapp-logo text-lg"></i> PEDIR AGORA
-                                </button>
-                                <button onclick="App.ui.openDetails('${b.id}')" class="w-full mt-2 text-gray-400 text-xs font-bold hover:text-brand-blue py-2">VER ITENS COMPLETOS</button>
-                            </div>
-                        </article>
-                        `;
-                    }).join('');
-                },
-
-                openConfirm(b) {
-                    const modal = document.getElementById('confirm-modal');
-                    const content = document.getElementById('confirm-content');
-                    const optsContainer = document.getElementById('conf-options');
-                    const savedIdx = App.data.preferences[b.id] || 0;
-
-                    document.getElementById('conf-title').innerText = b.name;
-                    
-                    // Render Options
-                    optsContainer.innerHTML = b.opts.map((o, idx) => `
-                        <div onclick="App.ui.selectConfirmOption('${b.id}', ${idx})" 
-                             class="cursor-pointer border-2 rounded-xl p-3 flex justify-between items-center transition-all ${idx === savedIdx ? 'border-green-500 bg-green-50 ring-1 ring-green-500' : 'border-gray-200 hover:border-green-200'}">
-                            <div>
-                                <div class="font-bold text-sm text-gray-800">${o.n}</div>
-                                <div class="text-green-600 font-bold text-xs">${o.price}</div>
-                            </div>
-                            <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center ${idx === savedIdx ? 'border-green-500 bg-green-500' : 'border-gray-300'}">
-                                <div class="w-2 h-2 bg-white rounded-full ${idx === savedIdx ? '' : 'hidden'}"></div>
-                            </div>
-                        </div>
-                    `).join('');
-
-                    // Bind Button
-                    document.getElementById('conf-btn').onclick = () => {
-                        const currentIdx = App.data.preferences[b.id] || 0;
-                        App.actions.sendWhatsApp(b, b.opts[currentIdx]);
-                    };
-
-                    modal.classList.remove('hidden');
-                    // Small delay for animation
-                    setTimeout(() => {
-                        content.classList.remove('scale-95');
-                        content.classList.add('scale-100');
-                    }, 10);
-                },
-
-                selectConfirmOption(basketId, idx) {
-                    App.storage.setPref(basketId, idx);
-                    this.openConfirm(DB.baskets[basketId]); // Re-render local modal
-                    this.render(); // Update main list price
-                },
-
-                closeConfirm() {
-                    const modal = document.getElementById('confirm-modal');
-                    const content = document.getElementById('confirm-content');
-                    content.classList.remove('scale-100');
-                    content.classList.add('scale-95');
-                    setTimeout(() => modal.classList.add('hidden'), 200);
-                },
-
-                openDetails(id) {
-                    const b = DB.baskets[id];
-                    const html = `
-                        <div class="p-6">
-                            <h3 class="text-2xl font-bold mb-4 text-gray-900">${b.name} <span class="text-brand-blue text-base block font-normal">Lista de Itens</span></h3>
-                            <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 max-h-[60vh] overflow-y-auto">
-                                ${b.items.map(i => `<div class="bg-gray-50 p-2 rounded border border-gray-100 flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>${i}</div>`).join('')}
-                            </div>
-                            <button onclick="App.ui.closeModal()" class="mt-6 w-full bg-gray-100 text-gray-800 font-bold py-3 rounded-xl">Fechar</button>
-                        </div>
-                    `;
-                    this.openModal(null, html);
-                },
-
-                openModal(type, content) {
-                    const overlay = document.getElementById('modal-overlay');
-                    const cont = document.getElementById('modal-content');
-                    
-                    if(type === 'company') {
-                        cont.innerHTML = `
-                            <div class="p-8 text-center">
-                                <div class="w-20 h-20 bg-gray-100 rounded-full mx-auto mb-4 overflow-hidden"><img src="https://donaantonia.com.br/img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif" class="w-full h-full object-cover"></div>
-                                <h2 class="text-2xl font-bold">Dona Antônia</h2>
-                                <p class="text-gray-500 mb-6">Cestas Básicas</p>
-                                <a href="tel:65998150975" class="block w-full bg-gray-100 p-4 rounded-xl font-bold mb-3 text-gray-700">(65) 99815-0975</a>
-                                <button onclick="App.ui.closeModal()" class="text-red-500 font-bold mt-2">Fechar</button>
-                            </div>`;
-                    } else {
-                        cont.innerHTML = content;
-                    }
-
-                    overlay.classList.remove('hidden');
-                    setTimeout(() => {
-                        overlay.classList.remove('opacity-0');
-                        cont.classList.remove('translate-y-full');
-                    }, 10);
-                },
-
-                closeModal() {
-                    const overlay = document.getElementById('modal-overlay');
-                    const cont = document.getElementById('modal-content');
-                    overlay.classList.add('opacity-0');
-                    cont.classList.add('translate-y-full');
-                    setTimeout(() => overlay.classList.add('hidden'), 300);
-                }
+            selectOption(basketId, idx) {
+                // Atualiza o estado
+                DB.baskets[basketId].opts.forEach((o, i) => o.sel = (i === idx));
+                // Reabre o modal para atualizar a visualização (maneira rápida de re-renderizar)
+                this.openOrderModal(basketId);
             }
         };
 
-        // Initialize
+        // Iniciar
         App.init();
     </script>
 </body>
