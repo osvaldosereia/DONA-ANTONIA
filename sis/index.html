@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA V3 | Professional Dashboard</title>
     
-    <!-- Fonte Inter (Embutida para garantir visual) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 
-    <!-- Font Awesome (Ícones - Mantido CDN pois são muitos ícones, mas o layout não quebra sem eles) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -46,7 +44,6 @@
         /* --- LAYOUT --- */
         .app-wrapper { display: flex; width: 100%; height: 100%; }
         
-        /* Sidebar */
         aside {
             width: var(--sidebar-width);
             background-color: var(--slate-900);
@@ -82,7 +79,6 @@
         .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .nav-item i { width: 20px; text-align: center; }
 
-        /* Main Content */
         main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
         
         header.top-bar {
@@ -101,7 +97,6 @@
             background-color: #f8fafc;
         }
 
-        /* --- VIEWS & GRID SYSTEM --- */
         .view-section { 
             display: none; 
             height: 100%; 
@@ -114,10 +109,9 @@
             display: flex; gap: 1.5rem; height: 100%;
             align-items: flex-start;
         }
-        .panel-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
+        .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
-        /* --- CARDS & PANELS --- */
         .card {
             background: var(--white);
             border: 1px solid var(--slate-200);
@@ -139,7 +133,6 @@
 
         .card-body { padding: 1rem; overflow-y: auto; flex: 1; }
         
-        /* --- FORMS --- */
         form { display: flex; flex-direction: column; gap: 1rem; }
         
         .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
@@ -161,7 +154,6 @@
         .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
         .row-sidebar { display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; }
 
-        /* --- BUTTONS --- */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
             padding: 0.6rem 1rem;
@@ -179,12 +171,14 @@
         .btn-danger { background-color: var(--danger); color: white; }
         .btn-danger:hover { background-color: var(--danger-hover); }
         
+        .btn-warning { background-color: var(--warning); color: white; }
+        .btn-warning:hover { background-color: var(--warning-hover); }
+
         .btn-ghost { background-color: transparent; color: var(--slate-400); padding: 0.25rem 0.5rem; }
         .btn-ghost:hover { background-color: var(--slate-100); color: var(--slate-600); }
 
         .btn-block { width: 100%; }
 
-        /* --- TABLES --- */
         .table-wrapper { flex: 1; overflow: auto; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
         
@@ -207,7 +201,6 @@
         }
         tbody tr:hover { background-color: var(--slate-50); }
 
-        /* --- BADGES & UTILS --- */
         .badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .badge-blue { background-color: #eff6ff; color: var(--primary); border-color: #dbeafe; }
         .badge-purple { background-color: #f5f3ff; color: #7c3aed; border-color: #ede9fe; }
@@ -222,7 +215,6 @@
         .text-slate-400 { color: var(--slate-400); }
         .text-xs { font-size: 0.75rem; }
 
-        /* --- MODALS --- */
         dialog {
             margin: auto; padding: 0; border: none; border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -233,13 +225,11 @@
         dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Custom Scrollbar for Webkit */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
 
-        /* --- SPECIFIC COMPONENTS --- */
         .search-bar { position: relative; }
         .search-bar i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem; }
         .search-bar input { padding-left: 2rem; }
@@ -252,6 +242,11 @@
         details summary:hover { background: var(--slate-100); }
         details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid var(--slate-200); }
         details .details-content { padding: 1rem; border: 1px solid var(--slate-100); border-top: none; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; background: var(--white); }
+        
+        .bulk-area { font-family: monospace; font-size: 0.8rem; border: 1px dashed var(--slate-300); background: var(--slate-50); min-height: 100px; }
+        .item-list { max-height: 150px; overflow-y: auto; border: 1px solid var(--slate-200); border-radius: 6px; padding: 0.5rem; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem; border-bottom: 1px solid var(--slate-100); font-size: 0.8rem; }
+        .item-row:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
@@ -366,6 +361,7 @@
                                     </div>
                                     <div class="form-group"><label>Descrição</label><input type="text" id="p-nome" required></div>
                                     
+                                    <!-- CONTROLE DE ESTOQUE -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200);">
                                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                             <label>Estoque</label>
@@ -383,6 +379,21 @@
                                     <div class="row-2">
                                         <div class="form-group"><label>Custo (R$)</label><input type="number" id="p-custo" step="0.0001"></div>
                                         <div class="form-group"><label style="color: var(--primary);">Venda (R$)</label><input type="number" id="p-valor" step="0.01" style="font-weight: 700; color: var(--primary); background: #eff6ff; border-color: #bfdbfe;"></div>
+                                    </div>
+
+                                    <!-- ÁREA COMBO -->
+                                    <div style="border-top: 1px solid var(--slate-200); padding-top: 10px;">
+                                        <div class="form-group">
+                                            <label style="display: flex; align-items: center; gap: 5px;">
+                                                <input type="checkbox" id="p-is-combo" onchange="UI.toggleComboArea(this.checked)" style="width: auto;"> É Combo / Kit?
+                                            </label>
+                                        </div>
+                                        <div id="combo-area" style="display: none; background: var(--slate-50); padding: 10px; border-radius: 6px;">
+                                            <label>Adicionar Itens (CÓDIGO | QTD)</label>
+                                            <textarea id="p-combo-bulk" class="bulk-area" placeholder="P001 | 2&#10;P005 | 1"></textarea>
+                                            <button type="button" onclick="ComboApp.processBulk()" class="btn btn-ghost btn-block" style="border: 1px dashed var(--slate-300); margin-top: 5px;">Processar Lista</button>
+                                            <div id="p-combo-list" class="item-list mt-2"></div>
+                                        </div>
                                     </div>
 
                                     <details>
@@ -493,31 +504,52 @@
             <div id="view-venda" class="view-section">
                 <div class="split-view">
                     <div class="panel-left">
-                        <div class="card">
+                        <div class="card full-h">
                             <div class="card-header"><span style="color: var(--success);">Novo Pedido</span></div>
                             <div class="card-body">
-                                <form onsubmit="App.handleSave('venda', event)" id="form-venda">
+                                <form id="form-venda" onsubmit="Cart.finalize(event)">
                                     <input type="hidden" id="v-id">
                                     <div class="form-group"><label>Cliente</label><select id="v-cliente" required></select></div>
+                                    
+                                    <!-- Área de Inserção de Itens -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border: 1px solid var(--slate-200); border-radius: 6px;">
-                                        <label>Item</label>
-                                        <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Buscar..." style="margin-bottom: 0.5rem;">
+                                        <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                            <div style="flex: 1;" class="form-group">
+                                                <label>Buscar Produto</label>
+                                                <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Nome ou Código...">
+                                            </div>
+                                        </div>
                                         <div style="display: flex; gap: 0.5rem;">
-                                            <select id="v-produto" required style="flex: 1;"></select>
+                                            <select id="v-produto" style="flex: 1;"></select>
                                             <input type="number" id="v-qty" value="1" min="1" style="width: 60px; text-align: center; font-weight: 700;">
+                                            <button type="button" onclick="Cart.add()" class="btn btn-primary"><i class="fa-solid fa-plus"></i></button>
+                                        </div>
+                                        
+                                        <div style="margin-top: 10px;">
+                                            <label style="cursor: pointer; font-size: 0.65rem;" onclick="document.getElementById('bulk-venda-area').style.display = document.getElementById('bulk-venda-area').style.display === 'none' ? 'block' : 'none'">+ Inserir em Lote (Cód | Qtd)</label>
+                                            <div id="bulk-venda-area" style="display: none; margin-top: 5px;">
+                                                <textarea id="v-bulk-list" class="bulk-area" placeholder="P001 | 5&#10;P002 | 10"></textarea>
+                                                <button type="button" onclick="Cart.processBulk()" class="btn btn-ghost btn-block" style="border: 1px dashed var(--slate-300); margin-top: 5px;">Adicionar Lista</button>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <!-- Lista de Itens do Carrinho -->
+                                    <div id="v-cart-list" class="item-list" style="flex: 1; min-height: 150px;">
+                                        <div style="text-align: center; color: var(--slate-400); padding: 1rem; font-size: 0.8rem;">Carrinho vazio</div>
+                                    </div>
+
                                     <div class="row-2">
                                         <div class="form-group"><label>Pagamento</label><select id="v-pagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão</option></select></div>
                                         <div class="form-group"><label>Rota</label><select id="v-rota"><option>CX</option><option>VG</option><option>CBA</option></select></div>
                                     </div>
-                                    <div class="form-group"><label>Desconto (R$)</label><input type="number" id="v-desconto" step="0.01"></div>
+                                    <div class="form-group"><label>Desconto (R$)</label><input type="number" id="v-desconto" step="0.01" oninput="Cart.calcTotal()"></div>
                                     
                                     <div style="background: var(--slate-800); color: white; padding: 1rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
                                         <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--slate-400);">Total</span>
                                         <span id="v-total" style="font-size: 1.2rem; font-weight: 700;">R$ 0,00</span>
                                     </div>
-                                    <button class="btn btn-success btn-block">Finalizar Pedido</button>
+                                    <button type="submit" class="btn btn-success btn-block">Finalizar Pedido</button>
                                 </form>
                             </div>
                         </div>
@@ -790,6 +822,136 @@
             }
         };
 
+        // --- COMBO APP (NEW) ---
+        const ComboApp = {
+            comboItems: [],
+            processBulk: () => {
+                const text = document.getElementById('p-combo-bulk').value;
+                if(!text) return;
+                const lines = text.split('\n');
+                const db = DB.load();
+                
+                lines.forEach(line => {
+                    const [code, q] = line.split('|').map(s => s.trim());
+                    if(!code) return;
+                    const prod = db.produto.find(p => p.codigo.toUpperCase() === code.toUpperCase() || p.ean === code);
+                    if(prod) {
+                        ComboApp.comboItems.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: Number(q)||1 });
+                    }
+                });
+                ComboApp.renderList();
+                document.getElementById('p-combo-bulk').value = '';
+            },
+            renderList: () => {
+                const el = document.getElementById('p-combo-list');
+                el.innerHTML = ComboApp.comboItems.map((i, idx) => `
+                    <div class="item-row">
+                        <span><b>${i.codigo}</b> ${i.nome}</span>
+                        <span>x${i.qty} <button type="button" onclick="ComboApp.remove(${idx})" style="color:red; margin-left:5px;">&times;</button></span>
+                    </div>
+                `).join('');
+            },
+            remove: (idx) => {
+                ComboApp.comboItems.splice(idx, 1);
+                ComboApp.renderList();
+            }
+        };
+
+        // --- CART SYSTEM (NEW FOR SALES) ---
+        const Cart = {
+            items: [],
+            add: () => {
+                const prodId = document.getElementById('v-produto').value;
+                const qty = Number(document.getElementById('v-qty').value);
+                if(!prodId || qty <= 0) return;
+                const db = DB.load();
+                const prod = db.produto.find(p => p.id === prodId);
+                if(prod) {
+                    Cart.items.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty, price: prod.valor });
+                    Cart.render();
+                    Cart.calcTotal();
+                }
+            },
+            processBulk: () => {
+                const text = document.getElementById('v-bulk-list').value;
+                if(!text) return;
+                const db = DB.load();
+                text.split('\n').forEach(line => {
+                    const [code, q] = line.split('|').map(s => s.trim());
+                    if(!code) return;
+                    const prod = db.produto.find(p => p.codigo.toUpperCase() === code.toUpperCase() || p.ean === code);
+                    if(prod) Cart.items.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: Number(q)||1, price: prod.valor });
+                });
+                Cart.render();
+                Cart.calcTotal();
+                document.getElementById('v-bulk-list').value = '';
+            },
+            render: () => {
+                const el = document.getElementById('v-cart-list');
+                if(Cart.items.length === 0) { el.innerHTML = '<div style="text-align: center; color: var(--slate-400); padding: 1rem; font-size: 0.8rem;">Carrinho vazio</div>'; return; }
+                el.innerHTML = Cart.items.map((i, idx) => `
+                    <div class="item-row">
+                        <span>${i.nome}</span>
+                        <span>${i.qty} x ${i.price.toFixed(2)} <button type="button" onclick="Cart.remove(${idx})" style="color:red;">&times;</button></span>
+                    </div>
+                `).join('');
+            },
+            remove: (idx) => { Cart.items.splice(idx, 1); Cart.render(); Cart.calcTotal(); },
+            calcTotal: () => {
+                const sub = Cart.items.reduce((acc, i) => acc + (i.qty * i.price), 0);
+                const desc = Number(document.getElementById('v-desconto').value) || 0;
+                document.getElementById('v-total').innerText = `R$ ${(sub - desc).toFixed(2)}`;
+            },
+            finalize: (e) => {
+                e.preventDefault();
+                if(Cart.items.length === 0) return alert('Carrinho vazio!');
+                
+                const db = DB.load();
+                const cliId = document.getElementById('v-cliente').value;
+                const pag = document.getElementById('v-pagamento').value;
+                const rota = document.getElementById('v-rota').value;
+                const desc = Number(document.getElementById('v-desconto').value) || 0;
+                const total = Cart.items.reduce((acc, i) => acc + (i.qty * i.price), 0) - desc;
+
+                const venda = {
+                    id: Date.now().toString(),
+                    codigo: DB.nextCode('V'),
+                    cliId: cliId,
+                    pag: pag,
+                    rota: rota,
+                    desc: desc,
+                    total: total,
+                    date: Date.now(),
+                    items: Cart.items // Save all items
+                };
+
+                // Deduct Stock
+                Cart.items.forEach(i => {
+                    const prod = db.produto.find(p => p.id === i.id);
+                    if(prod) {
+                        prod.estoque -= i.qty; // Decrement physical stock by default for sales
+                        // Check if combo/kit logic needed here (if prod.items exists)
+                        if(prod.items) { // Recursive combo deduction
+                             prod.items.forEach(sub => {
+                                 const subProd = db.produto.find(sp => sp.id === sub.id);
+                                 if(subProd) subProd.estoque -= (sub.qty * i.qty);
+                             });
+                        }
+                    }
+                });
+
+                db.venda.push(venda);
+                DB.saveAll(db);
+                
+                alert('Venda Finalizada!');
+                Cart.items = [];
+                Cart.render();
+                document.getElementById('form-venda').reset();
+                document.getElementById('v-total').innerText = 'R$ 0,00';
+                Views.venda.render();
+            }
+        };
+
         // --- VIEWS ---
         const Views = {
             cliente: {
@@ -818,10 +980,11 @@
                     document.getElementById('count-produto').innerText = list.length;
                     document.getElementById('table-produto').innerHTML = list.map(p => {
                         const estStyle = p.estoque <= 0 ? 'color: var(--danger);' : 'color: var(--slate-700);';
+                        const isCombo = p.items && p.items.length > 0 ? '<span class="badge badge-blue">COMBO</span>' : '';
                         return `
                         <tr>
                             <td>
-                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome}</div>
+                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome} ${isCombo}</div>
                                 <div style="font-size: 0.7rem; color: var(--slate-400); font-family: monospace; margin-top: 2px;">${p.ean || '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>'}</div>
                             </td>
                             <td style="text-align: center; font-weight: 700; ${estStyle}">${p.estoque}</td>
@@ -864,20 +1027,46 @@
             venda: {
                 render: () => {
                     const list = DB.load().venda;
-                    document.getElementById('table-venda').innerHTML = list.map(v => `
+                    const db = DB.load();
+                    document.getElementById('table-venda').innerHTML = list.map(v => {
+                        const cli = db.cliente.find(c => c.id === v.cliId);
+                        return `
                         <tr>
                             <td style="font-weight: 700;">#${v.codigo}</td>
-                            <td>Cli ID: ${v.cliId}</td>
+                            <td>${cli ? cli.nome : 'Cliente Removido'}</td>
                             <td>
-                                <div style="font-weight: 700; color: var(--success);">R$ ${v.total.toFixed(2)}</div>
-                                <div style="font-size: 0.7rem; color: var(--slate-400);">${v.pag} - ${v.rota}</div>
+                                <div style="font-weight: 700; color: var(--success);">R$ ${Number(v.total).toFixed(2)}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400);">${v.items.length} Itens - ${v.rota}</div>
                             </td>
                             <td class="text-right"><button onclick="App.delete('venda','${v.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-times"></i></button></td>
                         </tr>
-                    `).join('');
+                    `}).join('');
                 }
             },
-            expedicao: { render: () => {} }
+            expedicao: {
+                render: () => {
+                    const db = DB.load();
+                    ['CX','VG','CBA','CPA'].forEach(r => {
+                        const pedidos = db.venda.filter(v => v.rota === r).slice(-8); // Show last 8
+                        document.getElementById(`col-${r}`).innerHTML = pedidos.map(p => {
+                            const cli = db.cliente.find(c => c.id === p.cliId);
+                            // Itens sum
+                            const itemsText = p.items.map(i => `${i.qty}x ${i.nome.substring(0,10)}..`).join('<br>');
+                            return `
+                            <div style="background: white; padding: 0.75rem; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 0.75rem;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <b style="color:var(--slate-800);">#${p.codigo}</b>
+                                    <span style="font-weight:bold; color:var(--success);">R$ ${Number(p.total).toFixed(0)}</span>
+                                </div>
+                                <div style="color:var(--slate-600); margin-bottom:4px;">${cli?.nome.substring(0,15)}...</div>
+                                <div style="border-top:1px dashed var(--slate-200); padding-top:4px; font-size:0.65rem; color:var(--slate-500); line-height:1.2;">
+                                    ${itemsText}
+                                </div>
+                            </div>`;
+                        }).join('');
+                    });
+                }
+            }
         };
 
         const App = {
@@ -896,12 +1085,20 @@
                     data.valor = Number(data.valor);
                     data.estoque = Number(data.estoque);
                     data.estoqueFiscal = Number(data.estoqueFiscal);
+                    // Add combo items
+                    if(document.getElementById('p-is-combo').checked) {
+                        data.items = ComboApp.comboItems;
+                    } else {
+                        data.items = [];
+                    }
                 }
                 
                 DB.save(type, data);
                 form.reset();
                 if(type === 'produto') {
                     document.getElementById('p-id').value = '';
+                    ComboApp.comboItems = []; // reset combo
+                    ComboApp.renderList();
                     Views.catalogo.render();
                 } else if(type === 'cliente') {
                     document.getElementById('c-id').value = '';
@@ -913,14 +1110,31 @@
                 if(!item) return;
                 for(let k in item) {
                     const el = document.getElementById(`${type.charAt(0)}-${k}`);
-                    if(el) el.value = item[k];
+                    if(el) {
+                        if(el.type === 'checkbox') el.checked = item[k];
+                        else el.value = item[k];
+                    }
                 }
                 document.getElementById(`${type.charAt(0)}-id`).value = item.id;
+                
+                if(type === 'produto') {
+                    if(item.items && item.items.length > 0) {
+                        document.getElementById('p-is-combo').checked = true;
+                        UI.toggleComboArea(true);
+                        ComboApp.comboItems = item.items;
+                        ComboApp.renderList();
+                    } else {
+                        document.getElementById('p-is-combo').checked = false;
+                        UI.toggleComboArea(false);
+                    }
+                }
             },
             delete: (type, id) => {
                 if(confirm('Confirmar exclusão?')) {
                     DB.delete(type, id);
-                    Views[type].render();
+                    if(type==='cliente') Views.cliente.render();
+                    else if(type==='produto') Views.catalogo.render();
+                    else if(type==='venda') Views.venda.render();
                 }
             }
         };
@@ -942,21 +1156,26 @@
                 }
                 if(view === 'venda') {
                     const db = DB.load();
-                    // Load Clients
                     const cliSel = document.getElementById('v-cliente');
                     cliSel.innerHTML = '<option value="">Selecione...</option>' + db.cliente.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
                     
-                    // Load Products
                     const prodSel = document.getElementById('v-produto');
                     prodSel.innerHTML = '<option value="">Selecione...</option>' + db.produto.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
                     
                     Views.venda.render();
                 }
+                if(view === 'expedicao') Views.expedicao.render();
             },
             filter: (t, v) => Views[t].filter(v),
             resetForm: (t) => {
                 document.getElementById(`form-${t}`).reset();
                 document.getElementById(`${t.charAt(0)}-id`).value = '';
+                if(t === 'produto') {
+                    ComboApp.comboItems = [];
+                    ComboApp.renderList();
+                    document.getElementById('p-is-combo').checked = false;
+                    UI.toggleComboArea(false);
+                }
             },
             toggleStockInputs: () => {
                 const type = document.querySelector('input[name="p-stock-type"]:checked').value;
@@ -968,6 +1187,9 @@
                 const prodSel = document.getElementById('v-produto');
                 const filtered = db.produto.filter(p => p.nome.toLowerCase().includes(val.toLowerCase()) || p.codigo.toLowerCase().includes(val.toLowerCase()));
                 prodSel.innerHTML = '<option value="">Selecione...</option>' + filtered.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+            },
+            toggleComboArea: (checked) => {
+                document.getElementById('combo-area').style.display = checked ? 'block' : 'none';
             }
         };
 
