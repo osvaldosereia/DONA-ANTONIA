@@ -1,266 +1,425 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA V3 | Professional Core</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>SISTEMA V3 | Professional Dashboard</title>
     
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Inter', 'sans-serif'] },
-                    colors: {
-                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8', 900: '#1e3a8a' },
-                        slate: { 850: '#1e293b' } // Custom dark sidebar
-                    }
-                }
-            }
-        }
-    </script>
+    <!-- Fonte Inter (Embutida para garantir visual) -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    </style>
+
+    <!-- Font Awesome (Ícones - Mantido CDN pois são muitos ícones, mas o layout não quebra sem eles) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* Base Setup */
-        body { background-color: #f3f4f6; color: #111827; overflow: hidden; font-size: 13px; }
-        
-        /* Layout Structure */
-        .app-wrapper { display: flex; height: 100vh; width: 100vw; }
-        .sidebar { width: 240px; background-color: #0f172a; color: #e2e8f0; display: flex; flex-direction: column; flex-shrink: 0; z-index: 50; }
-        .main-area { flex: 1; display: flex; flex-direction: column; min-width: 0; background: #f3f4f6; position: relative; }
-        .content-scroll { flex: 1; overflow-y: auto; overflow-x: hidden; padding: 20px; scroll-behavior: smooth; }
-
-        /* Sticky Headers */
-        .top-header { height: 56px; background: white; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; padding: 0 24px; justify-content: space-between; flex-shrink: 0; z-index: 40; }
-        
-        /* Components */
-        .card { background: white; border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); overflow: hidden; display: flex; flex-direction: column; }
-        .card-header { padding: 12px 16px; border-bottom: 1px solid #f3f4f6; background-color: #f9fafb; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
-        .card-body { padding: 16px; flex: 1; overflow-y: auto; }
-        
-        /* Tables */
-        .table-container { width: 100%; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; text-align: left; }
-        thead th { 
-            background-color: #f9fafb; color: #6b7280; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 16px; border-bottom: 1px solid #e5e7eb; 
-            position: sticky; top: 0; z-index: 10; 
+        /* --- CSS RESET & BASE --- */
+        :root {
+            --primary: #2563eb; --primary-hover: #1d4ed8;
+            --success: #10b981; --success-hover: #059669;
+            --danger: #ef4444; --danger-hover: #dc2626;
+            --warning: #f97316; --warning-hover: #ea580c;
+            --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b;
+            --slate-600: #475569; --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a;
+            --white: #ffffff;
+            
+            --header-height: 64px;
+            --sidebar-width: 260px;
+            --radius: 8px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
-        tbody td { padding: 10px 16px; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: middle; }
-        tbody tr:last-child td { border-bottom: none; }
-        tbody tr:hover { background-color: #f9fafb; }
 
-        /* Forms */
-        label { display: block; font-size: 11px; font-weight: 600; color: #4b5563; margin-bottom: 4px; text-transform: uppercase; }
-        input, select, textarea { width: 100%; background: #fff; border: 1px solid #d1d5db; border-radius: 6px; padding: 8px 10px; font-size: 13px; color: #111827; transition: border-color 0.15s, box-shadow 0.15s; outline: none; }
-        input:focus, select:focus, textarea:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1); }
-        input:read-only { background-color: #f3f4f6; color: #6b7280; cursor: not-allowed; }
-
-        /* Buttons */
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 8px 16px; border-radius: 6px; font-weight: 500; font-size: 12px; transition: all 0.2s; gap: 6px; cursor: pointer; border: none; }
-        .btn-primary { background-color: #2563eb; color: white; } .btn-primary:hover { background-color: #1d4ed8; }
-        .btn-success { background-color: #10b981; color: white; } .btn-success:hover { background-color: #059669; }
-        .btn-danger { background-color: #ef4444; color: white; } .btn-danger:hover { background-color: #dc2626; }
-        .btn-ghost { background-color: transparent; color: #6b7280; } .btn-ghost:hover { background-color: #f3f4f6; color: #111827; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
-        /* Navigation */
-        .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #94a3b8; border-radius: 6px; margin: 2px 8px; transition: all 0.2s; font-weight: 500; font-size: 13px; cursor: pointer; border: none; background: transparent; width: calc(100% - 16px); text-align: left; }
-        .nav-item:hover { background-color: rgba(255,255,255,0.05); color: #f8fafc; }
-        .nav-item.active { background-color: #2563eb; color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .nav-item i { width: 18px; text-align: center; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--slate-100);
+            color: var(--slate-900);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            font-size: 13px;
+        }
 
-        /* Scrollbar */
+        /* --- LAYOUT --- */
+        .app-wrapper { display: flex; width: 100%; height: 100%; }
+        
+        /* Sidebar */
+        aside {
+            width: var(--sidebar-width);
+            background-color: var(--slate-900);
+            color: var(--slate-300);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 50;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.1);
+        }
+
+        .sidebar-header {
+            height: var(--header-height);
+            display: flex; align-items: center; padding: 0 1.5rem;
+            border-bottom: 1px solid var(--slate-800);
+            background-color: #020617;
+        }
+        
+        .sidebar-menu { flex: 1; overflow-y: auto; padding: 1rem 0.75rem; display: flex; flex-direction: column; gap: 0.25rem; }
+        
+        .nav-item {
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            color: var(--slate-400);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s;
+            background: transparent; border: none; cursor: pointer; width: 100%; text-align: left;
+            font-family: inherit; font-size: 0.9rem;
+        }
+        .nav-item:hover { background-color: var(--slate-800); color: var(--white); }
+        .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
+        .nav-item i { width: 20px; text-align: center; }
+
+        /* Main Content */
+        main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+        
+        header.top-bar {
+            height: var(--header-height);
+            background-color: var(--white);
+            border-bottom: 1px solid var(--slate-200);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0; z-index: 40;
+        }
+
+        .content-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background-color: #f8fafc;
+        }
+
+        /* --- VIEWS & GRID SYSTEM --- */
+        .view-section { 
+            display: none; 
+            height: 100%; 
+            padding: 1.5rem; 
+            flex-direction: column; 
+        }
+        .view-section.active { display: flex; }
+
+        .split-view {
+            display: flex; gap: 1.5rem; height: 100%;
+            align-items: flex-start;
+        }
+        .panel-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
+        .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
+
+        /* --- CARDS & PANELS --- */
+        .card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .card.full-h { height: 100%; }
+
+        .card-header {
+            padding: 0.75rem 1rem;
+            background-color: var(--slate-50);
+            border-bottom: 1px solid var(--slate-100);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--slate-500);
+            letter-spacing: 0.05em;
+        }
+
+        .card-body { padding: 1rem; overflow-y: auto; flex: 1; }
+        
+        /* --- FORMS --- */
+        form { display: flex; flex-direction: column; gap: 1rem; }
+        
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        label { font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.02em; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--slate-300);
+            border-radius: 6px;
+            font-family: inherit; font-size: 0.85rem; color: var(--slate-700);
+            background-color: var(--white);
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        input[readonly] { background-color: var(--slate-50); color: var(--slate-500); border-color: var(--slate-200); }
+
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+        .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
+        .row-sidebar { display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.025em;
+            cursor: pointer; border: none; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: var(--success-hover); }
+        
+        .btn-danger { background-color: var(--danger); color: white; }
+        .btn-danger:hover { background-color: var(--danger-hover); }
+        
+        .btn-ghost { background-color: transparent; color: var(--slate-400); padding: 0.25rem 0.5rem; }
+        .btn-ghost:hover { background-color: var(--slate-100); color: var(--slate-600); }
+
+        .btn-block { width: 100%; }
+
+        /* --- TABLES --- */
+        .table-wrapper { flex: 1; overflow: auto; position: relative; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        
+        thead th {
+            position: sticky; top: 0; z-index: 10;
+            background-color: var(--slate-50);
+            color: var(--slate-500);
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-200);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        
+        tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-100);
+            color: var(--slate-700);
+            vertical-align: middle;
+            font-size: 0.85rem;
+        }
+        tbody tr:hover { background-color: var(--slate-50); }
+
+        /* --- BADGES & UTILS --- */
+        .badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
+        .badge-blue { background-color: #eff6ff; color: var(--primary); border-color: #dbeafe; }
+        .badge-purple { background-color: #f5f3ff; color: #7c3aed; border-color: #ede9fe; }
+        .badge-gray { background-color: var(--slate-100); color: var(--slate-500); border-color: var(--slate-200); }
+        
+        .font-mono { font-family: 'Courier New', Courier, monospace; letter-spacing: -0.02em; }
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+        .text-bold { font-weight: 700; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .text-slate-400 { color: var(--slate-400); }
+        .text-xs { font-size: 0.75rem; }
+
+        /* --- MODALS --- */
+        dialog {
+            margin: auto; padding: 0; border: none; border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            max-width: 90vw; width: 900px;
+            background: var(--white);
+            animation: fadeIn 0.2s ease-out;
+        }
+        dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Custom Scrollbar for Webkit */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
 
-        /* Utility Classes */
-        .hidden { display: none !important; }
-        .view-section { display: none; height: 100%; flex-direction: column; gap: 20px; }
-        .view-section.active { display: flex; }
-        .split-view { display: flex; gap: 20px; height: 100%; align-items: flex-start; }
-        .split-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; }
-        .split-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; }
-        
-        /* Badges */
-        .badge { display: inline-flex; align-items: center; px: 2px; py: 0.5px; border-radius: 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
-        .badge-gray { background: #f3f4f6; color: #4b5563; border: 1px solid #e5e7eb; padding: 2px 6px; }
-        .badge-blue { background: #eff6ff; color: #2563eb; border: 1px solid #dbeafe; padding: 2px 6px; }
-        .badge-purple { background: #f5f3ff; color: #7c3aed; border: 1px solid #ede9fe; padding: 2px 6px; }
-        
-        dialog::backdrop { background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(2px); }
+        /* --- SPECIFIC COMPONENTS --- */
+        .search-bar { position: relative; }
+        .search-bar i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem; }
+        .search-bar input { padding-left: 2rem; }
+
+        .dashboard-stats { display: flex; gap: 1rem; align-items: center; }
+        .stat-box { background: var(--slate-50); padding: 0.25rem 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200); font-size: 0.75rem; color: var(--slate-500); font-weight: 600; }
+        .stat-box b { color: var(--slate-800); font-size: 0.9rem; margin-left: 4px; }
+
+        details summary { cursor: pointer; list-style: none; padding: 0.5rem; background: var(--slate-50); border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: var(--slate-500); display: flex; justify-content: space-between; align-items: center; }
+        details summary:hover { background: var(--slate-100); }
+        details[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; border-bottom: 1px solid var(--slate-200); }
+        details .details-content { padding: 1rem; border: 1px solid var(--slate-100); border-top: none; border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; background: var(--white); }
     </style>
 </head>
 <body>
 
-    <div class="app-wrapper">
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="p-6 flex items-center gap-3">
-                <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center shadow-lg shadow-blue-900/50">
-                    <i class="fa-solid fa-cube text-white text-sm"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-white tracking-wide text-sm">SISTEMA V3</h1>
-                    <p class="text-[10px] text-slate-400 uppercase tracking-wider">Pro Edition</p>
+    <aside>
+        <div class="sidebar-header">
+            <i class="fa-solid fa-cube" style="color: var(--primary); font-size: 1.2rem; margin-right: 0.75rem;"></i>
+            <div>
+                <h1 style="color: white; font-weight: 700; font-size: 0.9rem; letter-spacing: 1px;">SISTEMA V3</h1>
+                <p style="color: var(--slate-500); font-size: 0.65rem; text-transform: uppercase; font-weight: 600;">Standalone Pro</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+            <button onclick="UI.switchView('cliente', this)" class="nav-item active"><i class="fa-solid fa-users"></i> Clientes</button>
+            <button onclick="UI.switchView('catalogo', this)" class="nav-item"><i class="fa-solid fa-box-open"></i> Catálogo</button>
+            <button onclick="UI.switchView('logistica', this)" class="nav-item"><i class="fa-solid fa-truck-fast"></i> Logística</button>
+            <button onclick="UI.switchView('venda', this)" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Vendas</button>
+            <button onclick="UI.switchView('expedicao', this)" class="nav-item"><i class="fa-solid fa-clipboard-check"></i> Expedição</button>
+        </nav>
+
+        <div style="padding: 1rem; border-top: 1px solid var(--slate-800);">
+            <button onclick="ExportEngine.exportAll()" class="btn btn-ghost btn-block" style="color: var(--slate-400); border: 1px solid var(--slate-700);">
+                <i class="fa-solid fa-database"></i> Backup Dados
+            </button>
+        </div>
+    </aside>
+
+    <main>
+        <header class="top-bar">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <h2 id="page-title" style="font-size: 1.1rem; font-weight: 700; color: var(--slate-800);">Visão Geral</h2>
+                <div style="height: 20px; width: 1px; background: var(--slate-300);"></div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--slate-500); font-size: 0.8rem;">
+                    <i class="fa-regular fa-clock"></i> <span id="clock" class="font-mono">00:00</span>
                 </div>
             </div>
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="text-align: right;">
+                    <p style="font-weight: 700; color: var(--slate-700); font-size: 0.8rem;">Administrador</p>
+                    <p style="font-size: 0.65rem; color: var(--slate-400); text-transform: uppercase;">Acesso Total</p>
+                </div>
+                <div style="width: 32px; height: 32px; background: #dbeafe; color: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; border: 1px solid #bfdbfe;">AD</div>
+            </div>
+        </header>
+
+        <div class="content-area">
             
-            <nav class="flex-1 mt-4">
-                <button onclick="UI.switchView('cliente', this)" class="nav-item active"><i class="fa-solid fa-users"></i> Clientes</button>
-                <button onclick="UI.switchView('catalogo', this)" class="nav-item"><i class="fa-solid fa-box-archive"></i> Catálogo</button>
-                <button onclick="UI.switchView('logistica', this)" class="nav-item"><i class="fa-solid fa-truck-ramp-box"></i> Logística</button>
-                <button onclick="UI.switchView('venda', this)" class="nav-item"><i class="fa-solid fa-cart-shopping"></i> Vendas</button>
-                <button onclick="UI.switchView('expedicao', this)" class="nav-item"><i class="fa-solid fa-clipboard-list"></i> Expedição</button>
-            </nav>
-
-            <div class="p-4 border-t border-slate-700/50">
-                <button onclick="ExportEngine.exportAll()" class="nav-item !m-0 !w-full justify-center bg-slate-800 hover:bg-slate-700">
-                    <i class="fa-solid fa-cloud-arrow-down"></i> Backup Dados
-                </button>
-            </div>
-        </aside>
-
-        <!-- MAIN AREA -->
-        <main class="main-area">
-            <header class="top-header">
-                <div class="flex items-center gap-4">
-                    <h2 id="page-title" class="text-lg font-bold text-gray-800">Visão Geral</h2>
-                    <span class="h-4 w-px bg-gray-300"></span>
-                    <span id="clock" class="text-xs font-medium text-gray-500 font-mono">00:00</span>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-xs font-bold text-gray-700">Admin User</p>
-                        <p class="text-[10px] text-gray-400 uppercase">Gerente</p>
-                    </div>
-                    <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 text-xs font-bold border border-gray-300">AD</div>
-                </div>
-            </header>
-
-            <div class="content-scroll">
-                
-                <!-- VIEW: CLIENTE -->
-                <div id="view-cliente" class="view-section active">
-                    <div class="split-view">
-                        <div class="card split-left">
+            <!-- VIEW: CLIENTE -->
+            <div id="view-cliente" class="view-section active">
+                <div class="split-view">
+                    <div class="panel-left">
+                        <div class="card">
                             <div class="card-header">
-                                <span class="text-xs font-bold text-gray-600 uppercase">Novo Cliente</span>
-                                <button onclick="UI.resetForm('cliente')" class="text-xs text-gray-400 hover:text-red-500 font-medium">Limpar</button>
+                                <span>Novo Cliente</span>
+                                <button onclick="UI.resetForm('cliente')" class="btn-ghost"><i class="fa-solid fa-eraser"></i></button>
                             </div>
                             <div class="card-body">
-                                <form onsubmit="App.handleSave('cliente', event)" id="form-cliente" class="flex flex-col gap-4">
+                                <form onsubmit="App.handleSave('cliente', event)" id="form-cliente">
                                     <input type="hidden" id="c-id">
-                                    <div class="grid grid-cols-3 gap-3">
-                                        <div><label>Código</label><input type="text" id="c-codigo" readonly></div>
-                                        <div class="col-span-2"><label>Rota</label><select id="c-rota"><option value="">Sel...</option><option value="CX">CX</option><option value="VG">VG</option><option value="CBA">CBA</option><option value="CPA">CPA</option></select></div>
+                                    <div class="row-sidebar">
+                                        <div class="form-group"><label>Código</label><input type="text" id="c-codigo" readonly></div>
+                                        <div class="form-group"><label>Rota</label><select id="c-rota"><option value="">Sel...</option><option value="CX">CX</option><option value="VG">VG</option><option value="CBA">CBA</option><option value="CPA">CPA</option></select></div>
                                     </div>
-                                    <div><label>Nome Completo</label><input type="text" id="c-nome" required></div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label>Telefone</label><input type="text" id="c-tel"></div>
-                                        <div><label>Cidade</label><select id="c-cidade"><option>Cuiabá</option><option>Várzea Grande</option></select></div>
+                                    <div class="form-group"><label>Nome</label><input type="text" id="c-nome" required></div>
+                                    <div class="row-2">
+                                        <div class="form-group"><label>Telefone</label><input type="text" id="c-tel"></div>
+                                        <div class="form-group"><label>Cidade</label><select id="c-cidade"><option>Cuiabá</option><option>Várzea Grande</option></select></div>
                                     </div>
-                                    <div><label>Endereço</label><textarea id="c-endereco" rows="3"></textarea></div>
-                                    <button class="btn btn-primary w-full mt-2">Salvar Registro</button>
+                                    <div class="form-group"><label>Endereço</label><textarea id="c-endereco" rows="3"></textarea></div>
+                                    <button class="btn btn-primary btn-block">Salvar Cliente</button>
                                 </form>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card split-right">
+                    <div class="panel-right">
+                        <div class="card full-h">
                             <div class="card-header">
-                                <div class="flex items-center gap-3">
-                                    <div class="relative">
-                                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                                        <input type="text" oninput="UI.filter('cliente', this.value)" placeholder="Buscar clientes..." class="pl-8 !w-64">
-                                    </div>
+                                <div class="search-bar">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" oninput="UI.filter('cliente', this.value)" placeholder="Buscar cliente..." style="width: 250px;">
                                 </div>
-                                <span class="text-xs font-bold text-gray-500">Total: <span id="count-cliente" class="text-gray-800">0</span></span>
+                                <div class="stat-box">Total: <b id="count-cliente">0</b></div>
                             </div>
-                            <div class="table-container flex-1">
+                            <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th>Cliente</th><th>Localização</th><th class="text-right">Ações</th></tr></thead>
+                                    <thead><tr><th>Cliente / Código</th><th>Localização</th><th class="text-right">Ações</th></tr></thead>
                                     <tbody id="table-cliente"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- VIEW: CATÁLOGO -->
-                <div id="view-catalogo" class="view-section">
-                    <div class="split-view">
-                        <!-- Form Produto -->
-                        <div class="card split-left">
+            <!-- VIEW: CATÁLOGO -->
+            <div id="view-catalogo" class="view-section">
+                <div class="split-view">
+                    <div class="panel-left">
+                        <div class="card full-h">
                             <div class="card-header">
-                                <span class="text-xs font-bold text-gray-600 uppercase">Dados do Produto</span>
-                                <button onclick="UI.resetForm('produto')" class="text-xs text-gray-400 hover:text-red-500 font-medium">Limpar</button>
+                                <span>Dados do Produto</span>
+                                <button onclick="UI.resetForm('produto')" class="btn-ghost"><i class="fa-solid fa-eraser"></i></button>
                             </div>
                             <div class="card-body">
-                                <form onsubmit="App.handleSave('produto', event)" id="form-produto" class="flex flex-col gap-3">
+                                <form onsubmit="App.handleSave('produto', event)" id="form-produto">
                                     <input type="hidden" id="p-id">
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label>Código</label><input type="text" id="p-codigo" readonly class="font-bold text-gray-600"></div>
-                                        <div><label>EAN (Unid)</label><input type="text" id="p-ean" placeholder="GTIN-13"></div>
+                                    <div class="row-2">
+                                        <div class="form-group"><label>Código</label><input type="text" id="p-codigo" readonly></div>
+                                        <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
                                     </div>
-                                    <div><label>Descrição</label><input type="text" id="p-nome" required class="font-medium"></div>
+                                    <div class="form-group"><label>Descrição</label><input type="text" id="p-nome" required></div>
                                     
-                                    <div class="bg-gray-50 p-3 rounded-md border border-gray-200">
-                                        <div class="flex justify-between items-center mb-2">
-                                            <label class="!mb-0">Estoque</label>
-                                            <div class="flex gap-2">
-                                                <label class="flex items-center gap-1 font-normal cursor-pointer"><input type="radio" name="p-stock-type" value="ambos" checked onchange="UI.toggleStockInputs()" class="!w-auto"> Ambos</label>
-                                                <label class="flex items-center gap-1 font-normal cursor-pointer"><input type="radio" name="p-stock-type" value="fisico" onchange="UI.toggleStockInputs()" class="!w-auto"> Fís</label>
+                                    <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200);">
+                                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                            <label>Estoque</label>
+                                            <div style="display: flex; gap: 0.5rem; font-size: 0.7rem;">
+                                                <label style="display: flex; align-items: center; gap: 4px; font-weight: 500; cursor: pointer;"><input type="radio" name="p-stock-type" value="ambos" checked onchange="UI.toggleStockInputs()" style="width: auto;"> Ambos</label>
+                                                <label style="display: flex; align-items: center; gap: 4px; font-weight: 500; cursor: pointer;"><input type="radio" name="p-stock-type" value="fisico" onchange="UI.toggleStockInputs()" style="width: auto;"> Fís</label>
                                             </div>
                                         </div>
-                                        <div class="grid grid-cols-2 gap-3" id="stock-inputs-container">
-                                            <div id="grp-fisico"><label class="text-gray-400 text-[10px]">Físico</label><input type="number" id="p-estoque" placeholder="0" class="text-center font-bold"></div>
-                                            <div id="grp-fiscal"><label class="text-purple-400 text-[10px]">Fiscal</label><input type="number" id="p-estoqueFiscal" placeholder="0" class="text-center font-bold text-purple-600 border-purple-200 bg-purple-50"></div>
+                                        <div class="row-2" id="stock-inputs-container">
+                                            <div class="form-group" id="grp-fisico"><label style="color: var(--slate-400); font-size: 0.6rem;">Físico</label><input type="number" id="p-estoque" placeholder="0" class="text-center text-bold"></div>
+                                            <div class="form-group" id="grp-fiscal"><label style="color: #a855f7; font-size: 0.6rem;">Fiscal</label><input type="number" id="p-estoqueFiscal" placeholder="0" class="text-center text-bold" style="color: #7e22ce; border-color: #d8b4fe; background: #f3e8ff;"></div>
                                         </div>
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label>Custo (R$)</label><input type="number" id="p-custo" step="0.0001"></div>
-                                        <div><label class="text-blue-600">Venda (R$)</label><input type="number" id="p-valor" step="0.01" class="font-bold text-blue-600 border-blue-200 bg-blue-50"></div>
+                                    <div class="row-2">
+                                        <div class="form-group"><label>Custo (R$)</label><input type="number" id="p-custo" step="0.0001"></div>
+                                        <div class="form-group"><label style="color: var(--primary);">Venda (R$)</label><input type="number" id="p-valor" step="0.01" style="font-weight: 700; color: var(--primary); background: #eff6ff; border-color: #bfdbfe;"></div>
                                     </div>
 
-                                    <details class="group bg-white border border-gray-200 rounded-md">
-                                        <summary class="list-none flex justify-between items-center cursor-pointer p-2.5 text-xs font-bold text-gray-500 hover:bg-gray-50">
-                                            FISCAL / XML <i class="fa-solid fa-chevron-down text-[10px] transition-transform group-open:rotate-180"></i>
-                                        </summary>
-                                        <div class="p-3 pt-0 flex flex-col gap-3 border-t border-gray-100 mt-2">
-                                            <div class="grid grid-cols-2 gap-3 mt-2">
-                                                <div><label>NCM</label><input type="text" id="p-ncm"></div>
-                                                <div><label>CEST</label><input type="text" id="p-cest"></div>
-                                            </div>
-                                            <div class="grid grid-cols-2 gap-3">
-                                                <div><label>CFOP</label><input type="text" id="p-cfop"></div>
-                                                <div><label>CSOSN</label><input type="text" id="p-csosn"></div>
-                                            </div>
+                                    <details>
+                                        <summary>FISCAL / XML <i class="fa-solid fa-chevron-down"></i></summary>
+                                        <div class="details-content">
+                                            <div class="form-group"><div class="row-2">
+                                                <div class="form-group"><label>NCM</label><input type="text" id="p-ncm"></div>
+                                                <div class="form-group"><label>CEST</label><input type="text" id="p-cest"></div>
+                                            </div></div>
+                                            <div class="form-group" style="margin-top: 0.75rem;"><div class="row-2">
+                                                <div class="form-group"><label>CFOP</label><input type="text" id="p-cfop"></div>
+                                                <div class="form-group"><label>CSOSN</label><input type="text" id="p-csosn"></div>
+                                            </div></div>
                                             <input type="hidden" id="p-categoria"><input type="hidden" id="p-subcategoria"><input type="hidden" id="p-nota"><input type="hidden" id="p-refId"><input type="hidden" id="p-fator"><input type="hidden" id="p-unidade">
-                                            <textarea id="p-obs-produto" rows="1" placeholder="Obs Fiscal"></textarea>
+                                            <div class="form-group" style="margin-top: 0.75rem;"><label>Obs</label><textarea id="p-obs-produto" rows="2"></textarea></div>
                                         </div>
                                     </details>
 
-                                    <button class="btn btn-primary w-full mt-2 py-2.5">Salvar Produto</button>
+                                    <button class="btn btn-success btn-block" style="margin-top: 0.5rem;">Salvar Produto</button>
                                 </form>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Tabela Produto -->
-                        <div class="card split-right">
+                    <div class="panel-right">
+                        <div class="card full-h">
                             <div class="card-header">
-                                <div class="flex gap-2">
-                                    <div class="relative">
-                                        <i class="fa-solid fa-search absolute left-3 top-2.5 text-gray-400 text-xs"></i>
-                                        <input type="text" id="catalogo-search" oninput="Views.catalogo.filter(this.value)" placeholder="Buscar produto..." class="pl-8 !w-64">
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <div class="search-bar">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="catalogo-search" oninput="Views.catalogo.filter(this.value)" placeholder="Buscar produto..." style="width: 250px;">
                                     </div>
-                                    <button onclick="CategoryApp.openModal()" class="btn btn-ghost border border-gray-200 !px-3 text-xs"><i class="fa-solid fa-tags"></i></button>
+                                    <button onclick="CategoryApp.openModal()" class="btn btn-ghost" style="border: 1px solid var(--slate-300); border-radius: 6px;"><i class="fa-solid fa-tags"></i></button>
                                 </div>
-                                <span class="text-xs font-bold text-gray-500">Itens: <span id="count-produto" class="text-gray-800">0</span></span>
+                                <div class="stat-box">Itens: <b id="count-produto">0</b></div>
                             </div>
-                            <div class="table-container flex-1">
+                            <div class="table-wrapper">
                                 <table>
                                     <thead>
                                         <tr>
@@ -277,47 +436,49 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- VIEW: LOGÍSTICA -->
-                <div id="view-logistica" class="view-section">
-                    <div class="split-view">
-                        <div class="flex flex-col gap-4 split-left">
-                            <!-- Import -->
-                            <div class="card">
-                                <div class="card-header"><span class="text-xs font-bold text-blue-600 uppercase">Importar XML/JSON</span></div>
-                                <div class="card-body">
-                                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 flex flex-col items-center justify-center text-center hover:bg-gray-50 transition cursor-pointer relative">
-                                        <i class="fa-solid fa-file-arrow-up text-2xl text-gray-300 mb-2"></i>
-                                        <span class="text-xs text-gray-500">Arraste ou clique</span>
-                                        <input type="file" id="json-import-file" accept=".json" class="absolute inset-0 opacity-0 cursor-pointer">
-                                    </div>
-                                    <button onclick="ImportEngine.processFile()" class="btn btn-primary w-full mt-3">Processar Arquivo</button>
+            <!-- VIEW: LOGÍSTICA -->
+            <div id="view-logistica" class="view-section">
+                <div class="split-view">
+                    <div class="panel-left">
+                        <!-- Import Card -->
+                        <div class="card">
+                            <div class="card-header"><span style="color: var(--primary);">Importação JSON</span></div>
+                            <div class="card-body">
+                                <div style="border: 2px dashed var(--slate-300); border-radius: 8px; padding: 1.5rem; text-align: center; position: relative; background: var(--slate-50); cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f8fafc'">
+                                    <i class="fa-solid fa-file-code" style="font-size: 1.5rem; color: var(--slate-400); margin-bottom: 0.5rem;"></i>
+                                    <p style="font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase;">Clique para selecionar</p>
+                                    <input type="file" id="json-import-file" accept=".json" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
                                 </div>
-                            </div>
-                            
-                            <!-- Manual -->
-                            <div class="card flex-1">
-                                <div class="card-header"><span class="text-xs font-bold text-orange-600 uppercase">Movimento Manual</span></div>
-                                <div class="card-body">
-                                    <form onsubmit="App.handleSave('entrada', event)" id="form-entrada-manual" class="flex flex-col gap-3">
-                                        <div><label>Produto</label><select id="e-produto" required></select></div>
-                                        <div><label>Destino</label><select id="e-tipo-estoque"><option value="fisico">Físico</option><option value="fiscal">Fiscal</option><option value="ambos">Ambos</option></select></div>
-                                        <div class="grid grid-cols-2 gap-3">
-                                            <div><label>Qtd (+/-)</label><input type="number" id="e-qty" required class="font-bold"></div>
-                                            <div><label>Custo</label><input type="number" id="e-custo" step="0.01"></div>
-                                        </div>
-                                        <button class="btn btn-primary bg-orange-600 hover:bg-orange-700 w-full mt-2">Registrar</button>
-                                    </form>
-                                </div>
+                                <button onclick="ImportEngine.processFile()" class="btn btn-primary btn-block" style="margin-top: 1rem;">Processar Arquivo</button>
                             </div>
                         </div>
-
-                        <div class="card split-right">
-                            <div class="card-header">
-                                <span class="text-xs font-bold text-gray-600 uppercase">Histórico de Movimentação</span>
-                                <span class="text-xs font-bold text-gray-500">Regs: <span id="count-entrada">0</span></span>
+                        
+                        <!-- Manual Card -->
+                        <div class="card" style="flex: 1;">
+                            <div class="card-header"><span style="color: var(--warning);">Movimento Manual</span></div>
+                            <div class="card-body">
+                                <form onsubmit="App.handleSave('entrada', event)" id="form-entrada-manual">
+                                    <div class="form-group"><label>Produto</label><select id="e-produto" required></select></div>
+                                    <div class="form-group"><label>Destino</label><select id="e-tipo-estoque"><option value="fisico">Físico</option><option value="fiscal">Fiscal</option><option value="ambos">Ambos</option></select></div>
+                                    <div class="row-2">
+                                        <div class="form-group"><label>Qtd (+/-)</label><input type="number" id="e-qty" required class="text-bold"></div>
+                                        <div class="form-group"><label>Custo</label><input type="number" id="e-custo" step="0.01"></div>
+                                    </div>
+                                    <button class="btn btn-warning btn-block" style="background-color: var(--warning); color: white; margin-top: 0.5rem;">Registrar</button>
+                                </form>
                             </div>
-                            <div class="table-container flex-1">
+                        </div>
+                    </div>
+
+                    <div class="panel-right">
+                        <div class="card full-h">
+                            <div class="card-header">
+                                <span>Histórico</span>
+                                <div class="stat-box">Regs: <b id="count-entrada">0</b></div>
+                            </div>
+                            <div class="table-wrapper">
                                 <table>
                                     <thead><tr><th>Data</th><th>Produto</th><th>Tipo</th><th>Origem</th><th class="text-right">Qtd</th></tr></thead>
                                     <tbody id="table-entrada"></tbody>
@@ -326,126 +487,145 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- VIEW: VENDA -->
-                <div id="view-venda" class="view-section">
-                    <div class="split-view">
-                        <div class="card split-left">
-                            <div class="card-header">
-                                <span class="text-xs font-bold text-emerald-600 uppercase">Novo Pedido</span>
-                                <button onclick="UI.resetForm('venda')" class="text-xs text-gray-400 hover:text-red-500 font-medium">Limpar</button>
-                            </div>
+            <!-- VIEW: VENDA -->
+            <div id="view-venda" class="view-section">
+                <div class="split-view">
+                    <div class="panel-left">
+                        <div class="card">
+                            <div class="card-header"><span style="color: var(--success);">Novo Pedido</span></div>
                             <div class="card-body">
-                                <form onsubmit="App.handleSave('venda', event)" id="form-venda" class="flex flex-col gap-3">
+                                <form onsubmit="App.handleSave('venda', event)" id="form-venda">
                                     <input type="hidden" id="v-id">
-                                    <div><label>Cliente</label><select id="v-cliente" required></select></div>
-                                    <div class="p-3 bg-gray-50 rounded border border-gray-200">
+                                    <div class="form-group"><label>Cliente</label><select id="v-cliente" required></select></div>
+                                    <div style="background: var(--slate-50); padding: 0.75rem; border: 1px solid var(--slate-200); border-radius: 6px;">
                                         <label>Item</label>
-                                        <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Buscar..." class="mb-2">
-                                        <div class="flex gap-2">
-                                            <select id="v-produto" required class="flex-1"></select>
-                                            <input type="number" id="v-qty" value="1" min="1" class="w-16 text-center font-bold">
+                                        <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Buscar..." style="margin-bottom: 0.5rem;">
+                                        <div style="display: flex; gap: 0.5rem;">
+                                            <select id="v-produto" required style="flex: 1;"></select>
+                                            <input type="number" id="v-qty" value="1" min="1" style="width: 60px; text-align: center; font-weight: 700;">
                                         </div>
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <div><label>Pagamento</label><select id="v-pagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão</option></select></div>
-                                        <div><label>Rota</label><select id="v-rota"><option>CX</option><option>VG</option><option>CBA</option></select></div>
+                                    <div class="row-2">
+                                        <div class="form-group"><label>Pagamento</label><select id="v-pagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão</option></select></div>
+                                        <div class="form-group"><label>Rota</label><select id="v-rota"><option>CX</option><option>VG</option><option>CBA</option></select></div>
                                     </div>
-                                    <div><label>Desconto (R$)</label><input type="number" id="v-desconto" step="0.01"></div>
+                                    <div class="form-group"><label>Desconto (R$)</label><input type="number" id="v-desconto" step="0.01"></div>
                                     
-                                    <div class="mt-2 p-3 bg-slate-800 rounded text-white flex justify-between items-center shadow-sm">
-                                        <span class="text-xs font-bold text-slate-400 uppercase">Total</span>
-                                        <span id="v-total" class="text-lg font-bold">R$ 0,00</span>
+                                    <div style="background: var(--slate-800); color: white; padding: 1rem; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                                        <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--slate-400);">Total</span>
+                                        <span id="v-total" style="font-size: 1.2rem; font-weight: 700;">R$ 0,00</span>
                                     </div>
-                                    <button class="btn btn-success w-full py-3 text-xs uppercase tracking-wide">Finalizar Pedido</button>
+                                    <button class="btn btn-success btn-block">Finalizar Pedido</button>
                                 </form>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="card split-right">
+                    <div class="panel-right">
+                        <div class="card full-h">
                             <div class="card-header">
-                                <div class="flex gap-2 items-center">
-                                    <input type="date" id="v-filter-start" class="!w-32">
-                                    <input type="date" id="v-filter-end" class="!w-32">
-                                    <button onclick="Views.venda.render()" class="btn btn-ghost border border-gray-200 text-xs">Filtrar</button>
+                                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                    <input type="date" id="v-filter-start" style="width: 130px;">
+                                    <input type="date" id="v-filter-end" style="width: 130px;">
+                                    <button onclick="Views.venda.render()" class="btn btn-ghost" style="border: 1px solid var(--slate-200);">Filtrar</button>
                                 </div>
-                                <span class="text-xs font-bold text-gray-500">Pedidos: <span id="count-venda">0</span></span>
+                                <div class="stat-box">Pedidos: <b id="count-venda">0</b></div>
                             </div>
-                            <div class="table-container flex-1">
+                            <div class="table-wrapper">
                                 <table>
-                                    <thead><tr><th class="w-10">#</th><th>Cliente</th><th>Detalhes</th><th class="text-right">Ações</th></tr></thead>
+                                    <thead><tr><th style="width: 50px;">#</th><th>Cliente</th><th>Detalhes</th><th class="text-right">Ações</th></tr></thead>
                                     <tbody id="table-venda"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- VIEW: EXPEDIÇÃO -->
-                <div id="view-expedicao" class="view-section">
-                    <div class="grid grid-cols-4 h-full gap-px bg-gray-200 border border-gray-200 rounded-lg overflow-hidden">
-                        <div class="flex flex-col bg-gray-50"><div class="bg-blue-600 text-white font-bold p-3 text-center text-sm uppercase">CX</div><div id="col-CX" class="flex-1 p-2 overflow-auto space-y-2"></div></div>
-                        <div class="flex flex-col bg-gray-50"><div class="bg-emerald-600 text-white font-bold p-3 text-center text-sm uppercase">VG</div><div id="col-VG" class="flex-1 p-2 overflow-auto space-y-2"></div></div>
-                        <div class="flex flex-col bg-gray-50"><div class="bg-orange-600 text-white font-bold p-3 text-center text-sm uppercase">CBA</div><div id="col-CBA" class="flex-1 p-2 overflow-auto space-y-2"></div></div>
-                        <div class="flex flex-col bg-gray-50"><div class="bg-purple-600 text-white font-bold p-3 text-center text-sm uppercase">CPA</div><div id="col-CPA" class="flex-1 p-2 overflow-auto space-y-2"></div></div>
+            <!-- VIEW: EXPEDIÇÃO -->
+            <div id="view-expedicao" class="view-section">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); height: 100%; gap: 1px; background: var(--slate-300); border: 1px solid var(--slate-300); border-radius: 8px; overflow: hidden;">
+                    <div style="background: var(--slate-50); display: flex; flex-direction: column;">
+                        <div style="background: var(--primary); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CX</div>
+                        <div id="col-CX" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                    <div style="background: var(--slate-50); display: flex; flex-direction: column;">
+                        <div style="background: var(--success); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">VG</div>
+                        <div id="col-VG" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                    <div style="background: var(--slate-50); display: flex; flex-direction: column;">
+                        <div style="background: var(--warning); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CBA</div>
+                        <div id="col-CBA" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                    <div style="background: var(--slate-50); display: flex; flex-direction: column;">
+                        <div style="background: #7c3aed; color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CPA</div>
+                        <div id="col-CPA" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
                     </div>
                 </div>
-
             </div>
-        </main>
-    </div>
+
+        </div>
+    </main>
 
     <!-- MODAL IMPORTAÇÃO -->
-    <dialog id="import-modal" class="rounded-lg shadow-2xl p-0 w-[900px] max-w-full m-auto open:animate-in open:fade-in open:zoom-in-95 duration-200">
-        <div class="p-4 bg-slate-800 text-white flex justify-between items-center sticky top-0 z-50">
-            <h3 class="font-bold text-sm uppercase tracking-wide">Conferência de Importação</h3>
-            <button onclick="document.getElementById('import-modal').close()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-times"></i></button>
+    <dialog id="import-modal">
+        <div class="card-header" style="background: var(--slate-800); color: white; border-bottom: none;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="fa-solid fa-file-import"></i> <span>Conferência de Importação</span>
+            </div>
+            <button onclick="document.getElementById('import-modal').close()" style="background: none; border: none; color: var(--slate-400); cursor: pointer; font-size: 1.1rem;"><i class="fa-solid fa-times"></i></button>
         </div>
-        <div class="p-6 bg-white">
-            <div class="flex gap-6 mb-6 items-center bg-gray-50 p-4 rounded border border-gray-200">
-                <span class="text-xs font-bold text-gray-500 uppercase mr-2">Destino do Estoque:</span>
-                <label class="flex items-center gap-2 cursor-pointer text-xs font-medium"><input type="radio" name="import-dest" value="fisico"> Físico</label>
-                <label class="flex items-center gap-2 cursor-pointer text-xs font-medium"><input type="radio" name="import-dest" value="fiscal"> Fiscal</label>
-                <label class="flex items-center gap-2 cursor-pointer text-xs font-bold text-blue-600"><input type="radio" name="import-dest" value="ambos" checked> Ambos</label>
+        <div style="padding: 1.5rem;">
+            <div style="background: var(--slate-50); padding: 1rem; border-radius: var(--radius); border: 1px solid var(--slate-200); margin-bottom: 1rem; display: flex; gap: 1.5rem; align-items: center;">
+                <span style="font-weight: 700; font-size: 0.7rem; color: var(--slate-500); text-transform: uppercase;">Destino:</span>
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer;"><input type="radio" name="import-dest" value="fisico"> Físico</label>
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer;"><input type="radio" name="import-dest" value="fiscal"> Fiscal</label>
+                <label style="display: flex; align-items: center; gap: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 700; color: var(--primary);"><input type="radio" name="import-dest" value="ambos" checked> Ambos</label>
             </div>
             
-            <div class="border border-gray-200 rounded-lg overflow-hidden max-h-[50vh] overflow-y-auto custom-scroll">
-                <table>
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="text-center w-10"><input type="checkbox" checked onchange="ImportEngine.toggleAll(this.checked)"></th>
-                            <th>Produto (JSON)</th>
-                            <th style="width: 200px;">EANs Identificados</th>
-                            <th>Status Sistema</th>
-                            <th class="text-right">Qtd</th>
+            <div style="border: 1px solid var(--slate-200); border-radius: var(--radius); overflow: hidden; max-height: 50vh; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--slate-50); border-bottom: 1px solid var(--slate-200);">
+                            <th style="padding: 0.75rem; text-align: center; width: 40px;"><input type="checkbox" checked onchange="ImportEngine.toggleAll(this.checked)"></th>
+                            <th style="padding: 0.75rem; font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; text-align: left;">Produto (JSON)</th>
+                            <th style="padding: 0.75rem; font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; text-align: left; width: 200px;">EANs (Unid / CX)</th>
+                            <th style="padding: 0.75rem; font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; text-align: left; width: 150px;">Status Sistema</th>
+                            <th style="padding: 0.75rem; font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; text-align: right; width: 80px;">Qtd</th>
                         </tr>
                     </thead>
-                    <tbody id="import-preview-list" class="bg-white"></tbody>
+                    <tbody id="import-preview-list"></tbody>
                 </table>
             </div>
             
-            <div class="mt-6 flex justify-end gap-3">
-                <button onclick="document.getElementById('import-modal').close()" class="btn btn-ghost border border-gray-200">Cancelar</button>
-                <button onclick="ImportEngine.confirmImport()" class="btn btn-success px-6 shadow-md shadow-emerald-200">Confirmar e Salvar</button>
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--slate-100);">
+                <button onclick="document.getElementById('import-modal').close()" class="btn btn-ghost" style="border: 1px solid var(--slate-200);">Cancelar</button>
+                <button onclick="ImportEngine.confirmImport()" class="btn btn-success">Confirmar e Salvar</button>
             </div>
         </div>
     </dialog>
 
     <!-- MODAL CATEGORIAS -->
-    <dialog id="cat-modal" class="rounded-lg shadow-xl p-5 w-96 m-auto">
-        <h3 class="font-bold text-sm uppercase mb-4 text-gray-700">Categorias</h3>
-        <form onsubmit="CategoryApp.addCategory(event)" class="flex gap-2 mb-4">
-            <input type="text" id="new-cat-name" placeholder="Nova..." class="flex-1">
-            <button class="btn btn-primary">ADD</button>
-        </form>
-        <div id="cat-list-container" class="space-y-2 max-h-64 overflow-y-auto pr-2"></div>
-        <button onclick="document.getElementById('cat-modal').close()" class="btn btn-ghost w-full mt-4 border border-gray-200">Fechar</button>
+    <dialog id="cat-modal" style="width: 400px;">
+        <div style="padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="font-weight: 700; color: var(--slate-700); font-size: 0.9rem; text-transform: uppercase;">Categorias</h3>
+                <button onclick="document.getElementById('cat-modal').close()" style="background: none; border: none; cursor: pointer; color: var(--slate-400);"><i class="fa-solid fa-times"></i></button>
+            </div>
+            <form onsubmit="CategoryApp.addCategory(event)" style="flex-direction: row; gap: 0.5rem; margin-bottom: 1rem;">
+                <input type="text" id="new-cat-name" placeholder="Nova..." style="flex: 1;">
+                <button class="btn btn-primary">ADD</button>
+            </form>
+            <div id="cat-list-container" style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+        </div>
     </dialog>
 
     <script>
         // --- CORE ---
         const DB = {
-            key: 'sys_v3_pro_db',
+            key: 'sys_v3_standalone_db',
             load: () => {
                 const def = {cliente:[], produto:[], venda:[], entrada:[], categorias: []};
                 let data = JSON.parse(localStorage.getItem(DB.key) || 'null');
@@ -507,8 +687,6 @@
                             if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
 
                             let cost = Number(item.Custo_Unitario) || 0;
-                            const costBox = Number(item.Custo_Real_Caixa) || 0;
-                            if(qty > 0 && costBox > 0) cost = (costBox - (Number(item.Valor_Desconto_Total)||0)) / qty;
                             if(cost < 0) cost = 0;
 
                             return {
@@ -537,22 +715,22 @@
                         `<span class="badge badge-blue">Novo</span>`;
                     
                     const eanDisplay = `
-                        <div class="flex flex-col gap-1">
-                            ${d.eanUnit ? `<span class="text-[10px] text-gray-500 font-mono">UN: <b class="text-gray-700">${d.eanUnit}</b></span>` : ''}
-                            ${d.eanBox ? `<span class="text-[10px] text-gray-500 font-mono">CX: <b class="text-gray-700">${d.eanBox}</b></span>` : ''}
-                            ${(!d.eanUnit && !d.eanBox) ? '<span class="text-[10px] text-gray-400 italic">--</span>' : ''}
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                            ${d.eanUnit ? `<span style="font-size: 0.65rem; color: var(--slate-500); font-family: monospace;">UN: <b style="color: var(--slate-700);">${d.eanUnit}</b></span>` : ''}
+                            ${d.eanBox ? `<span style="font-size: 0.65rem; color: var(--slate-500); font-family: monospace;">CX: <b style="color: var(--slate-700);">${d.eanBox}</b></span>` : ''}
+                            ${(!d.eanUnit && !d.eanBox) ? '<span style="font-size: 0.65rem; color: var(--slate-400); font-style: italic;">--</span>' : ''}
                         </div>
                     `;
 
                     return `
-                        <tr>
-                            <td class="text-center"><input type="checkbox" class="import-chk cursor-pointer" value="${d._id}" checked></td>
-                            <td>
-                                <div class="font-bold text-gray-700 text-xs">${d.json.xProd}</div>
+                        <tr style="border-bottom: 1px solid var(--slate-100);">
+                            <td style="padding: 0.75rem; text-align: center;"><input type="checkbox" class="import-chk" value="${d._id}" checked style="width: auto;"></td>
+                            <td style="padding: 0.75rem;">
+                                <div style="font-weight: 700; color: var(--slate-700); font-size: 0.8rem;">${d.json.xProd}</div>
                             </td>
-                            <td>${eanDisplay}</td>
-                            <td><div class="text-xs">${status}</div><div class="text-[10px] text-gray-400 truncate w-32">${d.match ? d.match.nome : ''}</div></td>
-                            <td class="text-right font-bold text-xs text-gray-700">${d.qty}</td>
+                            <td style="padding: 0.75rem;">${eanDisplay}</td>
+                            <td style="padding: 0.75rem;"><div style="margin-bottom: 2px;">${status}</div><div style="font-size: 0.65rem; color: var(--slate-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${d.match ? d.match.nome : ''}</div></td>
+                            <td style="padding: 0.75rem; text-align: right; font-weight: 700; color: var(--slate-700);">${d.qty}</td>
                         </tr>
                     `;
                 }).join('');
@@ -574,7 +752,7 @@
                         if(dest !== 'fiscal') prod.estoque += d.qty;
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
-                        if(d.eanFinal) prod.ean = d.eanFinal; // Update EAN
+                        if(d.eanFinal) prod.ean = d.eanFinal; 
                         if(d.json.NCM) prod.ncm = d.json.NCM;
                         prod.nota = d.json.Numero_Nota;
                     } else {
@@ -620,11 +798,11 @@
                     document.getElementById('count-cliente').innerText = list.length;
                     document.getElementById('table-cliente').innerHTML = list.map(c => `
                         <tr>
-                            <td><div class="font-bold text-xs text-gray-700">${c.codigo}</div><div class="text-[11px] text-gray-500">${c.nome}</div></td>
-                            <td><span class="badge badge-blue">${c.rota || '-'}</span><div class="text-[10px] text-gray-400 mt-1">${c.cidade}</div></td>
+                            <td><div style="font-weight: 700; color: var(--slate-700);">${c.codigo}</div><div style="font-size: 0.75rem; color: var(--slate-500);">${c.nome}</div></td>
+                            <td><span class="badge badge-blue" style="margin-bottom: 2px;">${c.rota || '-'}</span><div style="font-size: 0.7rem; color: var(--slate-400);">${c.cidade}</div></td>
                             <td class="text-right">
-                                <button onclick="App.edit('cliente', '${c.id}')" class="btn btn-ghost p-1.5"><i class="fa-solid fa-pen text-blue-500"></i></button>
-                                <button onclick="App.delete('cliente', '${c.id}')" class="btn btn-ghost p-1.5"><i class="fa-solid fa-trash text-red-400"></i></button>
+                                <button onclick="App.edit('cliente', '${c.id}')" class="btn btn-ghost" style="color: var(--primary);"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="App.delete('cliente', '${c.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>
                     `).join('');
@@ -639,22 +817,22 @@
                     const list = data || DB.load().produto;
                     document.getElementById('count-produto').innerText = list.length;
                     document.getElementById('table-produto').innerHTML = list.map(p => {
-                        const estStyle = p.estoque <= 0 ? 'text-red-500' : 'text-gray-700';
+                        const estStyle = p.estoque <= 0 ? 'color: var(--danger);' : 'color: var(--slate-700);';
                         return `
                         <tr>
                             <td>
-                                <div class="font-bold text-xs text-gray-800">${p.codigo} - ${p.nome}</div>
-                                <div class="text-[10px] text-gray-400 font-mono mt-0.5">${p.ean || ''}</div>
+                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400); font-family: monospace; margin-top: 2px;">${p.ean || '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>'}</div>
                             </td>
-                            <td class="text-center font-bold text-xs ${estStyle}">${p.estoque}</td>
-                            <td class="text-center"><span class="badge badge-purple">${p.estoqueFiscal||0}</span></td>
+                            <td style="text-align: center; font-weight: 700; ${estStyle}">${p.estoque}</td>
+                            <td style="text-align: center;"><span class="badge badge-purple">${p.estoqueFiscal||0}</span></td>
                             <td>
-                                <div class="font-bold text-xs text-blue-600">R$ ${Number(p.valor).toFixed(2)}</div>
-                                <div class="text-[10px] text-gray-400">C: R$ ${Number(p.custo).toFixed(2)}</div>
+                                <div style="font-weight: 700; color: var(--primary);">R$ ${Number(p.valor).toFixed(2)}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400);">C: R$ ${Number(p.custo).toFixed(2)}</div>
                             </td>
                             <td class="text-right">
-                                <button onclick="App.edit('produto', '${p.id}')" class="btn btn-ghost p-1.5"><i class="fa-solid fa-pen text-blue-500"></i></button>
-                                <button onclick="App.delete('produto', '${p.id}')" class="btn btn-ghost p-1.5"><i class="fa-solid fa-trash text-red-400"></i></button>
+                                <button onclick="App.edit('produto', '${p.id}')" class="btn btn-ghost" style="color: var(--primary);"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="App.delete('produto', '${p.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
                             </td>
                         </tr>`;
                     }).join('');
@@ -671,14 +849,14 @@
                     document.getElementById('count-entrada').innerText = list.length;
                     document.getElementById('table-entrada').innerHTML = list.map(i => {
                         const prod = db.produto.find(p => p.id === i.prodId);
-                        const qtyClass = i.qty < 0 ? 'text-red-500' : 'text-emerald-600';
+                        const qtyClass = i.qty < 0 ? 'color: var(--danger);' : 'color: var(--success);';
                         return `
                         <tr>
-                            <td class="text-[11px] text-gray-500">${new Date(i.date).toLocaleDateString()}</td>
-                            <td class="font-bold text-xs text-gray-700">${prod ? prod.nome : '???'}</td>
+                            <td style="font-size: 0.75rem; color: var(--slate-500); font-family: monospace;">${new Date(i.date).toLocaleDateString()}</td>
+                            <td style="font-weight: 700; color: var(--slate-700);">${prod ? prod.nome : '???'}</td>
                             <td><span class="badge badge-gray">${i.dest}</span></td>
-                            <td class="text-[11px] text-gray-500">${i.fornecedor || '-'}</td>
-                            <td class="text-right font-bold text-xs ${qtyClass}">${i.qty > 0 ? '+' : ''}${i.qty}</td>
+                            <td style="font-size: 0.75rem; color: var(--slate-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;" title="${i.fornecedor || '-'}">${i.fornecedor || '-'}</td>
+                            <td style="text-align: right; font-weight: 700; ${qtyClass}">${i.qty > 0 ? '+' : ''}${i.qty}</td>
                         </tr>`;
                     }).join('');
                 }
@@ -688,13 +866,13 @@
                     const list = DB.load().venda;
                     document.getElementById('table-venda').innerHTML = list.map(v => `
                         <tr>
-                            <td class="font-bold text-xs">#${v.codigo}</td>
-                            <td class="text-xs">Cli ID: ${v.cliId}</td>
+                            <td style="font-weight: 700;">#${v.codigo}</td>
+                            <td>Cli ID: ${v.cliId}</td>
                             <td>
-                                <div class="font-bold text-xs text-emerald-600">R$ ${v.total.toFixed(2)}</div>
-                                <div class="text-[10px] text-gray-400">${v.pag} - ${v.rota}</div>
+                                <div style="font-weight: 700; color: var(--success);">R$ ${v.total.toFixed(2)}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400);">${v.pag} - ${v.rota}</div>
                             </td>
-                            <td class="text-right"><button onclick="App.delete('venda','${v.id}')" class="btn btn-ghost text-red-400"><i class="fa-solid fa-times"></i></button></td>
+                            <td class="text-right"><button onclick="App.delete('venda','${v.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-times"></i></button></td>
                         </tr>
                     `).join('');
                 }
@@ -791,7 +969,7 @@
             },
             renderList: () => {
                 const list = document.getElementById('cat-list-container');
-                list.innerHTML = DB.load().categorias.map(c => `<div class="p-2 border rounded text-xs font-bold text-gray-700 bg-gray-50 mb-1">${c.nome}</div>`).join('');
+                list.innerHTML = DB.load().categorias.map(c => `<div style="padding: 0.5rem; border: 1px solid var(--slate-200); border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: var(--slate-700); background: var(--slate-50); display: flex; justify-content: space-between;"><span>${c.nome}</span> <i class="fa-solid fa-folder" style="color: var(--slate-300);"></i></div>`).join('');
             }
         };
 
