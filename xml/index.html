@@ -376,8 +376,8 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.2 Qtd NFe</span>
-                <span class="badge badge-success">Dados Brutos + Calc</span>
+                <span class="badge">v6.4 Dual EAN</span>
+                <span class="badge badge-success">Smart EAN Sorting</span>
             </div>
         </header>
 
@@ -486,7 +486,7 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.2 (Strict Quantity Export)
+         * SISTEMAS - Core Logic v6.4 (Smart EAN Sorting)
          */
         const app = {
             data: [], 
@@ -607,7 +607,7 @@
                 }
             },
 
-            // --- EXPORTAÇÃO (ATUALIZADO V6.2 - CAMPOS EXPLÍCITOS DE QTD) ---
+            // --- EXPORTAÇÃO (ATUALIZADO V6.4 - DUAL EAN LOGIC) ---
             exportSmartJSON() {
                 const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
@@ -626,19 +626,37 @@
                     const netCostBox = netTotal / item.qCom;
                     const unitCost = netCostBox / finalFactor;
                     
-                    // Quantidade TOTAL de unidades (ex: 2 caixas * 12un = 24un)
+                    // Quantidade TOTAL de unidades
                     const qtdTotalUnidades = item.qCom * finalFactor;
+
+                    // --- LÓGICA DE EAN INTELIGENTE ---
+                    // Se o fator for > 1, entende-se que o item na nota é uma CAIXA, logo o EAN pertence à CAIXA.
+                    // Se o fator for = 1, entende-se que o item na nota é UNITÁRIO, logo o EAN pertence à UNIDADE.
+                    let eanUnidade = '';
+                    let eanCaixa = '';
+
+                    if (finalFactor > 1) {
+                        // É uma caixa/fardo
+                        eanCaixa = item.cEAN;
+                        eanUnidade = 'PREENCHER_COM_LEITOR'; // O XML não forneceu o EAN unitário, apenas o da caixa
+                    } else {
+                        // É unitário
+                        eanUnidade = item.cEAN;
+                        eanCaixa = ''; // Não há EAN de caixa neste contexto
+                    }
 
                     if (mode === 'atacado') {
                         exportList.push({
                             ...item,
                             Numero_Nota: item.nNF,
+                            Quantidade_NFe: item.qCom,
+                            Unidade_NFe: item.uCom,
+                            Fator_Conversao: finalFactor,
+                            Quantidade_Total_Unidades: qtdTotalUnidades,
                             
-                            // CAMPOS PADRONIZADOS PARA MULTIPLICAÇÃO
-                            Quantidade_NFe: item.qCom,        // Qtd Original
-                            Unidade_NFe: item.uCom,           // Un Original
-                            Fator_Conversao: finalFactor,     // Fator
-                            Quantidade_Total_Unidades: qtdTotalUnidades, // Resultado
+                            // EANs separados
+                            EAN_Unidade: eanUnidade,
+                            EAN_Caixa: eanCaixa,
                             
                             _TIPO: 'ATACADO (ENTRADA)',
                             CFOP_SAIDA_SUGERIDO: fiscal.cfopOut,
@@ -657,7 +675,11 @@
                             id_referencia: item.id,
                             Numero_Nota: item.nNF,
                             cProd_Sugestao: item.cProd + '-UN', 
-                            cEAN: 'PREENCHER_COM_LEITOR', 
+                            
+                            // EANs separados
+                            EAN_Unidade: eanUnidade,
+                            EAN_Caixa: eanCaixa,
+                            
                             xProd: cleanDesc,
                             NCM: item.NCM, 
                             CEST: item.CEST,
@@ -665,11 +687,10 @@
                             CSOSN_SAIDA: fiscal.csosnOut,
                             Unidade_Venda: 'UN',
                             
-                            // CAMPOS PADRONIZADOS PARA MULTIPLICAÇÃO
-                            Quantidade_NFe: item.qCom,        // Qtd Original
-                            Unidade_NFe: item.uCom,           // Un Original
-                            Fator_Conversao: finalFactor,     // Fator
-                            Quantidade_Total_Unidades: qtdTotalUnidades, // Resultado
+                            Quantidade_NFe: item.qCom,
+                            Unidade_NFe: item.uCom,
+                            Fator_Conversao: finalFactor,
+                            Quantidade_Total_Unidades: qtdTotalUnidades,
                             
                             Custo_Unitario: parseFloat(unitCost.toFixed(4)), 
                             Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), 
