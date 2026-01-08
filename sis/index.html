@@ -110,30 +110,6 @@
         </div>
     </div>
 
-    <!-- Modal Fiscal Detalhado -->
-    <div id="fiscal-modal" class="fixed inset-0 z-[60] hidden modal-overlay flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
-            <div class="bg-slate-900 p-4 flex justify-between items-center text-white">
-                <h3 class="font-bold uppercase tracking-widest text-sm"><i class="fa-solid fa-file-invoice-dollar mr-2"></i> Detalhes Fiscais do Item</h3>
-                <button onclick="LogisticsApp.closeModal()" class="hover:text-red-400 transition"><i class="fa-solid fa-times text-lg"></i></button>
-            </div>
-            <div id="fiscal-modal-body" class="p-6 overflow-y-auto custom-scroll space-y-4">
-                <!-- Conteúdo injetado via JS -->
-            </div>
-            <div class="p-4 bg-slate-50 border-t flex justify-end">
-                <button onclick="LogisticsApp.closeModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg font-bold text-xs uppercase">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Feedback Loader -->
-    <div id="f-loading" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
-        <div class="bg-white p-6 rounded-lg shadow-xl flex items-center gap-4">
-            <div class="spinner border-blue-600 border-t-transparent !border-t-blue-600"></div>
-            <span class="font-medium text-slate-700">Processando...</span>
-        </div>
-    </div>
-
     <!-- SIDEBAR FIXA -->
     <aside class="fixed top-0 left-0 h-screen w-64 bg-slate-900 flex flex-col p-4 gap-2 no-print z-50">
         <div class="flex items-center gap-3 px-2 mb-8 text-white">
@@ -151,16 +127,13 @@
                 <i class="fa-solid fa-box w-5"></i> <span>Catálogo & Estoque</span>
             </button>
              <button onclick="UI.switchView('logistica', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
-                <i class="fa-solid fa-dolly w-5"></i> <span>Logística & XML</span>
+                <i class="fa-solid fa-dolly w-5"></i> <span>Logística Manual</span>
             </button>
             <button onclick="UI.switchView('venda', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
                 <i class="fa-solid fa-cart-shopping w-5"></i> <span>Vendas</span>
             </button>
             <button onclick="UI.switchView('expedicao', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
                 <i class="fa-solid fa-truck-fast w-5"></i> <span>Expedição</span>
-            </button>
-            <button onclick="UI.switchView('crm', this)" class="nav-link w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-white transition-all">
-                <i class="fa-solid fa-chart-line w-5"></i> <span>CRM</span>
             </button>
         </nav>
         <button onclick="ExportEngine.exportAll()" class="text-left px-4 py-2 text-slate-500 hover:text-emerald-400 text-xs transition mt-auto">
@@ -339,64 +312,14 @@
             </section>
         </main>
 
-        <!-- VIEW: LOGÍSTICA & ENTRADAS -->
+        <!-- VIEW: LOGÍSTICA & ENTRADAS (ATUALIZADA) -->
         <main id="view-logistica" class="view-content flex-col p-6 gap-6 w-full">
             
             <!-- Linha Superior -->
             <div class="flex flex-col lg:flex-row gap-6 w-full">
                 
-                <!-- Leitor Fiscal XML (Atualizado para Entrada/Saída) -->
-                <section class="flex-1 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-slate-700 uppercase text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-file-code text-blue-500"></i> Importação NFe (XML)
-                        </h3>
-                        <div class="flex gap-2">
-                             <button onclick="LogisticsApp.exportData('json')" class="text-emerald-600 text-[10px] font-bold uppercase hover:underline">Exportar JSON</button>
-                             <button onclick="LogisticsApp.clearData()" class="text-red-500 text-[10px] font-bold uppercase hover:underline">Limpar</button>
-                        </div>
-                    </div>
-
-                    <!-- Area de Upload -->
-                    <div class="mb-4 bg-slate-50 p-4 rounded-lg border border-dashed border-slate-300">
-                         <input type="file" id="f-fileInput" multiple accept=".xml, text/xml" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                    </div>
-
-                    <!-- Controles XML Avançados -->
-                     <div class="bg-blue-50 border border-blue-100 rounded-lg p-3 flex flex-col gap-3 mt-auto">
-                        <div class="flex items-center gap-2 justify-between flex-wrap">
-                             <span class="text-[10px] font-bold text-blue-800 uppercase flex items-center gap-1">
-                                 <i class="fa-solid fa-gears"></i> Opções de Processamento
-                             </span>
-                             <div class="flex gap-2">
-                                <select id="f-move-type" class="text-[10px] border border-blue-200 rounded p-1 outline-none font-bold text-slate-600" title="Tipo de Movimento">
-                                    <option value="auto">Automático (Pelo XML)</option>
-                                    <option value="entrada">Forçar ENTRADA (+)</option>
-                                    <option value="saida">Forçar SAÍDA (-)</option>
-                                </select>
-                                <select id="f-stock-dest" class="text-[10px] border border-blue-200 rounded p-1 outline-none font-bold text-slate-600" title="Estoque Alvo">
-                                    <option value="fisico">Destino: Físico</option>
-                                    <option value="fiscal">Destino: Fiscal</option>
-                                    <option value="ambos">Destino: Ambos</option>
-                                </select>
-                             </div>
-                        </div>
-                        <button onclick="LogisticsApp.importToStock()" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-bold uppercase shadow-sm transition">
-                            Processar XML no Estoque Selecionado
-                        </button>
-                    </div>
-
-                    <!-- Mini Lista de Preview -->
-                    <div class="w-full overflow-auto custom-scroll mt-4 border rounded-lg max-h-60">
-                        <table class="w-full text-left text-[10px]">
-                            <thead class="bg-slate-100 sticky top-0"><tr class="text-slate-500 font-bold"><th class="p-2">Item XML</th><th class="p-2">Tipo NF</th><th class="p-2 text-right">Qtd</th><th class="p-2 text-center">Ver</th></tr></thead>
-                            <tbody id="f-tableBody"></tbody>
-                        </table>
-                    </div>
-                </section>
-
                 <!-- Entrada Manual Avulsa -->
-                <section class="w-full lg:w-96 bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col h-auto">
+                <section class="w-full bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-col h-auto">
                     <h3 class="font-bold text-slate-700 uppercase text-xs mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-orange-500"></i> Movimento Manual</h3>
                     <form id="form-entrada-manual" onsubmit="App.handleSave('entrada', event)" class="flex-1 flex flex-col gap-3">
                          <div class="space-y-1">
@@ -575,44 +498,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- VIEW: CRM -->
-        <main id="view-crm" class="view-content flex-col p-6 gap-6 w-full">
-            <section class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between flex-shrink-0 no-print">
-                <div>
-                    <h3 class="text-sm font-bold text-slate-700 uppercase tracking-widest leading-none">Dashboard Analytics</h3>
-                </div>
-                <div class="flex gap-2 items-center">
-                    <input type="date" id="crm-filter-start" class="text-[10px] p-2 border rounded-lg outline-none">
-                    <button onclick="UI.renderCRM()" class="bg-blue-600 text-white text-[10px] font-bold px-4 py-2 rounded-lg hover:bg-blue-700 transition uppercase">Atualizar</button>
-                </div>
-            </section>
-            <section class="grid grid-cols-4 gap-4 flex-shrink-0">
-                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Receita Bruta</span><h3 id="crm-total-rev" class="text-2xl font-black text-emerald-600 leading-tight">R$ 0,00</h3></div>
-                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Ticket Médio</span><h3 id="crm-avg-ticket" class="text-2xl font-black text-blue-600 leading-tight">R$ 0,00</h3></div>
-                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Pedidos</span><h3 id="crm-total-orders" class="text-2xl font-black text-slate-700 leading-tight">0</h3></div>
-                <div class="bg-white p-5 rounded-2xl border"><span class="text-[10px] font-bold text-slate-400 uppercase">Clientes</span><h3 id="crm-active-clients" class="text-2xl font-black text-orange-500 leading-tight">0</h3></div>
-            </section>
-            <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex-1 flex flex-col">
-                <div class="p-4 border-b bg-slate-50/50 flex justify-between items-center">
-                    <h3 class="text-xs font-bold uppercase text-slate-500 tracking-tighter">Performance e Resultado por Produto</h3>
-                </div>
-                <div class="w-full overflow-x-auto">
-                    <table class="w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-bold">
-                            <tr>
-                                <th class="p-4">Produto</th>
-                                <th class="p-4 text-center">Vendas (Un)</th>
-                                <th class="p-4">Faturamento</th>
-                                <th class="p-4">Lucro Total</th>
-                                <th class="p-4">Margem (%)</th>
-                            </tr>
-                        </thead>
-                        <tbody id="crm-table-products" class="divide-y divide-slate-100"></tbody>
-                    </table>
-                </div>
-            </section>
-        </main>
     </div>
 
     <div id="print-area"></div>
@@ -763,7 +648,6 @@
 
                 if(view === 'venda') UI.renderVendaOptions();
                 if(view === 'catalogo') UI.renderKitOptions();
-                if(view === 'crm') UI.renderCRM();
                 if(view === 'expedicao') UI.renderExpedicao();
                 if(view === 'logistica') { UI.renderEntradaOptions(); LogisticsApp.render(); }
                 
@@ -800,7 +684,7 @@
                 if (!document.fullscreenElement) { el.requestFullscreen().catch(err => { alert(`Erro: ${err.message}`); }); } else { document.exitFullscreen(); }
             },
             render: (type) => {
-                if(type === 'crm' || type === 'expedicao' || type === 'logistica') return;
+                if(type === 'expedicao' || type === 'logistica') return;
                 const db = DB.load(); let data = db[type === 'catalogo' ? 'produto' : type];
                 if(type === 'venda') {
                     const s = UI.get('v-filter-start').value; const e = UI.get('v-filter-end').value;
@@ -850,13 +734,6 @@
                     }
                 });
             },
-            renderCRM: () => {
-                const db = DB.load(); const totalRev = db.venda.reduce((acc, v) => acc + v.total, 0);
-                UI.get('crm-total-rev').innerText = `R$ ${totalRev.toFixed(2)}`; UI.get('crm-avg-ticket').innerText = `R$ ${(totalRev / (db.venda.length || 1)).toFixed(2)}`; UI.get('crm-total-orders').innerText = db.venda.length; UI.get('crm-active-clients').innerText = [...new Set(db.venda.map(v => v.cliId))].length;
-                const stats = {}; db.venda.forEach(v => { const p = db.produto.find(x => x.id === v.prodId); if(!stats[v.prodId]) { stats[v.prodId] = { nome: p ? p.nome : 'Prod. Excluído', codigo: p ? p.codigo : '???', qty: 0, rev: 0, cost: 0 }; } stats[v.prodId].qty += v.qty; stats[v.prodId].rev += v.total; stats[v.prodId].cost += (Number(p?.custo || 0) * v.qty); });
-                const sorted = Object.values(stats).sort((a, b) => (b.rev - b.cost) - (a.rev - a.cost));
-                UI.get('crm-table-products').innerHTML = sorted.map(s => { const profit = s.rev - s.cost; const margin = s.rev > 0 ? (profit / s.rev) * 100 : 0; return `<tr class="hover:bg-slate-50 text-xs transition-all"><td class="p-4 font-bold text-slate-700">${s.codigo} - ${s.nome}</td><td class="p-4 text-center font-black text-slate-500">${s.qty}</td><td class="p-4 font-bold text-slate-800">R$ ${s.rev.toFixed(2)}</td><td class="p-4 font-bold text-blue-600">R$ ${profit.toFixed(2)}</td><td class="p-4 font-black ${margin >= 30 ? 'text-emerald-600' : (margin >= 15 ? 'text-orange-500' : 'text-red-500')}">${margin.toFixed(1)}%</td></tr>`; }).join('');
-            },
             resetForm: (t) => {
                 const form = UI.get(`form-${t}`); if(!form) return; form.reset();
                 if (t === 'entrada') return; 
@@ -903,7 +780,6 @@
                 UI.render('cliente'); UI.resetForm('cliente');
                 CategoryApp.populateSelects(); // Init categories
                 ['v-qty', 'v-desconto', 'v-produto'].forEach(id => { const el = UI.get(id); if(el) el.addEventListener('input', App.calcVenda); });
-                const fInput = document.getElementById('f-fileInput'); if(fInput) fInput.addEventListener('change', LogisticsApp.handleFileUpload);
             },
             calcVenda: () => {
                 const p = UI.get('v-produto'); const price = p.options[p.selectedIndex]?.dataset.price || 0;
@@ -1100,147 +976,7 @@
 
         // --- UNIFIED LOGISTICS & FISCAL LOGIC ---
         const LogisticsApp = {
-            data: [], storageKey: 'nfe_sys_data_full_v2',
-            loadFromStorage: () => { const stored = localStorage.getItem(LogisticsApp.storageKey); if (stored) { try { LogisticsApp.data = JSON.parse(stored); } catch (e) { localStorage.removeItem(LogisticsApp.storageKey); } } },
-            saveToStorage: () => { try { localStorage.setItem(LogisticsApp.storageKey, JSON.stringify(LogisticsApp.data)); } catch (e) { alert('Limite do localStorage.'); } },
-            clearData: () => { if (confirm('Apagar pré-visualização de XML?')) { LogisticsApp.data = []; localStorage.removeItem(LogisticsApp.storageKey); LogisticsApp.render(); document.getElementById('f-fileInput').value = ''; } },
-            toggleLoading: (show) => { const el = document.getElementById('f-loading'); if(show) { el.classList.remove('hidden'); el.classList.add('flex'); } else { el.classList.add('hidden'); el.classList.remove('flex'); } },
-            formatMoney: (v) => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
-            formatDate: (iso) => { if (!iso) return '-'; const [y, m, d] = iso.split('-'); return `${d}/${m}/${y}`; },
-
-            // Modal Logic
-            showDetails: (id) => {
-                const item = LogisticsApp.data.find(i => i.id === id); if(!item) return;
-                const modal = document.getElementById('fiscal-modal'); const body = document.getElementById('fiscal-modal-body');
-                body.innerHTML = `
-                    <div class="grid grid-cols-2 gap-4 text-sm"><div class="col-span-2 p-3 bg-slate-50 rounded border"><h4 class="font-bold text-slate-700">${item.xProd}</h4><p class="text-xs text-slate-500">Emitente: ${item.emitente}</p></div><div><span class="font-bold block text-xs uppercase text-slate-400">NCM</span> ${item.NCM}</div><div><span class="font-bold block text-xs uppercase text-slate-400">CFOP</span> ${item.CFOP}</div><div><span class="font-bold block text-xs uppercase text-slate-400">Cód. Prod</span> ${item.cProd}</div><div><span class="font-bold block text-xs uppercase text-slate-400">EAN/GTIN</span> ${item.cEAN}</div></div>
-                    <div class="mt-4 border-t pt-4"><h5 class="font-bold text-slate-700 mb-2">Tributação Detalhada</h5><div class="grid grid-cols-4 gap-2 text-center"><div class="p-2 bg-red-50 rounded"><span class="block text-[10px] font-bold text-red-400">ICMS</span> <span class="font-bold text-slate-700">${LogisticsApp.formatMoney(item.vICMS)}</span></div><div class="p-2 bg-red-50 rounded"><span class="block text-[10px] font-bold text-red-400">IPI</span> <span class="font-bold text-slate-700">${LogisticsApp.formatMoney(item.vIPI)}</span></div></div></div>`;
-                modal.classList.remove('hidden');
-            },
-            closeModal: () => { document.getElementById('fiscal-modal').classList.add('hidden'); },
-
-            // IMPORT TO STOCK LOGIC
-            importToStock: () => {
-                const filtered = LogisticsApp.data; 
-                const dest = document.getElementById('f-stock-dest').value;
-                const forcedType = document.getElementById('f-move-type').value; 
-
-                if(filtered.length === 0) return alert("Nenhum item XML listado.");
-                if(!confirm(`Deseja processar ${filtered.length} itens no estoque?`)) return;
-
-                const db = DB.load();
-                let created = 0, updated = 0;
-                
-                filtered.forEach(item => {
-                    let prod = db.produto.find(p => (item.cEAN && p.ean === item.cEAN) || p.nome.trim().toLowerCase() === item.xProd.trim().toLowerCase());
-                    
-                    if(!prod) {
-                        prod = { 
-                            id: Date.now().toString() + Math.random().toString().slice(2,5), 
-                            codigo: DB.getNextCode('produto'), 
-                            nome: item.xProd, 
-                            ean: item.cEAN !== 'SEM GTIN' ? item.cEAN : '', 
-                            ncm: item.NCM, 
-                            cest: '', cfop: item.CFOP, unidade: item.uCom, 
-                            valor: item.vUnCom * 1.5, custo: item.vUnCom, 
-                            estoque: 0, estoqueFiscal: 0, 
-                            tipo: 'normal' 
-                        };
-                        db.produto.push(prod); created++;
-                    } else { updated++; }
-
-                    let qty = item.qCom;
-                    let isExit = false;
-
-                    if(forcedType === 'saida') { isExit = true; }
-                    else if(forcedType === 'entrada') { isExit = false; }
-                    else { 
-                        if(item.tpNF === '1') isExit = true; 
-                    }
-
-                    if(isExit) qty = -Math.abs(qty); 
-                    else qty = Math.abs(qty); 
-
-                    if(dest === 'fisico' || dest === 'ambos') prod.estoque += qty;
-                    if(dest === 'fiscal' || dest === 'ambos') prod.estoqueFiscal = (prod.estoqueFiscal || 0) + qty;
-                    
-                    db.entrada.push({ 
-                        id: Date.now().toString() + Math.random().toString().slice(2,5), 
-                        date: Date.now(), 
-                        prodId: prod.id, 
-                        qty: qty, 
-                        custo: item.vUnCom, 
-                        fornecedor: `${item.emitente} (${isExit ? 'SAÍDA XML' : 'ENTRADA XML'})`, 
-                        dest: dest 
-                    });
-                });
-                
-                DB.saveAll(db);
-                alert(`Processamento Concluído!\nNovos: ${created}, Atualizados: ${updated}`);
-                LogisticsApp.clearData();
-                LogisticsApp.render(); 
-            },
-
-            handleFileUpload: async (event) => {
-                const files = Array.from(event.target.files); if (files.length === 0) return;
-                LogisticsApp.toggleLoading(true);
-                const readFile = (file) => new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = (e) => resolve(e.target.result); reader.onerror = (e) => reject(e); reader.readAsText(file); });
-                try {
-                    const contents = await Promise.all(files.map(file => readFile(file))); let newItems = [];
-                    contents.forEach(xml => { const items = LogisticsApp.parseXML(xml); if(items) newItems.push(...items); });
-                    LogisticsApp.data = [...LogisticsApp.data, ...newItems]; LogisticsApp.saveToStorage(); LogisticsApp.render();
-                } catch (e) { console.error(e); alert('Erro ao processar XML.'); } finally { LogisticsApp.toggleLoading(false); document.getElementById('f-fileInput').value = ''; }
-            },
-            parseXML: (xmlString) => {
-                try {
-                    const parser = new DOMParser(); const xmlDoc = parser.parseFromString(xmlString, "text/xml"); if (xmlDoc.getElementsByTagName("parsererror").length > 0) return null;
-                    const getTag = (p, t) => { if (!p) return ''; const els = p.getElementsByTagName(t); return els.length ? els[0].textContent : ''; };
-                    const getFloat = (p, t) => { const val = getTag(p, t); return val ? parseFloat(val) : 0.0; };
-                    
-                    const infNFe = xmlDoc.getElementsByTagName('infNFe')[0]; if (!infNFe) return null;
-                    
-                    const ide = xmlDoc.getElementsByTagName('ide')[0];
-                    const tpNF = getTag(ide, 'tpNF'); 
-                    const nNF = getTag(infNFe, 'nNF'); 
-                    const dhEmiRaw = getTag(infNFe, 'dhEmi') || getTag(infNFe, 'dEmi'); 
-                    const emitente = getTag(infNFe, 'xNome'); 
-                    const chave = infNFe.getAttribute('Id') || '';
-                    const dateObj = new Date(dhEmiRaw); 
-                    const formattedDate = !isNaN(dateObj) ? dateObj.toISOString().split('T')[0] : '';
-                    
-                    const detTags = xmlDoc.getElementsByTagName('det'); const items = [];
-                    for (let i = 0; i < detTags.length; i++) {
-                        const det = detTags[i]; const prod = det.getElementsByTagName('prod')[0]; const imposto = det.getElementsByTagName('imposto')[0]; const nItem = det.getAttribute('nItem');
-                        let icmsCst = '', vICMS = 0, vIPI = 0, vPIS = 0, vCOFINS = 0;
-                        if (imposto) { vICMS = getFloat(imposto, 'vICMS'); vIPI = getFloat(imposto, 'vIPI'); vPIS = getFloat(imposto, 'vPIS'); vCOFINS = getFloat(imposto, 'vCOFINS'); icmsCst = getTag(imposto, 'CST') || getTag(imposto, 'CSOSN'); }
-                        items.push({ 
-                            id: `${chave}-${nItem}`, 
-                            nNF, tpNF, dataEmissao: formattedDate, emitente, 
-                            cProd: getTag(prod, 'cProd'), cEAN: getTag(prod, 'cEAN'), xProd: getTag(prod, 'xProd'), 
-                            NCM: getTag(prod, 'NCM'), CFOP: getTag(prod, 'CFOP'), uCom: getTag(prod, 'uCom'), 
-                            qCom: getFloat(prod, 'qCom'), vUnCom: getFloat(prod, 'vUnCom'), vProd: getFloat(prod, 'vProd'), 
-                            CST_CSOSN: icmsCst, vICMS, vIPI, vPIS, vCOFINS 
-                        });
-                    }
-                    return items;
-                } catch (e) { return []; }
-            },
             render: () => {
-                if(LogisticsApp.data.length === 0) LogisticsApp.loadFromStorage();
-                
-                const tbodyXML = document.getElementById('f-tableBody');
-                tbodyXML.innerHTML = LogisticsApp.data.length === 0 ? `<tr><td colspan="4" class="p-4 text-center text-slate-400">Nenhum XML carregado.</td></tr>` : 
-                LogisticsApp.data.slice(0, 100).map(item => {
-                    const typeBadge = item.tpNF === '1' ? '<span class="text-[9px] text-red-600 bg-red-100 px-1 rounded">SAÍDA</span>' : '<span class="text-[9px] text-emerald-600 bg-emerald-100 px-1 rounded">ENTRADA</span>';
-                    return `
-                    <tr class="border-b hover:bg-slate-50">
-                        <td class="p-2"><div class="font-bold text-slate-700 truncate w-32">${item.xProd}</div><div class="text-[9px] text-slate-400">${item.nNF} | ${item.emitente.substring(0,10)}</div></td>
-                        <td class="p-2">${typeBadge}</td>
-                        <td class="p-2 text-right font-mono text-slate-600">${item.qCom}</td>
-                        <td class="p-2 text-center"><button onclick="LogisticsApp.showDetails('${item.id}')" class="text-blue-500 hover:text-blue-700"><i class="fa-solid fa-eye"></i></button></td>
-                    </tr>
-                `}).join('');
-
                 const db = DB.load();
                 const historyData = db.entrada.sort((a,b) => b.date - a.date).slice(0, 200);
                 const tbodyHist = document.getElementById('table-entrada');
@@ -1264,8 +1000,7 @@
                          <td class="p-3 font-bold text-right">${qtyDisplay}</td>
                      </tr>`;
                 }).join('');
-            },
-            exportData: (type) => { const data = LogisticsApp.data; if(!data.length) return alert('Sem dados.'); const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `xml_preview_${Date.now()}.json`; a.click(); }
+            }
         };
         window.onload = App.init;
     </script>
