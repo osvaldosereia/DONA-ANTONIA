@@ -940,7 +940,18 @@
                     sel.innerHTML = '<option value="">Sel...</option>' + DB.load().produto.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
                     Views.logistica.render();
                 }
-                if(view === 'venda') Views.venda.render();
+                if(view === 'venda') {
+                    const db = DB.load();
+                    // Load Clients
+                    const cliSel = document.getElementById('v-cliente');
+                    cliSel.innerHTML = '<option value="">Selecione...</option>' + db.cliente.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+                    
+                    // Load Products
+                    const prodSel = document.getElementById('v-produto');
+                    prodSel.innerHTML = '<option value="">Selecione...</option>' + db.produto.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+                    
+                    Views.venda.render();
+                }
             },
             filter: (t, v) => Views[t].filter(v),
             resetForm: (t) => {
@@ -951,6 +962,12 @@
                 const type = document.querySelector('input[name="p-stock-type"]:checked').value;
                 document.getElementById('grp-fisico').style.display = type === 'fiscal' ? 'none' : 'block';
                 document.getElementById('grp-fiscal').style.display = type === 'fisico' ? 'none' : 'block';
+            },
+            searchProduct: (val) => {
+                const db = DB.load();
+                const prodSel = document.getElementById('v-produto');
+                const filtered = db.produto.filter(p => p.nome.toLowerCase().includes(val.toLowerCase()) || p.codigo.toLowerCase().includes(val.toLowerCase()));
+                prodSel.innerHTML = '<option value="">Selecione...</option>' + filtered.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
             }
         };
 
