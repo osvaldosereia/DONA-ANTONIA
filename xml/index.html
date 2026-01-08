@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe de Alta Performance com Exportação Seletiva.">
-    <title>NFe Parser Pro | Seleção & Exportação</title>
+    <meta name="description" content="Leitor XML de NFe com Inteligência Fiscal e Conversão de Unidades.">
+    <title>NFe Parser Pro | Smart Fiscal</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -26,6 +26,8 @@
             --danger-bg: #fef2f2;
             --success: #16a34a;       /* Green 600 */
             --success-bg: #f0fdf4;
+            --warning: #ca8a04;
+            --warning-bg: #fefce8;
             
             /* Métricas */
             --radius: 8px;
@@ -49,7 +51,7 @@
 
         /* LAYOUT */
         main {
-            max-width: 1400px; /* Largura aumentada para acomodar tabela */
+            max-width: 1400px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
@@ -90,6 +92,11 @@
             border: 1px solid #dbeafe;
             align-self: flex-start;
         }
+        .badge-warning {
+            background: var(--warning-bg);
+            color: var(--warning);
+            border-color: #fef08a;
+        }
 
         /* FORMS */
         label {
@@ -102,7 +109,8 @@
 
         input[type="text"],
         input[type="date"],
-        input[type="file"] {
+        input[type="file"],
+        select {
             width: 100%;
             padding: 0.625rem;
             border: 1px solid var(--border);
@@ -110,9 +118,10 @@
             font-size: 0.875rem;
             transition: border-color 0.15s;
             background: var(--surface);
+            color: var(--text);
         }
 
-        input:focus {
+        input:focus, select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
@@ -189,6 +198,17 @@
             .ml-auto { margin-left: auto; }
         }
 
+        /* EXPORT CONTROL GROUP */
+        .export-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        @media (min-width: 640px) {
+            .export-control { flex-direction: row; width: auto; flex: 1; }
+        }
+
         /* TABLE */
         .results-header {
             display: flex;
@@ -217,12 +237,12 @@
             overflow-x: auto;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            max-height: 70vh; /* Sticky header needs max-height */
+            max-height: 70vh;
         }
 
         table {
             width: 100%;
-            border-collapse: separate; /* Required for sticky header border */
+            border-collapse: separate;
             border-spacing: 0;
             font-size: 0.75rem;
             white-space: nowrap;
@@ -249,7 +269,6 @@
             vertical-align: middle;
         }
 
-        /* Checkbox Column Width */
         th.w-check, td.w-check { width: 40px; text-align: center; padding-left: 0.5rem; padding-right: 0.5rem; }
 
         tr:hover td { background: var(--bg); }
@@ -259,6 +278,18 @@
         .text-brand { color: var(--primary); font-family: monospace; }
         .text-danger { color: var(--danger); }
         .font-bold { font-weight: 700; }
+        
+        /* New Styles for Smart Fiscal */
+        .smart-tag {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            margin-left: 5px;
+        }
+        .smart-st { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; } /* Red for ST */
+        .smart-normal { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; } /* Green for Normal */
 
         /* LOADING & UTILS */
         #loading {
@@ -293,8 +324,6 @@
 
         .hidden { display: none !important; }
         .flex { display: flex !important; }
-        
-        /* Animation for button appearance */
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -306,7 +335,7 @@
     <div id="loading" class="hidden">
         <div class="loader-card">
             <div class="spinner"></div>
-            <span style="font-weight: 500;">Processando...</span>
+            <span style="font-weight: 500;">Processando Fiscal...</span>
         </div>
     </div>
 
@@ -315,23 +344,26 @@
         <!-- Header -->
         <header>
             <div>
-                <h1>NFe Parser Pro <span>Select</span></h1>
-                <p>Extração, Seleção e Exportação de Produtos para Cadastro</p>
+                <h1>NFe Parser Pro <span>Fiscal Smart</span></h1>
+                <p>Detecta Fardos/Caixas, calcula Custo Unitário e define CFOP de Saída.</p>
             </div>
-            <span class="badge">v2.1 Exportação Seletiva</span>
+            <div class="flex flex-col items-end gap-1">
+                <span class="badge">v3.5 Multi-Mode Export</span>
+                <span class="badge badge-warning">Simples Nacional</span>
+            </div>
         </header>
 
         <!-- Upload -->
         <section>
-            <label for="fileInput">1. Importar Arquivos XML</label>
+            <label for="fileInput">1. Importar Arquivos XML (Compra)</label>
             <input type="file" id="fileInput" multiple accept=".xml, text/xml">
-            <p style="margin-top: 0.5rem;">🔒 Processamento local. Selecione múltiplos arquivos de uma vez.</p>
+            <p style="margin-top: 0.5rem;">🔒 O sistema analisa a descrição (ex: "6X5") para sugerir conversões.</p>
         </section>
 
         <!-- Filtros e Ações -->
         <section>
             <div class="results-header" style="border: none; padding: 0; margin: 0 0 1rem 0;">
-                <h2>2. Filtros e Seleção</h2>
+                <h2>2. Filtros e Seleção Inteligente</h2>
             </div>
 
             <div class="filters-grid">
@@ -354,18 +386,21 @@
             
             <div class="actions-row">
                 <!-- Botão de Exportação Condicional -->
-                <div id="selectionActions" class="hidden flex-1 fade-in">
-                    <button class="btn-success" onclick="app.exportSelected()">
-                        ✅ Exportar <span id="selectionCount">0</span> Itens Selecionados (JSON)
+                <div id="selectionActions" class="hidden fade-in export-control">
+                    <select id="exportModeSelect" style="max-width: 250px;">
+                        <option value="varejo" selected>Modo Varejo (Unidade)</option>
+                        <option value="atacado">Modo Atacado (Caixa/Fardo)</option>
+                        <option value="ambos">Ambos (Completo)</option>
+                    </select>
+                    <button class="btn-success" onclick="app.exportSmartJSON()">
+                        ✨ Exportar Itens Selecionados
                     </button>
-                    <span style="font-size: 0.75rem; color: var(--text-light); margin-left: 0.5rem; display: block; margin-top: 0.5rem;">
-                        Gera um arquivo único com os produtos escolhidos.
-                    </span>
+                    <!-- Contador movido para dentro do botão ou tooltip -->
                 </div>
 
-                <div class="ml-auto flex gap-2">
+                <div class="ml-auto flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                     <button class="btn-primary" onclick="app.exportData('json')" style="width: auto;">
-                        📥 Baixar Tudo
+                        📥 Backup Bruto
                     </button>
                     <button class="btn-danger" onclick="app.clearData()" style="width: auto;">
                         🗑️ Apagar
@@ -379,7 +414,7 @@
             <div style="background: var(--surface); padding: var(--spacing-md); border: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; border-bottom: none;" class="results-header">
                 <div>
                     <h3>3. Produtos Encontrados</h3>
-                    <p>Exibindo <span id="countDisplay" class="font-bold">0</span> registros.</p>
+                    <p>Selecione os produtos para gerar o arquivo de importação do ERP.</p>
                 </div>
                 <div class="total-card">
                     <div class="total-label">Total Filtrado</div>
@@ -391,33 +426,24 @@
                 <table>
                     <thead>
                         <tr>
-                            <!-- Checkbox Principal -->
                             <th class="w-check">
                                 <input type="checkbox" id="selectAll" onchange="app.toggleSelectAll(this)">
                             </th>
+                            <th>Info Fiscal</th>
                             <th>Data</th>
-                            <th>Nota</th>
-                            <th>Emitente</th>
-                            <th>Cód. Prod</th>
-                            <th>EAN/GTIN</th>
                             <th>Descrição</th>
+                            <th>EAN/GTIN</th>
                             <th>NCM</th>
-                            <th>CFOP</th>
-                            <th>Unid</th>
-                            <th>CST</th>
-                            <th class="text-right">Qtd</th>
-                            <th class="text-right">V. Unit</th>
+                            <th>CST Ent.</th>
+                            <th class="text-right">Qtd (Ent)</th>
+                            <th class="text-right">V. Unit (Cx)</th>
                             <th class="text-right">V. Total</th>
-                            <th class="text-right text-danger">ICMS</th>
-                            <th class="text-right text-danger">IPI</th>
-                            <th class="text-right text-danger">PIS</th>
-                            <th class="text-right text-danger">COF</th>
                         </tr>
                     </thead>
                     <tbody id="tableBody">
                         <!-- JS Renderiza aqui -->
                         <tr>
-                            <td colspan="18" style="text-align: center; padding: 3rem;">
+                            <td colspan="10" style="text-align: center; padding: 3rem;">
                                 <div style="color: var(--text-light);">
                                     Importe arquivos XML para visualizar os dados.
                                 </div>
@@ -432,12 +458,12 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v2.1 (Selection Feature)
+         * SISTEMAS - Core Logic v3.5 (Multi-Mode Export)
          */
         const app = {
             data: [], 
-            selectedIds: new Set(), // Armazena IDs selecionados
-            storageKey: 'nfe_sys_data_full_v2',
+            selectedIds: new Set(),
+            storageKey: 'nfe_sys_data_smart_v3',
 
             init() {
                 this.cacheDOM();
@@ -452,12 +478,11 @@
                     searchInput: document.getElementById('searchInput'),
                     dateStart: document.getElementById('dateStart'),
                     dateEnd: document.getElementById('dateEnd'),
-                    countDisplay: document.getElementById('countDisplay'),
                     totalDisplay: document.getElementById('totalValueDisplay'),
                     loading: document.getElementById('loading'),
                     selectAll: document.getElementById('selectAll'),
                     selectionActions: document.getElementById('selectionActions'),
-                    selectionCount: document.getElementById('selectionCount')
+                    exportModeSelect: document.getElementById('exportModeSelect'),
                 };
             },
 
@@ -468,99 +493,140 @@
                 this.dom.dateEnd.addEventListener('change', () => this.render());
             },
 
+            // --- Gerenciamento de Dados ---
             saveToStorage() {
-                try {
-                    localStorage.setItem(this.storageKey, JSON.stringify(this.data));
-                } catch (e) {
-                    alert('Aviso: Limite do LocalStorage atingido.');
-                }
+                try { localStorage.setItem(this.storageKey, JSON.stringify(this.data)); } catch (e) { alert('LocalStorage cheio.'); }
             },
-
             loadFromStorage() {
                 const stored = localStorage.getItem(this.storageKey);
-                if (stored) {
-                    try {
-                        this.data = JSON.parse(stored);
-                        this.render();
-                    } catch (e) {
-                        localStorage.removeItem(this.storageKey);
-                    }
-                }
+                if (stored) { this.data = JSON.parse(stored); this.render(); }
             },
-
             clearData() {
-                if (confirm('Tem certeza? Isso apaga todo o histórico importado.')) {
-                    this.data = [];
-                    this.selectedIds.clear();
-                    localStorage.removeItem(this.storageKey);
-                    this.render();
+                if (confirm('Limpar tudo?')) {
+                    this.data = []; this.selectedIds.clear();
+                    localStorage.removeItem(this.storageKey); this.render();
                     this.dom.fileInput.value = '';
                 }
             },
 
-            // --- Seleção de Produtos ---
-
+            // --- Lógica de Seleção ---
             toggleSelect(id) {
-                if (this.selectedIds.has(id)) {
-                    this.selectedIds.delete(id);
-                } else {
-                    this.selectedIds.add(id);
-                }
+                this.selectedIds.has(id) ? this.selectedIds.delete(id) : this.selectedIds.add(id);
                 this.updateSelectionUI();
             },
-
             toggleSelectAll(checkbox) {
-                const filtered = this.getFilteredData(); // Seleciona apenas o que está visível/filtrado
-                if (checkbox.checked) {
-                    filtered.forEach(item => this.selectedIds.add(item.id));
-                } else {
-                    filtered.forEach(item => this.selectedIds.delete(item.id));
-                }
-                this.render(); // Re-renderiza para atualizar checkboxes individuais
+                const filtered = this.getFilteredData();
+                checkbox.checked ? filtered.forEach(i => this.selectedIds.add(i.id)) : filtered.forEach(i => this.selectedIds.delete(i.id));
+                this.render();
             },
-
             updateSelectionUI() {
                 const count = this.selectedIds.size;
-                this.dom.selectionCount.textContent = count;
-                
                 if (count > 0) {
                     this.dom.selectionActions.classList.remove('hidden');
                     this.dom.selectionActions.classList.add('flex');
+                    const btn = this.dom.selectionActions.querySelector('button');
+                    btn.innerHTML = `✨ Exportar <b>${count}</b> Itens`;
                 } else {
                     this.dom.selectionActions.classList.add('hidden');
                     this.dom.selectionActions.classList.remove('flex');
                     this.dom.selectAll.checked = false;
                 }
-
-                // Atualiza visual das linhas (opcional para performance, mas bom para UX)
-                // Vamos fazer via render completo por segurança ou manipulação DOM direta se fosse React
-                // Aqui faremos manipulação direta para performance
-                const checkboxes = document.querySelectorAll('.row-checkbox');
-                checkboxes.forEach(cb => {
+                
+                document.querySelectorAll('.row-checkbox').forEach(cb => {
                     const tr = cb.closest('tr');
-                    if (cb.checked) tr.classList.add('selected');
-                    else tr.classList.remove('selected');
+                    cb.checked ? tr.classList.add('selected') : tr.classList.remove('selected');
                 });
             },
 
-            exportSelected() {
-                const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
+            // --- INTELIGÊNCIA FISCAL ---
+            detectConversionFactor(description) {
+                if (!description) return 1;
+                const desc = description.toUpperCase();
+                const regexMultiplier = /(\d+)\s*[xX]\s*\d+/; 
+                const matchX = desc.match(regexMultiplier);
+                if (matchX && matchX[1]) {
+                    const val = parseInt(matchX[1]);
+                    return val > 0 ? val : 1;
+                }
+                const regexPack = /(?:CX|FD|FARDO|PCT)\W+(\d+)/;
+                const matchPack = desc.match(regexPack);
+                if (matchPack && matchPack[1]) {
+                    const val = parseInt(matchPack[1]);
+                    return val > 0 ? val : 1;
+                }
+                return 1;
+            },
+
+            predictFiscalAttributes(item) {
+                const cfopIn = parseInt(item.CFOP.replace('.', ''));
+                const cstIn = parseInt(item.CST_CSOSN || '0');
                 
+                // Regra simplificada para Simples Nacional
+                const isST = [1403, 2403, 5403, 5405].includes(cfopIn) || [10, 30, 60, 70, 201, 202, 500].includes(cstIn);
+
+                if (isST) {
+                    return { cfopOut: '5.405', csosnOut: '500', desc: 'Revenda ST' };
+                } else {
+                    return { cfopOut: '5.102', csosnOut: '102', desc: 'Revenda Normal' };
+                }
+            },
+
+            // --- EXPORTAÇÃO CONFIGURÁVEL ---
+            exportSmartJSON() {
+                const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
 
-                // Exporta JSON
-                this.downloadJSON(selectedItems, `produtos_selecionados_${selectedItems.length}_itens`);
+                const mode = this.dom.exportModeSelect.value; // 'varejo', 'atacado', 'ambos'
+                const exportList = [];
+
+                selectedItems.forEach(item => {
+                    const factor = this.detectConversionFactor(item.xProd);
+                    const fiscal = this.predictFiscalAttributes(item);
+                    
+                    // Lógica para Modo Atacado
+                    if (mode === 'atacado' || mode === 'ambos') {
+                        exportList.push({
+                            ...item,
+                            _TIPO: 'ATACADO (ENTRADA)',
+                            _OBS: 'Dados originais da Nota de Entrada',
+                            CFOP_SAIDA_SUGERIDO: fiscal.cfopOut,
+                            CSOSN_SAIDA_SUGERIDO: fiscal.csosnOut,
+                            FATOR_DETECTADO: 1
+                        });
+                    }
+
+                    // Lógica para Modo Varejo (Conversão)
+                    if (mode === 'varejo' || mode === 'ambos') {
+                        const unitCost = item.vUnCom / factor;
+                        
+                        // Limpeza de descrição para cupom fiscal
+                        let cleanDesc = item.xProd.replace(/(\d+\s*[xX]\s*\d+)/gi, '').replace(/(FD|CX|FARDO)\s*\d*/gi, '').trim();
+                        cleanDesc = cleanDesc.replace(/\s+/, ' ') + " (UN)";
+
+                        exportList.push({
+                            id_referencia: item.id,
+                            cProd_Sugestao: item.cProd + '-UN', 
+                            cEAN: 'PREENCHER_COM_LEITOR', // Importante para validação SEFAZ
+                            xProd: cleanDesc,
+                            NCM: item.NCM, // Mantém NCM original para evitar malha fina
+                            CEST: item.CEST,
+                            CFOP_SAIDA: fiscal.cfopOut,
+                            CSOSN_SAIDA: fiscal.csosnOut,
+                            Unidade_Venda: 'UN',
+                            Fator_Conversao_Entrada: factor, // Fundamental para o estoque
+                            Custo_Unitario: parseFloat(unitCost.toFixed(4)),
+                            Preco_Custo_Caixa: item.vUnCom,
+                            _TIPO: 'VAREJO (SAIDA)',
+                            _OBS: `Desmembrado: 1 ${item.uCom} virou ${factor} UN`
+                        });
+                    }
+                });
+
+                const filename = `exportacao_${mode}_${selectedItems.length}itens`;
+                this.downloadJSON(exportList, filename);
             },
 
-            exportData(type) {
-                const dataToExport = this.getFilteredData();
-                if (dataToExport.length === 0) {
-                    alert("Nada para exportar.");
-                    return;
-                }
-                this.downloadJSON(dataToExport, `nfe_fiscal_completo`);
-            },
-
+            // --- Helpers ---
             downloadJSON(data, filenamePrefix) {
                 const content = JSON.stringify(data, null, 2);
                 const blob = new Blob([content], { type: 'application/json' });
@@ -572,254 +638,146 @@
                 a.click();
                 document.body.removeChild(a);
             },
-
-            // --- Parser (Mantido igual) ---
-
+            
+            // --- Parser (Mantido) ---
             async handleFileUpload(event) {
                 const files = Array.from(event.target.files);
                 if (files.length === 0) return;
-
                 this.toggleLoading(true);
                 const promises = files.map(file => this.readFileAsText(file));
-                
                 try {
                     const contents = await Promise.all(promises);
                     let newItems = [];
-                    
-                    contents.forEach(xmlString => {
-                        const parsedItems = this.parseXML(xmlString);
-                        if (parsedItems) newItems.push(...parsedItems);
+                    contents.forEach(xml => {
+                        const parsed = this.parseXML(xml);
+                        if (parsed) newItems.push(...parsed);
                     });
-
                     this.data = [...this.data, ...newItems];
                     this.saveToStorage();
                     this.render();
-                } catch (error) {
-                    console.error(error);
-                    alert('Erro ao processar arquivos.');
-                } finally {
-                    this.toggleLoading(false);
-                    this.dom.fileInput.value = ''; 
-                }
+                } catch (e) { alert('Erro no processamento.'); } 
+                finally { this.toggleLoading(false); this.dom.fileInput.value = ''; }
             },
-
             readFileAsText(file) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => resolve(e.target.result);
-                    reader.onerror = (e) => reject(e);
-                    reader.readAsText(file);
-                });
+                return new Promise((r, j) => { const fr = new FileReader(); fr.onload = e => r(e.target.result); fr.onerror = j; fr.readAsText(file); });
             },
-
             parseXML(xmlString) {
                 try {
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlString, "text/xml");
                     if (xmlDoc.getElementsByTagName("parsererror").length > 0) return null;
-
-                    const getTag = (parent, tag) => {
-                        if (!parent) return '';
-                        const els = parent.getElementsByTagName(tag);
-                        return els.length ? els[0].textContent : '';
-                    };
-                    const getFloat = (parent, tag) => {
-                        const val = getTag(parent, tag);
-                        return val ? parseFloat(val) : 0.0;
-                    };
+                    const getTag = (p, t) => { const el = p.getElementsByTagName(t)[0]; return el ? el.textContent : ''; };
+                    const getFloat = (p, t) => { const v = getTag(p, t); return v ? parseFloat(v) : 0.0; };
 
                     const infNFe = xmlDoc.getElementsByTagName('infNFe')[0];
                     if (!infNFe) return null; 
-
                     const nNF = getTag(infNFe, 'nNF');
-                    const dhEmiRaw = getTag(infNFe, 'dhEmi') || getTag(infNFe, 'dEmi');
+                    const dhEmi = getTag(infNFe, 'dhEmi') || getTag(infNFe, 'dEmi');
                     const emitente = getTag(infNFe, 'xNome');
-                    const cnpjEmitente = getTag(infNFe, 'CNPJ');
                     const chave = infNFe.getAttribute('Id') || '';
-                    const dateObj = new Date(dhEmiRaw);
-                    const formattedDate = !isNaN(dateObj) ? dateObj.toISOString().split('T')[0] : '';
-
-                    const detTags = xmlDoc.getElementsByTagName('det');
+                    
+                    const dets = xmlDoc.getElementsByTagName('det');
                     const items = [];
-
-                    for (let i = 0; i < detTags.length; i++) {
-                        const det = detTags[i];
-                        const prod = det.getElementsByTagName('prod')[0];
-                        const imposto = det.getElementsByTagName('imposto')[0];
-                        const nItem = det.getAttribute('nItem');
+                    for (let i = 0; i < dets.length; i++) {
+                        const prod = dets[i].getElementsByTagName('prod')[0];
+                        const imposto = dets[i].getElementsByTagName('imposto')[0];
+                        const nItem = dets[i].getAttribute('nItem');
                         
-                        let icmsCst = '', icmsCsosn = '', vICMS = 0, vIPI = 0, vPIS = 0, vCOFINS = 0;
-
+                        let cst = '', vICMS = 0;
                         if (imposto) {
+                            cst = getTag(imposto, 'CST') || getTag(imposto, 'CSOSN');
                             vICMS = getFloat(imposto, 'vICMS');
-                            vIPI = getFloat(imposto, 'vIPI');
-                            vPIS = getFloat(imposto, 'vPIS');
-                            vCOFINS = getFloat(imposto, 'vCOFINS');
-                            icmsCst = getTag(imposto, 'CST');
-                            icmsCsosn = getTag(imposto, 'CSOSN');
                         }
 
-                        // ID Único Composto: ChaveNFe + NumItem
-                        const uniqueId = `${chave}-${nItem}`;
-
                         items.push({
-                            id: uniqueId, // CRUCIAL para seleção
-                            nNF: nNF,
-                            dataEmissao: formattedDate,
-                            emitente: emitente,
-                            cnpjEmitente: cnpjEmitente,
-                            chaveAcesso: chave,
+                            id: `${chave}-${nItem}`,
+                            nNF, 
+                            dataEmissao: dhEmi.split('T')[0],
+                            emitente,
                             cProd: getTag(prod, 'cProd'),
                             cEAN: getTag(prod, 'cEAN'),
-                            cEANTrib: getTag(prod, 'cEANTrib'),
                             xProd: getTag(prod, 'xProd'),
                             NCM: getTag(prod, 'NCM'),
                             CEST: getTag(prod, 'CEST'),
                             CFOP: getTag(prod, 'CFOP'),
                             uCom: getTag(prod, 'uCom'),
                             qCom: getFloat(prod, 'qCom'),
-                            vUnCom: getFloat(prod, 'vUnCom'),
+                            vUnCom: getFloat(prod, 'vUnCom'), 
                             vProd: getFloat(prod, 'vProd'),
-                            vFrete: getFloat(prod, 'vFrete'),
-                            vDesc: getFloat(prod, 'vDesc'),
-                            CST_CSOSN: icmsCst || icmsCsosn || '',
-                            vICMS: vICMS, vIPI: vIPI, vPIS: vPIS, vCOFINS: vCOFINS,
-                            vTotalItem: getFloat(prod, 'vProd') + getFloat(prod, 'vIPI')
+                            CST_CSOSN: cst,
+                            vICMS
                         });
                     }
                     return items;
-                } catch (e) {
-                    return [];
-                }
+                } catch (e) { return []; }
             },
 
             // --- Render ---
-
             getFilteredData() {
-                const search = this.dom.searchInput.value.toLowerCase();
-                const start = this.dom.dateStart.value;
-                const end = this.dom.dateEnd.value;
-
-                return this.data.filter(item => {
-                    const matchText = (item.emitente || '').toLowerCase().includes(search) || 
-                                      (item.xProd || '').toLowerCase().includes(search) ||
-                                      (item.cProd || '').toLowerCase().includes(search) ||
-                                      (item.cEAN || '').includes(search) ||
-                                      (item.NCM || '').includes(search) ||
-                                      (item.nNF || '').includes(search);
-                    
-                    let matchDate = true;
-                    if (start) matchDate = matchDate && item.dataEmissao >= start;
-                    if (end) matchDate = matchDate && item.dataEmissao <= end;
-
-                    return matchText && matchDate;
-                }).sort((a, b) => b.dataEmissao.localeCompare(a.dataEmissao));
+                const s = this.dom.searchInput.value.toLowerCase();
+                const d1 = this.dom.dateStart.value;
+                const d2 = this.dom.dateEnd.value;
+                return this.data.filter(i => {
+                    const txt = (i.emitente+i.xProd+i.cProd+i.nNF).toLowerCase().includes(s);
+                    let date = true;
+                    if (d1) date = date && i.dataEmissao >= d1;
+                    if (d2) date = date && i.dataEmissao <= d2;
+                    return txt && date;
+                }).sort((a,b) => b.dataEmissao.localeCompare(a.dataEmissao));
             },
-
             render() {
                 const filtered = this.getFilteredData();
                 const tbody = this.dom.tableBody;
                 tbody.innerHTML = '';
                 
-                // Reset select all visual state based on visibility
                 this.dom.selectAll.checked = filtered.length > 0 && filtered.every(i => this.selectedIds.has(i.id));
 
-                if (this.data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="18" style="text-align:center; padding: 2rem; color: #94a3b8;">Nenhum dado carregado.</td></tr>`;
-                    this.updateTotals(0, 0);
-                    this.updateSelectionUI();
-                    return;
-                }
-                
                 if (filtered.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="18" style="text-align:center; padding: 2rem; color: #94a3b8;">Nenhum resultado encontrado.</td></tr>`;
-                    this.updateTotals(0, 0);
+                    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 2rem; color: #94a3b8;">Nada encontrado.</td></tr>`;
+                    this.dom.totalDisplay.textContent = 'R$ 0,00';
                     this.updateSelectionUI();
                     return;
                 }
 
-                const limit = 300;
-                const renderSet = filtered.slice(0, limit);
+                const limit = 200;
                 const fragment = document.createDocumentFragment();
 
-                renderSet.forEach(item => {
+                filtered.slice(0, limit).forEach(item => {
                     const tr = document.createElement('tr');
-                    const isSelected = this.selectedIds.has(item.id);
-                    if (isSelected) tr.classList.add('selected');
+                    const isSel = this.selectedIds.has(item.id);
+                    if (isSel) tr.classList.add('selected');
+
+                    const fiscal = this.predictFiscalAttributes(item);
+                    const tagClass = fiscal.csosnOut === '500' ? 'smart-st' : 'smart-normal';
+                    const tagLabel = fiscal.csosnOut === '500' ? 'ST' : 'NORM';
                     
+                    const factor = this.detectConversionFactor(item.xProd);
+                    const factorDisplay = factor > 1 ? `<span style="color:#2563eb; font-weight:bold; font-size:0.7rem;">(x${factor})</span>` : '';
+
                     tr.innerHTML = `
                         <td class="w-check">
-                            <input type="checkbox" class="row-checkbox" 
-                                value="${item.id}" 
-                                ${isSelected ? 'checked' : ''} 
-                                onchange="app.toggleSelect('${item.id}')">
+                            <input type="checkbox" class="row-checkbox" value="${item.id}" ${isSel ? 'checked' : ''} onchange="app.toggleSelect('${item.id}')">
                         </td>
-                        <td>${this.formatDate(item.dataEmissao)}</td>
-                        <td>${item.nNF}</td>
-                        <td title="${item.emitente}">${item.emitente.substring(0, 20)}...</td>
-                        <td class="text-brand">${item.cProd}</td>
-                        <td class="text-brand">${item.cEAN !== 'SEM GTIN' ? item.cEAN : ''}</td>
-                        <td title="${item.xProd}">${item.xProd.substring(0, 30)}...</td>
+                        <td><span class="smart-tag ${tagClass}">${tagLabel}</span></td>
+                        <td>${item.dataEmissao.split('-').reverse().join('/')}</td>
+                        <td title="${item.xProd}">${item.xProd.substring(0, 35)}... ${factorDisplay}</td>
+                        <td class="text-brand">${item.cEAN}</td>
                         <td>${item.NCM}</td>
-                        <td>${item.CFOP}</td>
-                        <td>${item.uCom}</td>
-                        <td>${item.CST_CSOSN}</td>
+                        <td>${item.CST_CSOSN || '-'}</td>
                         <td class="text-right">${item.qCom}</td>
-                        <td class="text-right">${this.formatMoney(item.vUnCom)}</td>
-                        <td class="text-right font-bold">${this.formatMoney(item.vProd)}</td>
-                        <td class="text-right text-danger">${item.vICMS > 0 ? this.formatMoney(item.vICMS) : '-'}</td>
-                        <td class="text-right text-danger">${item.vIPI > 0 ? this.formatMoney(item.vIPI) : '-'}</td>
-                        <td class="text-right text-danger">${item.vPIS > 0 ? this.formatMoney(item.vPIS) : '-'}</td>
-                        <td class="text-right text-danger">${item.vCOFINS > 0 ? this.formatMoney(item.vCOFINS) : '-'}</td>
+                        <td class="text-right">${item.vUnCom.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
+                        <td class="text-right font-bold">${item.vProd.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
                     `;
                     fragment.appendChild(tr);
                 });
 
                 tbody.appendChild(fragment);
-
-                if (filtered.length > limit) {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td colspan="18" style="text-align:center; padding: 1rem; color: #94a3b8; font-size: 0.8rem;">
-                        ... Exibindo ${limit} de ${filtered.length} linhas ...
-                    </td>`;
-                    tbody.appendChild(tr);
-                }
-
-                const totalValue = filtered.reduce((acc, curr) => acc + curr.vProd, 0);
-                this.updateTotals(filtered.length, totalValue);
+                this.dom.totalDisplay.textContent = filtered.reduce((a, b) => a + b.vProd, 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
                 this.updateSelectionUI();
             },
-
-            updateTotals(count, value) {
-                this.dom.countDisplay.textContent = count;
-                this.dom.totalDisplay.textContent = this.formatMoney(value);
-            },
-
-            resetFilters() {
-                this.dom.searchInput.value = '';
-                this.dom.dateStart.value = '';
-                this.dom.dateEnd.value = '';
-                this.render();
-            },
-
-            formatMoney(value) {
-                return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            },
-
-            formatDate(isoDate) {
-                if (!isoDate) return '-';
-                const [year, month, day] = isoDate.split('-');
-                return `${day}/${month}/${year}`;
-            },
-
             toggleLoading(show) {
-                if (show) {
-                    this.dom.loading.classList.remove('hidden');
-                    this.dom.loading.classList.add('flex');
-                } else {
-                    this.dom.loading.classList.add('hidden');
-                    this.dom.loading.classList.remove('flex');
-                }
+                const el = this.dom.loading;
+                show ? (el.classList.remove('hidden'), el.classList.add('flex')) : (el.classList.add('hidden'), el.classList.remove('flex'));
             }
         };
 
