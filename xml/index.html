@@ -319,6 +319,40 @@
         .smart-st { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; } /* Red for ST */
         .smart-normal { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; } /* Green for Normal */
 
+        /* TOAST NOTIFICATION */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--text);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.3s ease-out forwards;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateY(-10px); }
+        }
+
         /* LOADING & UTILS */
         #loading {
             position: fixed;
@@ -367,6 +401,9 @@
         </div>
     </div>
 
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <main>
         
         <!-- Header -->
@@ -376,8 +413,8 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.4 Dual EAN</span>
-                <span class="badge badge-success">Smart EAN Sorting</span>
+                <span class="badge">v6.1 Sincronização Automática</span>
+                <span class="badge badge-success">Descontos Ativos</span>
             </div>
         </header>
 
@@ -486,12 +523,12 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.4 (Smart EAN Sorting)
+         * SISTEMAS - Core Logic v6.1 (Auto-Sync by EAN)
          */
         const app = {
             data: [], 
             selectedIds: new Set(),
-            storageKey: 'nfe_sys_data_discount_v6',
+            storageKey: 'nfe_sys_data_sync_v61', // Changed key to version 6.1
 
             init() {
                 this.cacheDOM();
@@ -511,6 +548,7 @@
                     selectAll: document.getElementById('selectAll'),
                     selectionActions: document.getElementById('selectionActions'),
                     exportModeSelect: document.getElementById('exportModeSelect'),
+                    toastContainer: document.getElementById('toastContainer'),
                 };
             },
 
@@ -537,14 +575,53 @@
                 }
             },
 
+            // --- LÓGICA DE ATUALIZAÇÃO E SINCRONIZAÇÃO (NOVO) ---
             updateFactor(id, newValue) {
-                const item = this.data.find(i => i.id === id);
-                if (item) {
-                    let val = parseInt(newValue);
-                    if (isNaN(val) || val < 1) val = 1;
-                    item.userFactor = val;
-                    this.saveToStorage();
+                const sourceItem = this.data.find(i => i.id === id);
+                if (!sourceItem) return;
+
+                let val = parseInt(newValue);
+                if (isNaN(val) || val < 1) val = 1;
+
+                // 1. Atualiza o item atual
+                sourceItem.userFactor = val;
+
+                // 2. SINCRONIZAÇÃO: Busca outros itens com mesmo EAN
+                let syncCount = 0;
+                
+                // Só sincroniza se tiver EAN válido e não for "SEM GTIN"
+                const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
+
+                if (hasValidEan) {
+                    this.data.forEach(item => {
+                        // Se for outro item (não o atual) e tiver o mesmo EAN
+                        if (item.id !== id && item.cEAN === sourceItem.cEAN) {
+                            item.userFactor = val;
+                            syncCount++;
+                        }
+                    });
                 }
+
+                this.saveToStorage();
+                this.render(); // Re-renderiza para atualizar os inputs visuais
+
+                // 3. Feedback ao Usuário
+                if (syncCount > 0) {
+                    this.showToast(`✅ Atualizado em +${syncCount} itens idênticos (EAN: ${sourceItem.cEAN})`);
+                }
+            },
+
+            showToast(message) {
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = message;
+                this.dom.toastContainer.appendChild(toast);
+
+                // Remove após 3 segundos
+                setTimeout(() => {
+                    toast.style.animation = 'fadeOut 0.3s ease-out forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
             },
 
             toggleSelect(id) {
@@ -607,7 +684,7 @@
                 }
             },
 
-            // --- EXPORTAÇÃO (ATUALIZADO V6.4 - DUAL EAN LOGIC) ---
+            // --- EXPORTAÇÃO (COM CÁLCULO DE DESCONTO E NUMERO DA NOTA) ---
             exportSmartJSON() {
                 const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
@@ -620,49 +697,23 @@
                     const finalFactor = item.userFactor ? item.userFactor : detected;
                     const fiscal = this.predictFiscalAttributes(item);
                     
-                    // --- CÁLCULOS ---
+                    // --- CÁLCULO DO CUSTO LÍQUIDO ---
+                    // Custo Liq Caixa = (Valor Total Item - Desconto Total) / Quantidade Caixas
                     const totalDesc = item.vDesc || 0;
                     const netTotal = item.vProd - totalDesc;
                     const netCostBox = netTotal / item.qCom;
                     const unitCost = netCostBox / finalFactor;
-                    
-                    // Quantidade TOTAL de unidades
-                    const qtdTotalUnidades = item.qCom * finalFactor;
 
-                    // --- LÓGICA DE EAN INTELIGENTE ---
-                    // Se o fator for > 1, entende-se que o item na nota é uma CAIXA, logo o EAN pertence à CAIXA.
-                    // Se o fator for = 1, entende-se que o item na nota é UNITÁRIO, logo o EAN pertence à UNIDADE.
-                    let eanUnidade = '';
-                    let eanCaixa = '';
-
-                    if (finalFactor > 1) {
-                        // É uma caixa/fardo
-                        eanCaixa = item.cEAN;
-                        eanUnidade = 'PREENCHER_COM_LEITOR'; // O XML não forneceu o EAN unitário, apenas o da caixa
-                    } else {
-                        // É unitário
-                        eanUnidade = item.cEAN;
-                        eanCaixa = ''; // Não há EAN de caixa neste contexto
-                    }
-
-                    if (mode === 'atacado') {
+                    if (mode === 'atacado' || mode === 'ambos') {
                         exportList.push({
                             ...item,
-                            Numero_Nota: item.nNF,
-                            Quantidade_NFe: item.qCom,
-                            Unidade_NFe: item.uCom,
-                            Fator_Conversao: finalFactor,
-                            Quantidade_Total_Unidades: qtdTotalUnidades,
-                            
-                            // EANs separados
-                            EAN_Unidade: eanUnidade,
-                            EAN_Caixa: eanCaixa,
-                            
+                            Numero_Nota: item.nNF, // Adicionado nNF
                             _TIPO: 'ATACADO (ENTRADA)',
                             CFOP_SAIDA_SUGERIDO: fiscal.cfopOut,
                             CSOSN_SAIDA_SUGERIDO: fiscal.csosnOut,
+                            FATOR_UTILIZADO: finalFactor,
                             CUSTO_LIQUIDO_CAIXA: parseFloat(netCostBox.toFixed(4)),
-                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)),
+                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), // Campo explícito para custo
                             DESCONTO_APLICADO: totalDesc
                         });
                     }
@@ -673,30 +724,21 @@
 
                         exportList.push({
                             id_referencia: item.id,
-                            Numero_Nota: item.nNF,
+                            Numero_Nota: item.nNF, // Adicionado nNF
                             cProd_Sugestao: item.cProd + '-UN', 
-                            
-                            // EANs separados
-                            EAN_Unidade: eanUnidade,
-                            EAN_Caixa: eanCaixa,
-                            
+                            cEAN: 'PREENCHER_COM_LEITOR', 
                             xProd: cleanDesc,
                             NCM: item.NCM, 
                             CEST: item.CEST,
                             CFOP_SAIDA: fiscal.cfopOut,
                             CSOSN_SAIDA: fiscal.csosnOut,
                             Unidade_Venda: 'UN',
-                            
-                            Quantidade_NFe: item.qCom,
-                            Unidade_NFe: item.uCom,
-                            Fator_Conversao: finalFactor,
-                            Quantidade_Total_Unidades: qtdTotalUnidades,
-                            
-                            Custo_Unitario: parseFloat(unitCost.toFixed(4)), 
-                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), 
+                            Fator_Conversao_Entrada: finalFactor,
+                            Custo_Unitario: parseFloat(unitCost.toFixed(4)), // Custo Un. com desconto
+                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), // Custo da Caixa com desconto
                             Valor_Desconto_Total: totalDesc,
                             _TIPO: 'VAREJO (SAIDA)',
-                            _OBS: `Entrada: ${item.qCom} ${item.uCom} x ${finalFactor} = ${qtdTotalUnidades} UN`
+                            _OBS: `Desconto de R$ ${totalDesc} abatido do custo`
                         });
                     }
                 });
@@ -717,13 +759,7 @@
                 document.body.removeChild(a);
             },
             
-            // --- Parser (Preserve Data) ---
-            exportData(type) {
-                // Backup Bruto
-                const filename = `backup_bruto_${this.data.length}itens`;
-                this.downloadJSON(this.data, filename);
-            },
-
+            // --- Parser ---
             async handleFileUpload(event) {
                 const files = Array.from(event.target.files);
                 if (files.length === 0) return;
@@ -773,6 +809,7 @@
                             vICMS = getFloat(imposto, 'vICMS');
                         }
 
+                        // --- CORREÇÃO: LENDO O DESCONTO ---
                         const vDesc = getFloat(prod, 'vDesc'); 
 
                         items.push({
@@ -790,7 +827,7 @@
                             qCom: getFloat(prod, 'qCom'),
                             vUnCom: getFloat(prod, 'vUnCom'), 
                             vProd: getFloat(prod, 'vProd'),
-                            vDesc: vDesc, 
+                            vDesc: vDesc, // Armazena o desconto
                             CST_CSOSN: cst,
                             vICMS,
                             userFactor: null
@@ -848,9 +885,10 @@
                     const detected = this.detectConversionFactor(item.xProd);
                     const currentFactor = item.userFactor ? item.userFactor : detected;
                     
+                    // Cálculo Visual do Custo Líquido
                     const discount = item.vDesc || 0;
                     const netTotal = item.vProd - discount;
-                    const netUnitCostBox = netTotal / item.qCom; 
+                    const netUnitCostBox = netTotal / item.qCom; // Custo Liq da Caixa
 
                     const inputHtml = `
                         <input type="number" 
@@ -862,6 +900,7 @@
                                title="Qtd detectada: ${detected}. Edite para corrigir.">
                     `;
 
+                    // Formatação do Desconto (Se houver)
                     const descHtml = discount > 0 
                         ? `<span class="text-success font-bold">-${discount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>` 
                         : '<span style="color:#cbd5e1">-</span>';
