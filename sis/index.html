@@ -36,6 +36,16 @@
             #print-area { position: absolute; left: 0; top: 0; width: 100%; padding: 0; margin: 0; box-shadow: none; border: none; }
             .no-print { display: none !important; }
         }
+        
+        /* Estilo padrão para labels pequenos */
+        .input-label {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #94a3b8; /* slate-400 */
+            display: block;
+            margin-bottom: 2px;
+        }
     </style>
 </head>
 <body class="min-h-screen flex bg-slate-50">
@@ -48,9 +58,12 @@
                 <button onclick="document.getElementById('cat-modal').classList.add('hidden')" class="hover:text-red-400 transition"><i class="fa-solid fa-times"></i></button>
             </div>
             <div class="p-4 bg-slate-50 border-b space-y-2">
-                <form onsubmit="CategoryApp.addCategory(event)" class="flex gap-2">
-                    <input type="text" id="new-cat-name" placeholder="Nova Categoria Principal" class="flex-1 border rounded-lg px-3 py-2 text-xs outline-none" required>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-blue-700">Adicionar</button>
+                <form onsubmit="CategoryApp.addCategory(event)" class="flex flex-col gap-1">
+                    <label class="input-label">Nome da Nova Categoria</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="new-cat-name" placeholder="Ex: Bebidas, Limpeza..." class="flex-1 border rounded-lg px-3 py-2 text-xs outline-none" required>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-bold uppercase hover:bg-blue-700">Adicionar</button>
+                    </div>
                 </form>
             </div>
             <div class="flex-1 overflow-y-auto custom-scroll p-4 space-y-4" id="cat-list-container">
@@ -73,19 +86,22 @@
                     <p class="text-[10px] text-slate-400">Saldo Atual: <span id="adj-current-stock">0</span></p>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-lg border">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="adj-type" value="add" checked class="text-emerald-500 focus:ring-emerald-500">
-                        <span class="text-xs font-bold text-emerald-600">Entrada (+)</span>
-                    </label>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="radio" name="adj-type" value="sub" class="text-red-500 focus:ring-red-500">
-                        <span class="text-xs font-bold text-red-600">Saída/Perda (-)</span>
-                    </label>
+                <div>
+                    <label class="input-label">Tipo de Movimento</label>
+                    <div class="grid grid-cols-2 gap-2 bg-slate-50 p-2 rounded-lg border">
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="adj-type" value="add" checked class="text-emerald-500 focus:ring-emerald-500">
+                            <span class="text-xs font-bold text-emerald-600">Entrada (+)</span>
+                        </label>
+                        <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="radio" name="adj-type" value="sub" class="text-red-500 focus:ring-red-500">
+                            <span class="text-xs font-bold text-red-600">Saída/Perda (-)</span>
+                        </label>
+                    </div>
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Qual Estoque?</label>
+                    <label class="input-label">Qual Estoque?</label>
                     <select id="adj-dest" class="w-full bg-white border rounded-lg px-3 py-2 text-sm outline-none mt-1">
                         <option value="fisico">Físico</option>
                         <option value="fiscal">Fiscal</option>
@@ -94,7 +110,7 @@
                 </div>
 
                 <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase">Quantidade</label>
+                    <label class="input-label">Quantidade</label>
                     <input type="number" id="adj-qty" required min="1" class="w-full border rounded-lg px-3 py-2 text-lg font-bold text-center outline-none focus:border-blue-500" placeholder="0">
                 </div>
                 
@@ -151,28 +167,49 @@
                 </div>
                 <form id="form-cliente" onsubmit="App.handleSave('cliente', event)" class="p-5 space-y-4">
                     <input type="hidden" id="c-id">
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="col-span-1">
+                            <label class="input-label">Código</label>
+                            <input type="text" id="c-codigo" readonly placeholder="C0001" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="input-label">Rota de Entrega</label>
+                            <select id="c-rota" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none font-bold text-blue-700">
+                                <option value="">SELECIONAR ROTA</option>
+                                <option value="CX">CX</option>
+                                <option value="VG">VG</option>
+                                <option value="CBA">CBA</option>
+                                <option value="CPA">CPA</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Nome Completo</label>
+                        <input type="text" id="c-nome" required placeholder="Nome do Cliente" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="c-codigo" readonly placeholder="C0001" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-mono font-bold text-slate-500">
-                        <select id="c-rota" required class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none font-bold text-blue-700">
-                            <option value="">ROTA</option>
-                            <option value="CX">CX</option>
-                            <option value="VG">VG</option>
-                            <option value="CBA">CBA</option>
-                            <option value="CPA">CPA</option>
+                        <div>
+                            <label class="input-label">WhatsApp / Contato</label>
+                            <input type="tel" id="c-tel" required placeholder="(65) 99999-9999" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                        </div>
+                        <div>
+                            <label class="input-label">Bairro</label>
+                            <input type="text" id="c-bairro" placeholder="Bairro" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="input-label">Cidade</label>
+                        <select id="c-cidade" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                            <option value="Cuiabá">Cuiabá</option><option value="Várzea Grande">Várzea Grande</option>
                         </select>
                     </div>
-                    <input type="text" id="c-nome" required placeholder="Nome do Cliente" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-                    <div class="grid grid-cols-2 gap-2">
-                        <input type="tel" id="c-tel" required placeholder="WhatsApp" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-                        <input type="text" id="c-bairro" placeholder="Bairro" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    <div>
+                        <label class="input-label">Endereço Completo</label>
+                        <textarea id="c-endereco" rows="2" placeholder="Rua, Número, Referência" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"></textarea>
                     </div>
-                    <select id="c-cidade" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-                        <option value="Cuiabá">Cuiabá</option><option value="Várzea Grande">Várzea Grande</option>
-                    </select>
-                    <textarea id="c-endereco" rows="2" placeholder="Endereço Completo" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none"></textarea>
                     
                     <div class="space-y-1">
-                        <label class="text-[9px] font-bold text-slate-400 uppercase ml-1">Dados de Busca Maps</label>
+                        <label class="input-label">Link Google Maps (Opcional)</label>
                         <input type="text" id="c-maps" placeholder="Cole coordenadas ou link aqui..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:border-blue-400">
                     </div>
 
@@ -183,7 +220,10 @@
             <!-- Tabela Expandida -->
             <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-2xl">
-                    <input type="text" oninput="UI.filter('cliente', this.value)" placeholder="Filtrar clientes..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
+                    <div class="flex flex-col">
+                        <label class="input-label">Filtrar Lista</label>
+                        <input type="text" oninput="UI.filter('cliente', this.value)" placeholder="Buscar clientes..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
+                    </div>
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-cliente" class="text-slate-700">0</b></span>
                 </div>
                 <div class="w-full overflow-x-auto">
@@ -213,44 +253,83 @@
                     
                     <!-- Dados Básicos -->
                     <div class="grid grid-cols-2 gap-2">
-                        <input type="text" id="p-codigo" readonly placeholder="P001" class="bg-slate-100 border rounded-lg px-3 py-2 text-xs font-bold text-slate-500">
-                        <input type="text" id="p-ean" placeholder="EAN (GTIN)" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none">
+                        <div>
+                            <label class="input-label">Código Interno</label>
+                            <input type="text" id="p-codigo" readonly placeholder="P001" class="w-full bg-slate-100 border rounded-lg px-3 py-2 text-xs font-bold text-slate-500">
+                        </div>
+                        <div>
+                            <label class="input-label">Código de Barras (EAN)</label>
+                            <input type="text" id="p-ean" placeholder="EAN (GTIN)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none">
+                        </div>
                     </div>
-                    <input type="text" id="p-nome" required placeholder="Nome do Produto" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    <div>
+                        <label class="input-label">Descrição do Produto</label>
+                        <input type="text" id="p-nome" required placeholder="Nome do Produto" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
                     
                     <!-- Categorização -->
                     <div class="grid grid-cols-2 gap-2">
-                        <select id="p-categoria" onchange="CategoryApp.populateSub(this.value)" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs outline-none">
-                            <option value="">Categoria</option>
-                        </select>
-                        <select id="p-subcategoria" class="bg-slate-50 border rounded-lg px-2 py-2 text-xs outline-none">
-                            <option value="">Subcategoria</option>
-                        </select>
+                        <div>
+                            <label class="input-label">Categoria</label>
+                            <select id="p-categoria" onchange="CategoryApp.populateSub(this.value)" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs outline-none">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="input-label">Subcategoria</label>
+                            <select id="p-subcategoria" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs outline-none">
+                                <option value="">Selecione</option>
+                            </select>
+                        </div>
                     </div>
-                    <input type="text" id="p-unidade" placeholder="Unid. (Ex: UN)" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-xs uppercase">
+                    <div>
+                        <label class="input-label">Unidade (UN, KG, CX)</label>
+                        <input type="text" id="p-unidade" placeholder="Unid. (Ex: UN)" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-xs uppercase">
+                    </div>
 
                     <!-- Dados Fiscais Expandidos -->
                     <div class="bg-blue-50/50 p-2 rounded border border-blue-100 space-y-2">
                         <label class="text-[9px] font-bold text-blue-400 uppercase block">Dados Fiscais & Importação</label>
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="p-ncm" placeholder="NCM" class="bg-white border rounded-lg px-2 py-1 text-xs">
-                            <input type="text" id="p-cest" placeholder="CEST" class="bg-white border rounded-lg px-2 py-1 text-xs">
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">NCM</label>
+                                <input type="text" id="p-ncm" placeholder="NCM" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">CEST</label>
+                                <input type="text" id="p-cest" placeholder="CEST" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="p-cfop" placeholder="CFOP" class="bg-white border rounded-lg px-2 py-1 text-xs">
-                            <input type="text" id="p-csosn" placeholder="CSOSN" class="bg-white border rounded-lg px-2 py-1 text-xs">
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">CFOP</label>
+                                <input type="text" id="p-cfop" placeholder="CFOP" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">CSOSN</label>
+                                <input type="text" id="p-csosn" placeholder="CSOSN" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
-                            <input type="text" id="p-nota" placeholder="Última Nota" class="bg-white border rounded-lg px-2 py-1 text-xs" title="Número da Nota Fiscal">
-                            <input type="text" id="p-refId" placeholder="ID Referência" class="bg-white border rounded-lg px-2 py-1 text-xs text-slate-400">
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">Última Nota</label>
+                                <input type="text" id="p-nota" placeholder="Número Nota" class="w-full bg-white border rounded-lg px-2 py-1 text-xs" title="Número da Nota Fiscal">
+                            </div>
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">ID Referência</label>
+                                <input type="text" id="p-refId" placeholder="Ref. XML" class="w-full bg-white border rounded-lg px-2 py-1 text-xs text-slate-400">
+                            </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div class="flex flex-col">
-                                <label class="text-[8px] text-slate-400">Fator Conv.</label>
-                                <input type="number" id="p-fator" placeholder="1" class="bg-white border rounded-lg px-2 py-1 text-xs">
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">Fator Conversão</label>
+                                <input type="number" id="p-fator" placeholder="1" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
                             </div>
                         </div>
-                        <textarea id="p-obs-produto" rows="2" placeholder="Observações do XML/JSON" class="w-full bg-white border rounded-lg px-2 py-1 text-[10px] text-slate-500"></textarea>
+                        <div>
+                             <label class="text-[8px] text-slate-400 uppercase font-bold">Observações Fiscais</label>
+                            <textarea id="p-obs-produto" rows="2" placeholder="Observações do XML/JSON" class="w-full bg-white border rounded-lg px-2 py-1 text-[10px] text-slate-500"></textarea>
+                        </div>
                     </div>
 
                     <!-- Controle de Estoque -->
@@ -263,11 +342,11 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2" id="stock-inputs-container">
                             <div id="grp-fisico">
-                                <label class="text-[9px] text-slate-400 block">Estoque Físico</label>
+                                <label class="text-[9px] text-slate-400 block font-bold uppercase">Estoque Físico</label>
                                 <input type="number" id="p-estoque" placeholder="0" class="w-full bg-white border rounded-lg px-2 py-1 text-xs font-bold text-slate-700">
                             </div>
                             <div id="grp-fiscal">
-                                <label class="text-[9px] text-slate-400 block">Estoque Fiscal</label>
+                                <label class="text-[9px] text-slate-400 block font-bold uppercase">Estoque Fiscal</label>
                                 <input type="number" id="p-estoqueFiscal" placeholder="0" class="w-full bg-white border rounded-lg px-2 py-1 text-xs font-bold text-purple-700">
                             </div>
                         </div>
@@ -275,25 +354,29 @@
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="text-[9px] text-slate-400 block">Custo Líquido (Desc. Aplicado)</label>
-                            <input type="number" id="p-custo" step="0.0001" placeholder="Custo R$" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs">
+                            <label class="input-label">Custo Unitário (R$)</label>
+                            <input type="number" id="p-custo" step="0.0001" placeholder="R$ 0,00" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs">
                         </div>
                         <div>
-                            <label class="text-[9px] text-emerald-600 font-bold block">Preço de Venda</label>
-                            <input type="number" id="p-valor" step="0.01" required placeholder="Venda R$" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs font-bold text-emerald-600">
+                            <label class="input-label text-emerald-600">Preço Venda (R$)</label>
+                            <input type="number" id="p-valor" step="0.01" required placeholder="R$ 0,00" class="w-full bg-slate-50 border rounded-lg px-2 py-2 text-xs font-bold text-emerald-600">
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 px-1">
                         <input type="checkbox" id="p-isTemp" class="rounded border-slate-300" onchange="UI.updateNextProductCode(this.checked)">
-                        <label for="p-isTemp" class="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">Temporário (24h)</label>
+                        <label for="p-isTemp" class="text-[11px] font-bold text-slate-500 uppercase tracking-tighter">Produto Temporário (24h)</label>
                     </div>
-                    <select id="p-tipo" onchange="UI.toggleKit(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
-                        <option value="normal">Produto Normal</option><option value="kit">Kit / Combo</option>
-                    </select>
+                    
+                    <div>
+                        <label class="input-label">Tipo do Item</label>
+                        <select id="p-tipo" onchange="UI.toggleKit(this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none">
+                            <option value="normal">Produto Normal</option><option value="kit">Kit / Combo</option>
+                        </select>
+                    </div>
                     <div id="p-kit-area" class="hidden space-y-3">
-                        <label class="text-[9px] font-bold text-slate-400 uppercase">Lista do Kit</label>
-                        <textarea id="p-kit-bulk" rows="2" class="w-full p-2 text-[10px] font-mono border rounded outline-none bg-slate-50" placeholder="P001 | 2"></textarea>
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Configuração do Kit</label>
+                        <textarea id="p-kit-bulk" rows="2" class="w-full p-2 text-[10px] font-mono border rounded outline-none bg-slate-50" placeholder="P001 | 2 (Código | Qtd)"></textarea>
                         <div id="p-kit-list" class="max-h-32 overflow-y-auto custom-scroll space-y-1 bg-slate-50 p-2 rounded-lg border"></div>
                     </div>
                     <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow-lg transition text-xs uppercase">Salvar Produto</button>
@@ -302,8 +385,13 @@
             <section class="flex-1 w-full bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col">
                 <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center sticky top-0 bg-white z-10 rounded-t-2xl">
                     <div class="flex gap-2 items-center">
-                        <input type="text" oninput="UI.filter('produto', this.value)" placeholder="Buscar catálogo..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
-                        <button onclick="CategoryApp.openModal()" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-xs font-bold hover:bg-blue-200 transition"><i class="fa-solid fa-tags mr-1"></i> Categorias</button>
+                        <div class="flex flex-col">
+                            <label class="input-label">Buscar no Catálogo</label>
+                            <input type="text" oninput="UI.filter('produto', this.value)" placeholder="Nome, EAN ou Código..." class="pl-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none w-64 focus:border-blue-500">
+                        </div>
+                        <div class="flex flex-col justify-end h-full pt-4">
+                             <button onclick="CategoryApp.openModal()" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-xs font-bold hover:bg-blue-200 transition"><i class="fa-solid fa-tags mr-1"></i> Categorias</button>
+                        </div>
                     </div>
                     <span class="text-[10px] font-bold text-slate-400 uppercase">TOTAL: <b id="count-produto" class="text-slate-700">0</b></span>
                 </div>
@@ -336,11 +424,11 @@
                     <h3 class="font-bold text-slate-700 uppercase text-xs mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-orange-500"></i> Movimento Manual</h3>
                     <form id="form-entrada-manual" onsubmit="App.handleSave('entrada', event)" class="flex-1 flex flex-col gap-3">
                          <div class="space-y-1">
-                            <label class="text-[9px] font-bold text-slate-400 uppercase">Produto</label>
+                            <label class="input-label">Selecionar Produto</label>
                             <select id="e-produto" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-xs outline-none"></select>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[9px] font-bold text-slate-400 uppercase">Destino</label>
+                            <label class="input-label">Estoque de Destino</label>
                              <select id="e-tipo-estoque" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-xs outline-none font-bold text-slate-700">
                                 <option value="fisico">Físico</option>
                                 <option value="fiscal">Fiscal</option>
@@ -349,16 +437,16 @@
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                              <div>
-                                <label class="text-[9px] font-bold text-slate-400 uppercase">Qtd (+/-)</label>
+                                <label class="input-label">Quantidade (+/-)</label>
                                 <input type="number" id="e-qty" required class="w-full border rounded-lg px-3 py-2 text-xs outline-none font-bold" placeholder="Use - para saída">
                             </div>
                             <div>
-                                <label class="text-[9px] font-bold text-slate-400 uppercase">Custo (R$)</label>
+                                <label class="input-label">Custo Atualizado (R$)</label>
                                 <input type="number" id="e-custo" required step="0.01" class="w-full border rounded-lg px-3 py-2 text-xs outline-none">
                             </div>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[9px] font-bold text-slate-400 uppercase">Histórico / Origem</label>
+                            <label class="input-label">Histórico / Fornecedor</label>
                             <input type="text" id="e-fornecedor" placeholder="Ex: Compra Avulsa / Quebra" class="w-full border rounded-lg px-3 py-2 text-xs outline-none">
                         </div>
                         <button type="submit" class="mt-auto w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-sm transition text-xs uppercase">
@@ -413,40 +501,65 @@
                 </div>
                 <form id="form-venda" onsubmit="App.handleSave('venda', event)" class="p-5 space-y-3">
                     <input type="hidden" id="v-id">
-                    <select id="v-cliente" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></select>
+                    <div>
+                        <label class="input-label">Cliente</label>
+                        <select id="v-cliente" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></select>
+                    </div>
                     
                     <div class="space-y-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <label class="input-label">Adicionar Item</label>
                         <div class="relative">
                             <i class="fa-solid fa-search absolute left-3 top-2.5 text-slate-400 text-[10px]"></i>
                             <input type="text" id="v-prod-search" oninput="UI.searchProduct(this.value)" placeholder="Buscar produto..." class="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg outline-none focus:border-orange-400">
                         </div>
                         <div class="grid grid-cols-4 gap-2">
-                            <select id="v-produto" required class="col-span-3 bg-white border rounded-lg px-3 py-2 text-sm outline-none"></select>
-                            <input type="number" id="v-qty" value="1" min="1" class="bg-white border rounded-lg px-3 py-2 text-sm outline-none font-bold">
+                            <div class="col-span-3">
+                                <label class="input-label">Produto</label>
+                                <select id="v-produto" required class="w-full bg-white border rounded-lg px-3 py-2 text-sm outline-none"></select>
+                            </div>
+                            <div>
+                                <label class="input-label">Qtd.</label>
+                                <input type="number" id="v-qty" value="1" min="1" class="w-full bg-white border rounded-lg px-3 py-2 text-sm outline-none font-bold">
+                            </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
-                        <select id="v-pagamento" required class="bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
-                            <option value="Dinheiro">Dinheiro</option><option value="Cartão">Cartão</option>
-                            <option value="Pix">Pix</option><option value="Só Entregar">Só Entregar</option>
-                        </select>
-                        <select id="v-rota" required class="bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
-                            <option value="CX">CX</option><option value="VF">VF</option>
-                            <option value="CBA">CBA</option><option value="CPA">CPA</option>
+                        <div>
+                            <label class="input-label">Forma de Pagamento</label>
+                            <select id="v-pagamento" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                                <option value="Dinheiro">Dinheiro</option><option value="Cartão">Cartão</option>
+                                <option value="Pix">Pix</option><option value="Só Entregar">Só Entregar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="input-label">Rota de Saída</label>
+                            <select id="v-rota" required class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                                <option value="CX">CX</option><option value="VF">VF</option>
+                                <option value="CBA">CBA</option><option value="CPA">CPA</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="input-label text-purple-600">Brinde (Opcional)</label>
+                        <select id="v-brinde" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none font-bold text-purple-600">
+                            <option value="">Nenhum Brinde</option>
+                            <option value="Ovo">Brinde: Ovo</option>
+                            <option value="Café 250g">Brinde: Café 250g</option>
+                            <option value="Amaciante">Brinde: Amaciante</option>
+                            <option value="Omo">Brinde: Omo</option>
                         </select>
                     </div>
 
-                    <select id="v-brinde" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none font-bold text-purple-600">
-                        <option value="">Nenhum Brinde</option>
-                        <option value="Ovo">Brinde: Ovo</option>
-                        <option value="Café 250g">Brinde: Café 250g</option>
-                        <option value="Amaciante">Brinde: Amaciante</option>
-                        <option value="Omo">Brinde: Omo</option>
-                    </select>
-
-                    <input type="number" id="v-desconto" step="0.01" placeholder="Desconto (R$)" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
-                    <textarea id="v-obs" rows="2" placeholder="Observações" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></textarea>
+                    <div>
+                        <label class="input-label">Desconto (R$)</label>
+                        <input type="number" id="v-desconto" step="0.01" placeholder="Desconto em R$" class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="input-label">Observações do Pedido</label>
+                        <textarea id="v-obs" rows="2" placeholder="Ex: Entregar após as 14h..." class="w-full bg-slate-50 border rounded-lg px-3 py-2 text-sm outline-none"></textarea>
+                    </div>
                     <div class="p-3 bg-slate-900 rounded-xl text-white flex justify-between items-center">
                         <span class="text-xs uppercase font-bold text-slate-400">Total Líquido</span>
                         <span id="v-total" class="text-xl font-bold">R$ 0,00</span>
@@ -467,10 +580,17 @@
                         </div>
                     </div>
                     <div class="flex gap-2 items-center no-print">
-                        <input type="date" id="v-filter-start" class="text-[10px] p-1.5 border rounded outline-none focus:border-blue-400">
-                        <span class="text-[10px] text-slate-400 uppercase font-bold">a</span>
-                        <input type="date" id="v-filter-end" class="text-[10px] p-1.5 border rounded outline-none focus:border-blue-400">
-                        <button onclick="UI.render('venda')" class="bg-slate-200 hover:bg-slate-300 text-[10px] font-bold px-3 py-1.5 rounded transition uppercase">Filtrar</button>
+                        <div class="flex flex-col">
+                            <label class="input-label">De</label>
+                            <input type="date" id="v-filter-start" class="text-[10px] p-1.5 border rounded outline-none focus:border-blue-400">
+                        </div>
+                        <div class="flex flex-col">
+                            <label class="input-label">Até</label>
+                            <input type="date" id="v-filter-end" class="text-[10px] p-1.5 border rounded outline-none focus:border-blue-400">
+                        </div>
+                        <div class="flex flex-col justify-end h-full pt-4">
+                            <button onclick="UI.render('venda')" class="bg-slate-200 hover:bg-slate-300 text-[10px] font-bold px-3 py-1.5 rounded transition uppercase">Filtrar</button>
+                        </div>
                     </div>
                 </div>
                 <div class="w-full overflow-x-auto">
