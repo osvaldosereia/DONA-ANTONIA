@@ -202,6 +202,7 @@
         .option-price { font-weight: 800; color: var(--text-main); }
 
         /* Lista de Produtos */
+        .clean-list { padding-left: 0; margin: 0; list-style: none; } /* Remove o padding padrão da lista */
         .clean-list li.item-row { display: flex; align-items: center; width: 100%; height: 48px; padding: 0 5px; border-bottom: 1px solid #e2e8f0; }
         .item-icon-btn { background: none; border: none; cursor: pointer; padding: 8px; color: #2563EB; width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
         .item-text-wrapper { flex: 1; min-width: 0; padding-left: 5px; }
@@ -443,13 +444,18 @@
     </dialog>
 
     <dialog id="itemsDialog">
-        <div style="padding: 25px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 id="itemsModalTitle" style="margin: 0; font-size: 1.3rem;">Itens da Cesta</h3>
-                <button onclick="document.getElementById('itemsDialog').close()" style="background: transparent; border: none; font-size: 1.6rem; cursor: pointer; color: #666;">&times;</button>
+        <!-- ALTERAÇÃO DE DESIGN: Padding reduzido de 25px para 20px laterais 15px para ganhar espaço em telas menores -->
+        <div style="padding: 20px 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+                <!-- TÍTULO OTIMIZADO: Adicionei flex:1 para o título ocupar o espaço disponível e evitar quebra de linha prematura -->
+                <h3 id="itemsModalTitle" style="margin: 0; font-size: 1.25rem; line-height: 1.2; font-weight: 800; color: #111; flex: 1;">Itens da Cesta</h3>
+                <!-- Botão de fechar levemente ajustado para não brigar com o título -->
+                <button onclick="document.getElementById('itemsDialog').close()" style="background: transparent; border: none; font-size: 1.8rem; line-height: 1; padding: 0 0 0 10px; cursor: pointer; color: #666; flex-shrink: 0;" aria-label="Fechar">&times;</button>
             </div>
+            
             <div id="itemsModalContent" class="item-list-container" style="max-height: 60vh; overflow-y: auto;"></div>
-            <div style="margin-top: 25px;">
+            
+            <div style="margin-top: 20px;">
                  <button onclick="document.getElementById('itemsDialog').close()" class="btn-outline" style="width: 100%;">Fechar</button>
             </div>
         </div>
@@ -560,6 +566,8 @@
                 const dialog = document.getElementById('itemsDialog');
                 const title = document.getElementById('itemsModalTitle');
                 const content = document.getElementById('itemsModalContent');
+                
+                // TÍTULO: Garantimos que o texto é injetado no elemento com as novas regras de estilo (sem quebra)
                 title.innerText = basket.name;
 
                 const selectedRice = basket.opts.find(o => o.sel)?.n.replace('Com ', '') || 'Tio Alvino';
@@ -572,7 +580,7 @@
                     return `
                         <li class="item-row">
                             <button class="item-icon-btn" onclick="App.openSingleProductModal('${displayName.replace(/'/g, "\\'")}')" aria-label="Ver imagem">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
                             <div class="item-text-wrapper">
                                 <span class="item-text-content">${i.q}un - ${displayName}</span>
