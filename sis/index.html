@@ -379,16 +379,16 @@
                             <input type="text" id="p-refId" placeholder="ID XML">
                             <textarea id="p-obs-produto" rows="1" placeholder="Obs Fiscal"></textarea>
                         </div>
-                        <div style="border:1px solid var(--border); padding:0.5rem; border-radius:var(--radius);">
-                            <label>Estoque</label>
-                            <div style="display:flex; gap:10px; margin-bottom:5px;">
-                                <label><input type="radio" name="p-stock-type" value="ambos" checked onchange="UI.toggleStockInputs()"> Ambos</label>
-                                <label><input type="radio" name="p-stock-type" value="fisico" onchange="UI.toggleStockInputs()"> Físico</label>
-                                <label><input type="radio" name="p-stock-type" value="fiscal" onchange="UI.toggleStockInputs()"> Fiscal</label>
+                    <div class="bg-blue-50/50 p-2 rounded border border-blue-100 space-y-2">
+                        <label class="text-[9px] font-bold text-blue-400 uppercase block">Dados Fiscais & Importação</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">NCM</label>
+                                <input type="text" id="p-ncm" placeholder="NCM" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
                             </div>
-                            <div class="grid-2" id="stock-inputs-container">
-                                <div id="grp-fisico"><label>Físico</label><input type="number" id="p-estoque" placeholder="0"></div>
-                                <div id="grp-fiscal"><label>Fiscal</label><input type="number" id="p-estoqueFiscal" placeholder="0"></div>
+                            <div>
+                                <label class="text-[8px] text-slate-400 uppercase font-bold">CEST</label>
+                                <input type="text" id="p-cest" placeholder="CEST" class="w-full bg-white border rounded-lg px-2 py-1 text-xs">
                             </div>
                         </div>
                         <div class="grid-2">
@@ -653,71 +653,134 @@
         const ImportEngine = {
             stagedData: [],
             processFile: () => {
-                const file = document.getElementById('json-import-file').files[0];
-                if (!file) return alert('Selecione um arquivo JSON.');
+                const fileInput = document.getElementById('json-import-file');
+                const file = fileInput.files[0];
+                if (!file) return alert('Selecione um arquivo JSON primeiro!');
+
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     try {
-                        let items = JSON.parse(e.target.result);
-                        if (!Array.isArray(items)) return alert('JSON inválido. Deve ser uma lista []');
-
+                        const items = JSON.parse(e.target.result);
+                        if (!Array.isArray(items)) return alert('Formato inválido: O JSON deve ser uma lista []');
+                        
+                        let importedCount = 0;
+                        let updatedCount = 0;
                         const db = DB.load();
-                        ImportEngine.stagedData = [];
+                        ImportEngine.stagedData = []; // Clear previous data
 
+                        // --- PREPARE DATA FOR PREVIEW MODAL ---
                         items.forEach((item, index) => {
-                            const ean = item.cEAN && item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "";
-                            const name = item.xProd;
-                            const qty = Number(item.Quantidade_Total_Unidades) || 0; // Regra: Fracionado
-                            const cost = Number(item.Custo_Unitario) || 0;
-
-                            // Match Logic: 1. EAN, 2. Name
-                            let match = null;
-                            if (ean) match = db.produto.find(p => p.ean === ean);
-                            if (!match) match = db.produto.find(p => p.nome.toUpperCase() === name.toUpperCase());
+                            // Busca por NOME exato (ignora case)
+                            let match = db.produto.find(p => p.nome.toUpperCase() === item.xProd.toUpperCase());
                             
+                            // Lógica EAN: Tenta Unidade, se não, tenta Caixa
+                            let eanValid = "";
+                            if (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") {
+                                eanValid = item.EAN_Unidade;
+                            } else if (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") {
+                                eanValid = item.EAN_Caixa;
+                            } else if (item.cEAN && item.cEAN !== "PREENCHER_COM_LEITOR") { // Fallback para modelo antigo
+                                eanValid = item.cEAN;
+                            }
+
+                            // Tenta match por EAN se não achou por nome
+                            if (!match && eanValid) {
+                                match = db.produto.find(p => p.ean === eanValid);
+                            }
+
+                            const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
+                            
+                            // Cálculo de Quantidade Total (Unidade Fracionada)
+                            // Prioriza Quantidade_Total_Unidades, se não, calcula qtdNFe * Fator
+                            let qtyTotal = Number(item.Quantidade_Total_Unidades);
+                            if (!qtyTotal) {
+                                const qNFe = Number(item.Quantidade_NFe) || 0;
+                                qtyTotal = qNFe * factor;
+                            }
+
+                            const costBox = Number(item.Custo_Real_Caixa) || 0;
+                            const totalDiscount = Number(item.Valor_Desconto_Total) || 0;
+                            let finalUnitCost = 0;
+                            
+                            if (factor > 0 && costBox > 0) {
+                                finalUnitCost = (costBox - totalDiscount) / (item.Quantidade_NFe * factor); // Custo por UNIDADE individual
+                                // Correção: Se Quantidade_Total_Unidades já estiver correta, usa ela
+                                if (item.Quantidade_Total_Unidades) {
+                                     finalUnitCost = (costBox - totalDiscount) / item.Quantidade_Total_Unidades;
+                                }
+                            } else {
+                                finalUnitCost = Number(item.Custo_Unitario) || 0;
+                            }
+                            if (finalUnitCost < 0) finalUnitCost = 0;
+
                             ImportEngine.stagedData.push({
                                 _id: index,
-                                jsonName: name,
-                                ean: ean,
-                                qty: qty,
-                                cost: cost,
+                                jsonName: item.xProd,
+                                ean: eanValid,
+                                qty: qtyTotal,
+                                cost: finalUnitCost,
                                 ncm: item.NCM,
                                 cest: item.CEST,
                                 cfop: item.CFOP_SAIDA,
                                 csosn: item.CSOSN_SAIDA,
-                                uCom: item.Unidade_Venda, // Unidade final fracionada
+                                uCom: item.Unidade_Venda || "UN",
                                 nota: item.Numero_Nota,
                                 refId: item.id_referencia,
+                                fator: factor,
+                                obs: item._OBS,
                                 matchId: match ? match.id : null,
                                 matchName: match ? match.nome : null,
                                 matchCode: match ? match.codigo : null
                             });
                         });
+
                         ImportEngine.renderModal();
                         document.getElementById('import-modal').showModal();
-                    } catch(err) { alert('Erro ao ler JSON: ' + err.message); console.error(err); }
+                        fileInput.value = ''; // Limpa input
+
+                    } catch (err) {
+                        alert('Erro ao processar JSON: ' + err.message);
+                        console.error(err);
+                    }
                 };
                 reader.readAsText(file);
             },
             renderModal: () => {
                 const tbody = document.getElementById('import-preview-list');
                 tbody.innerHTML = ImportEngine.stagedData.map(i => {
-                    const status = i.matchId ? `<span class="text-success" style="font-weight:bold;">${i.matchCode}</span>` : `<span class="bg-tag" style="background:var(--warning); color:white;">NOVO</span>`;
-                    return `<tr><td style="text-align:center;"><input type="checkbox" class="import-check" value="${i._id}" checked></td><td><small>${i.jsonName}</small></td><td><small>${i.ean || '-'}</small></td><td>${status} <small>${i.matchName || ''}</small></td><td style="text-align:right;"><b>${i.qty}</b></td></tr>`;
+                    const status = i.matchId ? `<span class="text-emerald-600 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">ATUALIZAR: ${i.matchCode}</span>` : `<span class="text-blue-600 font-bold text-[10px] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">NOVO CADASTRO</span>`;
+                    const matchText = i.matchName ? `<br><span class="text-[9px] text-slate-400">Ref: ${i.matchName}</span>` : '';
+                    
+                    return `
+                        <tr class="hover:bg-slate-50 text-[11px] border-b border-slate-100">
+                            <td class="p-2 text-center"><input type="checkbox" class="import-check cursor-pointer" value="${i._id}" checked></td>
+                            <td class="p-2">
+                                <div class="font-bold text-slate-700">${i.jsonName}</div>
+                                <div class="text-[9px] text-slate-400">${status}${matchText}</div>
+                            </td>
+                            <td class="p-2 font-mono text-slate-600">${i.ean || '<span class="text-slate-300 italic">--</span>'}</td>
+                            <td class="p-2 text-center font-bold text-slate-700">${i.qty} <span class="text-[9px] font-normal text-slate-400">${i.uCom}</span></td>
+                        </tr>
+                    `;
                 }).join('');
             },
             toggleAll: (val) => { document.querySelectorAll('.import-check').forEach(c => c.checked = val); },
             confirmImport: () => {
-                const dest = document.querySelector('input[name="import-dest"]:checked').value;
+                const destInputs = document.getElementsByName('import-dest');
+                let dest = 'ambos';
+                for(const input of destInputs) { if(input.checked) dest = input.value; }
+
                 const selectedIds = Array.from(document.querySelectorAll('.import-check:checked')).map(c => Number(c.value));
                 if(selectedIds.length === 0) return alert('Nenhum item selecionado.');
 
                 const db = DB.load();
-                let count = 0;
+                let importedCount = 0;
+                let updatedCount = 0;
                 
+                // Pré-calcular próximo código para evitar duplicatas em loop
                 let nextCodeNum = 0;
                 db.produto.forEach(p => { 
-                    if (p.codigo?.startsWith('P') && !p.codigo?.startsWith('PT')) { 
+                    if (p.codigo && p.codigo.startsWith('P') && !p.codigo.startsWith('PT')) { 
                         const n = parseInt(p.codigo.substring(1)) || 0; 
                         if (n > nextCodeNum) nextCodeNum = n; 
                     } 
@@ -731,43 +794,73 @@
                     if (item.matchId) { prod = db.produto.find(p => p.id === item.matchId); }
 
                     if (prod) {
+                        // ATUALIZAÇÃO
                         if(dest === 'fisico' || dest === 'ambos') prod.estoque += item.qty;
-                        if(dest === 'fiscal' || dest === 'ambos') prod.estoqueFiscal = (prod.estoqueFiscal||0) + item.qty;
+                        if(dest === 'fiscal' || dest === 'ambos') prod.estoqueFiscal = (prod.estoqueFiscal || 0) + item.qty;
+                        
                         if (item.cost > 0) prod.custo = item.cost;
-                        // Atualiza fiscais se disponíveis
+                        
+                        // Atualiza campos cadastrais se vazio ou se veio na importação
                         if (item.ncm) prod.ncm = item.ncm;
                         if (item.cest) prod.cest = item.cest;
                         if (item.cfop) prod.cfop = item.cfop;
                         if (item.csosn) prod.csosn = item.csosn;
                         if (item.nota) prod.nota = item.nota;
+                        if (item.ean) prod.ean = item.ean; // Atualiza EAN se capturado
+                        if (item.uCom) prod.unidade = item.uCom;
+
+                        updatedCount++;
                     } else {
+                        // NOVO PRODUTO
                         nextCodeNum++;
                         const nextCode = `P${String(nextCodeNum).padStart(3, '0')}`;
-                        const newId = Date.now().toString() + Math.random();
+                        const newId = Date.now().toString() + Math.random().toString().slice(2,8);
+                        
                         prod = {
-                            id: newId, codigo: nextCode, nome: item.jsonName.toUpperCase(), ean: item.ean, 
-                            ncm: item.ncm, cest: item.cest, cfop: item.cfop, csosn: item.csosn, unidade: item.uCom, 
-                            custo: item.cost, valor: 0, 
+                            id: newId, 
+                            codigo: nextCode, 
+                            nome: item.jsonName.toUpperCase(), 
+                            ean: item.ean, 
+                            ncm: item.ncm, 
+                            cest: item.cest, 
+                            cfop: item.cfop, 
+                            csosn: item.csosn, 
+                            unidade: item.uCom, 
+                            custo: item.cost, 
+                            valor: 0, 
                             estoque: (dest === 'fisico' || dest === 'ambos') ? item.qty : 0, 
                             estoqueFiscal: (dest === 'fiscal' || dest === 'ambos') ? item.qty : 0, 
-                            nota: item.nota, refId: item.refId,
-                            tipo: 'normal', isTemp: false
+                            nota: item.nota, 
+                            refId: item.refId,
+                            fator: item.fator,
+                            obs: item.obs,
+                            tipo: 'normal', 
+                            isTemp: false
                         };
                         db.produto.push(prod);
+                        importedCount++;
                     }
-                    db.entrada.push({ id: Date.now() + Math.random(), date: Date.now(), prodId: prod.id, qty: item.qty, custo: item.cost, dest: dest, fornecedor: `Import Nota ${item.nota||'JSON'}` });
-                    count++;
+                    
+                    // Log de Entrada
+                    db.entrada.push({ 
+                        id: Date.now().toString() + Math.random().toString().slice(2,5), 
+                        date: Date.now(), 
+                        prodId: prod.id, 
+                        qty: item.qty, 
+                        custo: item.cost, 
+                        dest: dest, 
+                        fornecedor: `Import Nota ${item.nota || 'JSON'}` 
+                    });
                 });
 
                 DB.saveAll(db);
-                alert(`Importação concluída: ${count} itens.`);
+                alert(`Concluído!\nNovos: ${importedCount}\nAtualizados: ${updatedCount}`);
                 document.getElementById('import-modal').close();
-                document.getElementById('json-import-file').value = '';
                 
-                // FORCE REFRESH VIEW & CLEAR SEARCH
+                // Refresh views
                 const searchInput = document.getElementById('catalogo-search');
                 if(searchInput) searchInput.value = '';
-                Views.catalogo.init(document.getElementById('btn-catalogo'));
+                UI.switchView('catalogo');
             }
         };
 
