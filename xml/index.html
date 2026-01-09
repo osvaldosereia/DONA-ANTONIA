@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe com Resumo de Estoque e Consolidação de Quantidades.">
-    <title>NFe Parser Pro | v6.10 Estoque Total</title>
+    <meta name="description" content="Leitor XML de NFe com Edição Completa (EAN e Descrição).">
+    <title>NFe Parser Pro | v6.12 Edição Total</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -132,24 +132,45 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
         
-        input.factor-input {
-            width: 60px;
+        /* INPUTS ESPECIAIS NA TABELA */
+        input.table-input {
             padding: 4px 6px;
-            text-align: center;
             border: 1px solid #cbd5e1;
             border-radius: 4px;
-            font-weight: bold;
-            color: var(--primary-dark);
-            background: #f1f5f9;
             font-size: 0.75rem;
+            transition: all 0.2s;
+            background: #f1f5f9;
+            color: var(--text);
         }
-        input.factor-input:focus {
+        input.table-input:focus {
             background: #fff;
             border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+
+        /* Estilos específicos por tipo */
+        input.factor-input { 
+            width: 50px; 
+            text-align: center; 
+            font-weight: bold; 
+            color: var(--primary-dark);
+        }
+        
+        input.ean-input { 
+            width: 120px; 
+            font-family: monospace; 
+            letter-spacing: -0.5px;
+            text-align: center;
+        }
+
+        input.desc-input {
+            width: 100%;
+            min-width: 250px; /* Garante espaço para ler */
+            font-weight: 500;
         }
         
         input.factor-learned {
-            background: #f3e8ff; /* Roxo claro */
+            background: #f3e8ff; 
             color: #7e22ce;
             border-color: #d8b4fe;
         }
@@ -469,7 +490,7 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.10 Estoque Total</span>
+                <span class="badge">v6.12 Edição Total</span>
                 <span class="badge badge-purple">Memória Ativa</span>
             </div>
         </header>
@@ -478,7 +499,7 @@
         <section>
             <label for="fileInput">1. Importar Arquivos XML (Compra)</label>
             <input type="file" id="fileInput" multiple accept=".xml, text/xml">
-            <p style="margin-top: 0.5rem;">🧠 O sistema agora lembra os fatores que você definiu para cada EAN.</p>
+            <p style="margin-top: 0.5rem;">🧠 Dica: Edite <b>Descrição</b> e <b>EAN</b> livremente antes de exportar!</p>
         </section>
 
         <!-- Filtros e Ações -->
@@ -538,7 +559,7 @@
             <div style="background: var(--surface); padding: var(--spacing-md); border: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; border-bottom: none;" class="results-header">
                 <div>
                     <h3>3. Conferência de Produtos</h3>
-                    <p>Verifique a coluna <b>Desc.</b> e <b>V. Liq</b> para conferir o custo real.</p>
+                    <p>Edite os campos abaixo conforme necessário.</p>
                 </div>
 
                 <div class="table-controls">
@@ -566,8 +587,8 @@
                             </th>
                             <th>Fator/Cx</th>
                             <th>Data</th>
-                            <th>Descrição</th>
-                            <th>EAN</th>
+                            <th>Descrição (Editável)</th>
+                            <th>EAN (Editável)</th>
                             <th>NCM</th>
                             <th>CST</th>
                             <th class="text-right">Qtd</th>
@@ -592,7 +613,7 @@
 
     </main>
     
-    <!-- MODAL DE RESUMO (NEW) -->
+    <!-- MODAL DE RESUMO -->
     <dialog id="summaryModal">
         <div class="modal-header">
             <h3 style="margin:0; font-size: 1.1rem; display:flex; align-items:center; gap:0.5rem;">
@@ -605,7 +626,7 @@
                 <thead>
                     <tr>
                         <th style="position: sticky; top: -1px; z-index: 20;">EAN</th>
-                        <th style="position: sticky; top: -1px; z-index: 20;">Produto (Nome Principal)</th>
+                        <th style="position: sticky; top: -1px; z-index: 20;">Produto (Nome Atual)</th>
                         <th class="text-right" style="position: sticky; top: -1px; z-index: 20;">Qtd Total (Notas)</th>
                     </tr>
                 </thead>
@@ -618,7 +639,7 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.10
+         * SISTEMAS - Core Logic v6.12 (Edição Total, Exportação Separada)
          */
         var app = {
             data: [], 
@@ -667,7 +688,6 @@
                 this.render();
             },
 
-            // --- Gerenciamento da Memória de Fatores ---
             loadFactorsDB() {
                 try {
                     const db = localStorage.getItem(this.factorsStorageKey);
@@ -683,7 +703,6 @@
                 } catch (e) { console.error('Storage cheio para fatores'); }
             },
 
-            // --- Gerenciamento de Dados (Sessão) ---
             saveToStorage() {
                 try { localStorage.setItem(this.storageKey, JSON.stringify(this.data)); } catch (e) { alert('LocalStorage cheio.'); }
             },
@@ -692,7 +711,7 @@
                 if (stored) { this.data = JSON.parse(stored); this.render(); }
             },
             clearData() {
-                if (confirm('Limpar lista atual? (A memória de fatores será mantida)')) {
+                if (confirm('Limpar lista atual?')) {
                     this.data = []; this.selectedIds.clear();
                     localStorage.removeItem(this.storageKey); this.render();
                     this.dom.fileInput.value = '';
@@ -707,20 +726,16 @@
                 }
             },
 
-            // --- NOVA FUNÇÃO: RESUMO DE ESTOQUE ---
             showSummary() {
                 if (this.data.length === 0) return alert('Importe XMLs primeiro.');
 
                 const summary = {};
                 
                 this.data.forEach(item => {
-                    // Chave de agrupamento: EAN
-                    // Se não tiver EAN, usa o nome do produto para evitar agrupar "SEM GTIN" tudo junto sem critério
                     let key = item.cEAN;
                     let displayEAN = item.cEAN;
 
                     if (!key || key === 'SEM GTIN' || key.trim() === '') {
-                        // Fallback: Usa o nome do produto como chave secundária para agrupar
                         key = 'NO_GTIN_' + item.xProd; 
                         displayEAN = 'SEM GTIN';
                     }
@@ -728,18 +743,16 @@
                     if (!summary[key]) {
                         summary[key] = {
                             ean: displayEAN,
-                            name: item.xProd, // Pega o primeiro nome encontrado
+                            name: item.xProd, 
                             qty: 0
                         };
                     }
-                    // Soma a quantidade fiscal da nota (qCom)
                     summary[key].qty += parseFloat(item.qCom) || 0;
                 });
 
                 const tbody = document.getElementById('summaryTableBody');
                 tbody.innerHTML = '';
                 
-                // Ordena por nome do produto
                 Object.values(summary)
                     .sort((a,b) => a.name.localeCompare(b.name))
                     .forEach(row => {
@@ -759,7 +772,8 @@
                 document.getElementById('summaryModal').showModal();
             },
 
-            // --- Lógica Existente ---
+            // --- Lógica de Edição ---
+            
             updateFactor(id, newValue) {
                 const sourceItem = this.data.find(i => i.id === id);
                 if (!sourceItem) return;
@@ -769,6 +783,7 @@
 
                 sourceItem.userFactor = val;
 
+                // Sync por EAN (se válido)
                 let syncCount = 0;
                 const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
 
@@ -782,11 +797,25 @@
                 }
 
                 this.saveToStorage();
-                this.render(); 
+                // Não renderiza tudo para não perder foco se o usuário estiver digitando rápido
+                // Mas aqui como é fator (click), atualiza o valor visualmente se necessário
+            },
 
-                if (syncCount > 0) {
-                    this.showToast(`✅ Atualizado em +${syncCount} itens nesta lista`);
-                }
+            updateEAN(id, newEan) {
+                const sourceItem = this.data.find(i => i.id === id);
+                if (!sourceItem) return;
+                const cleanEan = newEan.trim().toUpperCase();
+                sourceItem.cEAN = cleanEan;
+                this.saveToStorage();
+                console.log(`EAN Editado: ${cleanEan}`);
+            },
+
+            updateDescription(id, newDesc) {
+                const sourceItem = this.data.find(i => i.id === id);
+                if (!sourceItem) return;
+                sourceItem.xProd = newDesc; // Salva a descrição editada
+                this.saveToStorage();
+                console.log(`Descrição Editada: ${newDesc}`);
             },
 
             showToast(message) {
@@ -858,6 +887,7 @@
                 }
             },
 
+            // --- EXPORTAÇÃO SIMPLES (SEM SOMA INTELIGENTE) ---
             exportSmartJSON() {
                 const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
@@ -870,6 +900,7 @@
                     const detected = this.detectConversionFactor(item.xProd);
                     const finalFactor = item.userFactor ? item.userFactor : detected;
                     
+                    // Aprendizado
                     if (item.userFactor && item.cEAN && item.cEAN !== 'SEM GTIN' && item.cEAN.length > 5) {
                         if (this.factorsDB[item.cEAN] !== item.userFactor) {
                             this.factorsDB[item.cEAN] = item.userFactor;
@@ -878,15 +909,46 @@
                     }
 
                     const fiscal = this.predictFiscalAttributes(item);
-                    
                     const totalDesc = item.vDesc || 0;
                     const netTotal = item.vProd - totalDesc;
                     const netCostBox = netTotal / item.qCom;
                     const unitCost = netCostBox / finalFactor;
 
+                    if (mode === 'varejo' || mode === 'ambos') {
+                        // Limpeza básica apenas para sugerir um padrão, mas respeita a edição se o usuário tiver mudado o xProd
+                        // OBS: A edição manual do xProd já sobrescreve item.xProd, então usamos ele.
+                        // A limpeza regex abaixo roda sobre o valor atual (editado ou não) para remover qtds de fardo
+                        let cleanDesc = item.xProd.replace(/(\d+\s*[xX]\s*\d+)/gi, '').replace(/(FD|CX|FARDO)\s*\d*/gi, '').trim();
+                        // Se não tiver (UN) no final, adiciona
+                        if(!cleanDesc.toUpperCase().endsWith('(UN)')) {
+                            cleanDesc = cleanDesc + " (UN)";
+                        }
+
+                        exportList.push({
+                            id_referencia: item.id,
+                            Numero_Nota: item.nNF,
+                            Quantidade_Nota: item.qCom,
+                            cProd_Sugestao: item.cProd + '-UN',
+                            cEAN: item.cEAN, // Valor EDITADO
+                            xProd: cleanDesc, // Descrição baseada no valor EDITADO
+                            NCM: item.NCM,
+                            CEST: item.CEST,
+                            CFOP_SAIDA: fiscal.cfopOut,
+                            CSOSN_SAIDA: fiscal.csosnOut,
+                            Unidade_Venda: 'UN',
+                            Fator_Conversao_Entrada: finalFactor,
+                            Quantidade_Total_Unidades: parseFloat((item.qCom * finalFactor).toFixed(3)),
+                            Custo_Unitario: parseFloat(unitCost.toFixed(4)),
+                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)),
+                            Valor_Desconto_Total: totalDesc,
+                            _TIPO: 'VAREJO (SAIDA)',
+                            _OBS: `Desconto de R$ ${totalDesc} abatido do custo`
+                        });
+                    }
+
                     if (mode === 'atacado' || mode === 'ambos') {
                         exportList.push({
-                            ...item, 
+                            ...item,
                             Numero_Nota: item.nNF,
                             _TIPO: 'ATACADO (ENTRADA)',
                             CFOP_SAIDA_SUGERIDO: fiscal.cfopOut,
@@ -895,32 +957,6 @@
                             CUSTO_LIQUIDO_CAIXA: parseFloat(netCostBox.toFixed(4)),
                             Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)),
                             DESCONTO_APLICADO: totalDesc
-                        });
-                    }
-
-                    if (mode === 'varejo' || mode === 'ambos') {
-                        let cleanDesc = item.xProd.replace(/(\d+\s*[xX]\s*\d+)/gi, '').replace(/(FD|CX|FARDO)\s*\d*/gi, '').trim();
-                        cleanDesc = cleanDesc.replace(/\s+/, ' ') + " (UN)";
-
-                        exportList.push({
-                            id_referencia: item.id,
-                            Numero_Nota: item.nNF,
-                            Quantidade_Nota: item.qCom,
-                            cProd_Sugestao: item.cProd + '-UN', 
-                            cEAN: item.cEAN, // Agora garantido no parse
-                            xProd: cleanDesc,
-                            NCM: item.NCM, 
-                            CEST: item.CEST,
-                            CFOP_SAIDA: fiscal.cfopOut,
-                            CSOSN_SAIDA: fiscal.csosnOut,
-                            Unidade_Venda: 'UN',
-                            Fator_Conversao_Entrada: finalFactor,
-                            Quantidade_Total_Unidades: parseFloat((item.qCom * finalFactor).toFixed(3)),
-                            Custo_Unitario: parseFloat(unitCost.toFixed(4)), 
-                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), 
-                            Valor_Desconto_Total: totalDesc,
-                            _TIPO: 'VAREJO (SAIDA)',
-                            _OBS: `Desconto de R$ ${totalDesc} abatido do custo`
                         });
                     }
                 });
@@ -1136,7 +1172,7 @@
                     const netTotal = item.vProd - discount;
                     const netUnitCostBox = netTotal / item.qCom;
 
-                    const factorClass = item.isLearned ? 'factor-input factor-learned' : 'factor-input';
+                    const factorClass = item.isLearned ? 'table-input factor-input factor-learned' : 'table-input factor-input';
                     const titleFactor = item.isLearned ? 'Carregado da memória por EAN' : `Qtd detectada: ${detected}`;
 
                     const inputHtml = `
@@ -1153,13 +1189,29 @@
                         ? `<span class="text-success font-bold">-${discount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>` 
                         : '<span style="color:#cbd5e1">-</span>';
 
-                    // EAN Render Logic
-                    let eanHtml = '';
-                    if (item.cEAN === 'SEM GTIN' || !item.cEAN) {
-                        eanHtml = '<span class="text-muted">SEM GTIN</span>';
-                    } else {
-                        eanHtml = `<span class="text-brand">${item.cEAN}</span>`;
-                    }
+                    // EAN Render Logic (Editável)
+                    const eanVal = (item.cEAN === 'SEM GTIN' || !item.cEAN) ? '' : item.cEAN;
+                    const eanPlaceholder = (item.cEAN === 'SEM GTIN') ? 'SEM GTIN' : 'EAN';
+                    
+                    const eanInputHtml = `
+                        <input type="text"
+                               class="table-input ean-input"
+                               value="${eanVal}"
+                               placeholder="${eanPlaceholder}"
+                               onchange="app.updateEAN('${item.id}', this.value)"
+                               onclick="this.select()"
+                        >
+                    `;
+
+                    // Descrição Render Logic (Editável)
+                    const descInputHtml = `
+                        <input type="text"
+                               class="table-input desc-input"
+                               value="${item.xProd}"
+                               onchange="app.updateDescription('${item.id}', this.value)"
+                               title="${item.xProd}"
+                        >
+                    `;
 
                     tr.innerHTML = `
                         <td class="w-check">
@@ -1167,8 +1219,8 @@
                         </td>
                         <td style="text-align: center;">${inputHtml}</td>
                         <td>${item.dataEmissao.split('-').reverse().join('/')}</td>
-                        <td title="${item.xProd}">${item.xProd.substring(0, 30)}...</td>
-                        <td>${eanHtml}</td>
+                        <td>${descInputHtml}</td>
+                        <td>${eanInputHtml}</td>
                         <td>${item.NCM}</td>
                         <td><span class="smart-tag ${tagClass}">${tagLabel}</span></td>
                         <td class="text-right">${item.qCom}</td>
