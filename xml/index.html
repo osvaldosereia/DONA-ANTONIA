@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe com Conferência Alfabética e Correção de EAN.">
-    <title>NFe Parser Pro | v6.9 EAN Visível</title>
+    <meta name="description" content="Leitor XML de NFe com Resumo de Estoque e Consolidação de Quantidades.">
+    <title>NFe Parser Pro | v6.10 Estoque Total</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -374,6 +374,42 @@
             to { opacity: 0; transform: translateY(-10px); }
         }
 
+        /* MODAL STYLE (NEW) */
+        dialog {
+            border: none;
+            border-radius: var(--radius);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            padding: 0;
+            max-width: 800px;
+            width: 90%;
+            margin: auto;
+        }
+        dialog::backdrop {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+        }
+        .modal-body {
+            padding: 1.5rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .btn-icon {
+            background: transparent;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+        .btn-icon:hover { color: var(--danger); }
+
         /* LOADING & UTILS */
         #loading {
             position: fixed;
@@ -433,7 +469,7 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.9 EAN Visível</span>
+                <span class="badge">v6.10 Estoque Total</span>
                 <span class="badge badge-purple">Memória Ativa</span>
             </div>
         </header>
@@ -465,7 +501,10 @@
                     <input type="date" id="dateEnd">
                 </div>
                 <div>
-                    <button class="btn-ghost" onclick="app.resetFilters()">Limpar Filtros</button>
+                    <!-- Botão de Resumo de Estoque -->
+                    <button class="btn-ghost" onclick="app.showSummary()" style="color: var(--primary); border-color: var(--primary-light);">
+                        📊 Estoque Total
+                    </button>
                 </div>
             </div>
             
@@ -552,16 +591,40 @@
         </section>
 
     </main>
+    
+    <!-- MODAL DE RESUMO (NEW) -->
+    <dialog id="summaryModal">
+        <div class="modal-header">
+            <h3 style="margin:0; font-size: 1.1rem; display:flex; align-items:center; gap:0.5rem;">
+                📊 Resumo Consolidado de Estoque
+            </h3>
+            <button onclick="document.getElementById('summaryModal').close()" class="btn-icon" title="Fechar">✕</button>
+        </div>
+        <div class="modal-body">
+            <table class="w-full">
+                <thead>
+                    <tr>
+                        <th style="position: sticky; top: -1px; z-index: 20;">EAN</th>
+                        <th style="position: sticky; top: -1px; z-index: 20;">Produto (Nome Principal)</th>
+                        <th class="text-right" style="position: sticky; top: -1px; z-index: 20;">Qtd Total (Notas)</th>
+                    </tr>
+                </thead>
+                <tbody id="summaryTableBody">
+                    <!-- Conteúdo gerado via JS -->
+                </tbody>
+            </table>
+        </div>
+    </dialog>
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.9 (EAN Fix)
+         * SISTEMAS - Core Logic v6.10
          */
         var app = {
             data: [], 
             factorsDB: {}, 
             selectedIds: new Set(),
-            storageKey: 'nfe_sys_data_sync_v65', // Compatível
+            storageKey: 'nfe_sys_data_sync_v65', 
             factorsStorageKey: 'nfe_sys_factors_db_v1', 
 
             init() {
@@ -604,6 +667,7 @@
                 this.render();
             },
 
+            // --- Gerenciamento da Memória de Fatores ---
             loadFactorsDB() {
                 try {
                     const db = localStorage.getItem(this.factorsStorageKey);
@@ -619,6 +683,7 @@
                 } catch (e) { console.error('Storage cheio para fatores'); }
             },
 
+            // --- Gerenciamento de Dados (Sessão) ---
             saveToStorage() {
                 try { localStorage.setItem(this.storageKey, JSON.stringify(this.data)); } catch (e) { alert('LocalStorage cheio.'); }
             },
@@ -642,6 +707,59 @@
                 }
             },
 
+            // --- NOVA FUNÇÃO: RESUMO DE ESTOQUE ---
+            showSummary() {
+                if (this.data.length === 0) return alert('Importe XMLs primeiro.');
+
+                const summary = {};
+                
+                this.data.forEach(item => {
+                    // Chave de agrupamento: EAN
+                    // Se não tiver EAN, usa o nome do produto para evitar agrupar "SEM GTIN" tudo junto sem critério
+                    let key = item.cEAN;
+                    let displayEAN = item.cEAN;
+
+                    if (!key || key === 'SEM GTIN' || key.trim() === '') {
+                        // Fallback: Usa o nome do produto como chave secundária para agrupar
+                        key = 'NO_GTIN_' + item.xProd; 
+                        displayEAN = 'SEM GTIN';
+                    }
+                    
+                    if (!summary[key]) {
+                        summary[key] = {
+                            ean: displayEAN,
+                            name: item.xProd, // Pega o primeiro nome encontrado
+                            qty: 0
+                        };
+                    }
+                    // Soma a quantidade fiscal da nota (qCom)
+                    summary[key].qty += parseFloat(item.qCom) || 0;
+                });
+
+                const tbody = document.getElementById('summaryTableBody');
+                tbody.innerHTML = '';
+                
+                // Ordena por nome do produto
+                Object.values(summary)
+                    .sort((a,b) => a.name.localeCompare(b.name))
+                    .forEach(row => {
+                        const tr = document.createElement('tr');
+                        const eanClass = row.ean === 'SEM GTIN' ? 'text-muted' : 'text-brand';
+                        
+                        tr.innerHTML = `
+                            <td class="${eanClass}">${row.ean}</td>
+                            <td>${row.name}</td>
+                            <td class="text-right font-bold" style="color:var(--primary); font-size: 1rem;">
+                                ${row.qty.toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 3})}
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                
+                document.getElementById('summaryModal').showModal();
+            },
+
+            // --- Lógica Existente ---
             updateFactor(id, newValue) {
                 const sourceItem = this.data.find(i => i.id === id);
                 if (!sourceItem) return;
@@ -652,7 +770,6 @@
                 sourceItem.userFactor = val;
 
                 let syncCount = 0;
-                // EAN check - Robust check against "SEM GTIN"
                 const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
 
                 if (hasValidEan) {
