@@ -46,7 +46,6 @@
         /* --- LAYOUT --- */
         .app-wrapper { display: flex; width: 100%; height: 100%; }
         
-        /* Sidebar */
         aside {
             width: var(--sidebar-width);
             background-color: var(--slate-900);
@@ -82,7 +81,6 @@
         .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .nav-item i { width: 20px; text-align: center; }
 
-        /* Main Content */
         main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
         
         header.top-bar {
@@ -101,23 +99,13 @@
             background-color: #f8fafc;
         }
 
-        /* --- VIEWS & GRID SYSTEM --- */
-        .view-section { 
-            display: none; 
-            height: 100%; 
-            padding: 1.5rem; 
-            flex-direction: column; 
-        }
+        .view-section { display: none; height: 100%; padding: 1.5rem; flex-direction: column; }
         .view-section.active { display: flex; }
 
-        .split-view {
-            display: flex; gap: 1.5rem; height: 100%;
-            align-items: flex-start;
-        }
+        .split-view { display: flex; gap: 1.5rem; height: 100%; align-items: flex-start; }
         .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
-        /* --- CARDS & PANELS --- */
         .card {
             background: var(--white);
             border: 1px solid var(--slate-200);
@@ -139,19 +127,13 @@
 
         .card-body { padding: 1rem; overflow-y: auto; flex: 1; }
         
-        /* --- FORMS --- */
         form { display: flex; flex-direction: column; gap: 1rem; }
-        
         .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
         label { font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.02em; }
         
         input, select, textarea {
-            width: 100%;
-            padding: 0.6rem 0.75rem;
-            border: 1px solid var(--slate-300);
-            border-radius: 6px;
-            font-family: inherit; font-size: 0.85rem; color: var(--slate-700);
-            background-color: var(--white);
+            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--slate-300); border-radius: 6px;
+            font-family: inherit; font-size: 0.85rem; color: var(--slate-700); background-color: var(--white);
             outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
@@ -161,13 +143,10 @@
         .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
         .row-sidebar { display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; }
 
-        /* --- BUTTONS --- */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.025em;
-            cursor: pointer; border: none; transition: all 0.2s;
+            padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 0.025em; cursor: pointer; border: none; transition: all 0.2s;
             text-decoration: none;
         }
         .btn-primary { background-color: var(--primary); color: white; }
@@ -182,36 +161,22 @@
         
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-warning:hover { background-color: var(--warning-hover); }
+        .btn-warning:disabled { background-color: var(--slate-200); color: var(--slate-400); cursor: not-allowed; }
 
         .btn-ghost { background-color: transparent; color: var(--slate-400); padding: 0.25rem 0.5rem; }
         .btn-ghost:hover { background-color: var(--slate-100); color: var(--slate-600); }
-
         .btn-block { width: 100%; }
 
-        /* --- TABLES --- */
         .table-wrapper { flex: 1; overflow: auto; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        
         thead th {
-            position: sticky; top: 0; z-index: 10;
-            background-color: var(--slate-50);
-            color: var(--slate-500);
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--slate-200);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: sticky; top: 0; z-index: 10; background-color: var(--slate-50); color: var(--slate-500);
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-200); box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        
-        tbody td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--slate-100);
-            color: var(--slate-700);
-            vertical-align: middle;
-            font-size: 0.85rem;
-        }
+        tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); vertical-align: middle; font-size: 0.85rem; }
         tbody tr:hover { background-color: var(--slate-50); }
 
-        /* --- BADGES & UTILS --- */
         .badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .badge-blue { background-color: #eff6ff; color: var(--primary); border-color: #dbeafe; }
         .badge-purple { background-color: #f5f3ff; color: #7c3aed; border-color: #ede9fe; }
@@ -227,7 +192,6 @@
         .text-slate-400 { color: var(--slate-400); }
         .text-xs { font-size: 0.75rem; }
 
-        /* --- MODALS --- */
         dialog {
             margin: auto; padding: 0; border: none; border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -238,13 +202,11 @@
         dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Custom Scrollbar for Webkit */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
 
-        /* --- SPECIFIC COMPONENTS --- */
         .search-bar { position: relative; }
         .search-bar i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem; }
         .search-bar input { padding-left: 2rem; }
@@ -373,7 +335,7 @@
                                     <div class="row-2">
                                         <div class="form-group"><label>Código</label><input type="text" id="p-codigo" readonly></div>
                                         <!-- EAN EDITÁVEL -->
-                                        <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
+                                        <div class="form-group"><label>EANs (Separar por vírgula)</label><input type="text" id="p-ean" class="font-mono" placeholder="EAN1, EAN2..."></div>
                                     </div>
                                     <div class="form-group"><label>Descrição</label><input type="text" id="p-nome" required></div>
                                     
@@ -660,7 +622,7 @@
                 </div>
             </div>
             
-            <!-- Botão Global de Vínculo -->
+            <!-- Botão Global de Unificação/Vínculo -->
             <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
                 <button onclick="ImportEngine.openBatchLinkModal()" class="btn btn-warning" id="btn-batch-link" disabled style="opacity: 0.5; font-size: 0.75rem;">
                     <i class="fa-solid fa-link"></i> Vincular Selecionados
@@ -763,7 +725,6 @@
         // --- IMPORT ENGINE ---
         const ImportEngine = {
             stagedData: [],
-            selectedIndex: null,
             processFile: () => {
                 const file = document.getElementById('json-import-file').files[0];
                 if(!file) return alert('Selecione um arquivo .json');
@@ -774,72 +735,51 @@
                         if(!Array.isArray(items)) throw new Error('JSON deve ser uma lista []');
                         
                         const db = DB.load();
-                        
-                        // Grouping logic to consolidate items with same EAN
-                        const groupedItems = {};
-                        
-                        items.forEach((item, idx) => {
-                             const eanUnit = (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") ? item.EAN_Unidade : "";
-                             const eanBox = (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") ? item.EAN_Caixa : "";
-                             const validEan = eanUnit || eanBox || (item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "");
-                             
-                             const key = validEan || item.xProd.toUpperCase(); // Use name if EAN is invalid
-                             
-                             if (!groupedItems[key]) {
-                                 groupedItems[key] = { items: [], totalQty: 0, firstItem: item, validEan: validEan, eanUnit: eanUnit, eanBox: eanBox };
-                             }
-                             
-                             let qty = Number(item.Quantidade_Total_Unidades);
-                             const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
-                             if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
-                             
-                             groupedItems[key].totalQty += qty;
-                             groupedItems[key].items.push(item);
-                        });
-                        
-                        // Create staged data and sort alphabetically by product name
-                        ImportEngine.stagedData = Object.keys(groupedItems).map((key, idx) => {
-                            const group = groupedItems[key];
-                            const item = group.firstItem;
-                            
-                            // Try finding existing product
+                        ImportEngine.stagedData = items.map((item, idx) => {
+                            const eanUnit = (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") ? item.EAN_Unidade : "";
+                            const eanBox = (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") ? item.EAN_Caixa : "";
+                            const validEan = eanUnit || eanBox || (item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "");
+
                             let match = null;
-                            if (group.validEan) {
-                                match = db.produto.find(p => p.ean === group.validEan);
+                            const eansToCheck = [eanUnit, eanBox, validEan].filter(e => e);
+                            
+                            // Check against multiple EANs in DB
+                            if (eansToCheck.length > 0) {
+                                match = db.produto.find(p => {
+                                    const pEans = p.eans || (p.ean ? [p.ean] : []);
+                                    return eansToCheck.some(e => pEans.includes(e));
+                                });
                             }
-                            // Fallback to name search if no EAN match or no valid EAN
-                            if (!match) {
+                            // Fallback to name
+                            if(!match) {
                                 match = db.produto.find(p => p.nome.toUpperCase() === item.xProd.toUpperCase());
                             }
+
+                            let qty = Number(item.Quantidade_Total_Unidades);
+                            const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
+                            if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
 
                             let cost = Number(item.Custo_Unitario) || 0;
                             if(cost < 0) cost = 0;
 
                             return {
                                 _id: idx,
-                                json: item, // representative item
-                                eanFinal: group.validEan,
-                                eanUnit: group.eanUnit,
-                                eanBox: group.eanBox,
-                                qty: group.totalQty,
+                                json: item,
+                                eanFinal: validEan,
+                                eanUnit: eanUnit,
+                                eanBox: eanBox,
+                                qty: qty,
                                 cost: cost,
-                                match: match
+                                match: match,
+                                eansFound: eansToCheck
                             };
-                        }).sort((a, b) => a.json.xProd.localeCompare(b.json.xProd));
+                        });
                         
                         ImportEngine.renderPreview();
                         document.getElementById('import-modal').showModal();
                     } catch(err) { alert('Erro: ' + err.message); }
                 };
                 reader.readAsText(file);
-            },
-            filterPreview: (val) => {
-                const term = val.toLowerCase();
-                const filteredData = ImportEngine.stagedData.filter(d => 
-                    d.json.xProd.toLowerCase().includes(term) || 
-                    (d.eanFinal && d.eanFinal.includes(term))
-                );
-                ImportEngine.renderPreview(filteredData);
             },
             renderPreview: (data = null) => {
                 const listToRender = data || ImportEngine.stagedData;
@@ -881,8 +821,6 @@
             updateBatchBtn: () => {
                 const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
                 const btn = document.getElementById('btn-batch-link');
-                // Enable only if items selected AND some are "New" (no match)
-                // Actually, allow re-linking too if user wants to correct a match
                 if(checked.length > 0) {
                     btn.disabled = false;
                     btn.style.opacity = 1;
@@ -925,7 +863,11 @@
                     checked.forEach(idx => {
                         const item = ImportEngine.stagedData.find(d => d._id === idx);
                         if(item) {
-                            item.match = prod; // Update match
+                            item.match = prod; 
+                            // Add extra EANs to the match if needed
+                            if(!prod.eans) prod.eans = [prod.ean].filter(Boolean);
+                            
+                            // Here we just prepare the staged data, actual merge happens on confirmImport
                         }
                     });
                     ImportEngine.renderPreview();
@@ -937,23 +879,19 @@
                 const checkboxes = Array.from(document.querySelectorAll('.import-chk:checked'));
                 if(checkboxes.length === 0) return alert('Nada selecionado');
 
-                const selectedIds = new Set(checkboxes.map(c => Number(c.value)));
-                
                 const db = DB.load();
                 let count = 0;
+
+                const selectedIds = new Set(checkboxes.map(c => parseInt(c.value)));
 
                 ImportEngine.stagedData.forEach(d => {
                     if(!selectedIds.has(d._id)) return;
 
-                    // Re-check for match in current DB state to handle multiple imports in one session properly
                     let prod = d.match ? db.produto.find(p => p.id === d.match.id) : null;
                     
-                    // Double check if we created it in a previous iteration of this loop (unlikely due to grouping, but good safety)
-                    if (!prod && d.eanFinal) {
-                        prod = db.produto.find(p => p.ean === d.eanFinal);
-                    }
-                    if (!prod) {
-                        prod = db.produto.find(p => p.nome.toUpperCase() === d.json.xProd.toUpperCase());
+                    if (!prod && d.eansFound.length > 0) {
+                        // Double check in case another item created it in this loop
+                        prod = db.produto.find(p => p.eans && d.eansFound.some(e => p.eans.includes(e)));
                     }
 
                     const jsonItem = d.json; 
@@ -964,24 +902,26 @@
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
                         
-                        if(d.eanFinal) prod.ean = d.eanFinal; 
-                        if(jsonItem.NCM) prod.ncm = jsonItem.NCM;
-                        if(jsonItem.CEST) prod.cest = jsonItem.CEST;
-                        if(jsonItem.CFOP_SAIDA) prod.cfop = jsonItem.CFOP_SAIDA;
-                        if(jsonItem.CSOSN_SAIDA) prod.csosn = jsonItem.CSOSN_SAIDA;
-                        if(jsonItem.Unidade_Venda) prod.unidade = jsonItem.Unidade_Venda;
-                        if(jsonItem.Fator_Conversao) prod.fator = jsonItem.Fator_Conversao;
+                        // Merge EANs
+                        const existingEans = prod.eans || (prod.ean ? [prod.ean] : []);
+                        const newEanList = [...new Set([...existingEans, ...d.eansFound])].slice(0, 5);
+                        prod.eans = newEanList;
+                        prod.ean = newEanList[0] || ""; 
                         
-                        prod.jsonData = jsonItem; 
+                        // Update other fields only if missing or specific logic requires
+                        if(!prod.ncm) prod.ncm = jsonItem.NCM;
                         
                         prod.nota = jsonItem.Numero_Nota;
                     } else {
                         // NOVO CADASTRO
+                        const initialEans = d.eansFound.length > 0 ? d.eansFound : (d.eanFinal ? [d.eanFinal] : []);
+                        
                         prod = {
                             id: Date.now().toString() + Math.random().toString().slice(2,5),
                             codigo: DB.nextCode('P'),
                             nome: jsonItem.xProd.toUpperCase(),
-                            ean: d.eanFinal,
+                            ean: initialEans[0] || "",
+                            eans: initialEans,
                             custo: d.cost,
                             valor: 0,
                             estoque: dest !== 'fiscal' ? d.qty : 0,
@@ -1015,7 +955,7 @@
                 DB.saveAll(db);
                 alert(`${count} itens processados.`);
                 document.getElementById('import-modal').close();
-                document.getElementById('import-filter').value = ''; // Clear filter
+                document.getElementById('import-filter').value = '';
                 Views.catalogo.render();
             }
         };
