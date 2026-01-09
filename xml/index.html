@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe com Edição Completa (EAN e Descrição).">
-    <title>NFe Parser Pro | v6.12 Edição Total</title>
+    <meta name="description" content="Leitor XML de NFe com Lista Completa (Sem Limites).">
+    <title>NFe Parser Pro | v6.13 Lista Completa</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -490,7 +490,7 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.12 Edição Total</span>
+                <span class="badge">v6.13 Lista Completa</span>
                 <span class="badge badge-purple">Memória Ativa</span>
             </div>
         </header>
@@ -639,7 +639,7 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.12 (Edição Total, Exportação Separada)
+         * SISTEMAS - Core Logic v6.13 (Lista Completa)
          */
         var app = {
             data: [], 
@@ -1153,7 +1153,7 @@
                     return;
                 }
 
-                const limit = 200;
+                const limit = 200; // THIS IS THE LIMIT CAUSING THE ISSUE
                 const fragment = document.createDocumentFragment();
 
                 filtered.slice(0, limit).forEach(item => {
