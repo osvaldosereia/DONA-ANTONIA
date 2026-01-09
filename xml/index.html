@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe com Edição Manual de Fator e Cálculo de Descontos.">
-    <title>NFe Parser Pro | Exportação Fiscal</title>
+    <meta name="description" content="Leitor XML de NFe com Correção de Backup e Quantidade.">
+    <title>NFe Parser Pro | v6.5 Backup Fix</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -92,11 +92,6 @@
             border: 1px solid #dbeafe;
             align-self: flex-start;
         }
-        .badge-warning {
-            background: var(--warning-bg);
-            color: var(--warning);
-            border-color: #fef08a;
-        }
         .badge-success {
             background: var(--success-bg);
             color: var(--success);
@@ -132,7 +127,6 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
         
-        /* Estilo específico para o input de fator na tabela */
         input.factor-input {
             width: 60px;
             padding: 4px 6px;
@@ -147,11 +141,6 @@
         input.factor-input:focus {
             background: #fff;
             border-color: var(--primary);
-        }
-        input.factor-input::-webkit-outer-spin-button,
-        input.factor-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
         }
 
         input[type="file"]::file-selector-button {
@@ -316,8 +305,8 @@
             font-weight: 700;
             margin-left: 5px;
         }
-        .smart-st { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; } /* Red for ST */
-        .smart-normal { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; } /* Green for Normal */
+        .smart-st { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .smart-normal { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
 
         /* TOAST NOTIFICATION */
         .toast-container {
@@ -388,7 +377,6 @@
         .flex { display: flex !important; }
         .fade-in { animation: fadeIn 0.3s ease-in; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
     </style>
 </head>
 <body>
@@ -397,7 +385,7 @@
     <div id="loading" class="hidden">
         <div class="loader-card">
             <div class="spinner"></div>
-            <span style="font-weight: 500;">Processando Fiscal...</span>
+            <span style="font-weight: 500;">Processando...</span>
         </div>
     </div>
 
@@ -413,7 +401,7 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.3 CFOP/CSOSN Automático</span>
+                <span class="badge">v6.5 Backup & Quantidade Fix</span>
                 <span class="badge badge-success">Descontos Ativos</span>
             </div>
         </header>
@@ -422,7 +410,7 @@
         <section>
             <label for="fileInput">1. Importar Arquivos XML (Compra)</label>
             <input type="file" id="fileInput" multiple accept=".xml, text/xml">
-            <p style="margin-top: 0.5rem;">🔒 O sistema agora lê a tag <code>&lt;vDesc&gt;</code> e calcula o custo real (Valor Produto - Desconto).</p>
+            <p style="margin-top: 0.5rem;">🔒 O sistema agora lê a tag <code>&lt;vDesc&gt;</code> e calcula o custo real.</p>
         </section>
 
         <!-- Filtros e Ações -->
@@ -463,7 +451,7 @@
                 </div>
 
                 <div class="ml-auto flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                    <button class="btn-primary" onclick="app.exportData('json')" style="width: auto;">
+                    <button class="btn-primary" onclick="app.exportData()" style="width: auto;">
                         📥 Backup Bruto
                     </button>
                     <button class="btn-danger" onclick="app.clearData()" style="width: auto;">
@@ -523,12 +511,13 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.3 (CFOP/CSOSN Config)
+         * SISTEMAS - Core Logic v6.5
          */
-        const app = {
+        // Use 'var' to ensure 'app' is accessible in onclick handlers (window scope) across all browsers
+        var app = {
             data: [], 
             selectedIds: new Set(),
-            storageKey: 'nfe_sys_data_sync_v61',
+            storageKey: 'nfe_sys_data_sync_v65',
 
             init() {
                 this.cacheDOM();
@@ -574,6 +563,16 @@
                     this.dom.fileInput.value = '';
                 }
             },
+            // Função de backup corrigida
+            exportData() {
+                try {
+                    if(!this.data || this.data.length === 0) return alert('Sem dados para exportar.');
+                    this.downloadJSON(this.data, 'backup_completo');
+                } catch (e) {
+                    alert('Erro ao exportar: ' + e.message);
+                    console.error(e);
+                }
+            },
 
             // --- LÓGICA DE ATUALIZAÇÃO E SINCRONIZAÇÃO ---
             updateFactor(id, newValue) {
@@ -583,18 +582,14 @@
                 let val = parseInt(newValue);
                 if (isNaN(val) || val < 1) val = 1;
 
-                // 1. Atualiza o item atual
                 sourceItem.userFactor = val;
 
-                // 2. SINCRONIZAÇÃO: Busca outros itens com mesmo EAN
+                // Sincronização: Busca outros itens com mesmo EAN
                 let syncCount = 0;
-                
-                // Só sincroniza se tiver EAN válido e não for "SEM GTIN"
                 const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
 
                 if (hasValidEan) {
                     this.data.forEach(item => {
-                        // Se for outro item (não o atual) e tiver o mesmo EAN
                         if (item.id !== id && item.cEAN === sourceItem.cEAN) {
                             item.userFactor = val;
                             syncCount++;
@@ -603,9 +598,8 @@
                 }
 
                 this.saveToStorage();
-                this.render(); // Re-renderiza para atualizar os inputs visuais
+                this.render(); 
 
-                // 3. Feedback ao Usuário
                 if (syncCount > 0) {
                     this.showToast(`✅ Atualizado em +${syncCount} itens idênticos (EAN: ${sourceItem.cEAN})`);
                 }
@@ -616,8 +610,6 @@
                 toast.className = 'toast';
                 toast.textContent = message;
                 this.dom.toastContainer.appendChild(toast);
-
-                // Remove após 3 segundos
                 setTimeout(() => {
                     toast.style.animation = 'fadeOut 0.3s ease-out forwards';
                     setTimeout(() => toast.remove(), 300);
@@ -652,7 +644,7 @@
                 });
             },
 
-            // --- INTELIGÊNCIA FISCAL E CONFIGURAÇÃO DE SAÍDA ---
+            // --- INTELIGÊNCIA FISCAL ---
             detectConversionFactor(description) {
                 if (!description) return 1;
                 const desc = description.toUpperCase();
@@ -674,20 +666,16 @@
             predictFiscalAttributes(item) {
                 const cfopIn = parseInt(item.CFOP.replace('.', ''));
                 const cstIn = parseInt(item.CST_CSOSN || '0');
-                
-                // Lista de CFOPs e CSTs que indicam Substituição Tributária (Entrada)
                 const isST = [1403, 2403, 5403, 5405].includes(cfopIn) || [10, 30, 60, 70, 201, 202, 500].includes(cstIn);
 
                 if (isST) {
-                    // CONFIGURAÇÃO: Se ST -> Venda com CFOP 5405 e CSOSN 500
                     return { cfopOut: '5405', csosnOut: '500', desc: 'Revenda ST' };
                 } else {
-                    // CONFIGURAÇÃO: Se Normal -> Venda com CFOP 5102 e CSOSN 102
                     return { cfopOut: '5102', csosnOut: '102', desc: 'Revenda Normal' };
                 }
             },
 
-            // --- EXPORTAÇÃO (COM CÁLCULO DE DESCONTO E NUMERO DA NOTA) ---
+            // --- EXPORTAÇÃO INTELIGENTE ---
             exportSmartJSON() {
                 const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
@@ -700,34 +688,38 @@
                     const finalFactor = item.userFactor ? item.userFactor : detected;
                     const fiscal = this.predictFiscalAttributes(item);
                     
-                    // --- CÁLCULO DO CUSTO LÍQUIDO ---
-                    // Custo Liq Caixa = (Valor Total Item - Desconto Total) / Quantidade Caixas
+                    // Cálculo Custo
                     const totalDesc = item.vDesc || 0;
                     const netTotal = item.vProd - totalDesc;
                     const netCostBox = netTotal / item.qCom;
                     const unitCost = netCostBox / finalFactor;
 
+                    // 1. MODO ATACADO
                     if (mode === 'atacado' || mode === 'ambos') {
                         exportList.push({
-                            ...item,
-                            Numero_Nota: item.nNF, // Adicionado nNF
+                            ...item, // Já inclui qCom (Quantidade da Nota)
+                            Numero_Nota: item.nNF,
                             _TIPO: 'ATACADO (ENTRADA)',
                             CFOP_SAIDA_SUGERIDO: fiscal.cfopOut,
                             CSOSN_SAIDA_SUGERIDO: fiscal.csosnOut,
                             FATOR_UTILIZADO: finalFactor,
                             CUSTO_LIQUIDO_CAIXA: parseFloat(netCostBox.toFixed(4)),
-                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), // Campo explícito para custo
+                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)),
                             DESCONTO_APLICADO: totalDesc
                         });
                     }
 
+                    // 2. MODO VAREJO
                     if (mode === 'varejo' || mode === 'ambos') {
                         let cleanDesc = item.xProd.replace(/(\d+\s*[xX]\s*\d+)/gi, '').replace(/(FD|CX|FARDO)\s*\d*/gi, '').trim();
                         cleanDesc = cleanDesc.replace(/\s+/, ' ') + " (UN)";
 
                         exportList.push({
                             id_referencia: item.id,
-                            Numero_Nota: item.nNF, // Adicionado nNF
+                            Numero_Nota: item.nNF,
+                            // Campos de Quantidade EXPLICITOS
+                            Quantidade_Nota: item.qCom,
+                            
                             cProd_Sugestao: item.cProd + '-UN', 
                             cEAN: 'PREENCHER_COM_LEITOR', 
                             xProd: cleanDesc,
@@ -737,8 +729,9 @@
                             CSOSN_SAIDA: fiscal.csosnOut,
                             Unidade_Venda: 'UN',
                             Fator_Conversao_Entrada: finalFactor,
-                            Custo_Unitario: parseFloat(unitCost.toFixed(4)), // Custo Un. com desconto
-                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), // Custo da Caixa com desconto
+                            Quantidade_Total_Unidades: parseFloat((item.qCom * finalFactor).toFixed(3)),
+                            Custo_Unitario: parseFloat(unitCost.toFixed(4)), 
+                            Custo_Real_Caixa: parseFloat(netCostBox.toFixed(4)), 
                             Valor_Desconto_Total: totalDesc,
                             _TIPO: 'VAREJO (SAIDA)',
                             _OBS: `Desconto de R$ ${totalDesc} abatido do custo`
@@ -768,8 +761,6 @@
                 if (files.length === 0) return;
                 this.toggleLoading(true);
 
-                // 1. Identificar chaves já carregadas (evita NFe duplicada)
-                // O ID do item é: NFeKEY-nItem. Split('-')[0] pega a NFeKEY.
                 const existingKeys = new Set(this.data.map(i => i.id.split('-')[0]));
                 
                 const promises = files.map(file => this.readFileAsText(file));
@@ -781,22 +772,17 @@
                     contents.forEach(xml => {
                         const parsed = this.parseXML(xml);
                         if (parsed && parsed.length > 0) {
-                            // Extrai a chave da NFe do primeiro item deste XML
                             const nfeKey = parsed[0].id.split('-')[0];
-                            
                             if (existingKeys.has(nfeKey)) {
-                                duplicates++; // XML já existe na lista
+                                duplicates++;
                             } else {
                                 newItems.push(...parsed);
-                                existingKeys.add(nfeKey); // Adiciona ao conjunto temp para evitar duplicados no mesmo lote
+                                existingKeys.add(nfeKey);
                             }
                         }
                     });
 
-                    // Feedback ao usuário
-                    if (duplicates > 0) {
-                        this.showToast(`⚠️ ${duplicates} NFe(s) ignorada(s) por duplicidade.`);
-                    }
+                    if (duplicates > 0) this.showToast(`⚠️ ${duplicates} NFe(s) duplicada(s).`);
 
                     if (newItems.length > 0) {
                         this.data = [...this.data, ...newItems];
@@ -806,7 +792,6 @@
                     } else if (duplicates === 0) {
                         this.showToast(`ℹ️ Nenhum dado válido encontrado.`);
                     }
-
                 } catch (e) { 
                     console.error(e);
                     this.showToast('❌ Erro ao processar arquivos.'); 
@@ -847,7 +832,6 @@
                             vICMS = getFloat(imposto, 'vICMS');
                         }
 
-                        // --- CORREÇÃO: LENDO O DESCONTO ---
                         const vDesc = getFloat(prod, 'vDesc'); 
 
                         items.push({
@@ -865,7 +849,7 @@
                             qCom: getFloat(prod, 'qCom'),
                             vUnCom: getFloat(prod, 'vUnCom'), 
                             vProd: getFloat(prod, 'vProd'),
-                            vDesc: vDesc, // Armazena o desconto
+                            vDesc: vDesc,
                             CST_CSOSN: cst,
                             vICMS,
                             userFactor: null
@@ -923,10 +907,9 @@
                     const detected = this.detectConversionFactor(item.xProd);
                     const currentFactor = item.userFactor ? item.userFactor : detected;
                     
-                    // Cálculo Visual do Custo Líquido
                     const discount = item.vDesc || 0;
                     const netTotal = item.vProd - discount;
-                    const netUnitCostBox = netTotal / item.qCom; // Custo Liq da Caixa
+                    const netUnitCostBox = netTotal / item.qCom;
 
                     const inputHtml = `
                         <input type="number" 
@@ -938,7 +921,6 @@
                                title="Qtd detectada: ${detected}. Edite para corrigir.">
                     `;
 
-                    // Formatação do Desconto (Se houver)
                     const descHtml = discount > 0 
                         ? `<span class="text-success font-bold">-${discount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>` 
                         : '<span style="color:#cbd5e1">-</span>';
@@ -970,6 +952,9 @@
                 show ? (el.classList.remove('hidden'), el.classList.add('flex')) : (el.classList.add('hidden'), el.classList.remove('flex'));
             }
         };
+
+        // Explicitly attach to window
+        window.app = app;
 
         document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
