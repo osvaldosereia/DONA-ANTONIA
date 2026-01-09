@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA V3 | Professional Dashboard</title>
     
-    <!-- Fonte Inter (Embutida para garantir visual) -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -46,7 +44,6 @@
         /* --- LAYOUT --- */
         .app-wrapper { display: flex; width: 100%; height: 100%; }
         
-        /* Sidebar */
         aside {
             width: var(--sidebar-width);
             background-color: var(--slate-900);
@@ -82,7 +79,6 @@
         .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .nav-item i { width: 20px; text-align: center; }
 
-        /* Main Content */
         main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
         
         header.top-bar {
@@ -101,23 +97,13 @@
             background-color: #f8fafc;
         }
 
-        /* --- VIEWS & GRID SYSTEM --- */
-        .view-section { 
-            display: none; 
-            height: 100%; 
-            padding: 1.5rem; 
-            flex-direction: column; 
-        }
+        .view-section { display: none; height: 100%; padding: 1.5rem; flex-direction: column; }
         .view-section.active { display: flex; }
 
-        .split-view {
-            display: flex; gap: 1.5rem; height: 100%;
-            align-items: flex-start;
-        }
+        .split-view { display: flex; gap: 1.5rem; height: 100%; align-items: flex-start; }
         .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
-        /* --- CARDS & PANELS --- */
         .card {
             background: var(--white);
             border: 1px solid var(--slate-200);
@@ -139,19 +125,13 @@
 
         .card-body { padding: 1rem; overflow-y: auto; flex: 1; }
         
-        /* --- FORMS --- */
         form { display: flex; flex-direction: column; gap: 1rem; }
-        
         .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
         label { font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.02em; }
         
         input, select, textarea {
-            width: 100%;
-            padding: 0.6rem 0.75rem;
-            border: 1px solid var(--slate-300);
-            border-radius: 6px;
-            font-family: inherit; font-size: 0.85rem; color: var(--slate-700);
-            background-color: var(--white);
+            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--slate-300); border-radius: 6px;
+            font-family: inherit; font-size: 0.85rem; color: var(--slate-700); background-color: var(--white);
             outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
@@ -161,17 +141,15 @@
         .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
         .row-sidebar { display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; }
 
-        /* --- BUTTONS --- */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.6rem 1rem;
-            border-radius: 6px;
-            font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.025em;
-            cursor: pointer; border: none; transition: all 0.2s;
+            padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 0.025em; cursor: pointer; border: none; transition: all 0.2s;
             text-decoration: none;
         }
         .btn-primary { background-color: var(--primary); color: white; }
         .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-primary:disabled { background-color: var(--slate-300); cursor: not-allowed; opacity: 0.7; }
         
         .btn-success { background-color: var(--success); color: white; }
         .btn-success:hover { background-color: var(--success-hover); }
@@ -181,40 +159,27 @@
         
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-warning:hover { background-color: var(--warning-hover); }
+        .btn-warning:disabled { background-color: var(--slate-200); color: var(--slate-400); cursor: not-allowed; }
 
         .btn-ghost { background-color: transparent; color: var(--slate-400); padding: 0.25rem 0.5rem; }
         .btn-ghost:hover { background-color: var(--slate-100); color: var(--slate-600); }
-
         .btn-block { width: 100%; }
 
-        /* --- TABLES --- */
         .table-wrapper { flex: 1; overflow: auto; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        
         thead th {
-            position: sticky; top: 0; z-index: 10;
-            background-color: var(--slate-50);
-            color: var(--slate-500);
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--slate-200);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: sticky; top: 0; z-index: 10; background-color: var(--slate-50); color: var(--slate-500);
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-200); box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        
-        tbody td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--slate-100);
-            color: var(--slate-700);
-            vertical-align: middle;
-            font-size: 0.85rem;
-        }
+        tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); vertical-align: middle; font-size: 0.85rem; }
         tbody tr:hover { background-color: var(--slate-50); }
 
-        /* --- BADGES & UTILS --- */
         .badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .badge-blue { background-color: #eff6ff; color: var(--primary); border-color: #dbeafe; }
         .badge-purple { background-color: #f5f3ff; color: #7c3aed; border-color: #ede9fe; }
         .badge-gray { background-color: var(--slate-100); color: var(--slate-500); border-color: var(--slate-200); }
+        .badge-orange { background-color: #fff7ed; color: var(--warning); border-color: #ffedd5; }
         
         .font-mono { font-family: 'Courier New', Courier, monospace; letter-spacing: -0.02em; }
         .text-right { text-align: right; }
@@ -225,7 +190,6 @@
         .text-slate-400 { color: var(--slate-400); }
         .text-xs { font-size: 0.75rem; }
 
-        /* --- MODALS --- */
         dialog {
             margin: auto; padding: 0; border: none; border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -236,13 +200,11 @@
         dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Custom Scrollbar for Webkit */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
 
-        /* --- SPECIFIC COMPONENTS --- */
         .search-bar { position: relative; }
         .search-bar i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem; }
         .search-bar input { padding-left: 2rem; }
@@ -827,7 +789,8 @@
                                 eanList: eanList,
                                 qty: qty,
                                 cost: cost,
-                                match: match
+                                match: match,
+                                eansFound: eansToCheck
                             };
                         }).sort((a, b) => a.mainName.localeCompare(b.mainName));
                         
@@ -880,7 +843,7 @@
             updateBatchBtn: () => {
                 const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
                 const btn = document.getElementById('btn-batch-link');
-                if(checked.length >= 2) {
+                if(checked.length >= 1) {
                     btn.disabled = false;
                     btn.style.opacity = 1;
                 } else {
@@ -888,37 +851,50 @@
                     btn.style.opacity = 0.5;
                 }
             },
-            mergeSelectedItems: () => {
-                const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
-                if (checked.length < 2) return;
-
-                const selectedIndices = checked.map(c => parseInt(c.value));
-                const itemsToMerge = ImportEngine.stagedData.filter(d => selectedIndices.includes(d._id));
+            openBatchLinkModal: () => {
+                 const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
+                 if(checked.length === 0) return;
+                 
+                 document.getElementById('product-link-search').value = '';
+                 ImportEngine.searchLinkProduct('');
+                 document.getElementById('product-select-modal').showModal();
+            },
+            searchLinkProduct: (val) => {
+                const db = DB.load();
+                const term = val.toLowerCase();
+                const filtered = db.produto.filter(p => p.nome.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term));
                 
-                // Identify PRIMARY item (Unit EAN, doesn't start with 1, or just first one)
-                let primaryItem = itemsToMerge.find(d => d.eanList.some(e => !e.startsWith('1')));
-                if (!primaryItem) primaryItem = itemsToMerge[0];
-
-                // Consolidate data
-                let totalQty = 0;
-                let allEans = new Set();
+                const container = document.getElementById('product-link-list');
+                container.innerHTML = filtered.map(p => `
+                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--slate-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="ImportEngine.applyBatchLink('${p.id}')" onmouseover="this.style.background='var(--slate-50)'" onmouseout="this.style.background='transparent'">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.8rem; color: var(--slate-700);">${p.nome}</div>
+                            <div style="font-size: 0.7rem; color: var(--slate-400);">${p.codigo} | EAN: ${p.ean || '-'}</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Selecionar</button>
+                    </div>
+                `).join('');
+                if (filtered.length === 0) container.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--slate-400);">Nenhum produto encontrado</div>';
+            },
+            applyBatchLink: (prodId) => {
+                const db = DB.load();
+                const prod = db.produto.find(p => p.id === prodId);
+                const checked = Array.from(document.querySelectorAll('.import-chk:checked')).map(c => Number(c.value));
                 
-                itemsToMerge.forEach(d => {
-                    totalQty += d.qty;
-                    d.eanList.forEach(e => allEans.add(e));
-                });
-
-                // Update primary item
-                primaryItem.qty = totalQty;
-                primaryItem.eanList = Array.from(allEans);
-                
-                // Remove others from stagedData
-                ImportEngine.stagedData = ImportEngine.stagedData.filter(d => d._id === primaryItem._id || !selectedIndices.includes(d._id));
-
-                ImportEngine.renderPreview();
-                // Clear selection
-                document.querySelectorAll('.import-chk').forEach(c => c.checked = false);
-                ImportEngine.updateBatchBtn();
+                if (prod && checked.length > 0) {
+                    checked.forEach(idx => {
+                        const item = ImportEngine.stagedData.find(d => d._id === idx);
+                        if(item) {
+                            item.match = prod; 
+                            // Add extra EANs to the match if needed
+                            if(!prod.eans) prod.eans = [prod.ean].filter(Boolean);
+                            
+                            // Here we just prepare the staged data, actual merge happens on confirmImport
+                        }
+                    });
+                    ImportEngine.renderPreview();
+                    document.getElementById('product-select-modal').close();
+                }
             },
             confirmImport: () => {
                 const dest = document.querySelector('input[name="import-dest"]:checked').value;
@@ -935,9 +911,9 @@
 
                     let prod = d.match ? db.produto.find(p => p.id === d.match.id) : null;
                     
-                    // Double check if created in loop
-                    if (!prod && d.eanList.length > 0) {
-                        prod = db.produto.find(p => p.eans && d.eanList.some(e => p.eans.includes(e)));
+                    if (!prod && d.eansFound.length > 0) {
+                        // Double check in case another item created it in this loop
+                        prod = db.produto.find(p => p.eans && d.eansFound.some(e => p.eans.includes(e)));
                     }
 
                     const jsonItem = d.json; 
@@ -954,8 +930,8 @@
                         prod.eans = newEanList;
                         prod.ean = newEanList[0] || ""; 
                         
-                        // Add secondary name if empty
-                        if(!prod.nomeSec && d.secName) prod.nomeSec = d.secName;
+                        // Update other fields only if missing or specific logic requires
+                        if(!prod.ncm) prod.ncm = jsonItem.NCM;
                         
                         prod.nota = jsonItem.Numero_Nota;
                     } else {
@@ -1017,7 +993,6 @@
                 const db = DB.load();
                 
                 lines.forEach(line => {
-                    // Match pattern: [quantity] Product Name or Code
                     const match = line.match(/^\[(\d+)\]\s*(.*)$/);
                     let qty = 1;
                     let identifier = line.trim();
@@ -1026,7 +1001,6 @@
                         qty = parseInt(match[1], 10);
                         identifier = match[2].trim();
                     } else {
-                        // Fallback for simple "Code | Qty" format
                         const parts = line.split('|').map(s => s.trim());
                         identifier = parts[0];
                         if (parts[1]) qty = parseInt(parts[1], 10) || 1;
@@ -1034,7 +1008,6 @@
 
                     if (!identifier) return;
 
-                    // Try to find product by code, EAN, or exact name match
                     const prod = db.produto.find(p => 
                         p.codigo.toUpperCase() === identifier.toUpperCase() || 
                         (p.eans && p.eans.includes(identifier)) ||
@@ -1085,7 +1058,6 @@
                 const lines = text.split('\n');
 
                 lines.forEach(line => {
-                    // Match pattern: [quantity] Product Name or Code
                     const match = line.match(/^\[(\d+)\]\s*(.*)$/);
                     let qty = 1;
                     let identifier = line.trim();
@@ -1094,7 +1066,6 @@
                         qty = parseInt(match[1], 10);
                         identifier = match[2].trim();
                     } else {
-                        // Fallback for simple "Code | Qty" format
                         const parts = line.split('|').map(s => s.trim());
                         identifier = parts[0];
                         if (parts[1]) qty = parseInt(parts[1], 10) || 1;
