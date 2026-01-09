@@ -114,7 +114,7 @@
             display: flex; gap: 1.5rem; height: 100%;
             align-items: flex-start;
         }
-        .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
+        .panel-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
         /* --- CARDS & PANELS --- */
@@ -740,28 +740,53 @@
                         if(!Array.isArray(items)) throw new Error('JSON deve ser uma lista []');
                         
                         const db = DB.load();
-                        ImportEngine.stagedData = items.map((item, idx) => {
-                            const eanUnit = (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") ? item.EAN_Unidade : "";
-                            const eanBox = (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") ? item.EAN_Caixa : "";
-                            const validEan = eanUnit || eanBox || (item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "");
-
-                            let match = db.produto.find(p => p.nome.toUpperCase() === item.xProd.toUpperCase());
-                            if(!match && validEan) match = db.produto.find(p => p.ean === validEan);
-
-                            let qty = Number(item.Quantidade_Total_Unidades);
-                            const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
-                            if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
+                        
+                        // Grouping logic to consolidate items with same EAN
+                        const groupedItems = {};
+                        
+                        items.forEach((item, idx) => {
+                             const eanUnit = (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") ? item.EAN_Unidade : "";
+                             const eanBox = (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") ? item.EAN_Caixa : "";
+                             const validEan = eanUnit || eanBox || (item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "");
+                             
+                             const key = validEan || item.xProd.toUpperCase(); // Use name if EAN is invalid
+                             
+                             if (!groupedItems[key]) {
+                                 groupedItems[key] = { items: [], totalQty: 0, firstItem: item, validEan: validEan, eanUnit: eanUnit, eanBox: eanBox };
+                             }
+                             
+                             let qty = Number(item.Quantidade_Total_Unidades);
+                             const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
+                             if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
+                             
+                             groupedItems[key].totalQty += qty;
+                             groupedItems[key].items.push(item);
+                        });
+                        
+                        ImportEngine.stagedData = Object.keys(groupedItems).map((key, idx) => {
+                            const group = groupedItems[key];
+                            const item = group.firstItem;
+                            
+                            // Try finding existing product
+                            let match = null;
+                            if (group.validEan) {
+                                match = db.produto.find(p => p.ean === group.validEan);
+                            }
+                            // Fallback to name search if no EAN match or no valid EAN
+                            if (!match) {
+                                match = db.produto.find(p => p.nome.toUpperCase() === item.xProd.toUpperCase());
+                            }
 
                             let cost = Number(item.Custo_Unitario) || 0;
                             if(cost < 0) cost = 0;
 
                             return {
                                 _id: idx,
-                                json: item,
-                                eanFinal: validEan,
-                                eanUnit: eanUnit,
-                                eanBox: eanBox,
-                                qty: qty,
+                                json: item, // representative item
+                                eanFinal: group.validEan,
+                                eanUnit: group.eanUnit,
+                                eanBox: group.eanBox,
+                                qty: group.totalQty,
                                 cost: cost,
                                 match: match
                             };
@@ -812,8 +837,18 @@
 
                 sel.forEach(idx => {
                     const d = ImportEngine.stagedData.find(x => x._id === idx);
+                    // Re-check for match in current DB state to handle multiple imports in one session properly
                     let prod = d.match ? db.produto.find(p => p.id === d.match.id) : null;
-                    const jsonItem = d.json; // Acesso completo ao objeto JSON original
+                    
+                    // Double check if we created it in a previous iteration of this loop (unlikely due to grouping, but good safety)
+                    if (!prod && d.eanFinal) {
+                        prod = db.produto.find(p => p.ean === d.eanFinal);
+                    }
+                    if (!prod) {
+                        prod = db.produto.find(p => p.nome.toUpperCase() === d.json.xProd.toUpperCase());
+                    }
+
+                    const jsonItem = d.json; 
 
                     if(prod) {
                         // ATUALIZAÇÃO
@@ -821,7 +856,6 @@
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
                         
-                        // Atualiza campos cadastrais sempre que vier no JSON
                         if(d.eanFinal) prod.ean = d.eanFinal; 
                         if(jsonItem.NCM) prod.ncm = jsonItem.NCM;
                         if(jsonItem.CEST) prod.cest = jsonItem.CEST;
@@ -830,7 +864,6 @@
                         if(jsonItem.Unidade_Venda) prod.unidade = jsonItem.Unidade_Venda;
                         if(jsonItem.Fator_Conversao) prod.fator = jsonItem.Fator_Conversao;
                         
-                        // Salva dados brutos extras para referência futura
                         prod.jsonData = jsonItem; 
                         
                         prod.nota = jsonItem.Numero_Nota;
@@ -847,7 +880,6 @@
                             estoqueFiscal: dest !== 'fisico' ? d.qty : 0,
                             tipo: 'normal',
                             nota: jsonItem.Numero_Nota,
-                            // Campos fiscais e extras completos
                             ncm: jsonItem.NCM,
                             cest: jsonItem.CEST,
                             cfop: jsonItem.CFOP_SAIDA,
@@ -855,12 +887,11 @@
                             unidade: jsonItem.Unidade_Venda,
                             fator: jsonItem.Fator_Conversao || jsonItem.Fator_Conversao_Entrada,
                             refId: jsonItem.id_referencia,
-                            jsonData: jsonItem // Salva todo o objeto original
+                            jsonData: jsonItem
                         };
                         db.produto.push(prod);
                     }
                     
-                    // Log de entrada
                     db.entrada.push({
                         id: Date.now().toString() + Math.random(),
                         date: Date.now(),
