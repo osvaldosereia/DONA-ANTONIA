@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Leitor XML de NFe com Conferência Alfabética e Memória de Fatores.">
-    <title>NFe Parser Pro | v6.8 Conferência</title>
+    <meta name="description" content="Leitor XML de NFe com Conferência Alfabética e Correção de EAN.">
+    <title>NFe Parser Pro | v6.9 EAN Visível</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -325,6 +325,7 @@
         .text-brand { color: var(--primary); font-family: monospace; }
         .text-danger { color: var(--danger); }
         .text-success { color: var(--success); }
+        .text-muted { color: #cbd5e1; font-style: italic; font-size: 0.7rem; }
         .font-bold { font-weight: 700; }
         
         /* New Styles for Smart Fiscal */
@@ -432,7 +433,7 @@
                 <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.8 Conferência A-Z</span>
+                <span class="badge">v6.9 EAN Visível</span>
                 <span class="badge badge-purple">Memória Ativa</span>
             </div>
         </header>
@@ -554,13 +555,13 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.8
+         * SISTEMAS - Core Logic v6.9 (EAN Fix)
          */
         var app = {
             data: [], 
             factorsDB: {}, 
             selectedIds: new Set(),
-            storageKey: 'nfe_sys_data_sync_v65', 
+            storageKey: 'nfe_sys_data_sync_v65', // Compatível
             factorsStorageKey: 'nfe_sys_factors_db_v1', 
 
             init() {
@@ -575,8 +576,8 @@
                     fileInput: document.getElementById('fileInput'),
                     tableBody: document.getElementById('tableBody'),
                     searchInput: document.getElementById('searchInput'),
-                    tableSearch: document.getElementById('tableSearch'), // Busca Local
-                    sortSelect: document.getElementById('sortSelect'),   // Ordenação
+                    tableSearch: document.getElementById('tableSearch'), 
+                    sortSelect: document.getElementById('sortSelect'), 
                     dateStart: document.getElementById('dateStart'),
                     dateEnd: document.getElementById('dateEnd'),
                     totalDisplay: document.getElementById('totalValueDisplay'),
@@ -591,20 +592,18 @@
             bindEvents() {
                 this.dom.fileInput.addEventListener('change', (e) => this.handleFileUpload(e));
                 this.dom.searchInput.addEventListener('input', () => {
-                    this.dom.tableSearch.value = this.dom.searchInput.value; // Sync visual
+                    this.dom.tableSearch.value = this.dom.searchInput.value; 
                     this.render();
                 });
                 this.dom.dateStart.addEventListener('change', () => this.render());
                 this.dom.dateEnd.addEventListener('change', () => this.render());
             },
 
-            // Sincroniza a busca da tabela com a busca principal
             syncSearch(val) {
                 this.dom.searchInput.value = val;
                 this.render();
             },
 
-            // --- Gerenciamento da Memória de Fatores ---
             loadFactorsDB() {
                 try {
                     const db = localStorage.getItem(this.factorsStorageKey);
@@ -620,7 +619,6 @@
                 } catch (e) { console.error('Storage cheio para fatores'); }
             },
 
-            // --- Gerenciamento de Dados (Sessão) ---
             saveToStorage() {
                 try { localStorage.setItem(this.storageKey, JSON.stringify(this.data)); } catch (e) { alert('LocalStorage cheio.'); }
             },
@@ -644,7 +642,6 @@
                 }
             },
 
-            // --- LÓGICA DE ATUALIZAÇÃO ---
             updateFactor(id, newValue) {
                 const sourceItem = this.data.find(i => i.id === id);
                 if (!sourceItem) return;
@@ -655,6 +652,7 @@
                 sourceItem.userFactor = val;
 
                 let syncCount = 0;
+                // EAN check - Robust check against "SEM GTIN"
                 const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
 
                 if (hasValidEan) {
@@ -713,7 +711,6 @@
                 });
             },
 
-            // --- INTELIGÊNCIA FISCAL ---
             detectConversionFactor(description) {
                 if (!description) return 1;
                 const desc = description.toUpperCase();
@@ -744,7 +741,6 @@
                 }
             },
 
-            // --- EXPORTAÇÃO ---
             exportSmartJSON() {
                 const selectedItems = this.data.filter(item => this.selectedIds.has(item.id));
                 if (selectedItems.length === 0) return;
@@ -794,7 +790,7 @@
                             Numero_Nota: item.nNF,
                             Quantidade_Nota: item.qCom,
                             cProd_Sugestao: item.cProd + '-UN', 
-                            cEAN: item.cEAN,
+                            cEAN: item.cEAN, // Agora garantido no parse
                             xProd: cleanDesc,
                             NCM: item.NCM, 
                             CEST: item.CEST,
@@ -833,7 +829,6 @@
                 document.body.removeChild(a);
             },
             
-            // --- Parser & Importação ---
             async handleFileUpload(event) {
                 const files = Array.from(event.target.files);
                 if (files.length === 0) return;
@@ -897,7 +892,7 @@
                     const parser = new DOMParser();
                     const xmlDoc = parser.parseFromString(xmlString, "text/xml");
                     if (xmlDoc.getElementsByTagName("parsererror").length > 0) return null;
-                    const getTag = (p, t) => { const el = p.getElementsByTagName(t)[0]; return el ? el.textContent : ''; };
+                    const getTag = (p, t) => { const el = p.getElementsByTagName(t)[0]; return el ? el.textContent.trim() : ''; };
                     const getFloat = (p, t) => { const v = getTag(p, t); return v ? parseFloat(v) : 0.0; };
 
                     const infNFe = xmlDoc.getElementsByTagName('infNFe')[0];
@@ -922,13 +917,24 @@
 
                         const vDesc = getFloat(prod, 'vDesc'); 
 
+                        // ROBUST EAN PARSING
+                        let cEAN = getTag(prod, 'cEAN');
+                        if (!cEAN || cEAN === 'SEM GTIN') {
+                            const cEANTrib = getTag(prod, 'cEANTrib');
+                            if (cEANTrib && cEANTrib !== 'SEM GTIN') {
+                                cEAN = cEANTrib;
+                            }
+                        }
+                        // Fallback to "SEM GTIN" string if still empty
+                        if (!cEAN) cEAN = 'SEM GTIN';
+
                         items.push({
                             id: `${chave}-${nItem}`,
                             nNF, 
                             dataEmissao: dhEmi.split('T')[0],
                             emitente,
                             cProd: getTag(prod, 'cProd'),
-                            cEAN: getTag(prod, 'cEAN'),
+                            cEAN: cEAN, // Garantido ter valor string
                             xProd: getTag(prod, 'xProd'),
                             NCM: getTag(prod, 'NCM'),
                             CEST: getTag(prod, 'CEST'),
@@ -967,7 +973,7 @@
                 if (sortMode === 'date') {
                     filtered.sort((a,b) => b.dataEmissao.localeCompare(a.dataEmissao));
                 } else {
-                    // Ordenação Alfabética (Padrão)
+                    // Ordenação Alfabética
                     filtered.sort((a,b) => a.xProd.localeCompare(b.xProd));
                 }
 
@@ -1030,6 +1036,14 @@
                         ? `<span class="text-success font-bold">-${discount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>` 
                         : '<span style="color:#cbd5e1">-</span>';
 
+                    // EAN Render Logic
+                    let eanHtml = '';
+                    if (item.cEAN === 'SEM GTIN' || !item.cEAN) {
+                        eanHtml = '<span class="text-muted">SEM GTIN</span>';
+                    } else {
+                        eanHtml = `<span class="text-brand">${item.cEAN}</span>`;
+                    }
+
                     tr.innerHTML = `
                         <td class="w-check">
                             <input type="checkbox" class="row-checkbox" value="${item.id}" ${isSel ? 'checked' : ''} onchange="app.toggleSelect('${item.id}')">
@@ -1037,7 +1051,7 @@
                         <td style="text-align: center;">${inputHtml}</td>
                         <td>${item.dataEmissao.split('-').reverse().join('/')}</td>
                         <td title="${item.xProd}">${item.xProd.substring(0, 30)}...</td>
-                        <td class="text-brand">${item.cEAN}</td>
+                        <td>${eanHtml}</td>
                         <td>${item.NCM}</td>
                         <td><span class="smart-tag ${tagClass}">${tagLabel}</span></td>
                         <td class="text-right">${item.qCom}</td>
