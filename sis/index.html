@@ -114,7 +114,7 @@
             display: flex; gap: 1.5rem; height: 100%;
             align-items: flex-start;
         }
-        .panel-left { width: 320px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
+        .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
         /* --- CARDS & PANELS --- */
@@ -813,30 +813,54 @@
                 sel.forEach(idx => {
                     const d = ImportEngine.stagedData.find(x => x._id === idx);
                     let prod = d.match ? db.produto.find(p => p.id === d.match.id) : null;
+                    const jsonItem = d.json; // Acesso completo ao objeto JSON original
 
                     if(prod) {
+                        // ATUALIZAÇÃO
                         if(dest !== 'fiscal') prod.estoque += d.qty;
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
+                        
+                        // Atualiza campos cadastrais sempre que vier no JSON
                         if(d.eanFinal) prod.ean = d.eanFinal; 
-                        if(d.json.NCM) prod.ncm = d.json.NCM;
-                        prod.nota = d.json.Numero_Nota;
+                        if(jsonItem.NCM) prod.ncm = jsonItem.NCM;
+                        if(jsonItem.CEST) prod.cest = jsonItem.CEST;
+                        if(jsonItem.CFOP_SAIDA) prod.cfop = jsonItem.CFOP_SAIDA;
+                        if(jsonItem.CSOSN_SAIDA) prod.csosn = jsonItem.CSOSN_SAIDA;
+                        if(jsonItem.Unidade_Venda) prod.unidade = jsonItem.Unidade_Venda;
+                        if(jsonItem.Fator_Conversao) prod.fator = jsonItem.Fator_Conversao;
+                        
+                        // Salva dados brutos extras para referência futura
+                        prod.jsonData = jsonItem; 
+                        
+                        prod.nota = jsonItem.Numero_Nota;
                     } else {
+                        // NOVO CADASTRO
                         prod = {
                             id: Date.now().toString() + Math.random().toString().slice(2,5),
                             codigo: DB.nextCode('P'),
-                            nome: d.json.xProd.toUpperCase(),
+                            nome: jsonItem.xProd.toUpperCase(),
                             ean: d.eanFinal,
                             custo: d.cost,
                             valor: 0,
                             estoque: dest !== 'fiscal' ? d.qty : 0,
                             estoqueFiscal: dest !== 'fisico' ? d.qty : 0,
-                            ncm: d.json.NCM,
                             tipo: 'normal',
-                            nota: d.json.Numero_Nota
+                            nota: jsonItem.Numero_Nota,
+                            // Campos fiscais e extras completos
+                            ncm: jsonItem.NCM,
+                            cest: jsonItem.CEST,
+                            cfop: jsonItem.CFOP_SAIDA,
+                            csosn: jsonItem.CSOSN_SAIDA,
+                            unidade: jsonItem.Unidade_Venda,
+                            fator: jsonItem.Fator_Conversao || jsonItem.Fator_Conversao_Entrada,
+                            refId: jsonItem.id_referencia,
+                            jsonData: jsonItem // Salva todo o objeto original
                         };
                         db.produto.push(prod);
                     }
+                    
+                    // Log de entrada
                     db.entrada.push({
                         id: Date.now().toString() + Math.random(),
                         date: Date.now(),
@@ -844,7 +868,7 @@
                         qty: d.qty,
                         custo: d.cost,
                         dest: dest,
-                        fornecedor: `Imp. Nota ${d.json.Numero_Nota || 'JSON'}`
+                        fornecedor: `Imp. Nota ${jsonItem.Numero_Nota || 'JSON'}`
                     });
                     count++;
                 });
