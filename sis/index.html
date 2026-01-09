@@ -412,6 +412,21 @@
                                         </div>
                                     </div>
 
+                                    <!-- ÁREA DE VARIAÇÕES (NOVA) -->
+                                    <details style="margin-top: 10px; border: 1px solid var(--slate-200); border-radius: 6px;">
+                                        <summary style="background: var(--slate-50);">VARIAÇÕES / APELIDOS</summary>
+                                        <div class="details-content">
+                                            <div class="form-group">
+                                                <label>Variações de Nome (Separar por |)</label>
+                                                <textarea id="p-variacoesNome" rows="2" placeholder="Nome 1 | Nome 2..."></textarea>
+                                            </div>
+                                            <div class="form-group" style="margin-top: 0.5rem;">
+                                                <label>Variações de EAN (Separar por |)</label>
+                                                <textarea id="p-variacoesEan" rows="2" placeholder="EAN 1 | EAN 2..."></textarea>
+                                            </div>
+                                        </div>
+                                    </details>
+
                                     <details>
                                         <summary>FISCAL / XML <i class="fa-solid fa-chevron-down"></i></summary>
                                         <div class="details-content">
@@ -987,17 +1002,23 @@
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
                         
-                        // MERGE VARIATIONS (EAN & NAMES)
+                        // MERGE VARIATIONS (EAN & NAMES) with robust trimming and set logic
+                        const cleanNewEans = d.allEans.map(e => e.trim()).filter(Boolean);
                         const existingEans = [prod.ean, ...(prod.variacoesEan || [])].filter(Boolean);
-                        const newEansList = [...new Set([...existingEans, ...d.allEans])];
-                        // Keep primary EAN, store rest in variacoesEan
-                        if(newEansList.length > 0 && !prod.ean) prod.ean = newEansList[0];
-                        prod.variacoesEan = newEansList;
+                        const newEansList = [...new Set([...existingEans, ...cleanNewEans])];
+                        
+                        if(newEansList.length > 0) {
+                            if(!prod.ean) prod.ean = newEansList[0]; // Set primary if missing
+                            prod.variacoesEan = newEansList; // Store ALL unique variations
+                        }
 
+                        const cleanNewNames = d.allNames.map(n => n.trim()).filter(Boolean);
                         const existingNames = [prod.nome, ...(prod.variacoesNome || [])].filter(Boolean);
-                        const newNamesList = [...new Set([...existingNames, ...d.allNames])];
-                        // Don't change primary name automatically to avoid confusion, just append variations
-                        prod.variacoesNome = newNamesList;
+                        const newNamesList = [...new Set([...existingNames, ...cleanNewNames])];
+                        
+                        if(newNamesList.length > 0) {
+                            prod.variacoesNome = newNamesList; // Store ALL unique name variations
+                        }
 
                         if(jsonItem.NCM) prod.ncm = jsonItem.NCM;
                         if(jsonItem.CEST) prod.cest = jsonItem.CEST;
@@ -1010,13 +1031,16 @@
 
                     } else {
                         // NOVO CADASTRO
+                        const cleanEans = d.allEans.map(e => e.trim()).filter(Boolean);
+                        const cleanNames = d.allNames.map(n => n.trim()).filter(Boolean);
+
                         prod = {
                             id: Date.now().toString() + Math.random().toString().slice(2,5),
                             codigo: DB.nextCode('P'),
-                            nome: d.allNames[0] || jsonItem.xProd.toUpperCase(),
-                            variacoesNome: d.allNames, // Save all names
-                            ean: d.allEans[0] || '',
-                            variacoesEan: d.allEans, // Save all EANs
+                            nome: cleanNames[0] || jsonItem.xProd.toUpperCase(),
+                            variacoesNome: cleanNames, // Save all names
+                            ean: cleanEans[0] || '',
+                            variacoesEan: cleanEans, // Save all EANs
                             custo: d.cost,
                             valor: 0,
                             estoque: dest !== 'fiscal' ? d.qty : 0,
@@ -1384,6 +1408,13 @@
                     } else {
                         data.items = [];
                     }
+                    
+                    // SAVE VARIATIONS (NEW)
+                    const vNomes = document.getElementById('p-variacoesNome').value;
+                    data.variacoesNome = vNomes ? vNomes.split('|').map(s => s.trim()).filter(Boolean) : [];
+
+                    const vEans = document.getElementById('p-variacoesEan').value;
+                    data.variacoesEan = vEans ? vEans.split('|').map(s => s.trim()).filter(Boolean) : [];
                 }
                 
                 DB.save(type, data);
@@ -1420,6 +1451,9 @@
                         document.getElementById('p-is-combo').checked = false;
                         UI.toggleComboArea(false);
                     }
+                    // LOAD VARIATIONS (NEW)
+                    document.getElementById('p-variacoesNome').value = (item.variacoesNome || []).join(' | ');
+                    document.getElementById('p-variacoesEan').value = (item.variacoesEan || []).join(' | ');
                 }
             },
             delete: (type, id) => {
