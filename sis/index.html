@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA V3 | Professional Dashboard</title>
     
+    <!-- Fonte Inter -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -44,6 +46,7 @@
         /* --- LAYOUT --- */
         .app-wrapper { display: flex; width: 100%; height: 100%; }
         
+        /* Sidebar */
         aside {
             width: var(--sidebar-width);
             background-color: var(--slate-900);
@@ -79,6 +82,7 @@
         .nav-item.active { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3); }
         .nav-item i { width: 20px; text-align: center; }
 
+        /* Main Content */
         main { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
         
         header.top-bar {
@@ -97,13 +101,23 @@
             background-color: #f8fafc;
         }
 
-        .view-section { display: none; height: 100%; padding: 1.5rem; flex-direction: column; }
+        /* --- VIEWS & GRID SYSTEM --- */
+        .view-section { 
+            display: none; 
+            height: 100%; 
+            padding: 1.5rem; 
+            flex-direction: column; 
+        }
         .view-section.active { display: flex; }
 
-        .split-view { display: flex; gap: 1.5rem; height: 100%; align-items: flex-start; }
+        .split-view {
+            display: flex; gap: 1.5rem; height: 100%;
+            align-items: flex-start;
+        }
         .panel-left { width: 360px; flex-shrink: 0; display: flex; flex-direction: column; max-height: 100%; gap: 1rem; }
         .panel-right { flex: 1; min-width: 0; display: flex; flex-direction: column; height: 100%; gap: 1rem; }
 
+        /* --- CARDS & PANELS --- */
         .card {
             background: var(--white);
             border: 1px solid var(--slate-200);
@@ -125,13 +139,19 @@
 
         .card-body { padding: 1rem; overflow-y: auto; flex: 1; }
         
+        /* --- FORMS --- */
         form { display: flex; flex-direction: column; gap: 1rem; }
+        
         .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
         label { font-size: 0.7rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; letter-spacing: 0.02em; }
         
         input, select, textarea {
-            width: 100%; padding: 0.6rem 0.75rem; border: 1px solid var(--slate-300); border-radius: 6px;
-            font-family: inherit; font-size: 0.85rem; color: var(--slate-700); background-color: var(--white);
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--slate-300);
+            border-radius: 6px;
+            font-family: inherit; font-size: 0.85rem; color: var(--slate-700);
+            background-color: var(--white);
             outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
@@ -141,10 +161,13 @@
         .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.75rem; }
         .row-sidebar { display: grid; grid-template-columns: 1fr 2fr; gap: 0.75rem; }
 
+        /* --- BUTTONS --- */
         .btn {
             display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-            padding: 0.6rem 1rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem;
-            text-transform: uppercase; letter-spacing: 0.025em; cursor: pointer; border: none; transition: all 0.2s;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.025em;
+            cursor: pointer; border: none; transition: all 0.2s;
             text-decoration: none;
         }
         .btn-primary { background-color: var(--primary); color: white; }
@@ -159,22 +182,36 @@
         
         .btn-warning { background-color: var(--warning); color: white; }
         .btn-warning:hover { background-color: var(--warning-hover); }
-        .btn-warning:disabled { background-color: var(--slate-200); color: var(--slate-400); cursor: not-allowed; }
 
         .btn-ghost { background-color: transparent; color: var(--slate-400); padding: 0.25rem 0.5rem; }
         .btn-ghost:hover { background-color: var(--slate-100); color: var(--slate-600); }
+
         .btn-block { width: 100%; }
 
+        /* --- TABLES --- */
         .table-wrapper { flex: 1; overflow: auto; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
+        
         thead th {
-            position: sticky; top: 0; z-index: 10; background-color: var(--slate-50); color: var(--slate-500);
-            font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 0.75rem 1rem;
-            border-bottom: 1px solid var(--slate-200); box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            position: sticky; top: 0; z-index: 10;
+            background-color: var(--slate-50);
+            color: var(--slate-500);
+            font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-200);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
         }
-        tbody td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--slate-100); color: var(--slate-700); vertical-align: middle; font-size: 0.85rem; }
+        
+        tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--slate-100);
+            color: var(--slate-700);
+            vertical-align: middle;
+            font-size: 0.85rem;
+        }
         tbody tr:hover { background-color: var(--slate-50); }
 
+        /* --- BADGES & UTILS --- */
         .badge { display: inline-flex; align-items: center; padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; border: 1px solid transparent; }
         .badge-blue { background-color: #eff6ff; color: var(--primary); border-color: #dbeafe; }
         .badge-purple { background-color: #f5f3ff; color: #7c3aed; border-color: #ede9fe; }
@@ -190,6 +227,7 @@
         .text-slate-400 { color: var(--slate-400); }
         .text-xs { font-size: 0.75rem; }
 
+        /* --- MODALS --- */
         dialog {
             margin: auto; padding: 0; border: none; border-radius: 12px;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
@@ -200,11 +238,13 @@
         dialog::backdrop { background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(2px); }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* Custom Scrollbar for Webkit */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--slate-300); border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--slate-400); }
 
+        /* --- SPECIFIC COMPONENTS --- */
         .search-bar { position: relative; }
         .search-bar i { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--slate-400); font-size: 0.8rem; }
         .search-bar input { padding-left: 2rem; }
@@ -333,11 +373,9 @@
                                     <div class="row-2">
                                         <div class="form-group"><label>Código</label><input type="text" id="p-codigo" readonly></div>
                                         <!-- EAN EDITÁVEL -->
-                                        <div class="form-group"><label>EANs (Separar por vírgula)</label><input type="text" id="p-ean" class="font-mono" placeholder="EAN1, EAN2..."></div>
+                                        <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
                                     </div>
-                                    <!-- Campos de Descrição com ID corrigido e Mapeamento -->
-                                    <div class="form-group"><label>Descrição Principal</label><input type="text" id="p-nome" required></div>
-                                    <div class="form-group"><label>Descrição Secundária (Fatura/Fiscal)</label><input type="text" id="p-nome-sec"></div>
+                                    <div class="form-group"><label>Descrição</label><input type="text" id="p-nome" required></div>
                                     
                                     <!-- CONTROLE DE ESTOQUE -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200);">
@@ -622,10 +660,10 @@
                 </div>
             </div>
             
-            <!-- Botão Global de Unificação/Vínculo -->
+            <!-- Botão Global de Vínculo -->
             <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
-                <button onclick="ImportEngine.mergeSelectedItems()" class="btn btn-warning" id="btn-batch-link" disabled style="opacity: 0.5; font-size: 0.75rem;">
-                    <i class="fa-solid fa-code-merge"></i> Unificar Selecionados
+                <button onclick="ImportEngine.openBatchLinkModal()" class="btn btn-warning" id="btn-batch-link" disabled style="opacity: 0.5; font-size: 0.75rem;">
+                    <i class="fa-solid fa-link"></i> Vincular Selecionados
                 </button>
             </div>
             
@@ -702,9 +740,9 @@
                     if(idx > -1) db[type][idx] = obj; else db[type].push(obj);
                 } else {
                     obj.id = Date.now().toString() + Math.random().toString().slice(2,5);
-                    if(type==='produto' && !obj.codigo) obj.codigo = DB.nextCode('P');
-                    if(type==='cliente' && !obj.codigo) obj.codigo = DB.nextCode('C');
-                    if(type==='venda') obj.codigo = DB.nextCode('V');
+                    if(type === 'produto' && !obj.codigo) obj.codigo = DB.nextCode('P');
+                    if(type === 'cliente' && !obj.codigo) obj.codigo = DB.nextCode('C');
+                    if(type === 'venda') obj.codigo = DB.nextCode('V');
                     db[type].push(obj);
                 }
                 DB.saveAll(db);
@@ -722,10 +760,9 @@
             }
         };
 
-        // --- IMPORT ENGINE ---
+        // --- IMPORT ENGINE (MODIFIED FOR MULTIPLE EAN/NAMES) ---
         const ImportEngine = {
             stagedData: [],
-            selectedIndex: null,
             processFile: () => {
                 const file = document.getElementById('json-import-file').files[0];
                 if(!file) return alert('Selecione um arquivo .json');
@@ -736,45 +773,71 @@
                         if(!Array.isArray(items)) throw new Error('JSON deve ser uma lista []');
                         
                         const db = DB.load();
-                        ImportEngine.stagedData = items.map((item, idx) => {
-                            const eanUnit = (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") ? item.EAN_Unidade : "";
-                            const eanBox = (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") ? item.EAN_Caixa : "";
-                            const validEan = eanUnit || eanBox || (item.cEAN !== "PREENCHER_COM_LEITOR" ? item.cEAN : "");
-
-                            let match = null;
-                            const eansToCheck = [eanUnit, eanBox, validEan].filter(e => e);
+                        
+                        // New Grouping logic: Consolidate lines based on EANs or Names
+                        const groupedItems = {};
+                        
+                        items.forEach((item, idx) => {
+                             // Extract multiple EANs separated by ' | '
+                             let eans = [];
+                             if (item.cEAN && item.cEAN !== "PREENCHER_COM_LEITOR") {
+                                eans = item.cEAN.split('|').map(s => s.trim()).filter(Boolean);
+                             }
+                             if (item.EAN_Unidade && item.EAN_Unidade !== "PREENCHER_COM_LEITOR") eans.push(item.EAN_Unidade);
+                             if (item.EAN_Caixa && item.EAN_Caixa !== "PREENCHER_COM_LEITOR") eans.push(item.EAN_Caixa);
+                             
+                             // Deduplicate EANs
+                             eans = [...new Set(eans)];
+                             
+                             // Extract multiple names
+                             let names = [];
+                             if (item.xProd) {
+                                names = item.xProd.split('|').map(s => s.trim()).filter(Boolean);
+                             }
+                             
+                             // Identifier key: use first valid EAN or first Name
+                             const key = eans.length > 0 ? eans[0] : (names.length > 0 ? names[0].toUpperCase() : 'UNKNOWN');
+                             
+                             if (!groupedItems[key]) {
+                                 groupedItems[key] = { items: [], totalQty: 0, firstItem: item, allEans: eans, allNames: names };
+                             } else {
+                                 // Merge EANs and Names from multiple lines if grouping happens (unlikely with this key strategy but safe)
+                                 groupedItems[key].allEans = [...new Set([...groupedItems[key].allEans, ...eans])];
+                                 groupedItems[key].allNames = [...new Set([...groupedItems[key].allNames, ...names])];
+                             }
+                             
+                             let qty = Number(item.Quantidade_Total_Unidades);
+                             const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
+                             if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
+                             
+                             groupedItems[key].totalQty += qty;
+                             groupedItems[key].items.push(item);
+                        });
+                        
+                        // Create staged data and match against DB using all variations
+                        ImportEngine.stagedData = Object.keys(groupedItems).map((key, idx) => {
+                            const group = groupedItems[key];
+                            const item = group.firstItem;
                             
-                            if (eansToCheck.length > 0) {
+                            // Advanced Matching: Check if ANY new EAN matches ANY stored EAN (or variations)
+                            // OR if ANY new Name matches ANY stored Name (or variations)
+                            let match = null;
+
+                            // 1. EAN Search
+                            if (group.allEans.length > 0) {
                                 match = db.produto.find(p => {
-                                    const pEans = p.eans || (p.ean ? [p.ean] : []);
-                                    return eansToCheck.some(e => pEans.includes(e));
+                                    const pEans = [p.ean, ...(p.variacoesEan || [])].filter(Boolean);
+                                    return group.allEans.some(newEan => pEans.includes(newEan));
                                 });
                             }
-                            if(!match) {
-                                match = db.produto.find(p => p.nome.toUpperCase() === item.xProd.toUpperCase());
-                            }
-                            
-                            // Parse Names
-                            let mainName = item.xProd;
-                            let secName = "";
-                            if(item.xProd.includes('|')) {
-                                const parts = item.xProd.split('|');
-                                mainName = parts[0].trim();
-                                secName = parts.slice(1).join(' | ').trim();
-                            }
 
-                            // Parse EANs
-                            let eanList = [];
-                            if (item.cEAN && item.cEAN !== "PREENCHER_COM_LEITOR") {
-                                eanList = item.cEAN.split('|').map(s => s.trim()).filter(s => s);
-                            } else {
-                                if (eanUnit) eanList.push(eanUnit);
-                                if (eanBox) eanList.push(eanBox);
+                            // 2. Name Search (if no EAN match)
+                            if (!match && group.allNames.length > 0) {
+                                match = db.produto.find(p => {
+                                    const pNames = [p.nome, ...(p.variacoesNome || [])].map(n => n.toUpperCase());
+                                    return group.allNames.some(newName => pNames.includes(newName.toUpperCase()));
+                                });
                             }
-
-                            let qty = Number(item.Quantidade_Total_Unidades);
-                            const factor = Number(item.Fator_Conversao_Entrada) || Number(item.Fator_Conversao) || 1;
-                            if(!qty) qty = (Number(item.Quantidade_NFe)||0) * factor;
 
                             let cost = Number(item.Custo_Unitario) || 0;
                             if(cost < 0) cost = 0;
@@ -782,15 +845,13 @@
                             return {
                                 _id: idx,
                                 json: item,
-                                mainName: mainName,
-                                secName: secName,
-                                eanList: eanList,
-                                qty: qty,
+                                allEans: group.allEans,
+                                allNames: group.allNames,
+                                qty: group.totalQty,
                                 cost: cost,
-                                match: match,
-                                eansFound: eansToCheck
+                                match: match
                             };
-                        }).sort((a, b) => a.mainName.localeCompare(b.mainName));
+                        }).sort((a, b) => a.json.xProd.localeCompare(b.json.xProd));
                         
                         ImportEngine.renderPreview();
                         document.getElementById('import-modal').showModal();
@@ -801,8 +862,8 @@
             filterPreview: (val) => {
                 const term = val.toLowerCase();
                 const filteredData = ImportEngine.stagedData.filter(d => 
-                    d.mainName.toLowerCase().includes(term) || 
-                    d.eanList.some(e => e.includes(term))
+                    d.allNames.some(n => n.toLowerCase().includes(term)) || 
+                    d.allEans.some(e => e.includes(term))
                 );
                 ImportEngine.renderPreview(filteredData);
             },
@@ -814,16 +875,19 @@
                         `<span class="badge badge-purple">Atualizar: ${d.match.codigo}</span>` : 
                         `<span class="badge badge-blue">Novo</span>`;
                     
-                    const eanDisplay = d.eanList.length > 0 ? d.eanList.join(', ') : '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>';
+                    // Display all EANs found in JSON
+                    const eanDisplay = d.allEans.length > 0 
+                        ? `<div style="display:flex; flex-direction:column; gap:2px;">${d.allEans.map(e => `<span style="font-size:0.65rem; font-family:monospace; color:var(--slate-600);">${e}</span>`).join('')}</div>`
+                        : '<span style="font-size: 0.65rem; color: var(--slate-400); font-style: italic;">--</span>';
 
                     return `
                         <tr style="border-bottom: 1px solid var(--slate-100);">
                             <td style="padding: 0.75rem; text-align: center;"><input type="checkbox" class="import-chk" value="${d._id}" checked onchange="ImportEngine.updateBatchBtn()"></td>
                             <td style="padding: 0.75rem;">
-                                <div style="font-weight: 700; color: var(--slate-700); font-size: 0.8rem;">${d.mainName}</div>
-                                ${d.secName ? `<div style="font-size: 0.7rem; color: var(--slate-400);">${d.secName}</div>` : ''}
+                                <div style="font-weight: 700; color: var(--slate-700); font-size: 0.8rem;">${d.allNames[0] || 'Sem Nome'}</div>
+                                ${d.allNames.length > 1 ? `<div style="font-size:0.65rem; color:var(--slate-400);">+ ${d.allNames.length - 1} variações</div>` : ''}
                             </td>
-                            <td style="padding: 0.75rem; font-family: monospace; font-size: 0.7rem;">${eanDisplay}</td>
+                            <td style="padding: 0.75rem;">${eanDisplay}</td>
                             <td style="padding: 0.75rem;">
                                 <div style="margin-bottom: 2px;">${status}</div>
                                 <div style="font-size: 0.65rem; color: var(--slate-400); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px;">${d.match ? d.match.nome : ''}</div>
@@ -841,7 +905,7 @@
             updateBatchBtn: () => {
                 const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
                 const btn = document.getElementById('btn-batch-link');
-                if(checked.length >= 1) {
+                if(checked.length > 0) {
                     btn.disabled = false;
                     btn.style.opacity = 1;
                 } else {
@@ -849,81 +913,110 @@
                     btn.style.opacity = 0.5;
                 }
             },
-            mergeSelectedItems: () => {
-                const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
-                if (checked.length < 2) return;
-
-                const selectedIndices = checked.map(c => parseInt(c.value));
-                const itemsToMerge = ImportEngine.stagedData.filter(d => selectedIndices.includes(d._id));
+            openBatchLinkModal: () => {
+                 const checked = Array.from(document.querySelectorAll('.import-chk:checked'));
+                 if(checked.length === 0) return;
+                 document.getElementById('product-link-search').value = '';
+                 ImportEngine.searchLinkProduct('');
+                 document.getElementById('product-select-modal').showModal();
+            },
+            searchLinkProduct: (val) => {
+                const db = DB.load();
+                const term = val.toLowerCase();
+                const filtered = db.produto.filter(p => p.nome.toLowerCase().includes(term) || p.codigo.toLowerCase().includes(term));
                 
-                let primaryItem = itemsToMerge.find(d => d.eanList.some(e => !e.startsWith('1')));
-                if (!primaryItem) primaryItem = itemsToMerge[0];
-
-                let totalQty = 0;
-                let allEans = new Set();
-                
-                itemsToMerge.forEach(d => {
-                    totalQty += d.qty;
-                    d.eanList.forEach(e => allEans.add(e));
-                });
-
-                primaryItem.qty = totalQty;
-                primaryItem.eanList = Array.from(allEans);
-                
-                ImportEngine.stagedData = ImportEngine.stagedData.filter(d => d._id === primaryItem._id || !selectedIndices.includes(d._id));
-
-                ImportEngine.renderPreview();
-                document.querySelectorAll('.import-chk').forEach(c => c.checked = false);
-                ImportEngine.updateBatchBtn();
+                const container = document.getElementById('product-link-list');
+                container.innerHTML = filtered.map(p => `
+                    <div style="padding: 0.75rem; border-bottom: 1px solid var(--slate-100); cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="ImportEngine.applyBatchLink('${p.id}')" onmouseover="this.style.background='var(--slate-50)'" onmouseout="this.style.background='transparent'">
+                        <div>
+                            <div style="font-weight: 700; font-size: 0.8rem; color: var(--slate-700);">${p.nome}</div>
+                            <div style="font-size: 0.7rem; color: var(--slate-400);">${p.codigo} | EAN: ${p.ean || '-'}</div>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 0.25rem 0.5rem; font-size: 0.65rem;">Selecionar</button>
+                    </div>
+                `).join('');
+                if (filtered.length === 0) container.innerHTML = '<div style="padding: 1rem; text-align: center; color: var(--slate-400);">Nenhum produto encontrado</div>';
+            },
+            applyBatchLink: (prodId) => {
+                const db = DB.load();
+                const prod = db.produto.find(p => p.id === prodId);
+                const checked = Array.from(document.querySelectorAll('.import-chk:checked')).map(c => Number(c.value));
+                if (prod && checked.length > 0) {
+                    checked.forEach(idx => {
+                        const item = ImportEngine.stagedData.find(d => d._id === idx);
+                        if(item) { item.match = prod; }
+                    });
+                    ImportEngine.renderPreview();
+                    document.getElementById('product-select-modal').close();
+                }
             },
             confirmImport: () => {
                 const dest = document.querySelector('input[name="import-dest"]:checked').value;
                 const checkboxes = Array.from(document.querySelectorAll('.import-chk:checked'));
                 if(checkboxes.length === 0) return alert('Nada selecionado');
 
+                const selectedIds = new Set(checkboxes.map(c => Number(c.value)));
                 const db = DB.load();
                 let count = 0;
-                const selectedIds = new Set(checkboxes.map(c => parseInt(c.value)));
 
                 ImportEngine.stagedData.forEach(d => {
                     if(!selectedIds.has(d._id)) return;
 
+                    // Re-resolve match from DB to ensure we have latest state
                     let prod = d.match ? db.produto.find(p => p.id === d.match.id) : null;
-                    if (!prod && d.eansFound && d.eansFound.length > 0) {
-                        prod = db.produto.find(p => p.eans && d.eansFound.some(e => p.eans.includes(e)));
+                    
+                    // Fallback matching if not explicitly linked (similar logic to processFile)
+                    if (!prod && d.allEans.length > 0) {
+                        prod = db.produto.find(p => {
+                            const pEans = [p.ean, ...(p.variacoesEan || [])].filter(Boolean);
+                            return d.allEans.some(newEan => pEans.includes(newEan));
+                        });
+                    }
+                    if (!prod && d.allNames.length > 0) {
+                        prod = db.produto.find(p => {
+                            const pNames = [p.nome, ...(p.variacoesNome || [])].map(n => n.toUpperCase());
+                            return d.allNames.some(newName => pNames.includes(newName.toUpperCase()));
+                        });
                     }
 
                     const jsonItem = d.json; 
 
                     if(prod) {
-                        // UPDATE
+                        // ATUALIZAÇÃO
                         if(dest !== 'fiscal') prod.estoque += d.qty;
                         if(dest !== 'fisico') prod.estoqueFiscal = (prod.estoqueFiscal||0) + d.qty;
                         if(d.cost > 0) prod.custo = d.cost;
                         
-                        const existingEans = prod.eans || (prod.ean ? [prod.ean] : []);
-                        const newEanList = [...new Set([...existingEans, ...d.eanList])].slice(0, 5);
-                        prod.eans = newEanList;
-                        prod.ean = newEanList[0] || ""; 
+                        // MERGE VARIATIONS (EAN & NAMES)
+                        const existingEans = [prod.ean, ...(prod.variacoesEan || [])].filter(Boolean);
+                        const newEansList = [...new Set([...existingEans, ...d.allEans])];
+                        // Keep primary EAN, store rest in variacoesEan
+                        if(newEansList.length > 0 && !prod.ean) prod.ean = newEansList[0];
+                        prod.variacoesEan = newEansList;
+
+                        const existingNames = [prod.nome, ...(prod.variacoesNome || [])].filter(Boolean);
+                        const newNamesList = [...new Set([...existingNames, ...d.allNames])];
+                        // Don't change primary name automatically to avoid confusion, just append variations
+                        prod.variacoesNome = newNamesList;
+
+                        if(jsonItem.NCM) prod.ncm = jsonItem.NCM;
+                        if(jsonItem.CEST) prod.cest = jsonItem.CEST;
+                        if(jsonItem.CFOP_SAIDA) prod.cfop = jsonItem.CFOP_SAIDA;
+                        if(jsonItem.CSOSN_SAIDA) prod.csosn = jsonItem.CSOSN_SAIDA;
+                        if(jsonItem.Unidade_Venda) prod.unidade = jsonItem.Unidade_Venda;
                         
-                        if(!prod.ncm) prod.ncm = jsonItem.NCM;
+                        prod.jsonData = jsonItem; 
                         prod.nota = jsonItem.Numero_Nota;
-                        
-                        // FIX: Ensure name is updated if empty
-                        if(!prod.nome || prod.nome.trim() === "") prod.nome = d.mainName.toUpperCase();
-                        if(!prod.nomeSec && d.secName) prod.nomeSec = d.secName;
 
                     } else {
-                        // CREATE
-                        const initialEans = d.eanList.slice(0, 5);
-                        
+                        // NOVO CADASTRO
                         prod = {
                             id: Date.now().toString() + Math.random().toString().slice(2,5),
                             codigo: DB.nextCode('P'),
-                            nome: d.mainName.toUpperCase(), // Explicitly set Name
-                            nomeSec: d.secName, // Explicitly set Sec Name
-                            ean: initialEans[0] || "",
-                            eans: initialEans,
+                            nome: d.allNames[0] || jsonItem.xProd.toUpperCase(),
+                            variacoesNome: d.allNames, // Save all names
+                            ean: d.allEans[0] || '',
+                            variacoesEan: d.allEans, // Save all EANs
                             custo: d.cost,
                             valor: 0,
                             estoque: dest !== 'fiscal' ? d.qty : 0,
@@ -955,18 +1048,215 @@
                 });
 
                 DB.saveAll(db);
-                alert(`${count} itens processados.`);
+                alert(`${count} itens processados e variações salvas.`);
                 document.getElementById('import-modal').close();
-                document.getElementById('import-filter').value = ''; 
+                document.getElementById('import-filter').value = '';
                 Views.catalogo.render();
             }
         };
 
-        // ... existing ComboApp and Cart code ...
+        // --- COMBO APP ---
+        const ComboApp = {
+            comboItems: [],
+            processBulk: () => {
+                const text = document.getElementById('p-combo-bulk').value;
+                if(!text) return;
+                const lines = text.split('\n');
+                const db = DB.load();
+                
+                lines.forEach(line => {
+                    const match = line.match(/^\[(\d+)\]\s*(.*)$/);
+                    let qty = 1;
+                    let identifier = line.trim();
+
+                    if (match) {
+                        qty = parseInt(match[1], 10);
+                        identifier = match[2].trim();
+                    } else {
+                        const parts = line.split('|').map(s => s.trim());
+                        identifier = parts[0];
+                        if (parts[1]) qty = parseInt(parts[1], 10) || 1;
+                    }
+
+                    if (!identifier) return;
+                    const idUpper = identifier.toUpperCase();
+
+                    const prod = db.produto.find(p => {
+                        const pEans = [p.ean, ...(p.variacoesEan||[])].filter(Boolean);
+                        const pNames = [p.nome, ...(p.variacoesNome||[])].map(n => n.toUpperCase());
+                        return p.codigo.toUpperCase() === idUpper || pEans.includes(identifier) || pNames.includes(idUpper);
+                    });
+
+                    if (prod) {
+                        ComboApp.comboItems.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty });
+                    }
+                });
+                ComboApp.renderList();
+                document.getElementById('p-combo-bulk').value = '';
+            },
+            renderList: () => {
+                const el = document.getElementById('p-combo-list');
+                el.innerHTML = ComboApp.comboItems.map((i, idx) => `
+                    <div class="item-row">
+                        <span><b>${i.codigo}</b> ${i.nome}</span>
+                        <span>x${i.qty} <button type="button" onclick="ComboApp.remove(${idx})" style="color:red; margin-left:5px;">&times;</button></span>
+                    </div>
+                `).join('');
+            },
+            remove: (idx) => {
+                ComboApp.comboItems.splice(idx, 1);
+                ComboApp.renderList();
+            }
+        };
+
+        // --- CART SYSTEM ---
+        const Cart = {
+            items: [],
+            add: () => {
+                const prodId = document.getElementById('v-produto').value;
+                const qty = Number(document.getElementById('v-qty').value);
+                if(!prodId || qty <= 0) return;
+                const db = DB.load();
+                const prod = db.produto.find(p => p.id === prodId);
+                if(prod) {
+                    Cart.items.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty, price: prod.valor });
+                    Cart.render();
+                    Cart.calcTotal();
+                }
+            },
+            processBulk: () => {
+                const text = document.getElementById('v-bulk-list').value;
+                if(!text) return;
+                const db = DB.load();
+                const lines = text.split('\n');
+
+                lines.forEach(line => {
+                    const match = line.match(/^\[(\d+)\]\s*(.*)$/);
+                    let qty = 1;
+                    let identifier = line.trim();
+
+                    if (match) {
+                        qty = parseInt(match[1], 10);
+                        identifier = match[2].trim();
+                    } else {
+                        const parts = line.split('|').map(s => s.trim());
+                        identifier = parts[0];
+                        if (parts[1]) qty = parseInt(parts[1], 10) || 1;
+                    }
+
+                    if(!identifier) return;
+                    const idUpper = identifier.toUpperCase();
+
+                    // Enhanced Search for Bulk Add
+                    const prod = db.produto.find(p => {
+                        const pEans = [p.ean, ...(p.variacoesEan||[])].filter(Boolean);
+                        const pNames = [p.nome, ...(p.variacoesNome||[])].map(n => n.toUpperCase());
+                        return p.codigo.toUpperCase() === idUpper || pEans.includes(identifier) || pNames.includes(idUpper);
+                    });
+
+                    if(prod) Cart.items.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty, price: prod.valor });
+                });
+                Cart.render();
+                Cart.calcTotal();
+                document.getElementById('v-bulk-list').value = '';
+            },
+            render: () => {
+                const el = document.getElementById('v-cart-list');
+                if(Cart.items.length === 0) { el.innerHTML = '<div style="text-align: center; color: var(--slate-400); padding: 1rem; font-size: 0.8rem;">Carrinho vazio</div>'; return; }
+                el.innerHTML = Cart.items.map((i, idx) => `
+                    <div class="item-row">
+                        <span>${i.nome}</span>
+                        <span>${i.qty} x ${i.price.toFixed(2)} <button type="button" onclick="Cart.remove(${idx})" style="color:red;">&times;</button></span>
+                    </div>
+                `).join('');
+            },
+            remove: (idx) => { Cart.items.splice(idx, 1); Cart.render(); Cart.calcTotal(); },
+            calcTotal: () => {
+                const sub = Cart.items.reduce((acc, i) => acc + (i.qty * i.price), 0);
+                const desc = Number(document.getElementById('v-desconto').value) || 0;
+                document.getElementById('v-total').innerText = `R$ ${(sub - desc).toFixed(2)}`;
+            },
+            confirmSale: (e) => {
+                e.preventDefault();
+                if(Cart.items.length === 0) return alert('Carrinho vazio!');
+                document.getElementById('sale-confirm-modal').showModal();
+            },
+            finalize: (e) => {
+                e.preventDefault();
+                const stockType = document.querySelector('input[name="sale-stock-type"]:checked').value;
+                const db = DB.load();
+                const cliId = document.getElementById('v-cliente').value;
+                const pag = document.getElementById('v-pagamento').value;
+                const rota = document.getElementById('v-rota').value;
+                const desc = Number(document.getElementById('v-desconto').value) || 0;
+                const total = Cart.items.reduce((acc, i) => acc + (i.qty * i.price), 0) - desc;
+
+                const venda = {
+                    id: Date.now().toString(),
+                    codigo: DB.nextCode('V'),
+                    cliId: cliId,
+                    pag: pag,
+                    rota: rota,
+                    desc: desc,
+                    total: total,
+                    date: Date.now(),
+                    items: Cart.items
+                };
+
+                Cart.items.forEach(cartItem => {
+                    const prod = db.produto.find(p => p.id === cartItem.id);
+                    if(prod) {
+                        const deduct = (p, q) => {
+                            if(stockType === 'fisico') p.estoque -= q;
+                            else if(stockType === 'fiscal') p.estoqueFiscal = (p.estoqueFiscal||0) - q;
+                        };
+                        deduct(prod, cartItem.qty);
+                        if(prod.items && prod.items.length > 0) {
+                            prod.items.forEach(childItem => {
+                                const childProd = db.produto.find(cp => cp.id === childItem.id);
+                                if(childProd) {
+                                    const totalChildQty = childItem.qty * cartItem.qty;
+                                    deduct(childProd, totalChildQty);
+                                }
+                            });
+                        }
+                    }
+                });
+
+                db.venda.push(venda);
+                DB.saveAll(db);
+                alert('Venda Finalizada!');
+                document.getElementById('sale-confirm-modal').close();
+                Cart.items = [];
+                Cart.render();
+                document.getElementById('form-venda').reset();
+                document.getElementById('v-total').innerText = 'R$ 0,00';
+                Views.venda.render();
+            }
+        };
 
         // --- VIEWS ---
         const Views = {
-            // ... client view ...
+            cliente: {
+                render: (data = null) => {
+                    const list = data || DB.load().cliente;
+                    document.getElementById('count-cliente').innerText = list.length;
+                    document.getElementById('table-cliente').innerHTML = list.map(c => `
+                        <tr>
+                            <td><div style="font-weight: 700; color: var(--slate-700);">${c.codigo}</div><div style="font-size: 0.75rem; color: var(--slate-500);">${c.nome}</div></td>
+                            <td><span class="badge badge-blue" style="margin-bottom: 2px;">${c.rota || '-'}</span><div style="font-size: 0.7rem; color: var(--slate-400);">${c.cidade}</div></td>
+                            <td class="text-right">
+                                <button onclick="App.edit('cliente', '${c.id}')" class="btn btn-ghost" style="color: var(--primary);"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="App.delete('cliente', '${c.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                },
+                filter: (val) => {
+                    const list = DB.load().cliente.filter(c => c.nome.toLowerCase().includes(val.toLowerCase()) || c.codigo.toLowerCase().includes(val.toLowerCase()));
+                    Views.cliente.render(list);
+                }
+            },
             catalogo: {
                 render: (data = null) => {
                     const list = data || DB.load().produto;
@@ -974,17 +1264,16 @@
                     document.getElementById('table-produto').innerHTML = list.map(p => {
                         const estStyle = p.estoque <= 0 ? 'color: var(--danger);' : 'color: var(--slate-700);';
                         const isCombo = p.items && p.items.length > 0 ? '<span class="badge badge-blue">COMBO</span>' : '';
-                        const eanDisplay = p.eans && p.eans.length > 0 ? p.eans.join(', ') : (p.ean || '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>');
                         
-                        // FIX: Ensure name is displayed
-                        const displayName = p.nome || "SEM DESCRIÇÃO";
-                        
+                        // Check if it has variations to show indicator
+                        const hasVar = (p.variacoesEan && p.variacoesEan.length > 1) || (p.variacoesNome && p.variacoesNome.length > 1);
+                        const varBadge = hasVar ? '<i class="fa-solid fa-layer-group" title="Possui variações cadastradas" style="color:var(--slate-400); font-size:0.7rem; margin-left:4px;"></i>' : '';
+
                         return `
                         <tr>
                             <td>
-                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${displayName} ${isCombo}</div>
-                                ${p.nomeSec ? `<div style="font-size: 0.65rem; color: var(--slate-500);">${p.nomeSec}</div>` : ''}
-                                <div style="font-size: 0.7rem; color: var(--slate-400); font-family: monospace; margin-top: 2px;">${eanDisplay}</div>
+                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome} ${isCombo} ${varBadge}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400); font-family: monospace; margin-top: 2px;">${p.ean || '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>'}</div>
                             </td>
                             <td style="text-align: center; font-weight: 700; ${estStyle}">${p.estoque}</td>
                             <td style="text-align: center;"><span class="badge badge-purple">${p.estoqueFiscal||0}</span></td>
@@ -1000,15 +1289,77 @@
                     }).join('');
                 },
                 filter: (val) => {
-                    const list = DB.load().produto.filter(p => 
-                        (p.nome && p.nome.toLowerCase().includes(val.toLowerCase())) || 
-                        (p.codigo && p.codigo.toLowerCase().includes(val.toLowerCase())) || 
-                        (p.eans && p.eans.some(e => e.includes(val)))
-                    );
+                    const term = val.toLowerCase();
+                    const list = DB.load().produto.filter(p => {
+                        const pNames = [p.nome, ...(p.variacoesNome||[])].join(' ').toLowerCase();
+                        const pEans = [p.ean, ...(p.variacoesEan||[])].join(' ');
+                        return pNames.includes(term) || p.codigo.toLowerCase().includes(term) || pEans.includes(term);
+                    });
                     Views.catalogo.render(list);
                 }
             },
-            // ... other views ...
+            logistica: {
+                render: () => {
+                    const db = DB.load();
+                    const list = db.entrada.sort((a,b) => b.date - a.date).slice(0, 100);
+                    document.getElementById('count-entrada').innerText = list.length;
+                    document.getElementById('table-entrada').innerHTML = list.map(i => {
+                        const prod = db.produto.find(p => p.id === i.prodId);
+                        const qtyClass = i.qty < 0 ? 'color: var(--danger);' : 'color: var(--success);';
+                        return `
+                        <tr>
+                            <td style="font-size: 0.75rem; color: var(--slate-500); font-family: monospace;">${new Date(i.date).toLocaleDateString()}</td>
+                            <td style="font-weight: 700; color: var(--slate-700);">${prod ? prod.nome : '???'}</td>
+                            <td><span class="badge badge-gray">${i.dest}</span></td>
+                            <td style="font-size: 0.75rem; color: var(--slate-500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;" title="${i.fornecedor || '-'}">${i.fornecedor || '-'}</td>
+                            <td style="text-align: right; font-weight: 700; ${qtyClass}">${i.qty > 0 ? '+' : ''}${i.qty}</td>
+                        </tr>`;
+                    }).join('');
+                }
+            },
+            venda: {
+                render: () => {
+                    const list = DB.load().venda;
+                    const db = DB.load();
+                    document.getElementById('table-venda').innerHTML = list.map(v => {
+                        const cli = db.cliente.find(c => c.id === v.cliId);
+                        return `
+                        <tr>
+                            <td style="font-weight: 700;">#${v.codigo}</td>
+                            <td>${cli ? cli.nome : 'Cliente Removido'}</td>
+                            <td>
+                                <div style="font-weight: 700; color: var(--success);">R$ ${Number(v.total).toFixed(2)}</div>
+                                <div style="font-size: 0.7rem; color: var(--slate-400);">${v.items.length} Itens - ${v.rota}</div>
+                            </td>
+                            <td class="text-right"><button onclick="App.delete('venda','${v.id}')" class="btn btn-ghost" style="color: var(--danger);"><i class="fa-solid fa-times"></i></button></td>
+                        </tr>
+                    `}).join('');
+                }
+            },
+            expedicao: {
+                render: () => {
+                    const db = DB.load();
+                    ['CX','VG','CBA','CPA'].forEach(r => {
+                        const pedidos = db.venda.filter(v => v.rota === r).slice(-8); // Show last 8
+                        document.getElementById(`col-${r}`).innerHTML = pedidos.map(p => {
+                            const cli = db.cliente.find(c => c.id === p.cliId);
+                            // Itens sum
+                            const itemsText = p.items.map(i => `${i.qty}x ${i.nome.substring(0,10)}..`).join('<br>');
+                            return `
+                            <div style="background: white; padding: 0.75rem; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 0.75rem;">
+                                <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                    <b style="color:var(--slate-800);">#${p.codigo}</b>
+                                    <span style="font-weight:bold; color:var(--success);">R$ ${Number(p.total).toFixed(0)}</span>
+                                </div>
+                                <div style="color:var(--slate-600); margin-bottom:4px;">${cli?.nome.substring(0,15)}...</div>
+                                <div style="border-top:1px dashed var(--slate-200); padding-top:4px; font-size:0.65rem; color:var(--slate-500); line-height:1.2;">
+                                    ${itemsText}
+                                </div>
+                            </div>`;
+                        }).join('');
+                    });
+                }
+            }
         };
 
         const App = {
@@ -1022,29 +1373,148 @@
                         if(key) data[key] = el.type === 'checkbox' ? el.checked : el.value;
                     }
                 });
-
-                // FIX: Explicitly ensure Name is captured
-                if (type === 'produto') {
-                    if(document.getElementById('p-nome').value) data.nome = document.getElementById('p-nome').value;
-                    if(document.getElementById('p-nome-sec').value) data.nomeSec = document.getElementById('p-nome-sec').value;
+                if(type === 'produto') {
+                    data.custo = Number(data.custo);
+                    data.valor = Number(data.valor);
+                    data.estoque = Number(data.estoque);
+                    data.estoqueFiscal = Number(data.estoqueFiscal);
+                    // Add combo items
+                    if(document.getElementById('p-is-combo').checked) {
+                        data.items = ComboApp.comboItems;
+                    } else {
+                        data.items = [];
+                    }
                 }
-
-                // ... rest of handleSave logic ...
+                
+                DB.save(type, data);
+                form.reset();
+                if(type === 'produto') {
+                    document.getElementById('p-id').value = '';
+                    ComboApp.comboItems = []; // reset combo
+                    ComboApp.renderList();
+                    Views.catalogo.render();
+                } else if(type === 'cliente') {
+                    document.getElementById('c-id').value = '';
+                    Views.cliente.render();
+                }
             },
             edit: (type, id) => {
-                // ... load item ...
-                // FIX: Ensure Name populates field
-                if (type === 'produto') {
-                    if(item.nome) document.getElementById('p-nome').value = item.nome;
-                    if(item.nomeSec) document.getElementById('p-nome-sec').value = item.nomeSec;
-                    // ... rest of population ...
+                const item = DB.load()[type].find(x => x.id === id);
+                if(!item) return;
+                for(let k in item) {
+                    const el = document.getElementById(`${type.charAt(0)}-${k}`);
+                    if(el) {
+                        if(el.type === 'checkbox') el.checked = item[k];
+                        else el.value = item[k];
+                    }
                 }
-                // ...
+                document.getElementById(`${type.charAt(0)}-id`).value = item.id;
+                
+                if(type === 'produto') {
+                    if(item.items && item.items.length > 0) {
+                        document.getElementById('p-is-combo').checked = true;
+                        UI.toggleComboArea(true);
+                        ComboApp.comboItems = item.items;
+                        ComboApp.renderList();
+                    } else {
+                        document.getElementById('p-is-combo').checked = false;
+                        UI.toggleComboArea(false);
+                    }
+                }
             },
-            // ... delete ...
+            delete: (type, id) => {
+                if(confirm('Confirmar exclusão?')) {
+                    DB.delete(type, id);
+                    if(type==='cliente') Views.cliente.render();
+                    else if(type==='produto') Views.catalogo.render();
+                    else if(type==='venda') Views.venda.render();
+                }
+            }
         };
 
-        // ... rest of code ...
+        const UI = {
+            switchView: (view, btn) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${view}`).classList.add('active');
+                btn.classList.add('active');
+                document.getElementById('page-title').innerText = view === 'logistica' ? 'Logística & Estoque' : view.charAt(0).toUpperCase() + view.slice(1);
+                
+                if(view === 'catalogo') Views.catalogo.render();
+                if(view === 'cliente') Views.cliente.render();
+                if(view === 'logistica') {
+                    const sel = document.getElementById('e-produto');
+                    sel.innerHTML = '<option value="">Sel...</option>' + DB.load().produto.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+                    Views.logistica.render();
+                }
+                if(view === 'venda') {
+                    const db = DB.load();
+                    const cliSel = document.getElementById('v-cliente');
+                    cliSel.innerHTML = '<option value="">Selecione...</option>' + db.cliente.map(c => `<option value="${c.id}">${c.nome}</option>`).join('');
+                    
+                    const prodSel = document.getElementById('v-produto');
+                    prodSel.innerHTML = '<option value="">Selecione...</option>' + db.produto.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+                    
+                    Views.venda.render();
+                }
+                if(view === 'expedicao') Views.expedicao.render();
+            },
+            filter: (t, v) => Views[t].filter(v),
+            resetForm: (t) => {
+                document.getElementById(`form-${t}`).reset();
+                document.getElementById(`${t.charAt(0)}-id`).value = '';
+                if(t === 'produto') {
+                    ComboApp.comboItems = [];
+                    ComboApp.renderList();
+                    document.getElementById('p-is-combo').checked = false;
+                    UI.toggleComboArea(false);
+                }
+            },
+            toggleStockInputs: () => {
+                const type = document.querySelector('input[name="p-stock-type"]:checked').value;
+                document.getElementById('grp-fisico').style.display = type === 'fiscal' ? 'none' : 'block';
+                document.getElementById('grp-fiscal').style.display = type === 'fisico' ? 'none' : 'block';
+            },
+            searchProduct: (val) => {
+                const db = DB.load();
+                const prodSel = document.getElementById('v-produto');
+                const term = val.toLowerCase();
+                // Improved Search for Sales Dropdown
+                const filtered = db.produto.filter(p => {
+                    const pNames = [p.nome, ...(p.variacoesNome||[])].join(' ').toLowerCase();
+                    const pEans = [p.ean, ...(p.variacoesEan||[])].join(' ');
+                    return pNames.includes(term) || p.codigo.toLowerCase().includes(term) || pEans.includes(term);
+                });
+                prodSel.innerHTML = '<option value="">Selecione...</option>' + filtered.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+            },
+            toggleComboArea: (checked) => {
+                document.getElementById('combo-area').style.display = checked ? 'block' : 'none';
+            }
+        };
+
+        const CategoryApp = {
+            openModal: () => document.getElementById('cat-modal').showModal(),
+            addCategory: (e) => {
+                e.preventDefault();
+                const name = document.getElementById('new-cat-name').value;
+                if(name) {
+                    const db = DB.load();
+                    db.categorias.push({id: Date.now(), nome: name, subs: []});
+                    DB.saveAll(db);
+                    CategoryApp.renderList();
+                    document.getElementById('new-cat-name').value = '';
+                }
+            },
+            renderList: () => {
+                const list = document.getElementById('cat-list-container');
+                list.innerHTML = DB.load().categorias.map(c => `<div style="padding: 0.5rem; border: 1px solid var(--slate-200); border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: var(--slate-700); background: var(--slate-50); display: flex; justify-content: space-between;"><span>${c.nome}</span> <i class="fa-solid fa-folder" style="color: var(--slate-300);"></i></div>`).join('');
+            }
+        };
+
+        window.onload = () => {
+            UI.switchView('cliente', document.querySelector('.nav-item.active'));
+            setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString().slice(0,5), 1000);
+        };
     </script>
 </body>
 </html>
