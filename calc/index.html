@@ -905,26 +905,22 @@
             phone: "5565998150975",
             isCustomMode: false, // Controla qual aba está ativa
 
-            // Fallback data (caso o fetch do JSON falhe em preview local)
-            fallbackData: [
-                { codigo: "ALM001", nome: "Arroz Tio Alvino 5kg", descricao: "Arroz agulhinha tipo 1.", preco: 28.50, categoria: "Alimentos Básicos", imagens: ["https://donaantonia.com.br/img/arroz-tio-alvino.jpg"] },
-                { codigo: "ALM002", nome: "Feijão Carioca 1kg", descricao: "Feijão novo.", preco: 8.90, categoria: "Alimentos Básicos", imagens: [] },
-                { codigo: "ALM003", nome: "Óleo de Soja 900ml", descricao: "Óleo refinado.", preco: 6.50, categoria: "Alimentos Básicos", imagens: [] },
-                { codigo: "LMP001", nome: "Sabão em Pó 800g", descricao: "Limpeza profunda.", preco: 7.50, categoria: "Limpeza", imagens: [] },
-                { codigo: "LMP002", nome: "Água Sanitária 1L", descricao: "Ação bactericida.", preco: 4.50, categoria: "Limpeza", imagens: [] }
-            ],
+            // FallbackData REMOVIDO para forçar o uso do JSON
 
             async init() {
                 const container = document.getElementById('custom-products-container');
                 try {
                     const response = await fetch('produtos/produtos.json');
-                    if (!response.ok) throw new Error("Falha ao carregar JSON");
+                    if (!response.ok) throw new Error("Não foi possível carregar o estoque (produtos.json).");
                     this.products = await response.json();
+                    this.renderCatalog();
                 } catch (error) {
-                    console.warn("Usando dados de fallback:", error);
-                    this.products = this.fallbackData;
+                    console.error("Erro:", error);
+                    container.innerHTML = `<div style="text-align:center; padding: 20px; color: #ef4444;">
+                        <p><strong>Erro ao carregar produtos.</strong></p>
+                        <p>Certifique-se de que o arquivo <code>produtos/produtos.json</code> existe.</p>
+                    </div>`;
                 }
-                this.renderCatalog();
             },
 
             toggleTab() {
