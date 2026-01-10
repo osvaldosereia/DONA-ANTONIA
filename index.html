@@ -4,9 +4,8 @@
     <!-- 
         ================================================================
         SEO ARCHITECT REPORT: 100/100 PERFECT SCORE
-        - Update: Mobile Layout Reordered (Products First)
-        - Update: No-Modal Product Lists (Semantic <details>)
-        - Update: CTA "Pedir por WhatsApp"
+        - Update: FAQ Atualizado com novas perguntas
+        - Update: Lista de Bairros movida para item de FAQ (Collapsible)
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -92,8 +91,8 @@
           "mainEntity": [
             {
               "@type": "Question",
-              "name": "Onde comprar cesta básica em Cuiabá com entrega grátis?",
-              "acceptedAnswer": { "@type": "Answer", "text": "Na Dona Antônia você compra online com entrega grátis para Cuiabá e Várzea Grande." }
+              "name": "Quais são as formas de pagamento?",
+              "acceptedAnswer": { "@type": "Answer", "text": "Dinheiro, Pix, Cartão de Débito, Cartão de Crédito (parcelado em até 3x sem juros), Cartões Alimentação e Refeição Pluxee, Alelo, Flash, Caju, Ifood." }
             }
           ]
         }
@@ -120,17 +119,15 @@
         @media (max-width: 1023px) {
             #main-content { order: 1; } /* Produtos Primeiro */
             #sidebar-info { order: 2; } /* Info depois */
-            #neighborhoods-section { order: 3; }
-            #faq-section { order: 4; }
+            #faq-section { order: 3; } /* FAQ com bairros por último */
         }
 
         /* DESKTOP: Grid Layout */
         @media (min-width: 1024px) {
-            .layout-grid { display: grid; grid-template-columns: 300px 1fr; grid-template-areas: "sidebar main" "sidebar faq" "sidebar neighborhoods"; align-items: start; gap: 32px; }
+            .layout-grid { display: grid; grid-template-columns: 300px 1fr; grid-template-areas: "sidebar main" "sidebar faq"; align-items: start; gap: 32px; }
             #sidebar-info { grid-area: sidebar; position: sticky; top: 90px; order: unset; }
             #main-content { grid-area: main; order: unset; }
             #faq-section { grid-area: faq; order: unset; }
-            #neighborhoods-section { grid-area: neighborhoods; order: unset; }
         }
 
         /* Componentes */
@@ -226,44 +223,6 @@
                         <li style="display: flex; align-items: center;"><span style="color: #16a34a; margin-right: 8px;">✓</span> Pagamento só na entrega</li>
                         <li style="display: flex; align-items: center;"><span style="color: #16a34a; margin-right: 8px;">✓</span> Aceitamos Cartão Alimentação</li>
                     </ul>
-                </div>
-                <hr style="border: 0; border-top: 1px solid #eee; margin: 0; width: 100%;">
-                <div>
-                   <h3 style="font-size: 1rem; margin-bottom: 8px;">📍 Regiões Atendidas</h3>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>Cuiabá (Zona Oeste):</strong> Alvorada, Araés, Barra do Pari, Centro Norte, Centro Sul, Cidade Alta, Cidade Verde, Coophamil, Consil, Despraiado, Duque de Caxias, Goiabeiras, Jardim Beira Rio, Jardim Cuiabá, Jardim Mariana, Jardim Santa Isabel, Jardim Ubirajara, Jardim Monte Líbano, Jardim Primavera, Novo Colorado, Novo Terceiro, Parque Residencial Tropical Ville, Popular, Porto, Quilombo, Ribeirão da Ponte, Ribeirão do Lipa, Santa Marta, Santa Rosa, Residencial Sucuri, Verdão.
-</p>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>Cuiabá (Zona Norte):</strong> Centro Político Administrativo, Jardim Florianópolis, Jardim União, Jardim Vitória, Jardim Aroeiras, Morada da Serra (CPA I, II, III, IV), Morada do Ouro, Nova Conquista, Novo Paraíso I e II, Primeiro de Março, Três Barras, Ouro Fino, Residencial Pádova, Serra Dourada, Doutor Fábio Leite I e II (Santa Fé), Altos da Glória, Jardim Umuarama I e II, Nova Canaã I, II e III, Jardim Brasil, Altos da Serra I e II, Centro América, Flor da Mata, Tancredo Neves, Residencial Jardim Videira.
-</p>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>Cuiabá (Zona Leste):</strong> Areão, Bandeirantes, Baú, Bela Marina, Bela Vista, Boa Esperança, Bosque da Saúde, Cachoeira das Garças, Campo Velho, São Mateus, Canjica, Carumbé, Dom Aquino, Dom Bosco, Grande Terceiro, Jardim Aclimação, Jardim das Américas, Jardim Califórnia, Jardim Eldorado, Jardim Europa, Jardim Imperial, Jardim Itália, Jardim Leblon, Jardim Paulista, Jardim Petrópolis, Jardim Shangri-Lá, Jardim Tropical, Jardim Universitário, Lixeira, Morada dos Nobres, Novo Mato Grosso, Novo Horizonte, Planalto, Paiaguás, Pedregal, Pico do Amor, Poção, Praeirinho, Praeiro, Recanto dos Pássaros, Residencial Itamarati, Residencial Santa Inês, Residencial São Carlos, Santa Cruz, São Roque, Sol Nascente, Terra Nova, Terceiro, UFMT.
-</p>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>Cuiabá (Zona Sul):</strong> Altos do Cerrado, Altos do Coxipó, Cohab São Gonçalo, Coophema, Coxipó, Jardim Comodoro, Jardim Fortaleza, Jardim Gramado, Jardim Industriário, Jardim dos Ipês, Jardim Mossoró, Jardim das Palmeiras, Jardim Passaredo, Jardim Presidente, Jordão, Lagoa Azul, Nossa Senhora Aparecida, Nova Esperança, Novo Milênio, Osmar Cabral, Parque Atalaia, Parque Cuiabá, Parque Georgia, Parque Residencial, Parque Ohara, Pascoal Ramos, Pedra 90, Real Parque, Residencial Coxipó, Residencial Itapajé, Residencial Santa Terezinha I e II, Santa Laura, São Gonçalo, São Gonçalo Beira Rio, São João Del Rei, São José, São Sebastião, São Francisco, Tijucal, Vista Alegre.
-</p>
-
-<hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>VG (Centro e Arredores):</strong> Água Limpa, Água Vermelha, Canelas, Centro, Centro Norte, Centro Sul, Cohab Canelas, Costa Verde, Figueirinha, Frutal de Minas, Ipase (Vila Ipase), Jardim Aeroporto, Jardim dos Estados, Jardim Eldorado, Jardim Icaraí, Jardim Paula I e II, Jardim Potiguar, Jardim Novo Horizonte, Nova Várzea Grande, Panamericano, Pirinéu, Planalto Ipiranga, Treze de Setembro, Vila Artur, Vila Operária, Vila São João, Vitória Régia.
-</p>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>VG (Grande Cristo Rei):</strong> 7 de Maio, 24 de Dezembro, Alameda, Cohab Asa Branca, Cohab Cristo Rei, Cohab Dom Orlando Chaves, Cohab Jaime Campos, Cohab João Baracat, Construmat, Cristo Rei, Hélio Ponce, Jardim Marajoara I e II, Jardim União, Loteamento Joaquim Curvo, Manga, Maringá I, II e III, Parque do Lago, Parque Sabiá, Ponte Nova, Residencial Jacarandá, Residencial Santa Clara, Residencial São Francisco, São Gonçalo, São Mateus I e II, Unipark.
-</p>
-
-<p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-    <strong>VG (Região Mapim/Glória):</strong> Alta da Boa Vista, Asa Bela, Cabo Michel, Glória, Jardim Alá, Jardim América, Jardim Campos Verdes, Jardim Esmeralda, Jardim Glória I e II, Jardim Imperial, Jardim Itororó, Jardim Manaíra, Jardim Ouro Verde, Mapim, Monte Castelo, Nova Esperança, Nova Fronteira, Novo Mato Grosso, Novo Mundo, Paiaguás, Parque Del Rei, Parque Mangabeiras, Santa Izabel, Santa Maria I e II, São Benedito, São Simão, Serra Dourada, Jardim Manancial.
-</p>
-
-<p style="font-size: 0.85rem; color: #555;">
-    <strong>VG (Distritos e Industriais):</strong> Bonsucesso, Capão do Pequi, Capão Grande, Cidade de Deus, Distrito Industrial, Engordador, Formigueiro, Jeani, Limpo Grande, Pai André, Parque Atlântico, Passagem da Conceição, Praia Grande, Souza Lima.
-</p>
                 </div>
             </div>
         </aside>
@@ -570,58 +529,100 @@
             </section>
         </main>
 
-        <!-- SEO Content: Bairros e Regiões -->
-        <section id="neighborhoods-section" class="card">
-            <h2>Atendimento nos Bairros de Cuiabá e VG</h2>
-            <p>A Dona Antônia é referência na distribuição de cestas básicas na baixada cuiabana. Realizamos entrega rápida em domicílio com frota própria.</p>
-            
-            <div style="margin-top: 15px;">
-                <h3 style="font-size: 0.95rem; color: #374151;">Principais Bairros de Cuiabá:</h3>
-                <ul class="hood-list">
-                    <li class="hood-tag">CPA I, II, III, IV</li>
-                    <li class="hood-tag">Pedra 90</li>
-                    <li class="hood-tag">Tijucal</li>
-                    <li class="hood-tag">Parque Cuiabá</li>
-                    <li class="hood-tag">Dr. Fábio</li>
-                    <li class="hood-tag">Santa Isabel</li>
-                    <li class="hood-tag">Centro</li>
-                </ul>
-            </div>
-
-            <div style="margin-top: 15px;">
-                <h3 style="font-size: 0.95rem; color: #374151;">Principais Bairros de Várzea Grande:</h3>
-                <ul class="hood-list">
-                    <li class="hood-tag">Cristo Rei</li>
-                    <li class="hood-tag">Mapim</li>
-                    <li class="hood-tag">Ipase</li>
-                    <li class="hood-tag">Jardim Glória</li>
-                    <li class="hood-tag">São Mateus</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- FAQ Section Schema Markup -->
+        <!-- FAQ Section: Dúvidas + Bairros (Tudo aqui dentro) -->
         <section id="faq-section" itemscope itemtype="https://schema.org/FAQPage">
             <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Dúvidas Frequentes</h2>
             
             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                <summary itemprop="name">Entregam em quais bairros de Cuiabá e VG?</summary>
+                <summary itemprop="name">Quais são as formas de pagamento?</summary>
                 <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
-                    <span itemprop="text">Entregamos em praticamente todos os bairros de Cuiabá (incluindo zona rural próxima) e Várzea Grande. Regiões como CPA, Coxipó, Pedra 90 e Cristo Rei têm rotas diárias.</span>
+                    <span itemprop="text">Dinheiro, Pix, Cartão de Débito, Cartão de Crédito (parcelado em até 3x sem juros), Cartões Alimentação e Refeição Pluxee, Alelo, Flash, Caju, Ifood.</span>
                 </div>
             </details>
 
             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                <summary itemprop="name">Aceitam Cartão Alimentação na entrega?</summary>
+                <summary itemprop="name">Eu pago só na entrega do pedido?</summary>
                 <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
-                    <span itemprop="text">Sim! Levamos a maquininha até você. Aceitamos Alelo, Sodexo (Pluxee), Ticket Alimentação, VR, além de Pix, Dinheiro e Cartões de Crédito (parcelamos em até 3x).</span>
+                    <span itemprop="text">Sim, aqui você faz o pagamento somente na entrega do pedido na sua casa.</span>
                 </div>
             </details>
 
             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-                <summary itemprop="name">Os produtos são de marcas conhecidas?</summary>
+                <summary itemprop="name">A entrega é grátis?</summary>
                 <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
-                    <span itemprop="text">Com certeza. Trabalhamos apenas com marcas líderes como Arroz Tio Alvino, Arroz Koblenz, Óleo Liza/Concórdia, Café Caboclo, Açúcar Doce Dia, entre outras. Qualidade garantida.</span>
+                    <span itemprop="text">Sim, mas apenas em vendas acima de R$ 85. Compras de valores menor possuem taxa de entrega de R$ 15</span>
+                </div>
+            </details>
+            
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Eu posso trocar algum produto da cesta básica por outro?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Sim. Peço ao atendente pelo whatsapp para fazer a substituição.</span>
+                </div>
+            </details>
+
+             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">De qual cidade vocês são?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Somos de Cuiabá, estamos localizados no bairro Nossa Senhora Aparecida em Cuiabá.</span>
+                </div>
+            </details>
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Quanto tempo para entregar meu pedido?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Todas as entregas são feitas no dia seguinte de segunda a sábado.</span>
+                </div>
+            </details>
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Que horas o meu pedido chega na minha casa?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">As entregas são por rota. Ao enviar seu pedido por whatsapp o atendente vai ter informar o horário aproximado que seu pedido vai chegar no dia seguinte.</span>
+                </div>
+            </details>
+
+            <!-- ITEM FINAL: Bairros Atendidos (RETRÁTIL) -->
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Atendimento nos Bairros de Cuiabá e VG</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <p>A Dona Antônia é referência na distribuição de cestas básicas na baixada cuiabana. Realizamos entrega rápida em domicílio com frota própria.</p>
+            
+                    <div style="margin-top: 15px;">
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Oeste):</strong> Alvorada, Araés, Barra do Pari, Centro Norte, Centro Sul, Cidade Alta, Cidade Verde, Coophamil, Consil, Despraiado, Duque de Caxias, Goiabeiras, Jardim Beira Rio, Jardim Cuiabá, Jardim Mariana, Jardim Santa Isabel, Jardim Ubirajara, Jardim Monte Líbano, Jardim Primavera, Novo Colorado, Novo Terceiro, Parque Residencial Tropical Ville, Popular, Porto, Quilombo, Ribeirão da Ponte, Ribeirão do Lipa, Santa Marta, Santa Rosa, Residencial Sucuri, Verdão.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Norte):</strong> Centro Político Administrativo, Jardim Florianópolis, Jardim União, Jardim Vitória, Jardim Aroeiras, Morada da Serra (CPA I, II, III, IV), Morada do Ouro, Nova Conquista, Novo Paraíso I e II, Primeiro de Março, Três Barras, Ouro Fino, Residencial Pádova, Serra Dourada, Doutor Fábio Leite I e II (Santa Fé), Altos da Glória, Jardim Umuarama I e II, Nova Canaã I, II e III, Jardim Brasil, Altos da Serra I e II, Centro América, Flor da Mata, Tancredo Neves, Residencial Jardim Videira.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Leste):</strong> Areão, Bandeirantes, Baú, Bela Marina, Bela Vista, Boa Esperança, Bosque da Saúde, Cachoeira das Garças, Campo Velho, São Mateus, Canjica, Carumbé, Dom Aquino, Dom Bosco, Grande Terceiro, Jardim Aclimação, Jardim das Américas, Jardim Califórnia, Jardim Eldorado, Jardim Europa, Jardim Imperial, Jardim Itália, Jardim Leblon, Jardim Paulista, Jardim Petrópolis, Jardim Shangri-Lá, Jardim Tropical, Jardim Universitário, Lixeira, Morada dos Nobres, Novo Mato Grosso, Novo Horizonte, Planalto, Paiaguás, Pedregal, Pico do Amor, Poção, Praeirinho, Praeiro, Recanto dos Pássaros, Residencial Itamarati, Residencial Santa Inês, Residencial São Carlos, Santa Cruz, São Roque, Sol Nascente, Terra Nova, Terceiro, UFMT.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Sul):</strong> Altos do Cerrado, Altos do Coxipó, Cohab São Gonçalo, Coophema, Coxipó, Jardim Comodoro, Jardim Fortaleza, Jardim Gramado, Jardim Industriário, Jardim dos Ipês, Jardim Mossoró, Jardim das Palmeiras, Jardim Passaredo, Jardim Presidente, Jordão, Lagoa Azul, Nossa Senhora Aparecida, Nova Esperança, Novo Milênio, Osmar Cabral, Parque Atalaia, Parque Cuiabá, Parque Georgia, Parque Residencial, Parque Ohara, Pascoal Ramos, Pedra 90, Real Parque, Residencial Coxipó, Residencial Itapajé, Residencial Santa Terezinha I e II, Santa Laura, São Gonçalo, São Gonçalo Beira Rio, São João Del Rei, São José, São Sebastião, São Francisco, Tijucal, Vista Alegre.
+                        </p>
+        
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Centro e Arredores):</strong> Água Limpa, Água Vermelha, Canelas, Centro, Centro Norte, Centro Sul, Cohab Canelas, Costa Verde, Figueirinha, Frutal de Minas, Ipase (Vila Ipase), Jardim Aeroporto, Jardim dos Estados, Jardim Eldorado, Jardim Icaraí, Jardim Paula I e II, Jardim Potiguar, Jardim Novo Horizonte, Nova Várzea Grande, Panamericano, Pirinéu, Planalto Ipiranga, Treze de Setembro, Vila Artur, Vila Operária, Vila São João, Vitória Régia.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Grande Cristo Rei):</strong> 7 de Maio, 24 de Dezembro, Alameda, Cohab Asa Branca, Cohab Cristo Rei, Cohab Dom Orlando Chaves, Cohab Jaime Campos, Cohab João Baracat, Construmat, Cristo Rei, Hélio Ponce, Jardim Marajoara I e II, Jardim União, Loteamento Joaquim Curvo, Manga, Maringá I, II e III, Parque do Lago, Parque Sabiá, Ponte Nova, Residencial Jacarandá, Residencial Santa Clara, Residencial São Francisco, São Gonçalo, São Mateus I e II, Unipark.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Região Mapim/Glória):</strong> Alta da Boa Vista, Asa Bela, Cabo Michel, Glória, Jardim Alá, Jardim América, Jardim Campos Verdes, Jardim Esmeralda, Jardim Glória I e II, Jardim Imperial, Jardim Itororó, Jardim Manaíra, Jardim Ouro Verde, Mapim, Monte Castelo, Nova Esperança, Nova Fronteira, Novo Mato Grosso, Novo Mundo, Paiaguás, Parque Del Rei, Parque Mangabeiras, Santa Izabel, Santa Maria I e II, São Benedito, São Simão, Serra Dourada, Jardim Manancial.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555;">
+                            <strong>VG (Distritos e Industriais):</strong> Bonsucesso, Capão do Pequi, Capão Grande, Cidade de Deus, Distrito Industrial, Engordador, Formigueiro, Jeani, Limpo Grande, Pai André, Parque Atlântico, Passagem da Conceição, Praia Grande, Souza Lima.
+                        </p>
+                    </div>
                 </div>
             </details>
         </section>
