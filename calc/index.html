@@ -4,9 +4,9 @@
     <!-- 
         ================================================================
         SEO ARCHITECT REPORT: 100/100 PERFECT SCORE
-        - Feature: Carregamento de Produtos via JSON Externo (fetch)
-        - Fallback: Dados de backup incluídos caso o JSON falhe
-        - Feature: Nova sessão "Monte a Sua Cesta" com 5 categorias
+        - Update: FAQ Atualizado com novas perguntas
+        - Update: Lista de Bairros movida para item de FAQ (Collapsible)
+        - Update: Navegação por Abas (Cestas Prontas / Monte sua Cesta)
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -71,7 +71,21 @@
           "areaServed": [ 
             { "@type": "City", "name": "Cuiabá" }, 
             { "@type": "City", "name": "Várzea Grande" }
-          ]
+          ],
+          "hasOfferCatalog": {
+            "@type": "OfferCatalog",
+            "name": "Catálogo de Cestas Básicas",
+            "itemListElement": [
+                {
+                    "@type": "Offer",
+                    "itemOffered": {
+                        "@type": "Product",
+                        "name": "Cesta Básica Econômica",
+                        "offers": { "@type": "Offer", "price": "85.00", "priceCurrency": "BRL" }
+                    }
+                }
+            ]
+          }
         },
         {
           "@type": "FAQPage",
@@ -94,7 +108,7 @@
         /* CSS CRÍTICO MINIFICADO */
         :root { --bg: #f9fafb; --surface: #ffffff; --text-main: #1f2937; --text-muted: #4b5563; --accent: #15803d; --accent-hover: #166534; --brand-blue: #2563EB; --border: #e5e7eb; --shadow: 0 4px 6px -1px rgba(0,0,0,0.05); --radius: 12px; }
         *, *::before, *::after { box-sizing: border-box; }
-        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; padding-bottom: 80px; /* Espaço para barra fixa */ }
+        body { margin: 0; font-family: system-ui, -apple-system, sans-serif; background-color: var(--bg); color: var(--text-main); line-height: 1.5; -webkit-font-smoothing: antialiased; padding-bottom: 80px; /* Ajuste para rodapé fixo */ }
         img { max-width: 100%; height: auto; display: block; }
         a { text-decoration: none; color: inherit; }
         
@@ -105,6 +119,7 @@
         /* MOBILE FIRST: Ordem de exibição */
         @media (max-width: 1023px) {
             #main-content { order: 1; } /* Produtos Primeiro */
+            #monte-sua-cesta { order: 1; } /* Monte sua cesta (quando visivel) tbm no topo */
             #sidebar-info { order: 2; } /* Info depois */
             #faq-section { order: 3; } /* FAQ com bairros por último */
         }
@@ -112,14 +127,15 @@
         /* DESKTOP: Grid Layout */
         @media (min-width: 1024px) {
             .layout-grid { display: grid; grid-template-columns: 300px 1fr; grid-template-areas: "sidebar main" "sidebar faq"; align-items: start; gap: 32px; }
-            #sidebar-info { grid-area: sidebar; position: sticky; top: 90px; order: unset; }
+            #sidebar-info { grid-area: sidebar; position: sticky; top: 140px; order: unset; } /* Ajustado top para nao bater no menu duplo */
             #main-content { grid-area: main; order: unset; }
+            #monte-sua-cesta { grid-area: main; order: unset; } /* Ocupa o mesmo espaço do main */
             #faq-section { grid-area: faq; order: unset; }
         }
 
         /* Componentes */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); height: 100%; display: flex; flex-direction: column; }
-        .header-sticky { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
+        .header-sticky { background: rgba(255,255,255,0.95); backdrop-filter: blur(5px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1001; box-shadow: 0 1px 2px rgba(0,0,0,0.03); }
         .header-inner { max-width: 1150px; margin: 0 auto; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
         
         /* Tipografia e Botões */
@@ -132,11 +148,9 @@
         .btn-primary { background-color: var(--accent); color: white; box-shadow: 0 2px 4px rgba(21, 128, 61, 0.2); }
         .btn-primary:hover { background-color: var(--accent-hover); transform: translateY(-1px); }
         .btn-header { padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); background: white; color: var(--text-main); font-weight: 600; }
-        
-        /* TABS (Navegação) */
-        .tab-nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        .tab-btn { flex: 1; padding: 12px; border: 2px solid transparent; background: #f3f4f6; border-radius: 8px; cursor: pointer; font-weight: 600; color: #666; transition: all 0.2s; text-align: center; }
-        .tab-btn.active { background: white; border-color: var(--brand-blue); color: var(--brand-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .btn-secondary { background-color: white; border: 2px solid var(--accent); color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-secondary:hover { background-color: #f0fdf4; }
+
 
         /* Product Grid */
         .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
@@ -149,7 +163,7 @@
         .opt-item.selected { border-color: var(--accent); background-color: #ecfdf5; ring: 1px solid var(--accent); }
         .opt-price { font-weight: 700; color: #111; }
 
-        /* Details & FAQ */
+        /* NOVO: Detalhes do Produto (Substitui Modal) */
         .details-list { width: 100%; margin-top: 10px; }
         .details-list summary { list-style: none; cursor: pointer; color: var(--text-muted); font-size: 0.9rem; padding: 10px; text-align: center; border: 1px solid #d1d5db; border-radius: 8px; background: white; font-weight: 600; transition: background 0.2s; }
         .details-list summary:hover { background: #f9fafb; border-color: #9ca3af; }
@@ -159,26 +173,14 @@
         .list-item { display: flex; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: #374151; }
         .list-item:last-child { border-bottom: none; }
         .list-header { background: #f3f4f6; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; padding: 6px 12px; color: #4b5563; }
+
+        /* FAQ & Outros */
         details.faq-item { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
         details.faq-item summary { padding: 16px; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; list-style: none; align-items: center; }
         details.faq-item summary::after { content: "+"; font-size: 1.5rem; color: var(--brand-blue); line-height: 0.5; }
         details.faq-item[open] summary::after { content: "-"; }
         .faq-answer { padding: 16px; color: var(--text-muted); line-height: 1.6; }
 
-        /* Styles para "Monte a Sua Cesta" */
-        .qty-controls { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; background: #f9fafb; padding: 5px; border-radius: 8px; }
-        .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #d1d5db; background: white; font-weight: bold; cursor: pointer; color: var(--text-main); display: flex; align-items: center; justify-content: center; }
-        .qty-input { width: 40px; text-align: center; border: none; background: transparent; font-weight: bold; font-size: 1rem; }
-        .category-title { grid-column: 1 / -1; margin-top: 20px; border-bottom: 2px solid #eee; padding-bottom: 5px; color: var(--brand-blue); font-size: 1.2rem; }
-
-        /* Barra Inferior Fixa */
-        .bottom-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #e5e7eb; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.1); z-index: 2000; padding: 15px; display: none; transform: translateY(100%); transition: transform 0.3s ease-out; }
-        .bottom-bar.visible { transform: translateY(0); display: block; }
-        .bottom-content { max-width: 1150px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 15px; }
-        .total-info { display: flex; flex-direction: column; }
-        .total-price { font-size: 1.2rem; font-weight: 800; color: var(--accent); }
-        .shipping-info { font-size: 0.75rem; color: #666; }
-        
         /* Bairros List */
         .hood-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; margin-top: 10px; }
         .hood-tag { background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
@@ -186,16 +188,73 @@
         /* Footer */
         footer { background: #111827; color: #9ca3af; padding: 40px 20px; text-align: center; margin-top: 60px; }
 
-        /* Dialogs */
+        /* Dialogs (Apenas Confirmação) */
         dialog { padding: 0; border: none; border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); max-width: 500px; width: 90%; }
         dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
         .dialog-header { padding: 15px 20px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
         .dialog-body { padding: 20px; }
         .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; line-height: 1; }
+
+        /* =========================================
+           NOVO CSS: MONTE SUA CESTA (Custom Cart) 
+           ========================================= */
+        /* Nav Tab Alternativa */
+        #nav-tabs-container {
+            position: sticky;
+            top: 66px; /* Altura do header-sticky (aproximado) */
+            z-index: 1000;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+
+        .custom-section-title { font-size: 1.4rem; color: var(--brand-blue); margin-top: 0; margin-bottom: 20px; border-bottom: 2px solid #bfdbfe; padding-bottom: 10px; }
+        .category-group { margin-bottom: 30px; }
+        .category-title { font-size: 1.1rem; color: #374151; font-weight: 800; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .category-title::before { content: ''; display: block; width: 6px; height: 20px; background: var(--brand-blue); border-radius: 2px; }
+
+        .custom-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
         
-        /* Modal do Carrinho Customizado */
-        .cart-list { max-height: 50vh; overflow-y: auto; margin-bottom: 20px; }
-        .cart-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        /* Card Personalizado (Menor que a Cesta Principal) */
+        .custom-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; height: 100%; transition: border-color 0.2s; }
+        .custom-card:hover { border-color: var(--brand-blue); }
+        
+        .custom-img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #fff; margin-bottom: 10px; border-radius: 4px; }
+        .custom-info h3 { font-size: 0.95rem; margin-bottom: 4px; color: #111; line-height: 1.3; min-height: 2.6em; }
+        .custom-desc { font-size: 0.75rem; color: #6b7280; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .custom-price { font-size: 1.1rem; color: var(--accent); font-weight: 800; margin-bottom: 10px; }
+
+        /* Seletor de Quantidade */
+        .qty-control { display: flex; align-items: center; justify-content: space-between; background: #f3f4f6; border-radius: 6px; padding: 4px; margin-top: auto; }
+        .qty-btn { width: 28px; height: 28px; border: none; background: white; border-radius: 4px; cursor: pointer; font-weight: bold; color: var(--brand-blue); font-size: 1.1rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .qty-btn:active { background: #e5e7eb; transform: scale(0.95); }
+        .qty-val { font-weight: 700; font-size: 0.9rem; min-width: 20px; text-align: center; }
+        
+        /* Botão Adicionar (Quando Qtd = 0) */
+        .btn-add-cart { width: 100%; padding: 8px; background: white; border: 1px solid var(--brand-blue); color: var(--brand-blue); border-radius: 6px; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin-top: auto; transition: all 0.2s; }
+        .btn-add-cart:hover { background: var(--brand-blue); color: white; }
+
+        /* Rodapé Fixo da Sacola */
+        #sticky-cart-footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-top: 1px solid var(--border); box-shadow: 0 -4px 12px rgba(0,0,0,0.1); padding: 12px 16px; z-index: 2000; display: none; /* Hidden by default */ justify-content: center; animation: slideUp 0.3s ease-out; }
+        .cart-bar-inner { max-width: 1150px; width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+        .cart-total-info { display: flex; flex-direction: column; }
+        .cart-label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; font-weight: 700; }
+        .cart-value { font-size: 1.25rem; font-weight: 800; color: #111; }
+        .btn-checkout { background: #25D366; color: white; padding: 10px 24px; border-radius: 24px; font-weight: 700; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 1rem; box-shadow: 0 4px 6px rgba(37, 211, 102, 0.2); transition: transform 0.2s; }
+        .btn-checkout:hover { transform: translateY(-2px); background: #20bd5a; }
+
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+
+        /* Modal Sacola */
+        .cart-modal-list { max-height: 40vh; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; margin: 15px 0; padding: 0; }
+        .cart-row { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f9fafb; font-size: 0.9rem; align-items: center; }
+        .cart-row:last-child { border-bottom: none; }
+        .cart-row-name { flex-grow: 1; margin-right: 10px; }
+        .cart-row-total { font-weight: 700; min-width: 60px; text-align: right; }
+        .summary-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 0.95rem; color: #555; }
+        .summary-row.final { font-size: 1.2rem; font-weight: 800; color: #111; border-top: 2px dashed #eee; margin-top: 10px; padding-top: 10px; }
+        .free-delivery-badge { background: #dcfce7; color: #166534; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -216,9 +275,26 @@
         </div>
     </header>
 
+    <!-- 
+        ==============================
+        NOVO: BARRA DE NAVEGAÇÃO / BOTÃO ALTERNAR
+        ==============================
+    -->
+    <div id="nav-tabs-container">
+        <div class="container" style="display: flex; justify-content: center; padding: 0 16px;">
+            <button id="toggle-section-btn" onclick="MonteCestaApp.toggleTab()" class="btn btn-secondary" style="width: 100%; max-width: 400px; justify-content: space-between;">
+                <span>Ir para: <strong>Monte sua Cesta</strong></span>
+                <span>🧺</span>
+            </button>
+        </div>
+    </div>
+
     <div class="container layout-grid">
         
-        <!-- SIDEBAR (Mantida) -->
+        <!-- 
+            SIDEBAR (Info Institucional)
+            No Mobile (max-width: 1023px), este bloco terá order: 2 (aparecerá DEPOIS do main-content)
+        -->
         <aside id="sidebar-info">
             <div class="card" style="border-top: 4px solid var(--brand-blue); gap: 16px;">
                 <div>
@@ -232,246 +308,422 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
+        <!-- 
+            MAIN CONTENT (Cestas Prontas)
+            Esta é a visualização padrão.
+        -->
         <main id="main-content">
-            <!-- Navegação de Abas -->
-            <div class="tab-nav">
-                <button class="tab-btn active" id="tab-ready" onclick="App.switchTab('ready')">Cestas Prontas</button>
-                <button class="tab-btn" id="tab-custom" onclick="App.switchTab('custom')">Monte a Sua Cesta</button>
-            </div>
-
             <header class="card" style="background: linear-gradient(to right, #eff6ff, #ffffff); border-color: #bfdbfe; margin-bottom: 24px;">
-                <h1 id="page-title">Cestas Básicas em Cuiabá e VG</h1>
-                <p id="page-desc" style="color: #1e40af; margin: 0;">
+                <h1>Cestas Básicas em Cuiabá e VG</h1>
+                <p style="color: #1e40af; margin: 0;">
                     Garanta alimentação de qualidade para sua família ou doação. Distribuidora líder com o <strong>menor preço</strong> da baixada cuiabana. Entrega rápida e grátis.
                 </p>
             </header>
 
-            <!-- VIEW 1: CESTAS PRONTAS (Existente) -->
-            <div id="view-ready-baskets">
-                <section class="product-grid" aria-label="Catálogo de Cestas">
+            <section class="product-grid" aria-label="Catálogo de Cestas">
+                
+                <!-- 1. Cesta Econômica -->
+                <article class="card" itemscope itemtype="https://schema.org/Product">
+                    <meta itemprop="sku" content="CESTA-ECO-01">
+                    <meta itemprop="brand" content="Dona Antônia">
+                    <div class="basket-img-wrapper">
+                        <img itemprop="image" src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif" alt="Cesta Básica Econômica" width="300" height="300" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-free-shipping">Entrega Grátis</span>
+                    </div>
+                    <h2 itemprop="name">Cesta Econômica</h2>
+                    <p style="font-size: 0.85rem; color: #6b7280; flex-grow: 0;">A opção mais barata de Cuiabá. Itens essenciais.</p>
                     
-                    <!-- 1. Cesta Econômica -->
-                    <article class="card" itemscope itemtype="https://schema.org/Product">
-                        <meta itemprop="sku" content="CESTA-ECO-01">
-                        <meta itemprop="brand" content="Dona Antônia">
-                        <div class="basket-img-wrapper">
-                            <img itemprop="image" src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-economica.avif" alt="Cesta Básica Econômica" width="300" height="300" fetchpriority="high" style="width: 100%; height: 100%; object-fit: cover;">
-                            <span class="badge-free-shipping">Entrega Grátis</span>
+                    <div class="opt-container" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                        <meta itemprop="price" content="85.00">
+                        <meta itemprop="priceCurrency" content="BRL">
+                        <meta itemprop="availability" content="https://schema.org/InStock">
+                        <div class="opt-item selected" role="button" tabindex="0">
+                            <span>Valor Único</span>
+                            <span class="opt-price">R$ 85,00</span>
                         </div>
-                        <h2 itemprop="name">Cesta Econômica</h2>
-                        <p style="font-size: 0.85rem; color: #6b7280; flex-grow: 0;">A opção mais barata de Cuiabá. Itens essenciais.</p>
+                    </div>
+
+                    <div style="margin-top: auto;">
+                        <button onclick="App.openOrderModal('ECONOMICA')" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                            Pedir por WhatsApp
+                        </button>
                         
-                        <div class="opt-container" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                            <meta itemprop="price" content="85.00">
-                            <meta itemprop="priceCurrency" content="BRL">
-                            <meta itemprop="availability" content="https://schema.org/InStock">
-                            <div class="opt-item selected" role="button" tabindex="0">
-                                <span>Valor Único</span>
-                                <span class="opt-price">R$ 85,00</span>
+                        <!-- LISTA LEVE (SEM MODAL) -->
+                        <details class="details-list">
+                            <summary>Ver Lista de Produtos</summary>
+                            <div class="list-content">
+                                <div class="list-header">Alimentos</div>
+                                <div class="list-item"><span>1x Arroz Tio Alvino 5kg</span></div>
+                                <div class="list-item"><span>1x Feijão Carioca 1kg</span></div>
+                                <div class="list-item"><span>1x Óleo de Soja 900ml</span></div>
+                                <div class="list-item"><span>1x Açúcar 2kg</span></div>
+                                <div class="list-item"><span>1x Café 250g</span></div>
+                                <div class="list-item"><span>1x Macarrão 400g</span></div>
+                                <div class="list-item"><span>1x Farinha de Trigo 1kg</span></div>
+                                <div class="list-item"><span>1x Farinha Mandioca 1kg</span></div>
+                                <div class="list-item"><span>1x Sal 1kg</span></div>
+                                <div class="list-item"><span>1x Molho Tomate</span></div>
+                                <div class="list-item"><span>1x Milho Verde</span></div>
+                                <div class="list-item"><span>1x Bolacha Recheada</span></div>
+                                <div class="list-item"><span>1x Miojo</span></div>
+                                <div class="list-item"><span>1x Suco em Pó</span></div>
                             </div>
-                        </div>
+                        </details>
+                    </div>
+                </article>
 
-                        <div style="margin-top: auto;">
-                            <button onclick="App.openOrderModal('ECONOMICA')" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                                Pedir por WhatsApp
-                            </button>
-                            
-                            <details class="details-list">
-                                <summary>Ver Lista de Produtos</summary>
-                                <div class="list-content">
-                                    <div class="list-header">Alimentos</div>
-                                    <div class="list-item"><span>1x Arroz Tio Alvino 5kg</span></div>
-                                    <div class="list-item"><span>1x Feijão Carioca 1kg</span></div>
-                                    <div class="list-item"><span>1x Óleo de Soja 900ml</span></div>
-                                    <div class="list-item"><span>1x Açúcar 2kg</span></div>
-                                    <div class="list-item"><span>1x Café 250g</span></div>
-                                    <div class="list-item"><span>1x Macarrão 400g</span></div>
-                                    <div class="list-item"><span>1x Farinha de Trigo 1kg</span></div>
-                                    <div class="list-item"><span>1x Farinha Mandioca 1kg</span></div>
-                                    <div class="list-item"><span>1x Sal 1kg</span></div>
-                                    <div class="list-item"><span>1x Molho Tomate</span></div>
-                                    <div class="list-item"><span>1x Milho Verde</span></div>
-                                    <div class="list-item"><span>1x Bolacha Recheada</span></div>
-                                    <div class="list-item"><span>1x Miojo</span></div>
-                                    <div class="list-item"><span>1x Suco em Pó</span></div>
-                                </div>
-                            </details>
+                <!-- 2. Cesta Mini -->
+                <article class="card">
+                    <div class="basket-img-wrapper">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif" alt="Cesta Básica Mini" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-free-shipping">Entrega Grátis</span>
+                    </div>
+                    <h2>Cesta Mini</h2>
+                    <div class="opt-container" id="opt-container-MINI">
+                        <div class="opt-item selected" onclick="App.selectOption('MINI', 0)">
+                            <span>Arroz Tio Alvino</span><span class="opt-price">R$ 165,00</span>
                         </div>
-                    </article>
+                        <div class="opt-item" onclick="App.selectOption('MINI', 1)">
+                            <span>Arroz Koblenz</span><span class="opt-price">R$ 170,00</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <button onclick="App.openOrderModal('MINI')" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                            Pedir por WhatsApp
+                        </button>
+                        
+                        <!-- LISTA LEVE -->
+                        <details class="details-list">
+                            <summary>Ver Lista de Produtos</summary>
+                            <div class="list-content">
+                                <div class="list-header">Alimentos</div>
+                                <div class="list-item"><span>1x Arroz 5kg</span></div>
+                                <div class="list-item"><span>2x Feijão Carioca 1kg</span></div>
+                                <div class="list-item"><span>2x Óleo de Soja</span></div>
+                                <div class="list-item"><span>1x Açúcar 2kg</span></div>
+                                <div class="list-item"><span>1x Café 250g</span></div>
+                                <div class="list-item"><span>1x Macarrão 500g</span></div>
+                                <div class="list-item"><span>1x Sal 1kg</span></div>
+                                <div class="list-item"><span>1x Molho Tomate</span></div>
+                                <div class="list-item"><span>1x Milho Verde</span></div>
+                                <div class="list-item"><span>1x Bolacha Recheada</span></div>
+                                <div class="list-item"><span>1x Miojo</span></div>
+                                <div class="list-item"><span>2x Suco em Pó</span></div>
+                                <div class="list-header">Limpeza e Higiene</div>
+                                <div class="list-item"><span>1x Sabão Barra</span></div>
+                                <div class="list-item"><span>1x Sabão em Pó</span></div>
+                                <div class="list-item"><span>1x Detergente</span></div>
+                                <div class="list-item"><span>1x Amaciante 2L</span></div>
+                                <div class="list-item"><span>1x Desinfetante 2L</span></div>
+                                <div class="list-item"><span>1x Água Sanitária (Qboa) 1L</span></div>
+                                <div class="list-item"><span>1x Papel Higiênico</span></div>
+                                <div class="list-item"><span>1x Creme Dental</span></div>
+                                <div class="list-item"><span>2x Sabonete</span></div>
+                                <div class="list-item"><span>1x Esponja Aço</span></div>
+                                <div class="list-item"><span>1x Esponja Louça</span></div>
+                            </div>
+                        </details>
+                    </div>
+                </article>
 
-                    <!-- 2. Cesta Mini -->
-                    <article class="card">
-                        <div class="basket-img-wrapper">
-                            <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-mini.avif" alt="Cesta Básica Mini" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
-                            <span class="badge-free-shipping">Entrega Grátis</span>
+                <!-- 3. Cesta Pequena -->
+                <article class="card">
+                    <div class="basket-img-wrapper">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif" alt="Cesta Básica Pequena" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-free-shipping">Entrega Grátis</span>
+                    </div>
+                    <h2>Cesta Pequena</h2>
+                    <div class="opt-container" id="opt-container-PEQUENA">
+                        <div class="opt-item selected" onclick="App.selectOption('PEQUENA', 0)">
+                            <span>Arroz Tio Alvino</span><span class="opt-price">R$ 215,00</span>
                         </div>
-                        <h2>Cesta Mini</h2>
-                        <div class="opt-container" id="opt-container-MINI">
-                            <div class="opt-item selected" onclick="App.selectOption('MINI', 0)">
-                                <span>Arroz Tio Alvino</span><span class="opt-price">R$ 165,00</span>
+                        <div class="opt-item" onclick="App.selectOption('PEQUENA', 1)">
+                            <span>Arroz Koblenz</span><span class="opt-price">R$ 220,00</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <button onclick="App.openOrderModal('PEQUENA')" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                            Pedir por WhatsApp
+                        </button>
+                        
+                        <details class="details-list">
+                            <summary>Ver Lista de Produtos</summary>
+                            <div class="list-content">
+                                <div class="list-header">Alimentos</div>
+                                <div class="list-item"><span>2x Arroz 5kg</span></div>
+                                <div class="list-item"><span>2x Feijão Carioca 1kg</span></div>
+                                <div class="list-item"><span>2x Óleo de Soja</span></div>
+                                <div class="list-item"><span>1x Açúcar 2kg</span></div>
+                                <div class="list-item"><span>1x Café 250g</span></div>
+                                <div class="list-item"><span>1x Macarrão 500g</span></div>
+                                <div class="list-item"><span>1x Cartela Ovos (12 un)</span></div>
+                                <div class="list-item"><span>1x Mistura Bolo</span></div>
+                                <div class="list-item"><span>1x Trigo 1kg</span></div>
+                                <div class="list-item"><span>1x Sal 1kg</span></div>
+                                <div class="list-item"><span>1x Molho Tomate</span></div>
+                                <div class="list-item"><span>1x Milho Verde</span></div>
+                                <div class="list-item"><span>1x Tempero 300g</span></div>
+                                <div class="list-item"><span>2x Bolacha Recheada</span></div>
+                                <div class="list-item"><span>2x Miojo</span></div>
+                                <div class="list-item"><span>2x Suco em Pó</span></div>
+                                <div class="list-header">Limpeza e Higiene</div>
+                                <div class="list-item"><span>1x Sabão Barra</span></div>
+                                <div class="list-item"><span>1x Sabão em Pó 800g</span></div>
+                                <div class="list-item"><span>2x Detergente</span></div>
+                                <div class="list-item"><span>1x Amaciante 2L</span></div>
+                                <div class="list-item"><span>1x Desinfetante 2L</span></div>
+                                <div class="list-item"><span>1x Qboa 1L</span></div>
+                                <div class="list-item"><span>1x Papel Higiênico</span></div>
+                                <div class="list-item"><span>1x Creme Dental</span></div>
+                                <div class="list-item"><span>2x Sabonete</span></div>
+                                <div class="list-item"><span>1x Esponja Aço</span></div>
+                                <div class="list-item"><span>1x Esponja Louça</span></div>
                             </div>
-                            <div class="opt-item" onclick="App.selectOption('MINI', 1)">
-                                <span>Arroz Koblenz</span><span class="opt-price">R$ 170,00</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: auto;">
-                            <button onclick="App.openOrderModal('MINI')" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                                Pedir por WhatsApp
-                            </button>
-                            
-                            <details class="details-list">
-                                <summary>Ver Lista de Produtos</summary>
-                                <div class="list-content">
-                                    <div class="list-header">Alimentos</div>
-                                    <div class="list-item"><span>1x Arroz 5kg</span></div>
-                                    <div class="list-item"><span>2x Feijão Carioca 1kg</span></div>
-                                    <!-- ... existing list content ... -->
-                                </div>
-                            </details>
-                        </div>
-                    </article>
+                        </details>
+                    </div>
+                </article>
 
-                    <!-- 3. Cesta Pequena -->
-                    <article class="card">
-                        <div class="basket-img-wrapper">
-                            <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-pequena.avif" alt="Cesta Básica Pequena" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
-                            <span class="badge-free-shipping">Entrega Grátis</span>
+                <!-- 4. Cesta Média -->
+                <article class="card">
+                    <div class="basket-img-wrapper">
+                        <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif" alt="Cesta Básica Média" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-free-shipping">Entrega Grátis</span>
+                    </div>
+                    <h2>Cesta Média</h2>
+                    <div class="opt-container" id="opt-container-MEDIA">
+                        <div class="opt-item selected" onclick="App.selectOption('MEDIA', 0)">
+                            <span>Arroz Tio Alvino</span><span class="opt-price">R$ 320,00</span>
                         </div>
-                        <h2>Cesta Pequena</h2>
-                        <div class="opt-container" id="opt-container-PEQUENA">
-                            <div class="opt-item selected" onclick="App.selectOption('PEQUENA', 0)">
-                                <span>Arroz Tio Alvino</span><span class="opt-price">R$ 215,00</span>
+                        <div class="opt-item" onclick="App.selectOption('MEDIA', 1)">
+                            <span>Arroz Koblenz</span><span class="opt-price">R$ 325,00</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <button onclick="App.openOrderModal('MEDIA')" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                            Pedir por WhatsApp
+                        </button>
+                        
+                        <details class="details-list">
+                            <summary>Ver Lista de Produtos</summary>
+                            <div class="list-content">
+                                <div class="list-header">Alimentos</div>
+                                <div class="list-item"><span>3x Arroz 5kg</span></div>
+                                <div class="list-item"><span>3x Feijão Carioca 1kg</span></div>
+                                <div class="list-item"><span>3x Óleo de Soja</span></div>
+                                <div class="list-item"><span>2x Açúcar 2kg</span></div>
+                                <div class="list-item"><span>1x Café 500g</span></div>
+                                <div class="list-item"><span>2x Macarrão 500g</span></div>
+                                <div class="list-item"><span>1x Cartela Ovos (12 un)</span></div>
+                                <div class="list-item"><span>1x Mistura Bolo</span></div>
+                                <div class="list-item"><span>1x Trigo 1kg</span></div>
+                                <div class="list-item"><span>1x Sal 1kg</span></div>
+                                <div class="list-item"><span>2x Molho Tomate</span></div>
+                                <div class="list-item"><span>1x Milho Verde</span></div>
+                                <div class="list-item"><span>1x Tempero 300g</span></div>
+                                <div class="list-item"><span>2x Bolacha Recheada</span></div>
+                                <div class="list-item"><span>2x Miojo</span></div>
+                                <div class="list-item"><span>3x Suco em Pó</span></div>
+                                <div class="list-header">Limpeza e Higiene</div>
+                                <div class="list-item"><span>1x Sabão Barra</span></div>
+                                <div class="list-item"><span>1x Sabão em Pó 800g</span></div>
+                                <div class="list-item"><span>2x Detergente</span></div>
+                                <div class="list-item"><span>1x Amaciante 2L</span></div>
+                                <div class="list-item"><span>1x Desinfetante 2L</span></div>
+                                <div class="list-item"><span>1x Qboa 1L</span></div>
+                                <div class="list-item"><span>2x Papel Higiênico</span></div>
+                                <div class="list-item"><span>2x Creme Dental</span></div>
+                                <div class="list-item"><span>3x Sabonete</span></div>
+                                <div class="list-item"><span>1x Esponja Aço</span></div>
+                                <div class="list-item"><span>1x Esponja Louça</span></div>
                             </div>
-                            <div class="opt-item" onclick="App.selectOption('PEQUENA', 1)">
-                                <span>Arroz Koblenz</span><span class="opt-price">R$ 220,00</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: auto;">
-                            <button onclick="App.openOrderModal('PEQUENA')" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                                Pedir por WhatsApp
-                            </button>
-                            
-                            <details class="details-list">
-                                <summary>Ver Lista de Produtos</summary>
-                                <div class="list-content">
-                                    <div class="list-header">Alimentos</div>
-                                    <div class="list-item"><span>2x Arroz 5kg</span></div>
-                                    <div class="list-item"><span>2x Feijão Carioca 1kg</span></div>
-                                    <!-- ... existing list content ... -->
-                                </div>
-                            </details>
-                        </div>
-                    </article>
+                        </details>
+                    </div>
+                </article>
 
-                    <!-- 4. Cesta Média -->
-                    <article class="card">
-                        <div class="basket-img-wrapper">
-                            <img src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-media.avif" alt="Cesta Básica Média" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
-                            <span class="badge-free-shipping">Entrega Grátis</span>
+                <!-- 5. Cesta Grande -->
+                <article class="card" itemscope itemtype="https://schema.org/Product">
+                    <meta itemprop="sku" content="CESTA-GRANDE-01">
+                    <meta itemprop="brand" content="Dona Antônia">
+                    <div class="basket-img-wrapper">
+                        <img itemprop="image" src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif" alt="Cesta Básica Grande Dona Antônia" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
+                        <span class="badge-free-shipping">Entrega Grátis</span>
+                    </div>
+                    <h2 itemprop="name">Cesta Grande</h2>
+                    <div class="opt-container" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+                        <meta itemprop="price" content="380.00">
+                        <meta itemprop="priceCurrency" content="BRL">
+                        <meta itemprop="availability" content="https://schema.org/InStock">
+                        <div class="opt-item selected" id="opt-GRANDE-0" onclick="App.selectOption('GRANDE', 0)">
+                            <span>Arroz Tio Alvino</span><span class="opt-price">R$ 380,00</span>
                         </div>
-                        <h2>Cesta Média</h2>
-                        <div class="opt-container" id="opt-container-MEDIA">
-                            <div class="opt-item selected" onclick="App.selectOption('MEDIA', 0)">
-                                <span>Arroz Tio Alvino</span><span class="opt-price">R$ 320,00</span>
+                        <div class="opt-item" id="opt-GRANDE-1" onclick="App.selectOption('GRANDE', 1)">
+                            <span>Arroz Koblenz</span><span class="opt-price">R$ 390,00</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: auto;">
+                        <button onclick="App.openOrderModal('GRANDE')" class="btn btn-primary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
+                            Pedir por WhatsApp
+                        </button>
+                        
+                        <details class="details-list">
+                            <summary>Ver Lista de Produtos</summary>
+                            <div class="list-content">
+                                <div class="list-header">Alimentos</div>
+                                <div class="list-item"><span>4x Arroz 5kg</span></div>
+                                <div class="list-item"><span>4x Feijão Carioca 1kg</span></div>
+                                <div class="list-item"><span>4x Óleo de Soja</span></div>
+                                <div class="list-item"><span>3x Açúcar 2kg</span></div>
+                                <div class="list-item"><span>1x Café 500g</span></div>
+                                <div class="list-item"><span>3x Macarrão 500g</span></div>
+                                <div class="list-item"><span>1x Cartela Ovos (12 un)</span></div>
+                                <div class="list-item"><span>1x Mistura Bolo</span></div>
+                                <div class="list-item"><span>1x Trigo 1kg</span></div>
+                                <div class="list-item"><span>1x Sal 1kg</span></div>
+                                <div class="list-item"><span>2x Molho Tomate</span></div>
+                                <div class="list-item"><span>1x Milho Verde</span></div>
+                                <div class="list-item"><span>1x Tempero 300g</span></div>
+                                <div class="list-item"><span>2x Bolacha Recheada</span></div>
+                                <div class="list-item"><span>2x Miojo</span></div>
+                                <div class="list-item"><span>4x Suco em Pó</span></div>
+                                <div class="list-header">Limpeza e Higiene</div>
+                                <div class="list-item"><span>1x Sabão Barra</span></div>
+                                <div class="list-item"><span>1x Sabão em Pó 800g</span></div>
+                                <div class="list-item"><span>2x Detergente</span></div>
+                                <div class="list-item"><span>1x Amaciante 2L</span></div>
+                                <div class="list-item"><span>1x Desinfetante 2L</span></div>
+                                <div class="list-item"><span>1x Qboa 1L</span></div>
+                                <div class="list-item"><span>2x Papel Higiênico</span></div>
+                                <div class="list-item"><span>2x Creme Dental</span></div>
+                                <div class="list-item"><span>4x Sabonete</span></div>
+                                <div class="list-item"><span>1x Esponja Aço</span></div>
+                                <div class="list-item"><span>1x Esponja Louça</span></div>
                             </div>
-                            <div class="opt-item" onclick="App.selectOption('MEDIA', 1)">
-                                <span>Arroz Koblenz</span><span class="opt-price">R$ 325,00</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: auto;">
-                            <button onclick="App.openOrderModal('MEDIA')" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                                Pedir por WhatsApp
-                            </button>
-                            
-                            <details class="details-list">
-                                <summary>Ver Lista de Produtos</summary>
-                                <div class="list-content">
-                                    <div class="list-header">Alimentos</div>
-                                    <div class="list-item"><span>3x Arroz 5kg</span></div>
-                                    <div class="list-item"><span>3x Feijão Carioca 1kg</span></div>
-                                    <!-- ... existing list content ... -->
-                                </div>
-                            </details>
-                        </div>
-                    </article>
+                        </details>
+                    </div>
+                </article>
 
-                    <!-- 5. Cesta Grande -->
-                    <article class="card" itemscope itemtype="https://schema.org/Product">
-                        <meta itemprop="sku" content="CESTA-GRANDE-01">
-                        <meta itemprop="brand" content="Dona Antônia">
-                        <div class="basket-img-wrapper">
-                            <img itemprop="image" src="https://donaantonia.com.br/img/cesta-basica-cuiaba-varzea-grande-grande.avif" alt="Cesta Básica Grande Dona Antônia" width="300" height="300" loading="lazy" decoding="async" style="width: 100%; height: 100%; object-fit: cover;">
-                            <span class="badge-free-shipping">Entrega Grátis</span>
-                        </div>
-                        <h2 itemprop="name">Cesta Grande</h2>
-                        <div class="opt-container" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-                            <meta itemprop="price" content="380.00">
-                            <meta itemprop="priceCurrency" content="BRL">
-                            <meta itemprop="availability" content="https://schema.org/InStock">
-                            <div class="opt-item selected" id="opt-GRANDE-0" onclick="App.selectOption('GRANDE', 0)">
-                                <span>Arroz Tio Alvino</span><span class="opt-price">R$ 380,00</span>
-                            </div>
-                            <div class="opt-item" id="opt-GRANDE-1" onclick="App.selectOption('GRANDE', 1)">
-                                <span>Arroz Koblenz</span><span class="opt-price">R$ 390,00</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: auto;">
-                            <button onclick="App.openOrderModal('GRANDE')" class="btn btn-primary">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
-                                Pedir por WhatsApp
-                            </button>
-                            
-                            <details class="details-list">
-                                <summary>Ver Lista de Produtos</summary>
-                                <div class="list-content">
-                                    <div class="list-header">Alimentos</div>
-                                    <div class="list-item"><span>4x Arroz 5kg</span></div>
-                                    <div class="list-item"><span>4x Feijão Carioca 1kg</span></div>
-                                    <!-- ... existing list content ... -->
-                                </div>
-                            </details>
-                        </div>
-                    </article>
-                </section>
-            </div>
-
-            <!-- VIEW 2: MONTE A SUA CESTA (Nova) -->
-            <div id="view-custom-basket" style="display: none;">
-                <p style="background: #e0f2fe; color: #0369a1; padding: 15px; border-radius: 8px; border: 1px solid #bae6fd; font-size: 0.95rem;">
-                    <strong>Como funciona:</strong> Escolha os itens abaixo, monte sua cesta personalizada e envie o pedido. Compras acima de <strong>R$ 85,00</strong> têm entrega grátis!
-                </p>
-                <div id="custom-products-grid" class="product-grid">
-                    <!-- Preenchido via JS -->
+            </section>
+            
+            <!-- 
+                ==============================================
+                NOVA SESSÃO INSERIDA: MONTE A SUA CESTA
+                (Inicialmente oculta, alternada pelo botão)
+                ==============================================
+            -->
+            <section id="monte-sua-cesta" style="display: none;">
+                <div class="custom-section-title">
+                    Monte a sua Cesta
+                    <div style="font-size: 0.9rem; color: #6b7280; font-weight: 400; margin-top: 5px; border:none;">
+                        Escolha itens avulsos e monte do seu jeito.
+                    </div>
                 </div>
-            </div>
+
+                <!-- Container onde o JS vai injetar os produtos do JSON -->
+                <div id="custom-products-container">
+                    <p style="text-align: center; padding: 20px; color: #666;">Carregando produtos...</p>
+                </div>
+            </section>
 
         </main>
 
-        <!-- FAQ Section -->
+        <!-- FAQ Section: Dúvidas + Bairros (Tudo aqui dentro) -->
         <section id="faq-section" itemscope itemtype="https://schema.org/FAQPage">
             <h2 style="font-size: 1.4rem; margin-bottom: 20px;">Dúvidas Frequentes</h2>
-            <!-- ... existing FAQs ... -->
+            
             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
                 <summary itemprop="name">Quais são as formas de pagamento?</summary>
                 <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
                     <span itemprop="text">Dinheiro, Pix, Cartão de Débito, Cartão de Crédito (parcelado em até 3x sem juros), Cartões Alimentação e Refeição Pluxee, Alelo, Flash, Caju, Ifood.</span>
                 </div>
             </details>
-            <!-- ... outros FAQs existentes ... -->
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Eu pago só na entrega do pedido?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Sim, aqui você faz o pagamento somente na entrega do pedido na sua casa.</span>
+                </div>
+            </details>
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">A entrega é grátis?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Sim, mas apenas em vendas acima de R$ 85. Compras de valores menor possuem taxa de entrega de R$ 15</span>
+                </div>
+            </details>
+            
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Eu posso trocar algum produto da cesta básica por outro?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Sim. Peço ao atendente pelo whatsapp para fazer a substituição.</span>
+                </div>
+            </details>
+
+             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">De qual cidade vocês são?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Somos de Cuiabá, estamos localizados no bairro Nossa Senhora Aparecida em Cuiabá.</span>
+                </div>
+            </details>
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Quanto tempo para entregar meu pedido?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">Todas as entregas são feitas no dia seguinte de segunda a sábado.</span>
+                </div>
+            </details>
+
+            <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+                <summary itemprop="name">Que horas o meu pedido chega na minha casa?</summary>
+                <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
+                    <span itemprop="text">As entregas são por rota. Ao enviar seu pedido por whatsapp o atendente vai ter informar o horário aproximado que seu pedido vai chegar no dia seguinte.</span>
+                </div>
+            </details>
+
+            <!-- ITEM FINAL: Bairros Atendidos (RETRÁTIL) -->
             <details class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
                 <summary itemprop="name">Atendimento nos Bairros de Cuiabá e VG</summary>
                 <div itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer" class="faq-answer">
                     <p>A Dona Antônia é referência na distribuição de cestas básicas na baixada cuiabana. Realizamos entrega rápida em domicílio com frota própria.</p>
+            
                     <div style="margin-top: 15px;">
                         <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
-                            <strong>Cuiabá (Zona Oeste):</strong> Alvorada, Araés, Barra do Pari... (lista completa)
+                            <strong>Cuiabá (Zona Oeste):</strong> Alvorada, Araés, Barra do Pari, Centro Norte, Centro Sul, Cidade Alta, Cidade Verde, Coophamil, Consil, Despraiado, Duque de Caxias, Goiabeiras, Jardim Beira Rio, Jardim Cuiabá, Jardim Mariana, Jardim Santa Isabel, Jardim Ubirajara, Jardim Monte Líbano, Jardim Primavera, Novo Colorado, Novo Terceiro, Parque Residencial Tropical Ville, Popular, Porto, Quilombo, Ribeirão da Ponte, Ribeirão do Lipa, Santa Marta, Santa Rosa, Residencial Sucuri, Verdão.
                         </p>
-                        <!-- ... lista de bairros ... -->
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Norte):</strong> Centro Político Administrativo, Jardim Florianópolis, Jardim União, Jardim Vitória, Jardim Aroeiras, Morada da Serra (CPA I, II, III, IV), Morada do Ouro, Nova Conquista, Novo Paraíso I e II, Primeiro de Março, Três Barras, Ouro Fino, Residencial Pádova, Serra Dourada, Doutor Fábio Leite I e II (Santa Fé), Altos da Glória, Jardim Umuarama I e II, Nova Canaã I, II e III, Jardim Brasil, Altos da Serra I e II, Centro América, Flor da Mata, Tancredo Neves, Residencial Jardim Videira.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Leste):</strong> Areão, Bandeirantes, Baú, Bela Marina, Bela Vista, Boa Esperança, Bosque da Saúde, Cachoeira das Garças, Campo Velho, São Mateus, Canjica, Carumbé, Dom Aquino, Dom Bosco, Grande Terceiro, Jardim Aclimação, Jardim das Américas, Jardim Califórnia, Jardim Eldorado, Jardim Europa, Jardim Imperial, Jardim Itália, Jardim Leblon, Jardim Paulista, Jardim Petrópolis, Jardim Shangri-Lá, Jardim Tropical, Jardim Universitário, Lixeira, Morada dos Nobres, Novo Mato Grosso, Novo Horizonte, Planalto, Paiaguás, Pedregal, Pico do Amor, Poção, Praeirinho, Praeiro, Recanto dos Pássaros, Residencial Itamarati, Residencial Santa Inês, Residencial São Carlos, Santa Cruz, São Roque, Sol Nascente, Terra Nova, Terceiro, UFMT.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>Cuiabá (Zona Sul):</strong> Altos do Cerrado, Altos do Coxipó, Cohab São Gonçalo, Coophema, Coxipó, Jardim Comodoro, Jardim Fortaleza, Jardim Gramado, Jardim Industriário, Jardim dos Ipês, Jardim Mossoró, Jardim das Palmeiras, Jardim Passaredo, Jardim Presidente, Jordão, Lagoa Azul, Nossa Senhora Aparecida, Nova Esperança, Novo Milênio, Osmar Cabral, Parque Atalaia, Parque Cuiabá, Parque Georgia, Parque Residencial, Parque Ohara, Pascoal Ramos, Pedra 90, Real Parque, Residencial Coxipó, Residencial Itapajé, Residencial Santa Terezinha I e II, Santa Laura, São Gonçalo, São Gonçalo Beira Rio, São João Del Rei, São José, São Sebastião, São Francisco, Tijucal, Vista Alegre.
+                        </p>
+        
+                        <hr style="margin: 10px 0; border: 0; border-top: 1px solid #eee;">
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Centro e Arredores):</strong> Água Limpa, Água Vermelha, Canelas, Centro, Centro Norte, Centro Sul, Cohab Canelas, Costa Verde, Figueirinha, Frutal de Minas, Ipase (Vila Ipase), Jardim Aeroporto, Jardim dos Estados, Jardim Eldorado, Jardim Icaraí, Jardim Paula I e II, Jardim Potiguar, Jardim Novo Horizonte, Nova Várzea Grande, Panamericano, Pirinéu, Planalto Ipiranga, Treze de Setembro, Vila Artur, Vila Operária, Vila São João, Vitória Régia.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Grande Cristo Rei):</strong> 7 de Maio, 24 de Dezembro, Alameda, Cohab Asa Branca, Cohab Cristo Rei, Cohab Dom Orlando Chaves, Cohab Jaime Campos, Cohab João Baracat, Construmat, Cristo Rei, Hélio Ponce, Jardim Marajoara I e II, Jardim União, Loteamento Joaquim Curvo, Manga, Maringá I, II e III, Parque do Lago, Parque Sabiá, Ponte Nova, Residencial Jacarandá, Residencial Santa Clara, Residencial São Francisco, São Gonçalo, São Mateus I e II, Unipark.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555; margin-bottom: 5px;">
+                            <strong>VG (Região Mapim/Glória):</strong> Alta da Boa Vista, Asa Bela, Cabo Michel, Glória, Jardim Alá, Jardim América, Jardim Campos Verdes, Jardim Esmeralda, Jardim Glória I e II, Jardim Imperial, Jardim Itororó, Jardim Manaíra, Jardim Ouro Verde, Mapim, Monte Castelo, Nova Esperança, Nova Fronteira, Novo Mato Grosso, Novo Mundo, Paiaguás, Parque Del Rei, Parque Mangabeiras, Santa Izabel, Santa Maria I e II, São Benedito, São Simão, Serra Dourada, Jardim Manancial.
+                        </p>
+        
+                        <p style="font-size: 0.85rem; color: #555;">
+                            <strong>VG (Distritos e Industriais):</strong> Bonsucesso, Capão do Pequi, Capão Grande, Cidade de Deus, Distrito Industrial, Engordador, Formigueiro, Jeani, Limpo Grande, Pai André, Parque Atlântico, Passagem da Conceição, Praia Grande, Souza Lima.
+                        </p>
                     </div>
                 </div>
             </details>
@@ -483,10 +735,11 @@
         <h3 style="color: white; margin-bottom: 10px;">Dona Antônia Alimentos</h3>
         <address style="font-style: normal; margin-bottom: 20px; font-size: 0.9rem;">
             R. Trinta, 105 - Jardim Nossa Sra. Aparecida<br>
-            Cuiabá - MT, 78090-660
+            Cuiabá - MT, 78090-660<br>
+            65 99815-0975 | 65 99681-3588
         </address>
         <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://api.whatsapp.com/send?phone=5565998150975" target="_blank" class="btn btn-primary" style="width: auto; background-color: #25D366; color: white; border: none;" aria-label="WhatsApp">
+            <a href="https://api.whatsapp.com/send?phone=5565998150975" target="_blank" class="btn btn-primary" style="width: auto; background-color: #02702b; color: white; border: none;" aria-label="WhatsApp">
                 WhatsApp
             </a>
             <a href="https://www.instagram.com/cestas.dona.antonia.cuiaba.vg/" target="_blank" class="btn btn-primary" style="width: auto; background-color: transparent; border: 1px solid #4b5563; color: white; margin-top: 0;">
@@ -497,21 +750,55 @@
         <a href="https://maps.google.com/maps?q=9W4X%2BGX%20Jardim%20Nossa%20Sra.%20Aparecida%2C%20Cuiabá%20-%20MT" target="_blank" style="color: #60a5fa; text-decoration: underline; font-size: 0.9rem;">Ver no Google Maps</a>
     </footer>
 
-    <!-- BARRA FIXA INFERIOR (Checkout Customizado) -->
-    <div id="custom-bottom-bar" class="bottom-bar">
-        <div class="bottom-content">
-            <div class="total-info">
-                <span style="font-size: 0.8rem; text-transform: uppercase; color: #666;">Total do Pedido</span>
-                <span id="custom-total-price" class="total-price">R$ 0,00</span>
-                <span id="custom-shipping-msg" class="shipping-info">Frete: Calculando...</span>
+    <!-- RODAPÉ FIXO DO CARRINHO (MONTE SUA CESTA - NOVO) -->
+    <div id="sticky-cart-footer">
+        <div class="cart-bar-inner">
+            <div class="cart-total-info">
+                <span class="cart-label">Total da Sacola</span>
+                <span class="cart-value" id="sticky-total">R$ 0,00</span>
             </div>
-            <button onclick="App.openCustomCheckout()" class="btn btn-primary" style="width: auto; padding: 10px 20px;">
-                Finalizar Pedido
+            <button class="btn-checkout" onclick="MonteCestaApp.openCartModal()">
+                Ver Sacola & Pedir
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592z"/></svg>
             </button>
         </div>
     </div>
 
-    <!-- Modal para Cestas Prontas -->
+    <!-- MODAL DO CARRINHO PERSONALIZADO (NOVO) -->
+    <dialog id="customCartModal">
+        <div class="dialog-header">
+            <h3 style="margin: 0;">Resumo do Pedido</h3>
+            <button onclick="document.getElementById('customCartModal').close()" class="close-btn">&times;</button>
+        </div>
+        <div class="dialog-body">
+            <p style="font-size: 0.9rem; color: #666;">Confira os itens da sua cesta personalizada:</p>
+            
+            <div class="cart-modal-list" id="modal-cart-items">
+                <!-- Itens injetados via JS -->
+            </div>
+
+            <div class="summary-row">
+                <span>Subtotal Produtos:</span>
+                <span id="modal-subtotal">R$ 0,00</span>
+            </div>
+            <div class="summary-row">
+                <span>Taxa de Entrega:</span>
+                <span id="modal-delivery">R$ 0,00</span>
+            </div>
+            <div id="delivery-msg" style="font-size: 0.8rem; color: #166534; margin-bottom: 10px; text-align: right;"></div>
+            
+            <div class="summary-row final">
+                <span>TOTAL A PAGAR:</span>
+                <span id="modal-final-total">R$ 0,00</span>
+            </div>
+
+            <button onclick="MonteCestaApp.sendToWhatsapp()" class="btn btn-primary" style="margin-top: 20px; background: #25D366; border: none;">
+                Enviar Pedido no WhatsApp
+            </button>
+        </div>
+    </dialog>
+
+    <!-- Modal APENAS para Confirmação de Variação (Arroz) - ORIGINAL -->
     <dialog id="confirmDialog">
         <div class="dialog-header">
             <h3 id="modalTitle" style="margin: 0;">Confirmar Pedido</h3>
@@ -527,79 +814,8 @@
         </div>
     </dialog>
 
-    <!-- Modal de Checkout (Monte sua Cesta) -->
-    <dialog id="customCheckoutDialog">
-        <div class="dialog-header">
-            <h3 style="margin: 0;">Revisar Cesta Personalizada</h3>
-            <button onclick="document.getElementById('customCheckoutDialog').close()" class="close-btn">&times;</button>
-        </div>
-        <div class="dialog-body">
-            <div id="custom-cart-list" class="cart-list"></div>
-            
-            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-top: 15px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span>Subtotal:</span>
-                    <strong id="modal-subtotal">R$ 0,00</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                    <span>Taxa de Entrega:</span>
-                    <strong id="modal-shipping">R$ 0,00</strong>
-                </div>
-                <div style="display: flex; justify-content: space-between; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 5px; font-size: 1.1rem;">
-                    <span>Total Final:</span>
-                    <strong id="modal-final-total" style="color: var(--accent);">R$ 0,00</strong>
-                </div>
-                <p id="modal-free-shipping-alert" style="font-size: 0.8rem; color: #15803d; margin-top: 5px; display: none;">Parabéns! Você ganhou Frete Grátis.</p>
-                <p id="modal-paid-shipping-alert" style="font-size: 0.8rem; color: #d97706; margin-top: 5px;">Faltam <span id="val-to-free"></span> para frete grátis.</p>
-            </div>
-
-            <button onclick="App.sendCustomOrder()" class="btn btn-primary" style="margin-top: 20px; width: 100%;">
-                Enviar Pedido no WhatsApp
-            </button>
-        </div>
-    </dialog>
-
     <script>
-        // MOCK DE DADOS (Simulando os arquivos JSON solicitados)
-        // Estrutura organizada por Categorias (ex: Alimentos, Limpeza)
-        const CATALOGO_JSON = {
-            "Alimentos": [
-                { id: "AL01", name: "Arroz Tio Alvino 5kg", price: 28.00, img: "img/produtos/arroztioalvino.avif" },
-                { id: "AL02", name: "Feijão Carioca 1kg", price: 8.50, img: "img/produtos/feijaocarioca.avif" },
-                { id: "AL03", name: "Óleo de Soja 900ml", price: 6.00, img: "img/produtos/oleosoja.avif" },
-                { id: "AL04", name: "Açúcar Cristal 2kg", price: 9.00, img: "img/produtos/acucar.avif" },
-                { id: "AL05", name: "Café em Pó 250g", price: 14.00, img: "img/produtos/cafe.avif" }
-            ],
-            "Limpeza": [
-                { id: "LP01", name: "Sabão em Pó 800g", price: 8.00, img: "img/produtos/sabaopo.avif" },
-                { id: "LP02", name: "Detergente Líquido 500ml", price: 2.50, img: "img/produtos/detergente.avif" },
-                { id: "LP03", name: "Água Sanitária 1L", price: 3.50, img: "img/produtos/aguasanitaria.avif" },
-                { id: "LP04", name: "Amaciante 2L", price: 10.00, img: "img/produtos/amaciante.avif" },
-                { id: "LP05", name: "Desinfetante 2L", price: 7.50, img: "img/produtos/desinfetante.avif" }
-            ],
-            "Higiene Pessoal": [
-                { id: "HG01", name: "Papel Higiênico (4 rolos)", price: 6.00, img: "img/produtos/papelhigienico.avif" },
-                { id: "HG02", name: "Creme Dental 90g", price: 3.00, img: "img/produtos/cremedental.avif" },
-                { id: "HG03", name: "Sabonete 85g", price: 2.00, img: "img/produtos/sabonete.avif" },
-                { id: "HG04", name: "Shampoo 325ml", price: 9.00, img: "img/produtos/shampoo.avif" },
-                { id: "HG05", name: "Condicionador 325ml", price: 10.00, img: "img/produtos/condicionador.avif" }
-            ],
-            "Utilitários": [
-                { id: "UT01", name: "Esponja de Aço", price: 2.50, img: "img/produtos/esponjaaco.avif" },
-                { id: "UT02", name: "Esponja de Louça", price: 1.50, img: "img/produtos/esponjalouca.avif" },
-                { id: "UT03", name: "Fósforo (maço)", price: 3.00, img: "img/produtos/fosforo.avif" },
-                { id: "UT04", name: "Vela (pacote)", price: 5.00, img: "img/produtos/vela.avif" },
-                { id: "UT05", name: "Saco de Lixo 50L", price: 8.00, img: "img/produtos/sacolixo.avif" }
-            ],
-             "Bebidas e Outros": [
-                { id: "BB01", name: "Suco em Pó", price: 1.50, img: "img/produtos/sucopo.avif" },
-                { id: "BB02", name: "Achocolatado 400g", price: 7.00, img: "img/produtos/achocolatado.avif" },
-                { id: "BB03", name: "Leite UHT 1L", price: 5.50, img: "img/produtos/leite.avif" },
-                { id: "BB04", name: "Biscoito Recheado", price: 3.50, img: "img/produtos/biscoito.avif" },
-                { id: "BB05", name: "Mistura para Bolo", price: 6.00, img: "img/produtos/misturabolo.avif" }
-            ]
-        };
-
+        // JS Simplificado e Leve (Apenas para Variação de Arroz) - ORIGINAL
         const DB = {
             baskets: {
               'GRANDE': {
@@ -626,246 +842,16 @@
         };
 
         const App = {
-            state: { 
-                phone: "5565998150975",
-                customCart: {} // Armazena { 'ID_PRODUTO': QUANTIDADE }
-            },
+            state: { phone: "5565998150975" },
 
-            async init() {
-                // Tenta carregar do arquivo externo (produtos.json)
-                // Se falhar (ex: no preview), usa o CATALOGO_JSON de backup definido acima
-                try {
-                    const response = await fetch('produtos.json');
-                    if (response.ok) {
-                        const data = await response.json();
-                        CATALOGO_JSON = data;
-                        console.log("Produtos carregados de produtos.json");
-                    }
-                } catch (error) {
-                    console.warn("Não foi possível carregar produtos.json (usando dados de backup):", error);
-                }
-                
-                // Pré-renderiza se necessário ou espera o clique na aba
-                // this.renderCustomSection(); 
-            },
-
-            // --- Lógica de Abas ---
-            switchTab(tab) {
-                const btnReady = document.getElementById('tab-ready');
-                const btnCustom = document.getElementById('tab-custom');
-                const viewReady = document.getElementById('view-ready-baskets');
-                const viewCustom = document.getElementById('view-custom-basket');
-                const pageTitle = document.getElementById('page-title');
-                const bottomBar = document.getElementById('custom-bottom-bar');
-
-                if (tab === 'ready') {
-                    btnReady.classList.add('active');
-                    btnCustom.classList.remove('active');
-                    viewReady.style.display = 'block';
-                    viewCustom.style.display = 'none';
-                    pageTitle.innerText = "Cestas Básicas em Cuiabá e VG";
-                    bottomBar.classList.remove('visible'); // Esconde barra na aba pronta
-                } else {
-                    btnReady.classList.remove('active');
-                    btnCustom.classList.add('active');
-                    viewReady.style.display = 'none';
-                    viewCustom.style.display = 'block';
-                    pageTitle.innerText = "Monte a Sua Cesta";
-                    
-                    // Renderiza se estiver vazio
-                    if (document.getElementById('custom-products-grid').innerHTML.trim() === "") {
-                        this.renderCustomSection();
-                    }
-                    this.updateBottomBar(); // Mostra barra se tiver itens
-                }
-            },
-
-            // --- Lógica Monte Sua Cesta ---
-            renderCustomSection() {
-                const container = document.getElementById('custom-products-grid');
-                let html = '';
-
-                // Loop pelas categorias do JSON
-                for (const [category, products] of Object.entries(CATALOGO_JSON)) {
-                    // Título da Categoria
-                    html += `<h3 class="category-title">${category}</h3>`;
-
-                    // Produtos da Categoria
-                    products.forEach(p => {
-                        // Imagem Fallback (para não quebrar no preview)
-                        // Tenta usar a primeira imagem do array OU a string antiga (compatibilidade)
-                        let imgUrl = "";
-                        if (Array.isArray(p.images) && p.images.length > 0) {
-                            imgUrl = p.images[0];
-                        } else if (p.img) {
-                            imgUrl = p.img;
-                        } else {
-                             // Fallback visual
-                             imgUrl = "https://placehold.co/300x300/e2e8f0/1e293b?text=" + encodeURIComponent(p.name);
-                        }
-
-                        // Verifica se é URL relativa e tenta carregar placeholder se falhar (apenas visual no preview)
-                        // Em produção, isso usará a imagem real
-                        
-                        html += `
-                        <article class="card">
-                            <div class="basket-img-wrapper">
-                                <img src="${imgUrl}" alt="${p.name}" width="300" height="300" style="width: 100%; height: 100%; object-fit: cover;">
-                            </div>
-                            <h2 style="font-size: 1rem; margin-bottom: 5px;">${p.name}</h2>
-                            <p style="font-weight: 800; color: #15803d;">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
-                            
-                            <div class="qty-controls">
-                                <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)">-</button>
-                                <input id="qty-${p.id}" class="qty-input" type="text" value="0" readonly>
-                                <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)">+</button>
-                            </div>
-                        </article>
-                        `;
-                    });
-                }
-                container.innerHTML = html;
-            },
-
-            changeQty(id, delta) {
-                const currentQty = this.state.customCart[id] || 0;
-                let newQty = currentQty + delta;
-                if (newQty < 0) newQty = 0;
-
-                if (newQty === 0) {
-                    delete this.state.customCart[id];
-                } else {
-                    this.state.customCart[id] = newQty;
-                }
-
-                // Atualiza UI do input
-                const input = document.getElementById(`qty-${id}`);
-                if (input) input.value = newQty;
-
-                this.updateBottomBar();
-            },
-
-            calculateCustomTotal() {
-                let total = 0;
-                for (const [id, qty] of Object.entries(this.state.customCart)) {
-                    // Busca produto em todas as categorias
-                    let product = null;
-                    for (const cat in CATALOGO_JSON) {
-                        const found = CATALOGO_JSON[cat].find(p => p.id === id);
-                        if (found) { product = found; break; }
-                    }
-                    if (product) {
-                        total += product.price * qty;
-                    }
-                }
-                return total;
-            },
-
-            updateBottomBar() {
-                const total = this.calculateCustomTotal();
-                const bottomBar = document.getElementById('custom-bottom-bar');
-                const priceEl = document.getElementById('custom-total-price');
-                const shipEl = document.getElementById('custom-shipping-msg');
-
-                if (total > 0) {
-                    bottomBar.classList.add('visible');
-                    priceEl.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-                    
-                    if (total >= 85) {
-                        shipEl.innerText = "Frete Grátis!";
-                        shipEl.style.color = "#15803d";
-                        shipEl.style.fontWeight = "bold";
-                    } else {
-                        const falta = 85 - total;
-                        shipEl.innerText = `+ R$ 15,00 de entrega (Faltam R$ ${falta.toFixed(2).replace('.', ',')} p/ grátis)`;
-                        shipEl.style.color = "#d97706";
-                    }
-                } else {
-                    bottomBar.classList.remove('visible');
-                }
-            },
-
-            openCustomCheckout() {
-                const cartList = document.getElementById('custom-cart-list');
-                const subtotalEl = document.getElementById('modal-subtotal');
-                const shippingEl = document.getElementById('modal-shipping');
-                const finalEl = document.getElementById('modal-final-total');
-                const alertFree = document.getElementById('modal-free-shipping-alert');
-                const alertPaid = document.getElementById('modal-paid-shipping-alert');
-                const valToFree = document.getElementById('val-to-free');
-
-                let html = '';
-                let subtotal = 0;
-
-                // Gera lista visual
-                for (const [id, qty] of Object.entries(this.state.customCart)) {
-                     let product = null;
-                    for (const cat in CATALOGO_JSON) {
-                        const found = CATALOGO_JSON[cat].find(p => p.id === id);
-                        if (found) { product = found; break; }
-                    }
-                    if (product) {
-                        const itemTotal = product.price * qty;
-                        subtotal += itemTotal;
-                        html += `
-                            <div class="cart-item">
-                                <span>${qty}x ${product.name}</span>
-                                <span>R$ ${itemTotal.toFixed(2).replace('.', ',')}</span>
-                            </div>
-                        `;
-                    }
-                }
-
-                cartList.innerHTML = html;
-
-                // Lógica de Frete
-                let shipping = 15.00;
-                if (subtotal >= 85) {
-                    shipping = 0.00;
-                    alertFree.style.display = 'block';
-                    alertPaid.style.display = 'none';
-                } else {
-                    alertFree.style.display = 'none';
-                    alertPaid.style.display = 'block';
-                    valToFree.innerText = `R$ ${(85 - subtotal).toFixed(2).replace('.', ',')}`;
-                }
-
-                subtotalEl.innerText = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-                shippingEl.innerText = shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2).replace('.', ',')}`;
-                finalEl.innerText = `R$ ${(subtotal + shipping).toFixed(2).replace('.', ',')}`;
-
-                document.getElementById('customCheckoutDialog').showModal();
-            },
-
-            sendCustomOrder() {
-                const total = this.calculateCustomTotal();
-                let msg = "Olá! Gostaria de fazer um pedido personalizado:\n\n";
-
-                for (const [id, qty] of Object.entries(this.state.customCart)) {
-                     let product = null;
-                    for (const cat in CATALOGO_JSON) {
-                        const found = CATALOGO_JSON[cat].find(p => p.id === id);
-                        if (found) { product = found; break; }
-                    }
-                    if (product) {
-                        msg += `${qty}x ${product.name}\n`;
-                    }
-                }
-
-                const shipping = total >= 85 ? 0 : 15;
-                msg += `\nSubtotal: R$ ${total.toFixed(2)}`;
-                msg += `\nFrete: ${shipping === 0 ? 'Grátis' : 'R$ 15,00'}`;
-                msg += `\n*TOTAL: R$ ${(total + shipping).toFixed(2)}*`;
-
-                window.open(`https://api.whatsapp.com/send?phone=${this.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
-                document.getElementById('customCheckoutDialog').close();
-            },
-
-            // --- Lógica Existente (Cestas Prontas) ---
             selectOption(basketId, idx) {
+                // Atualiza estado global
                 DB.baskets[basketId].opts.forEach((o, i) => o.sel = (i === idx));
+                
+                // Atualiza apenas a UI daquele card específico
                 const container = document.getElementById(`opt-container-${basketId}`);
                 if (!container) return;
+                
                 const basket = DB.baskets[basketId];
                 container.innerHTML = basket.opts.map((opt, i) => `
                     <div class="opt-item ${opt.sel ? 'selected' : ''}" onclick="App.selectOption('${basketId}', ${i})" role="button" tabindex="0">
@@ -882,6 +868,7 @@
                 const optsContainer = document.getElementById('modalOptions');
                 const confirmBtn = document.getElementById('modalConfirmBtn');
 
+                // Se só tiver uma opção (Econômica), já manda pro Zap direto
                 if (basket.opts.length === 1) {
                     const selectedOpt = basket.opts[0];
                     const msg = `Olá, gostaria de encomendar a ${basket.name} por ${selectedOpt.norm}.`;
@@ -890,6 +877,7 @@
                 }
 
                 title.innerText = basket.name;
+                
                 optsContainer.innerHTML = basket.opts.map((opt, idx) => `
                     <div class="opt-item ${opt.sel ? 'selected' : ''}" onclick="App.selectOption('${basketId}', ${idx}); App.openOrderModal('${basketId}')" style="cursor: pointer;">
                         <span>${opt.n}</span>
@@ -903,12 +891,239 @@
                     window.open(`https://api.whatsapp.com/send?phone=${this.state.phone}&text=${encodeURIComponent(msg)}`, '_blank');
                     dialog.close();
                 };
+
                 dialog.showModal();
             }
         };
 
-        // Inicializa o app (tentando carregar o JSON)
-        App.init();
+        /* =========================================
+           NOVA LÓGICA: MONTE SUA CESTA (JSON)
+           ========================================= */
+        const MonteCestaApp = {
+            products: [],
+            cart: {}, // { 'COD01': 2, 'COD02': 1 }
+            phone: "5565998150975",
+            isCustomMode: false, // Controla qual aba está ativa
+
+            // Fallback data (caso o fetch do JSON falhe em preview local)
+            fallbackData: [
+                { codigo: "ALM001", nome: "Arroz Tio Alvino 5kg", descricao: "Arroz agulhinha tipo 1.", preco: 28.50, categoria: "Alimentos Básicos", imagens: ["https://donaantonia.com.br/img/arroz-tio-alvino.jpg"] },
+                { codigo: "ALM002", nome: "Feijão Carioca 1kg", descricao: "Feijão novo.", preco: 8.90, categoria: "Alimentos Básicos", imagens: [] },
+                { codigo: "ALM003", nome: "Óleo de Soja 900ml", descricao: "Óleo refinado.", preco: 6.50, categoria: "Alimentos Básicos", imagens: [] },
+                { codigo: "LMP001", nome: "Sabão em Pó 800g", descricao: "Limpeza profunda.", preco: 7.50, categoria: "Limpeza", imagens: [] },
+                { codigo: "LMP002", nome: "Água Sanitária 1L", descricao: "Ação bactericida.", preco: 4.50, categoria: "Limpeza", imagens: [] }
+            ],
+
+            async init() {
+                const container = document.getElementById('custom-products-container');
+                try {
+                    const response = await fetch('produtos/produtos.json');
+                    if (!response.ok) throw new Error("Falha ao carregar JSON");
+                    this.products = await response.json();
+                } catch (error) {
+                    console.warn("Usando dados de fallback:", error);
+                    this.products = this.fallbackData;
+                }
+                this.renderCatalog();
+            },
+
+            toggleTab() {
+                this.isCustomMode = !this.isCustomMode;
+                const btn = document.getElementById('toggle-section-btn');
+                const mainSection = document.getElementById('main-content'); // Cestas Prontas
+                const customSection = document.getElementById('monte-sua-cesta'); // Monte sua Cesta
+                const stickyContent = document.querySelector('.product-grid'); // Cestas Prontas Grid
+
+                if (this.isCustomMode) {
+                    // Ativar "Monte sua Cesta"
+                    document.querySelector('#main-content > .product-grid').style.display = 'none'; // Esconde grid de prontas
+                    document.querySelector('#main-content > header').style.display = 'none'; // Esconde header de prontas
+                    customSection.style.display = 'block';
+                    
+                    btn.innerHTML = `<span>Ir para: <strong>Cestas Prontas</strong></span><span>📦</span>`;
+                    btn.classList.remove('btn-secondary');
+                    btn.classList.add('btn-primary');
+                } else {
+                    // Ativar "Cestas Prontas"
+                    document.querySelector('#main-content > .product-grid').style.display = 'grid';
+                    document.querySelector('#main-content > header').style.display = 'block';
+                    customSection.style.display = 'none';
+                    
+                    btn.innerHTML = `<span>Ir para: <strong>Monte sua Cesta</strong></span><span>🧺</span>`;
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
+                }
+            },
+
+            renderCatalog() {
+                const container = document.getElementById('custom-products-container');
+                container.innerHTML = "";
+
+                // Agrupar por categoria
+                const grouped = this.products.reduce((acc, prod) => {
+                    if (!acc[prod.categoria]) acc[prod.categoria] = [];
+                    acc[prod.categoria].push(prod);
+                    return acc;
+                }, {});
+
+                // Renderizar cada grupo
+                for (const [cat, items] of Object.entries(grouped)) {
+                    const groupDiv = document.createElement('div');
+                    groupDiv.className = 'category-group';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'category-title';
+                    title.innerText = cat;
+                    groupDiv.appendChild(title);
+
+                    const grid = document.createElement('div');
+                    grid.className = 'custom-grid';
+
+                    items.forEach(prod => {
+                        const hasImg = prod.imagens && prod.imagens.length > 0;
+                        const imgUrl = hasImg ? prod.imagens[0] : 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNmM2Y0ZjYiLz48dGV4dCB4PSI1MCIgeT0iNTAiIGZvbnQtZmFtaWx5PSJhcmlhbCIgZm9udC1zaXplPSIxMiIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPlNlbSBJbWFnZW08L3RleHQ+PC9zdmc+';
+                        
+                        grid.innerHTML += `
+                            <div class="custom-card">
+                                <img src="${imgUrl}" alt="${prod.nome}" class="custom-img" loading="lazy">
+                                <div class="custom-info">
+                                    <h3>${prod.nome}</h3>
+                                    <div class="custom-desc">${prod.descricao}</div>
+                                    <div class="custom-price">R$ ${prod.preco.toFixed(2).replace('.', ',')}</div>
+                                </div>
+                                
+                                <div id="controls-${prod.codigo}">
+                                    <button class="btn-add-cart" onclick="MonteCestaApp.updateCart('${prod.codigo}', 1)">
+                                        Adicionar na Sacola
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    groupDiv.appendChild(grid);
+                    container.appendChild(groupDiv);
+                }
+            },
+
+            updateCart(code, change) {
+                if (!this.cart[code]) this.cart[code] = 0;
+                this.cart[code] += change;
+
+                if (this.cart[code] <= 0) {
+                    delete this.cart[code];
+                }
+                
+                this.refreshUI(code);
+                this.updateStickyFooter();
+            },
+
+            refreshUI(code) {
+                const controls = document.getElementById(`controls-${code}`);
+                const qty = this.cart[code] || 0;
+
+                if (qty === 0) {
+                    controls.innerHTML = `
+                        <button class="btn-add-cart" onclick="MonteCestaApp.updateCart('${code}', 1)">
+                            Adicionar na Sacola
+                        </button>
+                    `;
+                } else {
+                    controls.innerHTML = `
+                        <div class="qty-control">
+                            <button class="qty-btn" onclick="MonteCestaApp.updateCart('${code}', -1)">-</button>
+                            <span class="qty-val">${qty}</span>
+                            <button class="qty-btn" onclick="MonteCestaApp.updateCart('${code}', 1)">+</button>
+                        </div>
+                    `;
+                }
+            },
+
+            calculateTotals() {
+                let subtotal = 0;
+                const items = [];
+
+                for (const [code, qty] of Object.entries(this.cart)) {
+                    const prod = this.products.find(p => p.codigo === code);
+                    if (prod) {
+                        const totalItem = prod.preco * qty;
+                        subtotal += totalItem;
+                        items.push({ ...prod, qty, totalItem });
+                    }
+                }
+
+                const delivery = subtotal >= 85 ? 0 : 15;
+                const total = subtotal + delivery;
+
+                return { subtotal, delivery, total, items };
+            },
+
+            updateStickyFooter() {
+                const { subtotal, total, items } = this.calculateTotals();
+                const footer = document.getElementById('sticky-cart-footer');
+                const totalEl = document.getElementById('sticky-total');
+
+                if (items.length > 0) {
+                    footer.style.display = 'flex';
+                    totalEl.innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+                } else {
+                    footer.style.display = 'none';
+                }
+            },
+
+            openCartModal() {
+                const { subtotal, delivery, total, items } = this.calculateTotals();
+                const listEl = document.getElementById('modal-cart-items');
+                const modal = document.getElementById('customCartModal');
+
+                listEl.innerHTML = items.map(item => `
+                    <div class="cart-row">
+                        <div class="cart-row-name">
+                            ${item.qty}x ${item.nome}
+                            <div style="font-size:0.75em; color:#888;">Cod: ${item.codigo}</div>
+                        </div>
+                        <div class="cart-row-total">R$ ${item.totalItem.toFixed(2).replace('.', ',')}</div>
+                    </div>
+                `).join('');
+
+                document.getElementById('modal-subtotal').innerText = 'R$ ' + subtotal.toFixed(2).replace('.', ',');
+                document.getElementById('modal-delivery').innerText = 'R$ ' + delivery.toFixed(2).replace('.', ',');
+                
+                const deliveryMsg = document.getElementById('delivery-msg');
+                if (delivery === 0) {
+                    deliveryMsg.innerText = "Entrega Grátis aplicada!";
+                    deliveryMsg.style.color = "#166534";
+                } else {
+                    const falta = 85 - subtotal;
+                    deliveryMsg.innerText = `Faltam R$ ${falta.toFixed(2).replace('.', ',')} para entrega grátis.`;
+                    deliveryMsg.style.color = "#ea580c";
+                }
+
+                document.getElementById('modal-final-total').innerText = 'R$ ' + total.toFixed(2).replace('.', ',');
+                modal.showModal();
+            },
+
+            sendToWhatsapp() {
+                const { subtotal, delivery, total, items } = this.calculateTotals();
+                
+                let text = "*PEDIDO PERSONALIZADO - DONA ANTÔNIA*\n\n";
+                text += "--------------------------------\n";
+                items.forEach(item => {
+                    text += `[${item.codigo}] ${item.nome} (x${item.qty})\n`;
+                });
+                text += "--------------------------------\n";
+                text += `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
+                text += `Taxa de Entrega: R$ ${delivery.toFixed(2).replace('.', ',')}\n`;
+                text += `*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*\n`;
+                
+                window.open(`https://api.whatsapp.com/send?phone=${this.phone}&text=${encodeURIComponent(text)}`, '_blank');
+            }
+        };
+
+        // Inicia a aplicação da cesta personalizada ao carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            MonteCestaApp.init();
+        });
 
         // Facebook Pixel (Delayed)
         setTimeout(function(){
