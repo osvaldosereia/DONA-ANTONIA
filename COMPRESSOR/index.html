@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compressor e Conversor AVIF</title>
+    <!-- Usando Tailwind CSS para estilização rápida e bonita -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ícones -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+
+    <div class="max-w-3xl mx-auto p-6">
+        <!-- Cabeçalho -->
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-600 mb-2">Conversor AVIF Pro para Web</h1>
+            <p class="text-gray-600">Smart Crop • 400x400px • <span class="text-red-500 font-bold">Garantia de 30KB</span></p>
+        </header>
+
+        <!-- Área de Upload -->
+        <div class="bg-white p-8 rounded-xl shadow-md border-2 border-dashed border-indigo-200 hover:border-indigo-400 transition-colors text-center" id="drop-zone">
+            <i data-lucide="upload-cloud" class="w-16 h-16 mx-auto text-indigo-400 mb-4"></i>
+            <label for="file-input" class="cursor-pointer">
+                <span class="bg-indigo-600 text-white px-6 py-2 rounded-full font-medium hover:bg-indigo-700 transition">Selecionar Imagens</span>
+                <input type="file" id="file-input" class="hidden" accept="image/*" multiple>
+            </label>
+            <p class="mt-4 text-sm text-gray-500">Ou arraste e solte seus arquivos aqui</p>
+        </div>
+
+        <!-- Opções -->
+        <div class="mt-6 flex justify-center space-x-6 text-sm text-gray-600">
+             <div class="flex items-center">
+                <input type="checkbox" id="keep-ratio" class="mr-2 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" checked>
+                <label for="keep-ratio" class="font-medium">Cortar para preencher (Smart Crop)</label>
+            </div>
+        </div>
+        <p class="text-xs text-center text-gray-400 mt-2">Desmarque para "espremer" a imagem (não recomendado)</p>
+
+
+        <!-- Área de Resultados -->
+        <div id="results-area" class="mt-8 space-y-4 hidden">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="text-xl font-semibold">Imagens Otimizadas</h2>
+                <span id="status-counter" class="text-sm text-gray-500"></span>
+            </div>
+            <div id="image-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- As imagens geradas aparecerão aqui -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Inicializa ícones
+        lucide.createIcons();
+
+        const fileInput = document.getElementById('file-input');
+        const imageList = document.getElementById('image-list');
+        const resultsArea = document.getElementById('results-area');
+        const dropZone = document.getElementById('drop-zone');
+        const statusCounter = document.getElementById('status-counter');
+        const keepRatioCheckbox = document.getElementById('keep-ratio');
+
+        // Configurações Alvo - ATUALIZADO PARA 400x400
+        const TARGET_WIDTH = 400;
+        const TARGET_HEIGHT = 400;
+        const MAX_SIZE_BYTES = 30 * 1024; // 30KB
+        
+        // Prioridade de formatos: Tenta AVIF, se falhar tenta WebP, se falhar tenta JPEG
+        const PREFERRED_FORMATS = ['image/avif', 'image/webp', 'image/jpeg'];
+
+        // Escutar seleção de arquivos
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Drag and Drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('border-indigo-600', 'bg-indigo-50');
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('border-indigo-600', 'bg-indigo-50');
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('border-indigo-600', 'bg-indigo-50');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        async function handleFiles(files) {
+            if (files.length > 0) {
+                resultsArea.classList.remove('hidden');
+            }
+
+            const filesArray = Array.from(files);
+            let processedCount = 0;
+            statusCounter.textContent = `Processando 0 de ${filesArray.length}...`;
+
+            for (const file of filesArray) {
+                if (!file.type.startsWith('image/')) continue;
+                
+                try {
+                    await processSingleImageModern(file);
+                } catch (err) {
+                    console.error("Erro ao processar imagem:", err);
+                }
+                
+                processedCount++;
+                statusCounter.textContent = `Processando ${processedCount} de ${filesArray.length}...`;
+            }
+            statusCounter.textContent = `Concluído: ${processedCount} imagens.`;
+        }
+
+        async function processSingleImageModern(file) {
+            let bitmap;
+            try {
+                bitmap = await createImageBitmap(file);
+            } catch (e) {
+                console.error("Erro ao criar bitmap", e);
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = TARGET_WIDTH;
+            canvas.height = TARGET_HEIGHT;
+            const ctx = canvas.getContext('2d');
+            
+            // Smart Crop
+            if (keepRatioCheckbox.checked) {
+                const ratio = Math.max(TARGET_WIDTH / bitmap.width, TARGET_HEIGHT / bitmap.height);
+                const x = (TARGET_WIDTH - bitmap.width * ratio) / 2;
+                const y = (TARGET_HEIGHT - bitmap.height * ratio) / 2;
+                ctx.drawImage(bitmap, 0, 0, bitmap.width, bitmap.height, x, y, bitmap.width * ratio, bitmap.height * ratio);
+            } else {
+                ctx.drawImage(bitmap, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
+            }
+            
+            bitmap.close(); 
+
+            // Tenta comprimir verificando suporte real do navegador
+            await compressWithFormatCheck(canvas, file.name);
+        }
+
+        async function compressWithFormatCheck(canvas, originalName) {
+            // Tenta formatos na ordem de preferência
+            for (const format of PREFERRED_FORMATS) {
+                // Teste rápido para ver se o navegador suporta o formato
+                const testBlob = await new Promise(resolve => canvas.toBlob(resolve, format, 0.9));
+                
+                // Se o navegador retornar PNG, significa que ele NÃO suporta a escrita do formato pedido
+                // (a menos que tenhamos pedido png, mas não pedimos)
+                if (testBlob && testBlob.type === format) {
+                    // Navegador suporta! Vamos fazer a busca binária neste formato.
+                    await compressWithBinarySearch(canvas, originalName, format);
+                    return;
+                }
+            }
+            // Se tudo falhar, o código provavelmente cairá aqui se o navegador só suportar PNG
+            alert("Seu navegador não suporta compressão moderna (AVIF/WebP/JPEG). Atualize seu navegador.");
+        }
+
+        async function compressWithBinarySearch(canvas, originalName, format) {
+            let minQ = 0.0;
+            let maxQ = 1.0;
+            let bestBlob = null;
+            let bestQuality = 0;
+            
+            const iterations = 6; 
+
+            for (let i = 0; i < iterations; i++) {
+                const midQ = (minQ + maxQ) / 2;
+                const blob = await new Promise(resolve => canvas.toBlob(resolve, format, midQ));
+
+                if (blob.size <= MAX_SIZE_BYTES) {
+                    bestBlob = blob;
+                    bestQuality = midQ;
+                    minQ = midQ; // Tenta melhorar qualidade
+                } else {
+                    maxQ = midQ; // Reduz qualidade
+                }
+            }
+
+            // Fallback final se mesmo com qualidade baixa não atingiu o tamanho
+            if (!bestBlob) {
+                 bestBlob = await new Promise(resolve => canvas.toBlob(resolve, format, 0.1));
+                 bestQuality = 0.1;
+            }
+
+            displayResult(bestBlob, originalName, bestQuality, format);
+        }
+
+        function displayResult(blob, originalName, finalQuality, format) {
+            const url = URL.createObjectURL(blob);
+            const sizeKB = (blob.size / 1024).toFixed(2);
+            
+            // Extensão correta baseada no formato real gerado
+            let ext = format.split('/')[1];
+            if(ext === 'jpeg') ext = 'jpg';
+            
+            const newName = originalName.split('.').slice(0, -1).join('.') + '.' + ext;
+
+            const card = document.createElement('div');
+            card.className = "bg-white p-4 rounded-lg shadow border flex items-center space-x-4 animate-fade-in";
+            
+            const sizeColorClass = blob.size > MAX_SIZE_BYTES ? 'text-red-500' : 'text-green-600';
+            
+            // Adiciona aviso visual se o formato não for AVIF
+            const formatBadge = ext === 'avif' 
+                ? '<span class="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded ml-2">AVIF</span>'
+                : `<span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-0.5 rounded ml-2">${ext.toUpperCase()} (Fallback)</span>`;
+
+            card.innerHTML = `
+                <div class="flex-shrink-0">
+                    <img src="${url}" class="w-20 h-20 object-cover rounded bg-gray-100 border" alt="Preview">
+                </div>
+                <div class="flex-grow min-w-0">
+                    <div class="flex items-center">
+                        <p class="text-sm font-medium text-gray-900 truncate">${newName}</p>
+                        ${formatBadge}
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Tamanho: <span class="${sizeColorClass} font-bold">${sizeKB} KB</span></p>
+                    <p class="text-xs text-gray-400">Qualidade: ${(finalQuality * 100).toFixed(0)}%</p>
+                </div>
+                <div class="flex-shrink-0">
+                    <a href="${url}" download="${newName}" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <i data-lucide="download" class="w-4 h-4 mr-1"></i> Baixar
+                    </a>
+                </div>
+            `;
+            
+            imageList.appendChild(card);
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
