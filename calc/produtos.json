@@ -1,0 +1,237 @@
+{
+  "Alimentos Básicos": [
+    {
+      "id": "ALI001",
+      "code": "1001",
+      "name": "Arroz Tio Alvino 5kg",
+      "description": "Arroz agulhinha tipo 1, soltinho e saboroso.",
+      "price": 28.00,
+      "images": ["img/produtos/arroztioalvino.avif"],
+      "video": null
+    },
+    {
+      "id": "ALI002",
+      "code": "1002",
+      "name": "Feijão Carioca 1kg",
+      "description": "Feijão novo, caldo grosso e rico em ferro.",
+      "price": 8.50,
+      "images": ["img/produtos/feijaocarioca.avif"],
+      "video": null
+    },
+    {
+      "id": "ALI003",
+      "code": "1003",
+      "name": "Óleo de Soja 900ml",
+      "description": "Óleo de soja refinado, ideal para frituras e cozimento.",
+      "price": 6.00,
+      "images": ["img/produtos/oleosoja.avif"],
+      "video": null
+    },
+    {
+      "id": "ALI004",
+      "code": "1004",
+      "name": "Açúcar Cristal 2kg",
+      "description": "Açúcar cristal branco, adoça na medida certa.",
+      "price": 9.00,
+      "images": ["img/produtos/acucar.avif"],
+      "video": null
+    },
+    {
+      "id": "ALI005",
+      "code": "1005",
+      "name": "Café em Pó 250g",
+      "description": "Café torrado e moído, aroma intenso e sabor marcante.",
+      "price": 12.00,
+      "images": ["img/produtos/cafe.avif"],
+      "video": null
+    }
+  ],
+  "Limpeza": [
+    {
+      "id": "LMP001",
+      "code": "2001",
+      "name": "Sabão em Pó 800g",
+      "description": "Remove manchas e deixa as roupas perfumadas.",
+      "price": 8.00,
+      "images": ["img/produtos/sabaopo.avif"],
+      "video": null
+    },
+    {
+      "id": "LMP002",
+      "code": "2002",
+      "name": "Detergente Líquido 500ml",
+      "description": "Alto poder desengordurante para suas louças.",
+      "price": 2.50,
+      "images": ["img/produtos/detergente.avif"],
+      "video": null
+    },
+    {
+      "id": "LMP003",
+      "code": "2003",
+      "name": "Água Sanitária 1L",
+      "description": "Ideal para desinfetar banheiros e clarear roupas.",
+      "price": 3.50,
+      "images": ["img/produtos/aguasanitaria.avif"],
+      "video": null
+    },
+    {
+      "id": "LMP004",
+      "code": "2004",
+      "name": "Amaciante 2L",
+      "description": "Deixa suas roupas macias e com perfume duradouro.",
+      "price": 10.00,
+      "images": ["img/produtos/amaciante.avif"],
+      "video": null
+    },
+    {
+      "id": "LMP005",
+      "code": "2005",
+      "name": "Desinfetante 2L",
+      "description": "Limpeza perfumada para toda a casa.",
+      "price": 5.00,
+      "images": ["img/produtos/desinfetante.avif"],
+      "video": null
+    }
+  ],
+  "Higiene Pessoal": [
+    {
+      "id": "HIG001",
+      "code": "3001",
+      "name": "Papel Higiênico (4 rolos)",
+      "description": "Folha dupla, macio e absorvente.",
+      "price": 6.00,
+      "images": ["img/produtos/papelhigienico.avif"],
+      "video": null
+    },
+    {
+      "id": "HIG002",
+      "code": "3002",
+      "name": "Creme Dental 90g",
+      "description": "Proteção anticáries e hálito fresco.",
+      "price": 3.00,
+      "images": ["img/produtos/cremedental.avif"],
+      "video": null
+    },
+    {
+      "id": "HIG003",
+      "code": "3003",
+      "name": "Sabonete 85g",
+      "description": "Limpeza suave e hidratação para a pele.",
+      "price": 2.00,
+      "images": ["img/produtos/sabonete.avif"],
+      "video": null
+    },
+    {
+      "id": "HIG004",
+      "code": "3004",
+      "name": "Shampoo 350ml",
+      "description": "Para todos os tipos de cabelo.",
+      "price": 7.50,
+      "images": ["img/produtos/shampoo.avif"],
+      "video": null
+    },
+    {
+      "id": "HIG005",
+      "code": "3005",
+      "name": "Condicionador 350ml",
+      "description": "Desembaraça e dá brilho aos fios.",
+      "price": 8.00,
+      "images": ["img/produtos/condicionador.avif"],
+      "video": null
+    }
+  ],
+  "Bebidas": [
+    {
+      "id": "BEB001",
+      "code": "4001",
+      "name": "Suco em Pó (Pct)",
+      "description": "Rende 1 litro, diversos sabores.",
+      "price": 1.00,
+      "images": ["img/produtos/sucopo.avif"],
+      "video": null
+    },
+    {
+      "id": "BEB002",
+      "code": "4002",
+      "name": "Refrigerante 2L",
+      "description": "Sabor Cola ou Guaraná.",
+      "price": 7.00,
+      "images": ["img/produtos/refrigerante.avif"],
+      "video": null
+    },
+    {
+      "id": "BEB003",
+      "code": "4003",
+      "name": "Achocolatado 400g",
+      "description": "Delicioso para o café da manhã.",
+      "price": 6.50,
+      "images": ["img/produtos/achocolatado.avif"],
+      "video": null
+    },
+    {
+      "id": "BEB004",
+      "code": "4004",
+      "name": "Água Mineral 500ml",
+      "description": "Água sem gás, pura e leve.",
+      "price": 2.00,
+      "images": ["img/produtos/aguamineral.avif"],
+      "video": null
+    },
+    {
+      "id": "BEB005",
+      "code": "4005",
+      "name": "Chá Mate (Caixa)",
+      "description": "Para preparo quente ou gelado.",
+      "price": 4.50,
+      "images": ["img/produtos/cha.avif"],
+      "video": null
+    }
+  ],
+  "Hortifruti": [
+    {
+      "id": "HRT001",
+      "code": "5001",
+      "name": "Batata (kg)",
+      "description": "Batata inglesa selecionada.",
+      "price": 6.00,
+      "images": ["img/produtos/batata.avif"],
+      "video": null
+    },
+    {
+      "id": "HRT002",
+      "code": "5002",
+      "name": "Cebola (kg)",
+      "description": "Cebola nacional de ótima qualidade.",
+      "price": 5.00,
+      "images": ["img/produtos/cebola.avif"],
+      "video": null
+    },
+    {
+      "id": "HRT003",
+      "code": "5003",
+      "name": "Cartela de Ovos (30un)",
+      "description": "Ovos brancos grandes.",
+      "price": 22.00,
+      "images": ["img/produtos/ovos.avif"],
+      "video": null
+    },
+    {
+      "id": "HRT004",
+      "code": "5004",
+      "name": "Tomate (kg)",
+      "description": "Tomate longa vida maduro.",
+      "price": 7.00,
+      "images": ["img/produtos/tomate.avif"],
+      "video": null
+    },
+    {
+      "id": "HRT005",
+      "code": "5005",
+      "name": "Alho (200g)",
+      "description": "Alho roxo descascado ou em cabeças.",
+      "price": 5.00,
+      "images": ["img/produtos/alho.avif"],
+      "video": null
+    }
+  ]
+}
