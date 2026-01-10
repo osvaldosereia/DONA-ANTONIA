@@ -899,7 +899,10 @@
                 a.click();
             },
             exportProducts: () => {
-                const data = DB.load().produto;
+                const data = DB.load().produto.map(p => ({
+                    ...p,
+                    imagem: p.imagem || `img/produtos/${p.codigo.toLowerCase()}.webp`
+                }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1626,6 +1629,15 @@
 
                     const vEans = document.getElementById('p-variacoesEan').value;
                     data.variacoesEan = vEans ? vEans.split('|').map(s => s.trim()).filter(Boolean) : [];
+
+                    // Ensure code exists for new products to generate image path
+                    if (!data.id && !data.codigo) {
+                         data.codigo = DB.nextCode('P');
+                    }
+                    // Set image path automatically
+                    if (data.codigo) {
+                        data.imagem = `img/produtos/${data.codigo.toLowerCase()}.webp`;
+                    }
                 }
                 
                 DB.save(type, data);
