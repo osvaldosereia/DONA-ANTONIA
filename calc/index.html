@@ -4,7 +4,7 @@
     <!-- 
         ================================================================
         SEO ARCHITECT REPORT: 100/100 PERFECT SCORE
-        - Update: Botão "Monte sua Cesta" no Header (Desktop)
+        - Update: Botões de navegação divididos (Lado a Lado)
         - Update: Menu Mobile Sticky com Categorias Dinâmicas
         - Update: Persistência de Estado (LocalStorage)
         - Core: Conteúdo original preservado integralmente
@@ -127,8 +127,8 @@
             body.mobile-scroll-active #main-header { transform: translateY(-100%); }
             body.mobile-scroll-active #mobile-sticky-controls { top: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
             
-            /* Esconde botão desktop no mobile */
-            .btn-toggle-desktop { display: none !important; }
+            /* Esconde botões desktop no mobile */
+            .nav-group-desktop { display: none !important; }
         }
 
         /* DESKTOP */
@@ -197,8 +197,9 @@
            NOVOS ESTILOS (ADD-ON) - MONTE SUA CESTA & NAV INTELIGENTE
            ========================================================= */
         
-        /* Botão Toggle no Desktop */
-        .btn-toggle-desktop { background: #eff6ff; color: var(--brand-blue); border: 1px solid #bfdbfe; margin-right: 12px; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; font-size: 0.85rem; }
+        /* Grupo de Botões Desktop */
+        .nav-group-desktop { display: flex; gap: 8px; margin-right: 15px; }
+        .btn-toggle-desktop { background: #eff6ff; color: var(--brand-blue); border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; font-size: 0.85rem; }
         .btn-toggle-desktop:hover { background: #dbeafe; transform: translateY(-1px); }
         .btn-toggle-desktop.active { background: var(--brand-blue); color: white; border-color: var(--brand-blue); }
 
@@ -214,8 +215,10 @@
         }
         
         .mobile-btn-row { display: flex; gap: 10px; flex-direction: column; }
+        .nav-group-mobile { display: flex; gap: 10px; width: 100%; }
+        
         .btn-toggle-mobile {
-            width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.9rem; cursor: pointer;
+            flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; border-radius: 8px; border: 1px solid var(--border); background: #f9fafb; font-weight: 600; color: #374151; font-size: 0.9rem; cursor: pointer; text-align: center;
         }
         .btn-toggle-mobile.active { background: #eff6ff; border-color: var(--brand-blue); color: var(--brand-blue); }
 
@@ -277,10 +280,12 @@
                 </div>
             </div>
             <nav style="display: flex; align-items: center;">
-                <!-- Botão Desktop (Injetado) -->
-                <button id="desk-toggle-btn" class="btn-toggle-desktop" onclick="MonteCestaApp.toggleTab()">
-                    <span>🧺 Monte sua Cesta</span>
-                </button>
+                <!-- Botões Desktop (Lado a Lado) -->
+                <div class="nav-group-desktop">
+                    <button id="btn-desk-prontas" class="btn-toggle-desktop active" onclick="MonteCestaApp.setMode(false, true)">📦 Prontas</button>
+                    <button id="btn-desk-monte" class="btn-toggle-desktop" onclick="MonteCestaApp.setMode(true, true)">🧺 Montar</button>
+                </div>
+                
                 <button onclick="document.getElementById('footer-contacts').scrollIntoView({behavior: 'smooth'})" class="btn-header" aria-label="Ir para contatos">Fale Conosco</button>
             </nav>
         </div>
@@ -289,10 +294,12 @@
     <!-- Controles Mobile (Novo elemento, fora do fluxo original) -->
     <div id="mobile-sticky-controls">
         <div class="mobile-btn-row">
-            <button id="mobile-toggle-btn" class="btn-toggle-mobile" onclick="MonteCestaApp.toggleTab()">
-                <span>Ir para: <strong>Monte sua Cesta</strong></span>
-                <span>🧺</span>
-            </button>
+            <!-- Botões Mobile (Lado a Lado) -->
+            <div class="nav-group-mobile">
+                <button id="btn-mob-prontas" class="btn-toggle-mobile active" onclick="MonteCestaApp.setMode(false, true)">📦 Cestas Prontas</button>
+                <button id="btn-mob-monte" class="btn-toggle-mobile" onclick="MonteCestaApp.setMode(true, true)">🧺 Monte sua Cesta</button>
+            </div>
+            
             <!-- Categorias (Injetado via JS) -->
             <div id="category-selector" class="category-scroll"></div>
         </div>
@@ -687,36 +694,45 @@
                 });
             },
 
-            toggleTab() {
-                this.setMode(!this.isCustomMode, true);
-            },
-
             setMode(isCustom, shouldScroll) {
                 this.isCustomMode = isCustom;
                 localStorage.setItem('donaantonia_mode', isCustom ? 'custom' : 'prontas');
 
                 const main = document.getElementById('cestas-prontas-view');
                 const custom = document.getElementById('monte-sua-cesta');
-                const btnDesk = document.getElementById('desk-toggle-btn');
-                const btnMob = document.getElementById('mobile-toggle-btn');
                 const catSelector = document.getElementById('category-selector');
 
+                // Buttons Desktop
+                const btnDeskProntas = document.getElementById('btn-desk-prontas');
+                const btnDeskMonte = document.getElementById('btn-desk-monte');
+                
+                // Buttons Mobile
+                const btnMobProntas = document.getElementById('btn-mob-prontas');
+                const btnMobMonte = document.getElementById('btn-mob-monte');
+
                 if (isCustom) {
+                    // Ativar "Monte sua Cesta"
                     main.style.display = 'none';
                     custom.style.display = 'block';
                     catSelector.style.display = 'flex';
-                    btnDesk.innerHTML = `<span>📦 Ver Cestas Prontas</span>`;
-                    btnDesk.classList.add('active');
-                    btnMob.innerHTML = `<span>Ir para: <strong>Cestas Prontas</strong></span><span>📦</span>`;
-                    btnMob.classList.add('active');
+                    
+                    // Update classes
+                    btnDeskProntas.classList.remove('active');
+                    btnDeskMonte.classList.add('active');
+                    btnMobProntas.classList.remove('active');
+                    btnMobMonte.classList.add('active');
+
                 } else {
+                    // Ativar "Cestas Prontas"
                     main.style.display = 'block';
                     custom.style.display = 'none';
                     catSelector.style.display = 'none';
-                    btnDesk.innerHTML = `<span>🧺 Monte sua Cesta</span>`;
-                    btnDesk.classList.remove('active');
-                    btnMob.innerHTML = `<span>Ir para: <strong>Monte sua Cesta</strong></span><span>🧺</span>`;
-                    btnMob.classList.remove('active');
+                    
+                    // Update classes
+                    btnDeskProntas.classList.add('active');
+                    btnDeskMonte.classList.remove('active');
+                    btnMobProntas.classList.add('active');
+                    btnMobMonte.classList.remove('active');
                 }
 
                 if (shouldScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
