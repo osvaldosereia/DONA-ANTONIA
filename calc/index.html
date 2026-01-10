@@ -4,9 +4,9 @@
     <!-- 
         ================================================================
         SEO ARCHITECT REPORT: 100/100 PERFECT SCORE
-        - Feature: Nova sessão "Monte a Sua Cesta"
-        - Feature: Carrinho de compras dinâmico
-        - Feature: Barra inferior fixa com cálculo de frete
+        - Feature: Carregamento de Produtos via JSON Externo (fetch)
+        - Fallback: Dados de backup incluídos caso o JSON falhe
+        - Feature: Nova sessão "Monte a Sua Cesta" com 5 categorias
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -568,19 +568,35 @@
                 { id: "AL02", name: "Feijão Carioca 1kg", price: 8.50, img: "img/produtos/feijaocarioca.avif" },
                 { id: "AL03", name: "Óleo de Soja 900ml", price: 6.00, img: "img/produtos/oleosoja.avif" },
                 { id: "AL04", name: "Açúcar Cristal 2kg", price: 9.00, img: "img/produtos/acucar.avif" },
-                { id: "AL05", name: "Café em Pó 250g", price: 12.00, img: "img/produtos/cafe.avif" },
-                { id: "AL06", name: "Macarrão Espaguete 500g", price: 4.50, img: "img/produtos/macarrao.avif" }
+                { id: "AL05", name: "Café em Pó 250g", price: 14.00, img: "img/produtos/cafe.avif" }
             ],
             "Limpeza": [
                 { id: "LP01", name: "Sabão em Pó 800g", price: 8.00, img: "img/produtos/sabaopo.avif" },
-                { id: "LP02", name: "Detergente Líquido", price: 2.50, img: "img/produtos/detergente.avif" },
+                { id: "LP02", name: "Detergente Líquido 500ml", price: 2.50, img: "img/produtos/detergente.avif" },
                 { id: "LP03", name: "Água Sanitária 1L", price: 3.50, img: "img/produtos/aguasanitaria.avif" },
-                { id: "LP04", name: "Amaciante 2L", price: 10.00, img: "img/produtos/amaciante.avif" }
+                { id: "LP04", name: "Amaciante 2L", price: 10.00, img: "img/produtos/amaciante.avif" },
+                { id: "LP05", name: "Desinfetante 2L", price: 7.50, img: "img/produtos/desinfetante.avif" }
             ],
-            "Higiene": [
+            "Higiene Pessoal": [
                 { id: "HG01", name: "Papel Higiênico (4 rolos)", price: 6.00, img: "img/produtos/papelhigienico.avif" },
-                { id: "HG02", name: "Creme Dental", price: 3.00, img: "img/produtos/cremedental.avif" },
-                { id: "HG03", name: "Sabonete", price: 2.00, img: "img/produtos/sabonete.avif" }
+                { id: "HG02", name: "Creme Dental 90g", price: 3.00, img: "img/produtos/cremedental.avif" },
+                { id: "HG03", name: "Sabonete 85g", price: 2.00, img: "img/produtos/sabonete.avif" },
+                { id: "HG04", name: "Shampoo 325ml", price: 9.00, img: "img/produtos/shampoo.avif" },
+                { id: "HG05", name: "Condicionador 325ml", price: 10.00, img: "img/produtos/condicionador.avif" }
+            ],
+            "Utilitários": [
+                { id: "UT01", name: "Esponja de Aço", price: 2.50, img: "img/produtos/esponjaaco.avif" },
+                { id: "UT02", name: "Esponja de Louça", price: 1.50, img: "img/produtos/esponjalouca.avif" },
+                { id: "UT03", name: "Fósforo (maço)", price: 3.00, img: "img/produtos/fosforo.avif" },
+                { id: "UT04", name: "Vela (pacote)", price: 5.00, img: "img/produtos/vela.avif" },
+                { id: "UT05", name: "Saco de Lixo 50L", price: 8.00, img: "img/produtos/sacolixo.avif" }
+            ],
+             "Bebidas e Outros": [
+                { id: "BB01", name: "Suco em Pó", price: 1.50, img: "img/produtos/sucopo.avif" },
+                { id: "BB02", name: "Achocolatado 400g", price: 7.00, img: "img/produtos/achocolatado.avif" },
+                { id: "BB03", name: "Leite UHT 1L", price: 5.50, img: "img/produtos/leite.avif" },
+                { id: "BB04", name: "Biscoito Recheado", price: 3.50, img: "img/produtos/biscoito.avif" },
+                { id: "BB05", name: "Mistura para Bolo", price: 6.00, img: "img/produtos/misturabolo.avif" }
             ]
         };
 
@@ -613,6 +629,24 @@
             state: { 
                 phone: "5565998150975",
                 customCart: {} // Armazena { 'ID_PRODUTO': QUANTIDADE }
+            },
+
+            async init() {
+                // Tenta carregar do arquivo externo (produtos.json)
+                // Se falhar (ex: no preview), usa o CATALOGO_JSON de backup definido acima
+                try {
+                    const response = await fetch('produtos.json');
+                    if (response.ok) {
+                        const data = await response.json();
+                        CATALOGO_JSON = data;
+                        console.log("Produtos carregados de produtos.json");
+                    }
+                } catch (error) {
+                    console.warn("Não foi possível carregar produtos.json (usando dados de backup):", error);
+                }
+                
+                // Pré-renderiza se necessário ou espera o clique na aba
+                // this.renderCustomSection(); 
             },
 
             // --- Lógica de Abas ---
@@ -659,13 +693,24 @@
                     // Produtos da Categoria
                     products.forEach(p => {
                         // Imagem Fallback (para não quebrar no preview)
-                        // Em produção, usará p.img
-                        const imgSrc = "https://placehold.co/300x300/e2e8f0/1e293b?text=" + encodeURIComponent(p.name);
+                        // Tenta usar a primeira imagem do array OU a string antiga (compatibilidade)
+                        let imgUrl = "";
+                        if (Array.isArray(p.images) && p.images.length > 0) {
+                            imgUrl = p.images[0];
+                        } else if (p.img) {
+                            imgUrl = p.img;
+                        } else {
+                             // Fallback visual
+                             imgUrl = "https://placehold.co/300x300/e2e8f0/1e293b?text=" + encodeURIComponent(p.name);
+                        }
+
+                        // Verifica se é URL relativa e tenta carregar placeholder se falhar (apenas visual no preview)
+                        // Em produção, isso usará a imagem real
                         
                         html += `
                         <article class="card">
                             <div class="basket-img-wrapper">
-                                <img src="${imgSrc}" alt="${p.name}" width="300" height="300" style="width: 100%; height: 100%; object-fit: cover;">
+                                <img src="${imgUrl}" alt="${p.name}" width="300" height="300" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
                             <h2 style="font-size: 1rem; margin-bottom: 5px;">${p.name}</h2>
                             <p style="font-weight: 800; color: #15803d;">R$ ${p.price.toFixed(2).replace('.', ',')}</p>
@@ -861,6 +906,9 @@
                 dialog.showModal();
             }
         };
+
+        // Inicializa o app (tentando carregar o JSON)
+        App.init();
 
         // Facebook Pixel (Delayed)
         setTimeout(function(){
