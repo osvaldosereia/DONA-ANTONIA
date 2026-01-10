@@ -408,7 +408,19 @@
                                             </label>
                                         </div>
                                         <div id="combo-area" style="display: none; background: var(--slate-50); padding: 10px; border-radius: 6px;">
-                                            <label>Adicionar Itens ([Qtd] Nome ou Código)</label>
+                                            <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;">
+                                                <div class="form-group" style="flex: 1;">
+                                                    <label>Selecionar Produto</label>
+                                                    <select id="p-combo-select" style="width: 100%;"></select>
+                                                </div>
+                                                <div class="form-group" style="width: 70px;">
+                                                    <label>Qtd</label>
+                                                    <input type="number" id="p-combo-qty" value="1" min="1" class="text-center">
+                                                </div>
+                                                <button type="button" onclick="ComboApp.addFromSelector()" class="btn btn-primary" style="height: 36px; margin-bottom: 1px;"><i class="fa-solid fa-plus"></i></button>
+                                            </div>
+                                            
+                                            <label>Ou colar lista ([Qtd] Nome ou Código)</label>
                                             <textarea id="p-combo-bulk" class="bulk-area" placeholder="[2] Sabão em Pó OMO&#10;[1] Esponja Assolan"></textarea>
                                             <button type="button" onclick="ComboApp.processBulk()" class="btn btn-ghost btn-block" style="border: 1px dashed var(--slate-300); margin-top: 5px;">Processar Lista</button>
                                             <div id="p-combo-list" class="item-list mt-2"></div>
@@ -621,19 +633,27 @@
             <div id="view-expedicao" class="view-section">
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); height: 100%; gap: 1px; background: var(--slate-300); border: 1px solid var(--slate-300); border-radius: 8px; overflow: hidden;">
                     <div style="background: var(--slate-50); display: flex; flex-direction: column;">
-                        <div style="background: var(--primary); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CX</div>
+                        <div style="background: var(--primary); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                            CX <button onclick="ExportEngine.exportRoute('CX')" class="btn btn-ghost" style="color: white; padding: 2px 6px; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-download"></i></button>
+                        </div>
                         <div id="col-CX" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
                     </div>
                     <div style="background: var(--slate-50); display: flex; flex-direction: column;">
-                        <div style="background: var(--success); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">VG</div>
+                        <div style="background: var(--success); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                            VG <button onclick="ExportEngine.exportRoute('VG')" class="btn btn-ghost" style="color: white; padding: 2px 6px; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-download"></i></button>
+                        </div>
                         <div id="col-VG" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
                     </div>
                     <div style="background: var(--slate-50); display: flex; flex-direction: column;">
-                        <div style="background: var(--warning); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CBA</div>
+                        <div style="background: var(--warning); color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                            CBA <button onclick="ExportEngine.exportRoute('CBA')" class="btn btn-ghost" style="color: white; padding: 2px 6px; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-download"></i></button>
+                        </div>
                         <div id="col-CBA" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
                     </div>
                     <div style="background: var(--slate-50); display: flex; flex-direction: column;">
-                        <div style="background: #7c3aed; color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase;">CPA</div>
+                        <div style="background: #7c3aed; color: white; font-weight: 700; padding: 0.75rem; text-align: center; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                            CPA <button onclick="ExportEngine.exportRoute('CPA')" class="btn btn-ghost" style="color: white; padding: 2px 6px; border: 1px solid rgba(255,255,255,0.3);"><i class="fa-solid fa-download"></i></button>
+                        </div>
                         <div id="col-CPA" style="flex: 1; padding: 0.75rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;"></div>
                     </div>
                 </div>
@@ -802,6 +822,7 @@
                     .text-right { text-align: right; }
                     .bold { font-weight: bold; }
                     .row { display: flex; justify-content: space-between; }
+                    .sub-item { font-size: 10px; color: #555; margin-left: 10px; }
                 </style></head><body>`);
                 
                 // Content
@@ -818,6 +839,15 @@
                 // Items
                 v.items.forEach(i => {
                      win.document.write(`<div>${i.qty}x ${i.nome}</div><div class="text-right">R$ ${(i.price * i.qty).toFixed(2)}</div>`);
+                     
+                     // Check if item is a combo and print sub-items
+                     const prod = db.produto.find(p => p.id === i.id);
+                     if (prod && prod.items && prod.items.length > 0) {
+                         prod.items.forEach(sub => {
+                             const subTotalQty = sub.qty * i.qty;
+                             win.document.write(`<div class="sub-item">↳ ${subTotalQty}x ${sub.nome}</div>`);
+                         });
+                     }
                 });
                 
                 win.document.write(`
@@ -829,6 +859,54 @@
                 win.document.write('</body></html>');
                 win.document.close();
                 win.print();
+            }
+        };
+
+        // --- EXPORT ENGINE (NEW) ---
+        const ExportEngine = {
+            exportAll: () => {
+                const data = DB.load();
+                const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `backup_sistema_v3_${Date.now()}.json`;
+                a.click();
+            },
+            exportRoute: (route) => {
+                const db = DB.load();
+                // Filter sales by route
+                const sales = db.venda.filter(v => v.rota === route);
+                
+                // Map to a richer structure including full client and item details
+                const exportData = sales.map(sale => {
+                    const client = db.cliente.find(c => c.id === sale.cliId);
+                    
+                    // Enrich items with full product details if needed, for now just basic + combo info
+                    const enrichedItems = sale.items.map(item => {
+                        const prod = db.produto.find(p => p.id === item.id);
+                        return {
+                            ...item,
+                            isCombo: !!(prod && prod.items && prod.items.length > 0),
+                            comboContents: (prod && prod.items && prod.items.length > 0) ? prod.items : []
+                        };
+                    });
+
+                    return {
+                        pedido: sale,
+                        cliente: client || { nome: 'Cliente Removido' },
+                        itensDetalhados: enrichedItems
+                    };
+                });
+
+                const blob = new Blob([JSON.stringify(exportData, null, 2)], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rota_${route}_${new Date().toISOString().slice(0,10)}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
             }
         };
 
@@ -1155,6 +1233,25 @@
                 });
                 ComboApp.renderList();
                 document.getElementById('p-combo-bulk').value = '';
+            },
+            addFromSelector: () => {
+                const prodId = document.getElementById('p-combo-select').value;
+                const qty = Number(document.getElementById('p-combo-qty').value);
+                if (!prodId || qty <= 0) return;
+                
+                const db = DB.load();
+                const prod = db.produto.find(p => p.id === prodId);
+                
+                if (prod) {
+                    ComboApp.comboItems.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty });
+                    ComboApp.renderList();
+                }
+            },
+            populateSelect: () => {
+                const db = DB.load();
+                const select = document.getElementById('p-combo-select');
+                select.innerHTML = '<option value="">Selecione...</option>' + 
+                    db.produto.sort((a,b) => a.nome.localeCompare(b.nome)).map(p => `<option value="${p.id}">${p.codigo} - ${p.nome}</option>`).join('');
             },
             renderList: () => {
                 const el = document.getElementById('p-combo-list');
@@ -1511,7 +1608,10 @@
                 btn.classList.add('active');
                 document.getElementById('page-title').innerText = view === 'logistica' ? 'Logística & Estoque' : view.charAt(0).toUpperCase() + view.slice(1);
                 
-                if(view === 'catalogo') Views.catalogo.render();
+                if(view === 'catalogo') {
+                    Views.catalogo.render();
+                    ComboApp.populateSelect();
+                }
                 if(view === 'cliente') Views.cliente.render();
                 if(view === 'logistica') {
                     const sel = document.getElementById('e-produto');
