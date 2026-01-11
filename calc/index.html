@@ -160,7 +160,8 @@
         .pm-gallery { 
             background: #000; flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
             min-height: 300px; 
-            touch-action: pan-y; /* Permite scroll se necessário, mas capturaremos swipes */
+            /* Importante: permite o gesto no container */
+            touch-action: pan-y; 
         }
         .pm-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.3s ease; }
         .pm-stage img, .pm-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
@@ -184,10 +185,14 @@
         /* DICA DE SWIPE */
         .swipe-hint {
             position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-            color: rgba(255,255,255,0.7); font-size: 0.8rem; pointer-events: none;
+            color: rgba(0,0,0,0.4); font-size: 0.8rem; pointer-events: none;
             display: flex; flex-direction: column; align-items: center; gap: 4px;
-            animation: bounce 2s infinite;
+            animation: bounce 2s infinite; font-weight: 500;
+            z-index: 20;
         }
+        /* Cor de texto diferente dentro da galeria escura */
+        .pm-gallery .swipe-hint { color: rgba(255,255,255,0.7); }
+        
         @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
         /* Informações do Produto */
@@ -371,6 +376,9 @@
                     this.setupDelegation('cart-body');
                     this.setupDelegation('product-modal');
                     
+                    // Inicializa listeners do modal de produto uma única vez
+                    ProductModal.init();
+
                     document.getElementById('search').addEventListener('input', (e) => {
                         this.renderCatalog(e.target.value.toLowerCase());
                     });
@@ -640,10 +648,23 @@
             init() {
                 this.modal = document.getElementById('product-modal');
                 this.content = document.getElementById('pm-content');
+                
+                // Configurar listener no container principal do modal
+                // Permite arrastar em qualquer lugar (imagem ou texto)
+                if(this.content) {
+                    this.content.addEventListener('touchstart', e => {
+                        this.touchStartY = e.changedTouches[0].screenY;
+                    }, {passive: true});
+                    
+                    this.content.addEventListener('touchend', e => {
+                        this.touchEndY = e.changedTouches[0].screenY;
+                        this.handleSwipe();
+                    }, {passive: true});
+                }
             },
 
             async open(productId, direction = 'fade') {
-                if(!this.modal) this.init();
+                // init já foi chamado no DOMContentLoaded via App.init()
                 
                 const product = App.data.find(p => p.id === productId);
                 if(!product) return;
@@ -685,18 +706,7 @@
                 
                 this.render(product, direction);
                 
-                // Setup swipe listeners
-                const gallery = document.querySelector('.pm-gallery');
-                if(gallery) {
-                    gallery.addEventListener('touchstart', e => {
-                        this.touchStartY = e.changedTouches[0].screenY;
-                    }, {passive: true});
-                    
-                    gallery.addEventListener('touchend', e => {
-                        this.touchEndY = e.changedTouches[0].screenY;
-                        this.handleSwipe();
-                    }, {passive: true});
-                }
+                // NOTA: Listeners de swipe já estão no init(), não precisa adicionar aqui
 
                 App.updateUI(product.id);
             },
