@@ -14,12 +14,12 @@
         /* --- CORE CSS (Minimal & Fast) --- */
         :root {
             --primary: #dc2626;
-            --primary-dark: #b91c1c; /* Contraste melhorado para texto sobre fundo claro */
+            --primary-dark: #b91c1c;
             --secondary: #111827;
             --bg: #f9fafb;
             --surface: #ffffff;
             --text-main: #1f2937;
-            --text-muted: #4b5563; /* Escurecido para passar no contraste (era #6b7280) */
+            --text-muted: #4b5563;
             --border: #e5e7eb;
             --header-h: 70px;
         }
@@ -31,45 +31,29 @@
             background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px;
         }
 
-        /* Acessibilidade: Hide visualmente mas mantém para leitores de tela */
-        .sr-only {
-            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
-        }
-
-        /* Layout Utilities */
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
         .hidden { display: none !important; }
         img, video { display: block; max-width: 100%; height: auto; }
         button, a { cursor: pointer; text-decoration: none; font-family: inherit; }
         
-        /* ⚡ RENDER OPTIMIZATION: Placeholder para imagens quebradas */
         .fallback-img {
             content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50' y='50' font-family='sans-serif' font-size='12' fill='%239ca3af' text-anchor='middle' dy='.3em'%3ESem Foto%3C/text%3E%3C/svg%3E");
-            object-fit: contain;
-            padding: 10px;
+            object-fit: contain; padding: 10px;
         }
 
         /* HEADER */
         header {
             position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
             background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border); z-index: 100;
-            contain: layout size;
+            border-bottom: 1px solid var(--border); z-index: 100; contain: layout size;
         }
         .header-inner { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        
         .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.25rem; color: var(--secondary); }
         .logo-box { width: 40px; height: 40px; background: var(--primary); color: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        
         .header-actions { display: flex; align-items: center; gap: 15px; }
-        .btn-header-cta {
-            background: var(--primary); color: white; padding: 8px 20px; border-radius: 50px;
-            font-weight: 600; font-size: 0.9rem; transition: background 0.2s;
-            display: none;
-        }
+        .btn-header-cta { background: var(--primary); color: white; padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; transition: background 0.2s; display: none; }
         @media(min-width: 768px) { .btn-header-cta { display: block; } }
-
         .cart-trigger { position: relative; background: none; border: none; padding: 5px; color: var(--text-main); }
         .cart-badge {
             position: absolute; top: -2px; right: -2px; background: var(--primary); color: white;
@@ -79,37 +63,21 @@
         }
         .cart-badge.show { transform: scale(1); }
 
-        /* HERO SECTION */
+        /* HERO */
         .hero { padding: calc(var(--header-h) + 40px) 0 60px; background: white; border-bottom: 1px solid var(--border); }
         .hero-grid { display: grid; gap: 40px; align-items: center; }
-        
-        /* Contraste melhorado na tag Hero */
-        .hero-tag {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: #fef2f2; color: var(--primary-dark); padding: 6px 16px; border-radius: 50px;
-            font-size: 0.85rem; font-weight: 700; border: 1px solid #fee2e2; margin-bottom: 20px;
-        }
-        
+        .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; color: var(--primary-dark); padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; border: 1px solid #fee2e2; margin-bottom: 20px; }
         .hero-content h1 { font-size: 2.5rem; line-height: 1.1; color: var(--secondary); margin-bottom: 16px; letter-spacing: -0.02em; }
         .hero-content p { font-size: 1.125rem; color: var(--text-muted); margin-bottom: 30px; max-width: 500px; line-height: 1.6; }
-        
         .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
         .btn-hero { padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 1rem; transition: transform 0.1s; }
         .btn-hero:active { transform: scale(0.98); }
         .btn-primary { background: var(--secondary); color: white; border: none; box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
         .btn-outline { background: white; color: var(--primary); border: 2px solid var(--primary); }
-
-        .hero-img-container {
-            border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
-            aspect-ratio: 16/10; position: relative; background: #eee;
-        }
+        .hero-img-container { border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15); aspect-ratio: 16/10; position: relative; background: #eee; }
         .hero-img { width: 100%; height: 100%; object-fit: cover; }
-        .hero-overlay {
-            position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;
-        }
-        .hero-overlay-title { font-weight: 800; font-size: 1.2rem; display: block; } /* Substitui H3 para SEO */
-
+        .hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white; }
+        .hero-overlay-title { font-weight: 800; font-size: 1.2rem; display: block; }
         @media (min-width: 768px) {
             .hero-grid { grid-template-columns: 1fr 1fr; }
             .hero-content h1 { font-size: 3.5rem; }
@@ -125,142 +93,114 @@
         .featured-section { padding: 60px 0; background: #f9fafb; }
         .section-header { text-align: center; margin-bottom: 40px; }
         .section-header h2 { font-size: 2rem; color: var(--secondary); margin-bottom: 8px; }
-        
         .grid-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media(min-width: 768px) { .grid-products { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 24px; } }
-
-        .category-separator {
-            position: sticky; top: var(--header-h); z-index: 10;
-            background: var(--bg); padding: 20px 0 10px; margin-top: 20px; border-bottom: 2px solid var(--border);
-        }
+        .category-separator { position: sticky; top: var(--header-h); z-index: 10; background: var(--bg); padding: 20px 0 10px; margin-top: 20px; border-bottom: 2px solid var(--border); }
         .category-title { font-size: 1.25rem; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.05em; }
 
-        /* 🚀 OPTIMIZATION: Content Visibility */
-        .card {
-            background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
-            display: flex; flex-direction: column;
-            content-visibility: auto; 
-            contain-intrinsic-size: 0 420px; 
-            position: relative;
-        }
+        .card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; content-visibility: auto; contain-intrinsic-size: 0 450px; position: relative; }
+        .card-img-box { aspect-ratio: 1; padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
+        .card-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
+        .card-img-box:hover .card-img { transform: scale(1.05); }
         
-        .card-img-box { 
-            aspect-ratio: 1; padding: 10px; display: flex; align-items: center; justify-content: center; 
-            position: relative;
+        .btn-details {
+            width: 100%; background: transparent; color: #4b5563; border: none; border-top: 1px solid #f3f4f6; border-bottom: 1px solid #f3f4f6;
+            padding: 8px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .card-img { width: 100%; height: 100%; object-fit: contain; }
-        
-        /* BOTÃO DE ZOOM */
-        .btn-zoom {
-            width: 100%;
-            background: transparent;
-            color: #4b5563; /* Cor mais escura para contraste */
-            border: none;
-            border-top: 1px solid #f3f4f6;
-            border-bottom: 1px solid #f3f4f6;
-            padding: 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .btn-zoom:hover { background: #f9fafb; color: var(--primary); }
-        .btn-zoom svg { width: 14px; height: 14px; opacity: 0.8; }
+        .btn-details:hover { background: #f9fafb; color: var(--primary); }
+        .btn-details svg { width: 14px; height: 14px; opacity: 0.8; }
 
         .card-body { padding: 12px 16px 16px; display: flex; flex-direction: column; flex: 1; }
+        .card-code { font-size: 0.7rem; color: #374151; font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; align-self: flex-start; margin-bottom: 8px; }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--secondary); margin-bottom: 4px; line-height: 1.3; }
         
-        /* Contraste melhorado para o código do produto */
-        .card-code { 
-            font-size: 0.7rem; 
-            color: #374151; /* Gray-700 (Passa WCAG AA) */
-            font-family: monospace; 
-            background: #f3f4f6; 
-            padding: 2px 6px; 
-            border-radius: 4px; 
-            align-self: flex-start; 
-            margin-bottom: 8px; 
+        /* Limite de texto no card */
+        .card-desc-preview {
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+            font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; min-height: 2.4em;
         }
 
-        .card-title { font-size: 1rem; font-weight: 600; color: var(--secondary); margin-bottom: 4px; line-height: 1.3; }
         .card-price { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-top: auto; padding-top: 8px; }
-        
         .card-actions { margin-top: 12px; }
         .btn-add { width: 100%; padding: 10px; background: #f3f4f6; border-radius: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-main); border: none; transition: background 0.2s; }
         .btn-add:active { background: #e5e7eb; }
-        
         .qty-control { display: flex; justify-content: space-between; align-items: center; background: var(--secondary); color: white; border-radius: 8px; padding: 4px; }
-        .qty-btn { 
-            width: 32px; height: 32px; min-width: 32px; /* Tamanho visual */
-            background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.2rem; border-radius: 6px; 
-            display: flex; align-items: center; justify-content: center; 
-            /* Acessibilidade: área de toque maior virtualmente se necessário, mas 32px é pequeno. Vamos aumentar um pouco visualmente se der, ou manter e confiar no layout */
-        }
-        
-        /* ICONS */
+        .qty-btn { width: 32px; height: 32px; min-width: 32px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.2rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
         svg { width: 24px; height: 24px; fill: currentColor; }
         .icon-sm { width: 16px; height: 16px; }
 
         /* MODAL CARRINHO */
-        dialog#cart-modal {
-            margin: auto; width: 100%; max-width: 450px; height: 100%; max-height: 100%;
-            border: none; background: white; z-index: 200; box-shadow: 0 0 50px rgba(0,0,0,0.2);
-            flex-direction: column;
-        }
-        @media(min-width: 768px) {
-            dialog#cart-modal { height: auto; max-height: 85vh; border-radius: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; }
-        }
+        dialog#cart-modal { margin: auto; width: 100%; max-width: 450px; height: 100%; max-height: 100%; border: none; background: white; z-index: 200; box-shadow: 0 0 50px rgba(0,0,0,0.2); flex-direction: column; }
+        @media(min-width: 768px) { dialog#cart-modal { height: auto; max-height: 85vh; border-radius: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; } }
         dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
         dialog[open] { display: flex; animation: slideUp 0.3s ease-out; }
+        
+        /* MODAL PRODUTO (NOVO) */
+        dialog#product-modal {
+            margin: auto; width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+            background: white; border: none; z-index: 300; padding: 0;
+            overflow: hidden; /* Scroll interno */
+        }
+        @media(min-width: 768px) {
+            dialog#product-modal { width: 900px; height: auto; max-height: 90vh; border-radius: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        }
+
+        .pm-grid { display: flex; flex-direction: column; height: 100%; }
+        @media(min-width: 768px) { .pm-grid { flex-direction: row; height: 600px; } }
+
+        /* Galeria Slide */
+        .pm-gallery { 
+            background: #000; flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
+            min-height: 300px; 
+        }
+        .pm-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .pm-stage img, .pm-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
+        
+        .pm-arrow {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.1); color: white; border: none;
+            width: 40px; height: 40px; border-radius: 50%; font-size: 1.2rem;
+            cursor: pointer; transition: background 0.2s; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+        .pm-arrow:hover { background: rgba(255,255,255,0.3); }
+        .pm-arrow.prev { left: 10px; }
+        .pm-arrow.next { right: 10px; }
+
+        /* Informações do Produto */
+        .pm-info { 
+            flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; 
+            background: white;
+        }
+        .pm-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
+        .pm-title { font-size: 1.5rem; font-weight: 800; color: var(--secondary); margin-bottom: 8px; line-height: 1.2; }
+        .pm-code { display: inline-block; background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-family: monospace; font-size: 0.8rem; color: #4b5563; }
+        
+        /* Texto Descritivo HTML */
+        .pm-desc { font-size: 1rem; color: #374151; line-height: 1.6; margin-bottom: 24px; flex-grow: 1; }
+        .pm-desc ul { margin-left: 20px; margin-bottom: 10px; list-style-type: disc; }
+        .pm-desc li { margin-bottom: 4px; }
+        .pm-desc strong { font-weight: 700; color: var(--secondary); }
+
+        .pm-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
+        .pm-price { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 16px; }
+        
+        .btn-close-pm { 
+            position: absolute; top: 16px; right: 16px; z-index: 10;
+            background: rgba(0,0,0,0.1); color: #333; width: 36px; height: 36px; 
+            border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        @media(min-width: 768px) { .btn-close-pm { background: #f3f4f6; } }
+
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
+        /* Comuns */
         .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
         .modal-body { flex: 1; overflow-y: auto; padding: 20px; }
         .modal-footer { padding: 20px; border-top: 1px solid var(--border); background: #f9fafb; }
-        
         .cart-item { display: flex; gap: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); margin-bottom: 15px; }
         .cart-total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; }
         .btn-checkout { width: 100%; padding: 16px; background: #25D366; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
-
-        /* MODAL GALERIA (FULL SCREEN) */
-        dialog#media-modal {
-            margin: 0; width: 100vw; height: 100vh; max-width: 100vw; max-height: 100vh;
-            background: black; border: none; z-index: 300;
-            display: none; /* Controlled by flex */
-        }
-        dialog#media-modal[open] { display: flex; flex-direction: column; }
-        
-        .media-stage { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .media-stage img, .media-stage video { max-width: 100%; max-height: 100%; object-fit: contain; animation: fadeIn 0.3s; }
-        
-        .btn-close-media {
-            position: absolute; top: 20px; right: 20px; z-index: 10;
-            background: rgba(255,255,255,0.2); color: white; border: none;
-            width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-        }
-        
-        .media-thumbs {
-            height: 90px; background: rgba(20,20,20,0.9); border-top: 1px solid #333;
-            display: flex; gap: 10px; padding: 10px; overflow-x: auto; justify-content: center;
-        }
-        .thumb-item {
-            width: 70px; height: 70px; border-radius: 6px; overflow: hidden; cursor: pointer;
-            border: 2px solid transparent; opacity: 0.6; transition: all 0.2s; background: #000;
-            padding: 0; display: block; /* Acessibilidade */
-        }
-        .thumb-item:focus { outline: 2px solid white; }
-        .thumb-item.active { border-color: var(--primary); opacity: 1; transform: scale(1.05); }
-        .thumb-item img, .thumb-item video { width: 100%; height: 100%; object-fit: cover; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
-
-        /* FAB & SEARCH */
         .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; box-shadow: 0 10px 25px rgba(220, 38, 38, 0.5); display: flex; align-items: center; justify-content: center; z-index: 90; border: none; }
         .search-bar { width: 100%; padding: 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 1rem; outline: none; transition: border-color 0.2s; background: white; }
         .search-bar:focus { border-color: var(--primary); }
@@ -304,7 +244,6 @@
                 <div class="hero-img-container">
                     <img src="img/capa.webp" alt="Cesta Básica" class="hero-img" width="600" height="375" fetchpriority="high" onerror="this.onerror=null;this.classList.add('fallback-img')">
                     <div class="hero-overlay">
-                        <!-- Correção SEO: H3 alterado para div para manter ordem hierárquica -->
                         <div class="hero-overlay-title">Produtos Selecionados</div>
                         <p style="font-size: 0.9rem; opacity: 0.9;">Direto do atacado para sua casa</p>
                     </div>
@@ -319,7 +258,6 @@
                     <h2>Cestas Prontas</h2>
                     <p style="color: var(--text-muted);">As campeãs de vendas com o melhor custo-benefício</p>
                 </div>
-                <!-- Event Delegation Container -->
                 <div id="featured-grid" class="grid-products"></div>
             </div>
         </section>
@@ -327,11 +265,9 @@
         <!-- Catálogo -->
         <section id="catalog-section" class="container" style="padding-top: 40px;">
             <div style="margin-bottom: 30px;">
-                <!-- Acessibilidade: Label adicionado (apenas para leitor de tela) -->
                 <label for="search" class="sr-only">Buscar por nome ou código</label>
                 <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar por nome ou código...">
             </div>
-            <!-- Event Delegation Container -->
             <div id="main-catalog">
                 <p style="text-align: center; color: var(--text-muted);">Carregando produtos...</p>
             </div>
@@ -367,16 +303,10 @@
         </div>
     </dialog>
 
-    <!-- MODAL GALERIA -->
-    <dialog id="media-modal">
-        <button class="btn-close-media" onclick="MediaGallery.close()" aria-label="Fechar Galeria">✕</button>
-        
-        <div class="media-stage" id="media-stage">
-            <!-- Imagem Grande ou Video Aqui -->
-        </div>
-
-        <div class="media-thumbs" id="media-thumbs">
-            <!-- Thumbnails geradas via JS -->
+    <!-- NOVO MODAL DE DETALHES DO PRODUTO -->
+    <dialog id="product-modal">
+        <div class="pm-grid" id="pm-content">
+            <!-- Conteúdo injetado via JS -->
         </div>
     </dialog>
 
@@ -398,16 +328,19 @@
                         valor: parseFloat(p.valor),
                         estoque: parseInt(p.estoque) || 0,
                         categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
-                        imagem: (p.imagem && !p.imagem.includes('/')) ? 'img/produtos/' + p.imagem : (p.imagem || '')
+                        imagem: (p.imagem && !p.imagem.includes('/')) ? 'img/produtos/' + p.imagem : (p.imagem || ''),
+                        // Mapeia o novo campo caracteristicas (permite HTML)
+                        caracteristicas: p.caracteristicas || ''
                     }));
 
                     this.renderFeatured();
                     this.renderCatalog();
                     
-                    // Event Listeners (Delegation)
                     this.setupDelegation('featured-grid');
                     this.setupDelegation('main-catalog');
                     this.setupDelegation('cart-body');
+                    // Delegation para controles dentro do modal de produto
+                    this.setupDelegation('product-modal');
                     
                     document.getElementById('search').addEventListener('input', (e) => {
                         this.renderCatalog(e.target.value.toLowerCase());
@@ -424,6 +357,13 @@
                 
                 el.addEventListener('click', (e) => {
                     const btn = e.target.closest('button[data-action]');
+                    // Se clicar na imagem ou na caixa da imagem, abre detalhes
+                    if (!btn && e.target.closest('.card-img-box')) {
+                        const card = e.target.closest('.card');
+                        if (card) ProductModal.open(card.id.replace('card-', ''));
+                        return;
+                    }
+
                     if (!btn) return;
                     
                     const action = btn.dataset.action;
@@ -431,7 +371,7 @@
                     
                     if (action === 'add') this.add(id);
                     if (action === 'remove') this.remove(id);
-                    if (action === 'zoom') MediaGallery.open(id);
+                    if (action === 'details') ProductModal.open(id);
                 });
             },
 
@@ -484,6 +424,8 @@
 
             cardHTML(p, loadingStrategy) {
                 const stock = p.estoque > 0 ? `Estoque: ${p.estoque}` : `<span style="color:var(--primary)">Indisponível</span>`;
+                // Remove tags HTML para o preview do card
+                const descPreview = p.caracteristicas.replace(/<[^>]*>?/gm, ''); 
                 
                 return `
                 <div class="card" id="card-${p.id}">
@@ -492,15 +434,16 @@
                              onerror="this.onerror=null;this.classList.add('fallback-img')">
                     </div>
                     
-                    <button class="btn-zoom" data-action="zoom" data-id="${p.id}" aria-label="Ampliar imagem de ${p.nome}">
-                        <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-                        Ampliar
+                    <button class="btn-details" data-action="details" data-id="${p.id}" aria-label="Ver detalhes de ${p.nome}">
+                        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+                        Ver Detalhes
                     </button>
 
                     <div class="card-body">
                         ${p.codigo ? `<div class="card-code">${p.codigo}</div>` : ''}
                         <div class="card-title">${p.nome}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">${stock}</div>
+                        ${descPreview ? `<div class="card-desc-preview">${descPreview}</div>` : ''}
+                        
                         <div class="card-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                         
                         <div class="card-actions" id="ctrl-${p.id}">
@@ -533,22 +476,12 @@
                 itemsToUpdate.forEach(p => {
                     if(!p) return;
                     const qty = this.cart[p.id] || 0;
-                    const ctrl = document.getElementById(`ctrl-${p.id}`);
                     
-                    if (ctrl) {
-                        if (qty === 0) {
-                            if(!ctrl.querySelector('.btn-add')) {
-                                ctrl.innerHTML = `<button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>`;
-                            }
-                        } else {
-                            ctrl.innerHTML = `
-                                <div class="qty-control">
-                                    <button class="qty-btn" data-action="remove" data-id="${p.id}" aria-label="Remover 1 unidade de ${p.nome}">-</button>
-                                    <span style="font-weight: 700; padding: 0 10px;">${qty}</span>
-                                    <button class="qty-btn" data-action="add" data-id="${p.id}" aria-label="Adicionar mais 1 unidade de ${p.nome}">+</button>
-                                </div>`;
-                        }
-                    }
+                    // Atualiza controles no Card Principal
+                    this.updateControlUI(`ctrl-${p.id}`, p.id, qty);
+                    
+                    // Atualiza controles no Modal de Produto (se aberto)
+                    this.updateControlUI(`pm-ctrl-${p.id}`, p.id, qty);
                 });
 
                 const badges = [document.getElementById('cart-badge'), document.getElementById('fab-badge')];
@@ -559,6 +492,25 @@
                 
                 if(document.getElementById('cart-modal').open) {
                     this.renderCartModal();
+                }
+            },
+
+            updateControlUI(elementId, prodId, qty) {
+                const ctrl = document.getElementById(elementId);
+                if (ctrl) {
+                    if (qty === 0) {
+                        // Verifica para evitar reflow
+                        if(!ctrl.querySelector('.btn-add')) {
+                            ctrl.innerHTML = `<button class="btn-add" data-action="add" data-id="${prodId}">ADICIONAR</button>`;
+                        }
+                    } else {
+                        ctrl.innerHTML = `
+                            <div class="qty-control">
+                                <button class="qty-btn" data-action="remove" data-id="${prodId}">-</button>
+                                <span style="font-weight: 700; padding: 0 10px;">${qty}</span>
+                                <button class="qty-btn" data-action="add" data-id="${prodId}">+</button>
+                            </div>`;
+                    }
                 }
             },
 
@@ -593,9 +545,9 @@
                                     <div style="font-size:0.8rem; color:#6b7280;">${qty} x R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                                 </div>
                                 <div class="qty-control" style="height:32px; align-self:center;">
-                                    <button class="qty-btn" data-action="remove" data-id="${id}" aria-label="Diminuir quantidade de ${p.nome}">-</button>
+                                    <button class="qty-btn" data-action="remove" data-id="${id}">-</button>
                                     <span style="padding:0 10px; font-weight:700;">${qty}</span>
-                                    <button class="qty-btn" data-action="add" data-id="${id}" aria-label="Aumentar quantidade de ${p.nome}">+</button>
+                                    <button class="qty-btn" data-action="add" data-id="${id}">+</button>
                                 </div>
                             </div>`;
                     }
@@ -647,16 +599,16 @@
             }
         };
 
-        // 🚀 GALERIA INTELIGENTE
-        const MediaGallery = {
+        // 🚀 NOVO: MODAL DE DETALHES DO PRODUTO COM SLIDESHOW
+        const ProductModal = {
             modal: null,
-            stage: null,
-            thumbs: null,
-            
+            content: null,
+            currentItemIndex: 0,
+            mediaItems: [],
+
             init() {
-                this.modal = document.getElementById('media-modal');
-                this.stage = document.getElementById('media-stage');
-                this.thumbs = document.getElementById('media-thumbs');
+                this.modal = document.getElementById('product-modal');
+                this.content = document.getElementById('pm-content');
             },
 
             async open(productId) {
@@ -665,87 +617,95 @@
                 const product = App.data.find(p => p.id === productId);
                 if(!product) return;
 
-                // Limpa e abre
-                this.stage.innerHTML = '<div style="color:white">Carregando...</div>';
-                this.thumbs.innerHTML = '';
                 this.modal.showModal();
+                this.content.innerHTML = '<div style="padding:40px; text-align:center;">Carregando detalhes...</div>';
 
-                // 1. Pega imagem principal
+                // Prepara Mídia (Busca variações A, B, C...)
                 const mediaItems = [];
-                if(product.imagem) {
-                    mediaItems.push({ type: 'img', src: product.imagem });
-                }
+                if(product.imagem) mediaItems.push({ type: 'img', src: product.imagem });
 
-                // 2. Busca Variações (A, B, C...)
-                const basePath = product.imagem.substring(0, product.imagem.lastIndexOf('.')); // ex: img/produtos/p008
-                const suffixes = ['A', 'B', 'C', 'D', 'E'];
-                
-                // Função helper para verificar existência
-                const checkUrl = (url, type) => {
-                    return new Promise(resolve => {
-                        const el = type === 'video' ? document.createElement('video') : new Image();
-                        el.onload = el.onloadedmetadata = () => resolve({ type, src: url });
-                        el.onerror = () => resolve(null);
-                        el.src = url;
-                    });
-                };
+                const basePath = product.imagem.substring(0, product.imagem.lastIndexOf('.'));
+                const suffixes = ['A', 'B', 'C', 'D'];
+                const checkUrl = (url, type) => new Promise(resolve => {
+                    const el = type === 'video' ? document.createElement('video') : new Image();
+                    el.onload = el.onloadedmetadata = () => resolve({ type, src: url });
+                    el.onerror = () => resolve(null);
+                    el.src = url;
+                });
 
-                // Verifica imagens e videos em paralelo
                 const checks = [];
-                suffixes.forEach(suffix => {
-                    // Check WEBP
-                    checks.push(checkUrl(`${basePath}${suffix}.webp`, 'img'));
-                    // Check MP4 (Videos)
-                    checks.push(checkUrl(`${basePath}${suffix}.mp4`, 'video'));
+                suffixes.forEach(s => {
+                    checks.push(checkUrl(`${basePath}${s}.webp`, 'img'));
+                    checks.push(checkUrl(`${basePath}${s}.mp4`, 'video'));
                 });
 
                 const results = await Promise.all(checks);
-                results.forEach(res => {
-                    if(res) mediaItems.push(res);
-                });
+                results.forEach(res => { if(res) mediaItems.push(res); });
 
-                this.render(mediaItems);
+                this.mediaItems = mediaItems;
+                this.currentItemIndex = 0;
+                this.render(product);
+                // Atualiza o estado do botão "Adicionar" dentro do modal com a quantidade atual
+                App.updateUI(product.id);
             },
 
-            render(items) {
-                if(items.length === 0) {
-                    this.stage.innerHTML = '<div style="color:white">Sem imagem</div>';
-                    return;
-                }
+            render(product) {
+                const qty = App.cart[product.id] || 0;
+                const hasArrows = this.mediaItems.length > 1;
 
-                // Render Thumbs - Trocado div por button para acessibilidade
-                this.thumbs.innerHTML = items.map((item, idx) => `
-                    <button class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="MediaGallery.show(${idx})" aria-label="Ver mídia ${idx + 1}">
-                        ${item.type === 'video' 
-                            ? `<video src="${item.src}#t=0.1" muted></video>` 
-                            : `<img src="${item.src}" alt="Miniatura ${idx + 1}">`
-                        }
-                    </button>
-                `).join('');
+                this.content.innerHTML = `
+                    <button class="btn-close-pm" onclick="ProductModal.close()">✕</button>
+                    
+                    <div class="pm-gallery">
+                        <div class="pm-stage" id="pm-stage">
+                            ${this.getMediaHTML(0)}
+                        </div>
+                        ${hasArrows ? `
+                            <button class="pm-arrow prev" onclick="ProductModal.slide(-1)">❮</button>
+                            <button class="pm-arrow next" onclick="ProductModal.slide(1)">❯</button>
+                        ` : ''}
+                    </div>
 
-                // Armazena itens para troca rápida
-                this.items = items;
-                this.show(0);
+                    <div class="pm-info">
+                        <div class="pm-header">
+                            ${product.codigo ? `<span class="pm-code">${product.codigo}</span>` : ''}
+                            <h2 class="pm-title">${product.nome}</h2>
+                        </div>
+
+                        <div class="pm-desc">
+                            ${product.caracteristicas ? product.caracteristicas : '<p>Sem descrição adicional.</p>'}
+                        </div>
+
+                        <div class="pm-footer">
+                            <div class="pm-price">R$ ${product.valor.toFixed(2).replace('.', ',')}</div>
+                            <div id="pm-ctrl-${product.id}">
+                                <!-- Botão injetado pelo App.updateUI -->
+                            </div>
+                        </div>
+                    </div>
+                `;
             },
 
-            show(index) {
-                const item = this.items[index];
-                
-                // Atualiza Stage
-                this.stage.innerHTML = item.type === 'video' 
+            getMediaHTML(index) {
+                if(this.mediaItems.length === 0) return '<div style="color:white">Sem imagem</div>';
+                const item = this.mediaItems[index];
+                return item.type === 'video' 
                     ? `<video src="${item.src}" controls autoplay style="max-height:100%; max-width:100%"></video>` 
-                    : `<img src="${item.src}" alt="Imagem ampliada">`;
+                    : `<img src="${item.src}" alt="Produto">`;
+            },
 
-                // Atualiza Thumbs Active
-                const thumbEls = this.thumbs.children;
-                for(let i=0; i<thumbEls.length; i++) {
-                    thumbEls[i].classList.toggle('active', i === index);
-                }
+            slide(direction) {
+                this.currentItemIndex += direction;
+                if(this.currentItemIndex >= this.mediaItems.length) this.currentItemIndex = 0;
+                if(this.currentItemIndex < 0) this.currentItemIndex = this.mediaItems.length - 1;
+                
+                const stage = document.getElementById('pm-stage');
+                stage.innerHTML = this.getMediaHTML(this.currentItemIndex);
             },
 
             close() {
                 this.modal.close();
-                this.stage.innerHTML = ''; // Para vídeo se estiver tocando
+                this.content.innerHTML = ''; 
             }
         };
 
