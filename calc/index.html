@@ -206,6 +206,23 @@
         .pm-arrow.prev { left: 15px; }
         .pm-arrow.next { right: 15px; }
 
+        /* NAVEGAÇÃO PRODUTOS (DESKTOP) */
+        .prod-nav-btn {
+            display: none; position: absolute; top: 50%; transform: translateY(-50%);
+            width: 60px; height: 60px; border-radius: 50%;
+            background: white; border: none; color: var(--text-main);
+            font-size: 1.5rem; cursor: pointer; z-index: 310;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3); align-items: center; justify-content: center;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .prod-nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
+        .prod-nav-btn:active { transform: translateY(-50%) scale(0.95); }
+        @media(min-width: 768px) {
+            .prod-nav-btn { display: flex; }
+            .prod-nav-btn.prev { left: -80px; }
+            .prod-nav-btn.next { right: -80px; }
+        }
+
         /* Informações do Produto */
         .pm-info { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; background: white; }
         .pm-header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px; }
@@ -357,6 +374,10 @@
 
     <!-- NOVO MODAL DE DETALHES DO PRODUTO -->
     <dialog id="product-modal">
+        <!-- Setas de Navegação (Desktop) - Fora do Grid -->
+        <button class="prod-nav-btn prev" data-action="prev-prod" aria-label="Produto Anterior">❮</button>
+        <button class="prod-nav-btn next" data-action="next-prod" aria-label="Próximo Produto">❯</button>
+
         <div class="pm-grid" id="pm-content">
             <!-- Conteúdo injetado via JS -->
         </div>
@@ -376,6 +397,7 @@
         const App = {
             data: [],
             filteredData: [], 
+            visualOrderData: [], // Armazena a ordem exata de exibição
             cart: {},
             phone: "5565999999999",
 
@@ -453,6 +475,7 @@
 
                 if (filtered.length === 0) {
                     container.innerHTML = `<p class="text-center" style="color:var(--text-muted); padding:40px;">Nenhum produto encontrado.</p>`;
+                    this.visualOrderData = [];
                     return;
                 }
 
@@ -480,8 +503,14 @@
                 // Renderiza Barra de Navegação de Categorias
                 this.renderCategoryNav(cats);
 
+                // Constrói a lista visual final para navegação no modal
+                this.visualOrderData = [];
                 let html = '';
+                
                 cats.forEach(cat => {
+                    // Adiciona produtos desta categoria à lista de ordem visual
+                    this.visualOrderData.push(...groups[cat]);
+
                     html += `
                         <div id="cat-${cat}" class="category-separator">
                             <h3 class="category-title">${cat}</h3>
@@ -752,29 +781,20 @@
             // Removido handleSwipe()
 
             navigate(direction) {
-                // Navegação baseada na ordem visual atual (filteredData)
-                let list = App.filteredData;
+                // Usa a lista visualOrderData que reflete exatamente a ordem da tela
+                let list = App.visualOrderData;
                 
-                // Encontra índice do produto atual na lista filtrada
-                let idx = list.findIndex(p => p.id === this.currentProductId);
-                
-                // Fallback: Se não achou na filtrada (ex: veio de Destaques mas a busca mudou), procura na lista completa
-                if (idx === -1) {
-                    list = App.data;
-                    idx = list.findIndex(p => p.id === this.currentProductId);
-                }
+                // Fallback caso a lista visual esteja vazia (ex: recarga direta)
+                if (!list || list.length === 0) list = App.data;
 
+                let idx = list.findIndex(p => p.id === this.currentProductId);
                 if (idx === -1) return;
 
                 let newIdx = idx + direction;
                 
-                // Lógica de loop opcional (se estiver no fim, volta pro inicio?)
-                // Se quiser loop, descomente:
-                // if (newIdx >= list.length) newIdx = 0;
-                // if (newIdx < 0) newIdx = list.length - 1;
-
+                // Limita a navegação (não faz loop entre o último e o primeiro)
                 if (newIdx >= 0 && newIdx < list.length) {
-                    this.open(list[newIdx].id); // Troca simples e direta
+                    this.open(list[newIdx].id); 
                 }
             },
 
