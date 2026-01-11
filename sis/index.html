@@ -386,7 +386,12 @@
                                         <!-- EAN EDITÁVEL -->
                                         <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
                                     </div>
-                                    <div class="form-group"><label>Descrição</label><input type="text" id="p-nome" required></div>
+                                    
+                                    <!-- NOME (Antiga Descrição) -->
+                                    <div class="form-group"><label>Nome</label><input type="text" id="p-nome" required></div>
+                                    
+                                    <!-- CARACTERÍSTICAS (Novo Campo) -->
+                                    <div class="form-group"><label>Características</label><textarea id="p-caracteristicas" rows="2"></textarea></div>
                                     
                                     <!-- CONTROLE DE ESTOQUE -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200);">
@@ -901,8 +906,7 @@
             exportProducts: () => {
                 const data = DB.load().produto.map(p => ({
                     ...p,
-                    // FORÇA O CAMINHO PADRÃO, REMOVENDO QUALQUER BASE64 ANTIGO
-                    imagem: `img/produtos/${(p.codigo || '').toLowerCase()}.webp`
+                    imagem: p.imagem || `img/produtos/${p.codigo.toLowerCase()}.webp`
                 }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
                 const url = URL.createObjectURL(blob);
@@ -1604,41 +1608,70 @@
             handleSave: (type, e) => {
                 e.preventDefault();
                 const form = document.getElementById(`form-${type}`);
-                const data = {};
-                Array.from(form.elements).forEach(el => {
-                    if(el.id) {
-                        const key = el.id.split('-')[1];
-                        if(key) data[key] = el.type === 'checkbox' ? el.checked : el.value;
+                let data = {};
+
+                if (type === 'produto') {
+                    // Manual object construction for Products to keep JSON clean
+                    // Core Data
+                    data.id = document.getElementById('p-id').value;
+                    // Generate new code if missing (new product)
+                    if (!data.id) {
+                        data.id = Date.now().toString() + Math.random().toString().slice(2,5);
+                        data.codigo = DB.nextCode('P');
+                    } else {
+                        data.codigo = document.getElementById('p-codigo').value;
                     }
-                });
-                if(type === 'produto') {
-                    data.custo = Number(data.custo);
-                    data.valor = Number(data.valor);
-                    data.estoque = Number(data.estoque);
-                    data.estoqueFiscal = Number(data.estoqueFiscal);
-                    // NOVOS CAMPOS
-                    data.peso = Number(data.peso);
+
+                    data.nome = document.getElementById('p-nome').value;
+                    data.ean = document.getElementById('p-ean').value;
+                    data.categoria = document.getElementById('p-categoria').value;
+                    data.caracteristicas = document.getElementById('p-caracteristicas').value;
                     
+                    // Numeric Data
+                    data.custo = Number(document.getElementById('p-custo').value) || 0;
+                    data.valor = Number(document.getElementById('p-valor').value) || 0;
+                    data.estoque = Number(document.getElementById('p-estoque').value) || 0;
+                    data.estoqueFiscal = Number(document.getElementById('p-estoqueFiscal').value) || 0;
+                    data.peso = Number(document.getElementById('p-peso').value) || 0;
+
+                    // Images (auto-generated path)
+                    data.imagem = `img/produtos/${data.codigo.toLowerCase()}.webp`;
+
+                    // Combos
                     if(document.getElementById('p-is-combo').checked) {
                         data.items = ComboApp.comboItems;
                     } else {
                         data.items = [];
                     }
-                    
+
+                    // Variations
                     const vNomes = document.getElementById('p-variacoesNome').value;
                     data.variacoesNome = vNomes ? vNomes.split('|').map(s => s.trim()).filter(Boolean) : [];
-
                     const vEans = document.getElementById('p-variacoesEan').value;
                     data.variacoesEan = vEans ? vEans.split('|').map(s => s.trim()).filter(Boolean) : [];
 
-                    // Ensure code exists for new products to generate image path
-                    if (!data.id && !data.codigo) {
-                         data.codigo = DB.nextCode('P');
-                    }
-                    // Set image path automatically
-                    if (data.codigo) {
-                        data.imagem = `img/produtos/${data.codigo.toLowerCase()}.webp`;
-                    }
+                    // Fiscal Data (Hidden/Details)
+                    data.ncm = document.getElementById('p-ncm').value;
+                    data.cest = document.getElementById('p-cest').value;
+                    data.cfop = document.getElementById('p-cfop').value;
+                    data.csosn = document.getElementById('p-csosn').value;
+                    data.obs = document.getElementById('p-obs-produto').value; // Using correct ID from HTML but saving as 'obs'
+                    
+                    // Hidden Legacy/Import Fields
+                    data.subcategoria = document.getElementById('p-subcategoria').value;
+                    data.nota = document.getElementById('p-nota').value;
+                    data.refId = document.getElementById('p-refId').value;
+                    data.fator = document.getElementById('p-fator').value;
+                    data.unidade = document.getElementById('p-unidade').value;
+
+                } else {
+                    // Standard Loop for other types (Cliente, Entrada)
+                    Array.from(form.elements).forEach(el => {
+                        if(el.id) {
+                            const key = el.id.split('-')[1];
+                            if(key) data[key] = el.type === 'checkbox' ? el.checked : el.value;
+                        }
+                    });
                 }
                 
                 DB.save(type, data);
@@ -1660,8 +1693,16 @@
             edit: (type, id) => {
                 const item = DB.load()[type].find(x => x.id === id);
                 if(!item) return;
+                
+                // Populate fields
                 for(let k in item) {
                     const el = document.getElementById(`${type.charAt(0)}-${k}`);
+                    // Handle special case for obs (ID mismatch in original code: p-obs-produto vs key obs)
+                    if (k === 'obs' && type === 'produto') {
+                         document.getElementById('p-obs-produto').value = item[k];
+                         continue;
+                    }
+
                     if(el) {
                         if(el.type === 'checkbox') el.checked = item[k];
                         else el.value = item[k];
