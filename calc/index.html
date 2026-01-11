@@ -1,564 +1,532 @@
 <!DOCTYPE html>
-<html lang="pt-BR" dir="ltr">
+<html lang="pt-BR">
 <head>
-    <!-- 
-        ================================================================
-        SEO ARCHITECT REPORT: 100/100 PERFECT SCORE
-        - Update: Cestas Prontas dinâmicas via JSON (Categoria: CESTA BASICA)
-        - Update: Caminho de imagem padronizado (img/produtos/)
-        - Update: Divisão automática de categorias
-        ================================================================
-    -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <!-- SEO Meta Tags -->
-    <title>Cestas Básicas em Cuiabá e Várzea Grande | Dona Antônia | Entrega Grátis</title>
-    <meta name="description" content="A melhor Cesta Básica de Cuiabá e VG. Arroz Tio Alvino, Feijão Novo. Entrega Grátis no CPA, Coxipó, Cristo Rei e região. Pague no recebimento. A partir de R$ 85,00.">
-    <meta name="keywords" content="cesta básica cuiabá, cesta básica várzea grande, doação de alimentos cpa, cesta básica cristo rei, atacado alimentos mt, arroz tio alvino">
-    <meta name="author" content="Dona Antônia Alimentos">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <link rel="canonical" href="https://donaantonia.com.br">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://donaantonia.com.br/">
-    <meta property="og:title" content="Dona Antônia - Cestas Básicas com Entrega Grátis">
-    <meta property="og:description" content="Monte sua cesta ou escolha opções prontas. Qualidade garantida e entrega rápida em Cuiabá e VG.">
-    <meta property="og:image" content="https://donaantonia.com.br/img/og-image.jpg">
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://donaantonia.com.br/">
-    <meta property="twitter:title" content="Dona Antônia - Cestas Básicas">
-    <meta property="twitter:description" content="Monte sua cesta ou escolha opções prontas. Entrega Grátis Cuiabá/VG.">
-    <meta property="twitter:image" content="https://donaantonia.com.br/img/og-image.jpg">
-
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Cestas Básicas Dona Antônia. Entrega Grátis Cuiabá/VG.">
+    <meta name="theme-color" content="#dc2626">
+    <title>Dona Antônia | Cestas Básicas</title>
 
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        .smooth-scroll { scroll-behavior: smooth; }
-        .glass-header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
-        .category-scroll::-webkit-scrollbar { display: none; }
-        .category-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        .product-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
-        .product-card:active { transform: scale(0.98); }
-        .fade-in { animation: fadeIn 0.5s ease-in; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Mobile Improvements */
-        @media (max-width: 640px) {
-            .mobile-padding-bottom { padding-bottom: 80px; }
+        /* --- CSS MODERN & MINIMALIST (No Frameworks) --- */
+        :root {
+            --primary: #dc2626; /* Vermelho vibrante */
+            --primary-dark: #b91c1c;
+            --bg: #f9fafb;
+            --surface: #ffffff;
+            --text-main: #1f2937;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --header-h: 60px;
         }
+
+        /* Reset Básico */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding-bottom: 80px; /* Espaço para FAB mobile */
+        }
+
+        /* Utilitários */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+        img { display: block; max-width: 100%; height: auto; }
+
+        /* Header */
+        header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
+            border-bottom: 1px solid var(--border); z-index: 100;
+            display: flex; align-items: center;
+        }
+        .header-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo { font-weight: 800; font-size: 1.25rem; color: var(--text-main); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        .logo span { color: var(--primary); }
+        .cart-icon-btn { position: relative; background: none; padding: 8px; }
+        .cart-badge {
+            position: absolute; top: 0; right: 0;
+            background: var(--primary); color: white;
+            font-size: 0.7rem; font-weight: bold;
+            min-width: 18px; height: 18px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid white;
+            transform: scale(0); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cart-badge.show { transform: scale(1); }
+
+        /* Hero Section */
+        .hero { padding: calc(var(--header-h) + 30px) 0 30px; text-align: center; }
+        .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 20px; }
+        .hero-tag { display: inline-block; background: #fef2f2; color: var(--primary); padding: 4px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 16px; border: 1px solid #fee2e2; }
+
+        /* Seção Cestas Prontas (Destaque) */
+        .featured-section { background: white; padding: 40px 0; margin-bottom: 30px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 20px; color: var(--text-main); }
+        
+        /* Grid de Produtos */
+        .grid-products {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* Mobile: 2 colunas */
+            gap: 12px;
+        }
+        @media (min-width: 768px) {
+            .grid-products { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 24px; }
+            .hero h1 { font-size: 3rem; }
+        }
+
+        /* Categoria Separator */
+        .category-header {
+            position: sticky; top: var(--header-h); z-index: 10;
+            background: var(--bg);
+            padding: 16px 0 8px;
+            margin-top: 24px;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 16px;
+        }
+        .category-header h2 { font-size: 1.2rem; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        /* Card de Produto */
+        .card {
+            background: var(--surface); border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden; display: flex; flex-direction: column;
+            transition: transform 0.1s;
+        }
+        .card:active { transform: scale(0.98); }
+        .card-img-container {
+            aspect-ratio: 1/1; padding: 10px; display: flex; align-items: center; justify-content: center;
+            background: white; border-bottom: 1px solid var(--border);
+        }
+        .card-img { width: 100%; height: 100%; object-fit: contain; }
+        .card-body { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; }
+        .card-code { font-size: 0.7rem; color: var(--text-muted); font-family: monospace; background: var(--bg); padding: 2px 4px; border-radius: 4px; align-self: flex-start; margin-bottom: 4px; }
+        .card-title { font-size: 0.9rem; font-weight: 500; margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; flex-grow: 1; }
+        .card-price { font-size: 1.1rem; font-weight: 700; color: var(--text-main); margin: 4px 0 0; }
+        .card-stock { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+        
+        /* Controles de Quantidade */
+        .qty-ctrl { display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+        .btn-add {
+            width: 100%; padding: 10px; background: var(--bg); color: var(--text-main);
+            font-weight: 600; border-radius: 8px; font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+        .btn-add:hover { background: var(--border); }
+        
+        .qty-selector {
+            display: flex; align-items: center; width: 100%; justify-content: space-between;
+            background: var(--primary); color: white; border-radius: 8px; padding: 4px;
+        }
+        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.2); border-radius: 4px; color: white; font-weight: bold; font-size: 1.2rem; }
+        .qty-val { font-weight: bold; }
+
+        /* FAB (Mobile Cart) */
+        .fab {
+            position: fixed; bottom: 20px; right: 20px;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: var(--primary); color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 90; transition: transform 0.2s;
+        }
+        .fab:active { transform: scale(0.95); }
+
+        /* Modal (Native Dialog) */
+        dialog {
+            margin: auto; width: 100%; max-width: 500px; height: 100%; max-height: 100%;
+            border: none; background: white; z-index: 200;
+            flex-direction: column; 
+            box-shadow: 0 0 50px rgba(0,0,0,0.2);
+        }
+        @media (min-width: 768px) {
+            dialog { height: auto; max-height: 90vh; border-radius: 16px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0; }
+        }
+        dialog::backdrop { background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(2px); }
+        dialog[open] { display: flex; animation: slideUp 0.3s ease-out; }
+        
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @media (min-width: 768px) { @keyframes slideUp { from { opacity: 0; transform: translate(-50%, -40%); } to { opacity: 1; transform: translate(-50%, -50%); } } }
+
+        .modal-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--bg); }
+        .modal-title { font-weight: 700; font-size: 1.1rem; }
+        .btn-close { width: 32px; height: 32px; border-radius: 50%; background: #e5e7eb; display: flex; align-items: center; justify-content: center; }
+        
+        .modal-body { flex: 1; overflow-y: auto; padding: 16px; }
+        .cart-item { display: flex; gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed var(--border); }
+        .cart-item-info { flex: 1; }
+        .cart-item-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+        .cart-item-price { color: var(--text-muted); font-size: 0.85rem; }
+
+        .modal-footer { padding: 16px; border-top: 1px solid var(--border); background: var(--bg); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; }
+        .summary-total { font-size: 1.25rem; font-weight: 800; color: var(--text-main); margin-top: 12px; border-top: 1px solid var(--border); padding-top: 12px; }
+        
+        .btn-checkout {
+            width: 100%; padding: 16px; background: #25D366; color: white;
+            font-weight: 700; font-size: 1.1rem; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            margin-top: 16px;
+        }
+
+        /* Loading */
+        .skeleton { background: #eee; height: 20px; width: 100%; border-radius: 4px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+        /* Icons SVG */
+        svg { width: 24px; height: 24px; fill: currentColor; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800 smooth-scroll">
+<body>
 
-    <!-- Header Fixo -->
-    <header class="fixed w-full top-0 z-50 glass-header shadow-sm border-b border-gray-100">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <!-- Logo -->
-            <a href="#" class="flex items-center gap-2" onclick="window.scrollTo(0,0)">
-                <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                    DA
-                </div>
-                <div>
-                    <h1 class="font-bold text-gray-900 leading-none">Dona Antônia</h1>
-                    <span class="text-xs text-red-600 font-medium">Alimentos</span>
-                </div>
+    <!-- Header -->
+    <header>
+        <div class="container header-content">
+            <a href="#" class="logo">
+                <div style="background: var(--primary); color: white; width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">DA</div>
+                <span>Dona Antônia</span>
             </a>
-
-            <!-- Cart Summary & CTA (Mobile/Desktop) -->
-            <div class="flex items-center gap-4">
-                <a href="#monte-sua-cesta" class="hidden md:block bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full font-medium transition shadow-md">
-                    Montar Cesta
-                </a>
-                <div class="relative cursor-pointer" onclick="document.getElementById('carrinho-modal').classList.remove('hidden')">
-                    <i class="fa-solid fa-basket-shopping text-2xl text-gray-700 hover:text-red-600 transition"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white transform scale-0 transition-transform duration-200">0</span>
-                </div>
-            </div>
+            <button class="cart-icon-btn" onclick="App.toggleCart()">
+                <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                <div id="cart-badge" class="cart-badge">0</div>
+            </button>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="pt-24 pb-12 px-4 bg-white">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8 items-center">
-            <div class="space-y-6 fade-in">
-                <div class="inline-block bg-red-50 text-red-600 px-3 py-1 rounded-full text-sm font-semibold border border-red-100">
-                    <i class="fa-solid fa-truck-fast mr-1"></i> Entrega Grátis acima de R$ 85
-                </div>
-                <h2 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
-                    Qualidade que alimenta sua <span class="text-red-600">família</span>
-                </h2>
-                <p class="text-gray-600 text-lg">
-                    Cestas básicas completas com as melhores marcas. Arroz Tio Alvino, Feijão Novo e muito mais. Pague somente na entrega.
-                </p>
-                <div class="flex gap-3 flex-wrap">
-                    <a href="#cestas-prontas" class="bg-gray-900 text-white px-6 py-3 rounded-xl font-medium hover:bg-gray-800 transition shadow-lg">
-                        Cestas Prontas
-                    </a>
-                    <a href="#monte-sua-cesta" class="bg-white text-red-600 border-2 border-red-600 px-6 py-3 rounded-xl font-medium hover:bg-red-50 transition">
-                        Montar Minha Cesta
-                    </a>
-                </div>
+    <!-- Main Content -->
+    <main>
+        <!-- Hero -->
+        <section class="container hero">
+            <span class="hero-tag">Entrega Grátis acima de R$ 85</span>
+            <h1>Qualidade para sua família</h1>
+            <p>Os melhores produtos, direto do atacado.</p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button onclick="document.getElementById('cestas-container').scrollIntoView({behavior: 'smooth'})" style="background: var(--text-main); color: white; padding: 12px 24px; border-radius: 8px; font-weight: 600;">Cestas Prontas</button>
+                <button onclick="document.getElementById('catalog-container').scrollIntoView({behavior: 'smooth'})" style="border: 2px solid var(--primary); color: var(--primary); background: transparent; padding: 12px 24px; border-radius: 8px; font-weight: 600;">Montar Cesta</button>
             </div>
-            <!-- Imagem Ilustrativa Hero -->
-            <div class="relative h-64 md:h-96 rounded-2xl overflow-hidden shadow-2xl fade-in md:order-last order-first">
-                <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Cesta de Alimentos" class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                <div class="absolute bottom-4 left-4 text-white">
-                    <p class="font-bold text-xl">Produtos Selecionados</p>
-                    <p class="text-sm opacity-90">Direto do atacado para sua casa</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Seção Cestas Prontas (Dinâmica) -->
-    <section id="cestas-prontas" class="py-12 bg-gray-50">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <h3 class="text-2xl md:text-3xl font-bold text-gray-900">Cestas Prontas</h3>
-                <p class="text-gray-500 mt-2">As campeãs de vendas com o melhor custo-benefício</p>
-            </div>
-
-            <!-- Container para as cestas prontas (Injetado via JS) -->
-            <div id="featured-baskets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Carregando... -->
-                <div class="col-span-full text-center py-12">
-                    <i class="fa-solid fa-spinner fa-spin text-3xl text-red-600"></i>
-                    <p class="text-gray-500 mt-2">Carregando cestas...</p>
+        <!-- Cestas Prontas -->
+        <section id="cestas-container" class="featured-section hidden">
+            <div class="container">
+                <h3 class="section-title">⭐ Cestas Prontas</h3>
+                <div id="featured-grid" class="grid-products">
+                    <!-- JS Injected -->
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Monte Sua Cesta Section -->
-    <section id="monte-sua-cesta" class="py-12 bg-white mobile-padding-bottom">
-        <div class="max-w-6xl mx-auto px-4 h-full flex flex-col md:flex-row gap-8">
+        <!-- Catálogo Geral -->
+        <section id="catalog-container" class="container">
+            <div style="margin-bottom: 20px;">
+                <input type="text" id="search" placeholder="🔍 Buscar produto ou código..." 
+                    style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 16px; outline: none;">
+            </div>
             
-            <!-- Sidebar Categorias (Desktop) -->
-            <aside class="hidden md:block w-64 flex-shrink-0">
-                <div class="sticky top-24 space-y-2">
-                    <h4 class="font-bold text-gray-900 mb-4 px-2">Categorias</h4>
-                    <nav class="space-y-1" id="desktop-categories">
-                        <!-- Categorias injetadas via JS -->
-                    </nav>
-                </div>
-            </aside>
-
-            <!-- Main Content -->
-            <div class="flex-1">
-                <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-6 gap-4">
-                    <div>
-                        <h3 class="text-2xl font-bold text-gray-900">Monte sua Cesta</h3>
-                        <p class="text-gray-500 text-sm">Escolha item por item conforme sua necessidade</p>
-                    </div>
-                    
-                    <!-- Search Bar -->
-                    <div class="w-full md:w-auto relative">
-                        <input type="text" id="search-input" placeholder="Buscar por nome ou código..." 
-                               class="w-full pl-10 pr-4 py-2 bg-gray-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400"></i>
-                    </div>
-                </div>
-
-                <!-- Categorias Mobile (Scroll Horizontal) -->
-                <div class="md:hidden overflow-x-auto category-scroll pb-4 mb-2 flex gap-2 sticky top-16 z-40 bg-white/95 py-2 backdrop-blur-sm" id="mobile-categories">
-                    <!-- Categorias injetadas via JS -->
-                </div>
-
-                <!-- Grid de Produtos -->
-                <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 md:gap-6">
-                    <!-- Cards injetados via JS -->
-                </div>
+            <div id="main-catalog">
+                <div class="skeleton"></div>
+                <div class="skeleton" style="width: 80%; margin-top: 10px;"></div>
             </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button (Mobile) -->
+    <button class="fab" onclick="App.toggleCart()" aria-label="Abrir Carrinho">
+        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <div id="fab-badge" class="cart-badge" style="border-color: var(--primary);">0</div>
+    </button>
+
+    <!-- Carrinho Dialog -->
+    <dialog id="cart-modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Sua Cesta</h3>
+            <button class="btn-close" onclick="App.toggleCart()">
+                <svg viewBox="0 0 24 24" style="width: 20px;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            </button>
         </div>
-    </section>
-
-    <!-- Floating Action Button (Mobile Cart) -->
-    <div class="fixed bottom-4 right-4 md:hidden z-40">
-        <button onclick="document.getElementById('carrinho-modal').classList.remove('hidden')" class="bg-red-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center relative hover:scale-105 transition">
-            <i class="fa-solid fa-basket-shopping text-xl"></i>
-            <span id="mobile-cart-count" class="absolute top-0 right-0 bg-white text-red-600 text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border border-gray-200">0</span>
-        </button>
-    </div>
-
-    <!-- Modal Carrinho -->
-    <div id="carrinho-modal" class="fixed inset-0 bg-black/50 z-[60] hidden backdrop-blur-sm transition-opacity">
-        <div class="absolute right-0 top-0 h-full w-full md:w-[400px] bg-white shadow-2xl flex flex-col animate-slide-in">
-            <!-- Header Cart -->
-            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                <h3 class="font-bold text-lg text-gray-900"><i class="fa-solid fa-receipt mr-2 text-red-600"></i>Sua Cesta</h3>
-                <button onclick="document.getElementById('carrinho-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark text-gray-600"></i>
-                </button>
-            </div>
-
-            <!-- Lista Itens -->
-            <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-3 bg-white">
-                <!-- Itens -->
-                <div class="text-center text-gray-400 py-10">
-                    <i class="fa-solid fa-basket-shopping text-4xl mb-3 opacity-30"></i>
-                    <p>Sua cesta está vazia</p>
-                </div>
-            </div>
-
-            <!-- Footer Cart -->
-            <div class="p-4 border-t border-gray-100 bg-gray-50 space-y-3">
-                <div class="flex justify-between text-sm text-gray-600">
-                    <span>Subtotal</span>
-                    <span class="font-bold" id="cart-subtotal">R$ 0,00</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <span class="text-gray-600">Taxa de Entrega</span>
-                    <span class="font-bold text-green-600" id="delivery-fee">Grátis</span>
-                </div>
-                <div class="flex justify-between text-xl font-bold text-gray-900 pt-2 border-t border-gray-200">
-                    <span>Total</span>
-                    <span id="cart-total">R$ 0,00</span>
-                </div>
-                
-                <button onclick="MonteCestaApp.checkout()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> Finalizar Pedido
-                </button>
-                <p class="text-[10px] text-center text-gray-400">Ao finalizar, você será redirecionado para o WhatsApp.</p>
-            </div>
+        <div class="modal-body" id="cart-body">
+            <!-- Items -->
         </div>
-    </div>
+        <div class="modal-footer">
+            <div class="summary-row"><span>Subtotal</span><span id="subtotal">R$ 0,00</span></div>
+            <div class="summary-row"><span style="color: green;">Entrega</span><span id="delivery">Calculando...</span></div>
+            <div class="summary-row summary-total"><span>Total</span><span id="total">R$ 0,00</span></div>
+            <button class="btn-checkout" onclick="App.checkout()">
+                <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Pedir no WhatsApp
+            </button>
+        </div>
+    </dialog>
 
-    <style>
-        .animate-slide-in { animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
-    </style>
-
-    <!-- Lógica da Aplicação -->
     <script>
-        const MonteCestaApp = {
-            products: [],
+        const App = {
+            data: [],
             cart: {},
-            phone: "5565999999999", 
-            activeCategory: 'Todos',
-            searchTerm: '',
-
+            
             async init() {
                 try {
-                    const response = await fetch('produtos/produtos.json');
-                    const data = await response.json();
+                    // Carregamento rápido do JSON
+                    const res = await fetch('produtos/produtos.json');
+                    if(!res.ok) throw new Error("Erro fetch");
+                    const raw = await res.json();
                     
-                    // Normalização dos dados
-                    this.products = data.map(p => {
-                        // Lógica de caminho da imagem (segurança se vier sem pasta)
-                        let imgPath = p.imagem || '';
-                        if (imgPath && !imgPath.includes('/')) {
-                            imgPath = 'img/produtos/' + imgPath;
-                        }
+                    // Tratamento leve de dados
+                    this.data = raw.map(p => ({
+                        ...p,
+                        id: String(p.id),
+                        valor: parseFloat(p.valor),
+                        estoque: parseInt(p.estoque) || 0,
+                        categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
+                        // Garante o path da imagem
+                        imagem: (p.imagem && !p.imagem.includes('/')) ? 'img/produtos/' + p.imagem : (p.imagem || '')
+                    }));
 
-                        return {
-                            ...p,
-                            valor: parseFloat(p.valor),
-                            estoque: parseInt(p.estoque) || 0,
-                            categoria: p.categoria ? p.categoria.toUpperCase() : "OUTROS", // Padroniza maiúscula
-                            imagem: imgPath
-                        };
+                    this.renderFeatured();
+                    this.renderCatalog();
+                    
+                    // Busca rápida
+                    document.getElementById('search').addEventListener('input', (e) => {
+                        this.renderCatalog(e.target.value.toLowerCase());
                     });
 
-                    this.renderFeaturedBaskets(); // Renderiza as cestas prontas (Topo)
-                    this.renderCategories(); // Cria as abas automaticamente
-                    this.render(); // Renderiza o grid principal
-                    this.setupSearch();
-                } catch (error) {
-                    console.error('Erro ao carregar produtos:', error);
-                    const errorMsg = `<div class="col-span-full text-center py-10 text-red-600"><p>Erro ao carregar produtos. Verifique o console.</p></div>`;
-                    document.getElementById('products-grid').innerHTML = errorMsg;
-                    document.getElementById('featured-baskets-grid').innerHTML = errorMsg;
+                } catch (e) {
+                    document.getElementById('main-catalog').innerHTML = `<div class="text-center" style="padding:40px; color:red">Erro ao carregar produtos. Atualize a página.</div>`;
+                    console.error(e);
                 }
             },
 
-            setupSearch() {
-                const searchInput = document.getElementById('search-input');
-                searchInput.addEventListener('input', (e) => {
-                    this.searchTerm = e.target.value.toLowerCase();
-                    this.render();
+            // Renderiza Cestas Prontas (Destaque)
+            renderFeatured() {
+                const cestas = this.data.filter(p => p.categoria === 'CESTA BASICA');
+                const container = document.getElementById('featured-grid');
+                const section = document.getElementById('cestas-container');
+                
+                if (cestas.length === 0) return;
+
+                section.classList.remove('hidden');
+                container.innerHTML = cestas.map(p => this.createCardHTML(p, true)).join('');
+            },
+
+            // Renderiza Catálogo Completo com Divisões de Categoria
+            renderCatalog(term = '') {
+                const container = document.getElementById('main-catalog');
+                
+                // Filtra e Agrupa
+                const filtered = this.data.filter(p => 
+                    p.categoria !== 'CESTA BASICA' && // Já mostrados no topo
+                    (p.nome.toLowerCase().includes(term) || (p.codigo && p.codigo.toLowerCase().includes(term)))
+                );
+
+                if (filtered.length === 0) {
+                    container.innerHTML = `<div class="text-center" style="padding:40px; color:var(--text-muted)">Nenhum produto encontrado.</div>`;
+                    return;
+                }
+
+                // Agrupamento manual para evitar Object.groupBy (compatibilidade)
+                const groups = {};
+                filtered.forEach(p => {
+                    if (!groups[p.categoria]) groups[p.categoria] = [];
+                    groups[p.categoria].push(p);
                 });
+
+                // Ordena categorias alfabeticamente
+                const sortedCats = Object.keys(groups).sort();
+                
+                let html = '';
+                sortedCats.forEach(cat => {
+                    html += `
+                        <div class="category-header">
+                            <h2>${cat}</h2>
+                        </div>
+                        <div class="grid-products">
+                            ${groups[cat].map(p => this.createCardHTML(p)).join('')}
+                        </div>
+                    `;
+                });
+
+                container.innerHTML = html;
+                this.updateUI(); // Atualiza contadores nos cards
             },
 
-            // Pega categorias únicas automaticamente do JSON
-            getUniqueCategories() {
-                // Remove 'CESTA BASICA' do filtro principal se quisermos que elas fiquem só no topo
-                // Mas o pedido foi "faça as divisões de forma automática", então vamos incluir tudo
-                const cats = new Set(this.products.map(p => p.categoria));
-                return ['Todos', ...Array.from(cats).sort()];
+            // Gera HTML do Card (String Template pura para performance)
+            createCardHTML(p, isFeatured = false) {
+                const stockDisplay = p.estoque > 0 ? `Estoque: ${p.estoque}` : `<span style="color:var(--primary)">Indisponível</span>`;
+                // Se for destaque, força fetchpriority
+                const imgAttr = isFeatured ? 'fetchpriority="high"' : 'loading="lazy"';
+                
+                return `
+                <div class="card" data-id="${p.id}">
+                    <div class="card-img-container">
+                        <img src="${p.imagem}" 
+                             alt="${p.nome}" 
+                             class="card-img" 
+                             ${imgAttr}
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+PHJlY3Qgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9IiNlZWUiLz48dGV4dCB4PSI1MCIgeT0iNTAiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIiBmaWxsPSIjOTk5IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+U2VtIEZvdG88L3RleHQ+PC9zdmc+'">
+                    </div>
+                    <div class="card-body">
+                        ${p.codigo ? `<div class="card-code">${p.codigo}</div>` : ''}
+                        <h4 class="card-title">${p.nome}</h4>
+                        <div class="card-stock">${stockDisplay}</div>
+                        <div class="card-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
+                        
+                        <div class="qty-ctrl" id="ctrl-${p.id}">
+                            <button class="btn-add" onclick="App.add('${p.id}')">ADICIONAR</button>
+                        </div>
+                    </div>
+                </div>`;
             },
 
-            renderCategories() {
-                const cats = this.getUniqueCategories();
-                const desktopNav = document.getElementById('desktop-categories');
-                const mobileNav = document.getElementById('mobile-categories');
-
-                const btnClassDesktop = (c) => `w-full text-left px-3 py-2 rounded-lg text-sm transition ${this.activeCategory === c ? 'bg-red-50 text-red-700 font-bold' : 'text-gray-600 hover:bg-gray-50'}`;
-                const btnClassMobile = (c) => `whitespace-nowrap px-4 py-2 rounded-full text-sm font-medium border transition ${this.activeCategory === c ? 'bg-red-600 text-white border-red-600 shadow-md' : 'bg-white text-gray-600 border-gray-200'}`;
-
-                desktopNav.innerHTML = cats.map(c => 
-                    `<button onclick="MonteCestaApp.setCategory('${c}')" class="${btnClassDesktop(c)}">${c}</button>`
-                ).join('');
-
-                mobileNav.innerHTML = cats.map(c => 
-                    `<button onclick="MonteCestaApp.setCategory('${c}')" class="${btnClassMobile(c)}">${c}</button>`
-                ).join('');
-            },
-
-            setCategory(cat) {
-                this.activeCategory = cat;
-                this.renderCategories();
-                this.render();
-            },
-
+            // Lógica do Carrinho
             add(id) {
                 if (!this.cart[id]) this.cart[id] = 0;
                 this.cart[id]++;
-                this.updateCartUI();
+                this.updateUI();
             },
 
             remove(id) {
-                if (this.cart[id] && this.cart[id] > 0) {
+                if (this.cart[id]) {
                     this.cart[id]--;
-                    if (this.cart[id] === 0) delete this.cart[id];
-                    this.updateCartUI();
+                    if (this.cart[id] <= 0) delete this.cart[id];
+                    this.updateUI();
                 }
             },
 
-            // Renderiza a seção "Cestas Prontas" no topo
-            renderFeaturedBaskets() {
-                const container = document.getElementById('featured-baskets-grid');
-                // Filtra produtos onde categoria é explicitamente CESTA BASICA
-                const baskets = this.products.filter(p => p.categoria === 'CESTA BASICA');
+            // Atualiza UI globalmente (Badges e Botões dos Cards)
+            updateUI() {
+                let totalCount = 0;
+                let subtotal = 0;
 
-                if (baskets.length === 0) {
-                    document.getElementById('cestas-prontas').style.display = 'none';
-                    return;
-                }
-
-                container.innerHTML = baskets.map(p => {
-                    return `
-                    <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition border border-gray-100 flex flex-col h-full">
-                        <div class="flex justify-between items-start mb-4">
-                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded">PRONTA ENTREGA</span>
-                        </div>
-                        <h4 class="text-xl font-bold text-gray-900 mb-2">${p.nome}</h4>
-                        
-                        <div class="h-48 mb-4 flex items-center justify-center p-2">
-                            <img src="${p.imagem}" onerror="this.src='https://placehold.co/300x200?text=Sem+Foto'" alt="${p.nome}" class="max-h-full max-w-full object-contain drop-shadow-sm">
-                        </div>
-
-                        <div class="border-t border-gray-100 pt-4 mt-auto">
-                            <div class="flex justify-between items-end">
-                                <div>
-                                    <div class="text-2xl font-bold text-red-600">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
-                                    <div class="text-xs text-gray-500 mt-1">Estoque: ${p.estoque}</div>
-                                </div>
-                                <button onclick="MonteCestaApp.add('${p.id}')" class="bg-red-600 text-white w-12 h-12 rounded-full flex items-center justify-center hover:bg-red-700 shadow-lg transition transform active:scale-95">
-                                    <i class="fa-solid fa-plus text-lg"></i>
-                                </button>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('');
-            },
-
-            // Renderiza o Grid Principal "Monte sua Cesta"
-            render() {
-                const grid = document.getElementById('products-grid');
-                grid.innerHTML = '';
-
-                let filtered = this.products;
-
-                // Opcional: Se quiser esconder as Cestas Básicas do grid de "montagem" descomente abaixo.
-                // Mas como o pedido foi "divisões automáticas", mantive tudo.
-                // filtered = filtered.filter(p => p.categoria !== 'CESTA BASICA');
-
-                if (this.activeCategory !== 'Todos') {
-                    filtered = filtered.filter(p => p.categoria === this.activeCategory);
-                }
-
-                if (this.searchTerm) {
-                    filtered = filtered.filter(p => 
-                        p.nome.toLowerCase().includes(this.searchTerm) || 
-                        (p.codigo && p.codigo.toLowerCase().includes(this.searchTerm))
-                    );
-                }
-
-                if (filtered.length === 0) {
-                    grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-400">Nenhum produto encontrado nesta categoria.</div>`;
-                    return;
-                }
-
-                filtered.forEach(p => {
+                // Atualiza cada card na tela
+                for (const p of this.data) {
                     const qty = this.cart[p.id] || 0;
-                    const html = `
-                        <div class="product-card bg-white rounded-2xl p-3 border border-gray-100 shadow-sm flex flex-col h-full relative group">
-                            <div class="absolute top-2 left-2 bg-gray-100 text-gray-500 text-[10px] font-mono px-1.5 py-0.5 rounded opacity-50 group-hover:opacity-100 transition">
-                                ${p.codigo || ''}
-                            </div>
-                            <div class="h-32 mb-3 flex items-center justify-center p-2">
-                                <img src="${p.imagem}" onerror="this.src='https://placehold.co/150x150?text=Sem+Foto'" alt="${p.nome}" class="max-h-full max-w-full object-contain drop-shadow-sm">
-                            </div>
-                            <div class="flex-grow">
-                                <h5 class="text-sm font-medium text-gray-800 leading-snug line-clamp-2 mb-1" title="${p.nome}">${p.nome}</h5>
-                                <p class="text-sm font-bold text-gray-900">R$ ${p.valor.toFixed(2).replace('.', ',')}</p>
-                                <p class="text-[10px] text-gray-500 mt-1">Estoque: ${p.estoque}</p>
-                            </div>
-                            <div class="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
-                                ${qty === 0 ? `
-                                    <button onclick="MonteCestaApp.add('${p.id}')" class="w-full bg-gray-50 hover:bg-red-600 hover:text-white text-gray-700 font-medium py-1.5 rounded-lg text-sm transition flex items-center justify-center gap-2">
-                                        Adicionar
-                                    </button>
-                                ` : `
-                                    <div class="flex items-center justify-between w-full bg-red-50 rounded-lg p-1">
-                                        <button onclick="MonteCestaApp.remove('${p.id}')" class="w-7 h-7 flex items-center justify-center bg-white text-red-600 rounded shadow-sm hover:bg-gray-100">-</button>
-                                        <span class="font-bold text-sm text-red-700">${qty}</span>
-                                        <button onclick="MonteCestaApp.add('${p.id}')" class="w-7 h-7 flex items-center justify-center bg-red-600 text-white rounded shadow-sm hover:bg-red-700">+</button>
-                                    </div>
-                                `}
-                            </div>
-                        </div>
-                    `;
-                    grid.innerHTML += html;
+                    if (qty > 0) {
+                        totalCount += qty;
+                        subtotal += p.valor * qty;
+                    }
+
+                    // Encontra o container de controle no DOM
+                    const ctrl = document.getElementById(`ctrl-${p.id}`);
+                    if (ctrl) {
+                        if (qty === 0) {
+                            ctrl.innerHTML = `<button class="btn-add" onclick="App.add('${p.id}')">ADICIONAR</button>`;
+                        } else {
+                            ctrl.innerHTML = `
+                                <div class="qty-selector">
+                                    <button class="qty-btn" onclick="App.remove('${p.id}')">−</button>
+                                    <span class="qty-val">${qty}</span>
+                                    <button class="qty-btn" onclick="App.add('${p.id}')">+</button>
+                                </div>`;
+                        }
+                    }
+                }
+
+                // Atualiza Badges
+                const badges = [document.getElementById('cart-badge'), document.getElementById('fab-badge')];
+                badges.forEach(b => {
+                    b.innerText = totalCount;
+                    if(totalCount > 0) b.classList.add('show');
+                    else b.classList.remove('show');
                 });
             },
 
-            updateCartUI() {
-                this.render(); // Atualiza botões no grid
+            toggleCart() {
+                const modal = document.getElementById('cart-modal');
+                if (modal.open) {
+                    modal.close();
+                } else {
+                    this.renderCartItems();
+                    modal.showModal();
+                }
+            },
 
-                const cartDiv = document.getElementById('cart-items');
-                const totalSpan = document.getElementById('cart-total');
-                const subtotalSpan = document.getElementById('cart-subtotal');
-                const countBadge = document.getElementById('cart-count');
-                const mobileCountBadge = document.getElementById('mobile-cart-count');
-                const deliverySpan = document.getElementById('delivery-fee');
+            renderCartItems() {
+                const body = document.getElementById('cart-body');
+                const subEl = document.getElementById('subtotal');
+                const delEl = document.getElementById('delivery');
+                const totEl = document.getElementById('total');
 
-                let total = 0;
-                let count = 0;
                 let html = '';
+                let sub = 0;
+                let isEmpty = true;
 
-                Object.keys(this.cart).forEach(id => {
-                    const product = this.products.find(p => p.id == id);
-                    const qty = this.cart[id];
-                    if (product && qty > 0) {
-                        const sub = product.valor * qty;
-                        total += sub;
-                        count += qty;
+                for (const [id, qty] of Object.entries(this.cart)) {
+                    const p = this.data.find(x => x.id === id);
+                    if (p) {
+                        isEmpty = false;
+                        sub += p.valor * qty;
                         html += `
-                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center border border-gray-100 overflow-hidden">
-                                         <img src="${product.imagem}" onerror="this.src='https://placehold.co/50?text=..'" class="w-8 h-8 object-contain">
-                                    </div>
-                                    <div>
-                                        <div class="text-xs font-bold text-gray-800 line-clamp-1 w-32">${product.nome}</div>
-                                        <div class="text-xs text-gray-500">R$ ${product.valor.toFixed(2).replace('.', ',')}</div>
-                                    </div>
+                            <div class="cart-item">
+                                <div class="cart-item-info">
+                                    <div class="cart-item-title">${p.nome}</div>
+                                    <div class="cart-item-price">${qty} x R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                                 </div>
-                                <div class="flex items-center gap-3">
-                                    <div class="flex items-center bg-white border border-gray-200 rounded-lg h-7">
-                                        <button onclick="MonteCestaApp.remove('${id}')" class="w-6 text-gray-500 hover:text-red-600">-</button>
-                                        <span class="text-xs font-bold w-4 text-center">${qty}</span>
-                                        <button onclick="MonteCestaApp.add('${id}')" class="w-6 text-gray-500 hover:text-green-600">+</button>
-                                    </div>
-                                    <div class="text-xs font-bold text-gray-900 w-16 text-right">R$ ${sub.toFixed(2).replace('.', ',')}</div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <button onclick="App.remove('${id}'); App.renderCartItems()" style="width:28px; height:28px; background:#eee; border-radius:4px;">-</button>
+                                    <strong>${qty}</strong>
+                                    <button onclick="App.add('${id}'); App.renderCartItems()" style="width:28px; height:28px; background:var(--primary); color:white; border-radius:4px;">+</button>
                                 </div>
                             </div>
                         `;
                     }
-                });
-
-                if (count === 0) {
-                    cartDiv.innerHTML = `
-                        <div class="text-center text-gray-400 py-10 flex flex-col items-center">
-                            <div class="bg-gray-100 p-4 rounded-full mb-3">
-                                <i class="fa-solid fa-basket-shopping text-2xl opacity-50"></i>
-                            </div>
-                            <p class="text-sm">Sua cesta está vazia</p>
-                        </div>
-                    `;
-                    countBadge.classList.add('scale-0');
-                    mobileCountBadge.innerText = '0';
-                    mobileCountBadge.classList.add('hidden');
-                } else {
-                    cartDiv.innerHTML = html;
-                    countBadge.innerText = count;
-                    countBadge.classList.remove('scale-0');
-                    mobileCountBadge.innerText = count;
-                    mobileCountBadge.classList.remove('hidden');
                 }
 
-                const deliveryFee = total >= 85 ? 0 : 15;
-                const finalTotal = total + deliveryFee;
+                if (isEmpty) {
+                    body.innerHTML = '<div class="text-center" style="padding:30px; color:var(--text-muted)">Sua cesta está vazia.</div>';
+                    subEl.innerText = 'R$ 0,00';
+                    delEl.innerText = '-';
+                    totEl.innerText = 'R$ 0,00';
+                    return;
+                }
 
-                subtotalSpan.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
-                deliverySpan.innerHTML = deliveryFee === 0 
-                    ? '<span class="flex items-center gap-1 text-green-600"><i class="fa-solid fa-check-circle"></i> Grátis</span>' 
-                    : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`;
-                totalSpan.innerText = `R$ ${finalTotal.toFixed(2).replace('.', ',')}`;
+                body.innerHTML = html;
+                
+                const shipping = sub >= 85 ? 0 : 15;
+                const total = sub + shipping;
+
+                subEl.innerText = `R$ ${sub.toFixed(2).replace('.', ',')}`;
+                delEl.innerHTML = shipping === 0 ? '<span style="color:green; font-weight:bold">GRÁTIS</span>' : `R$ ${shipping.toFixed(2).replace('.', ',')}`;
+                totEl.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
             },
 
             checkout() {
-                const items = [];
+                if (Object.keys(this.cart).length === 0) return alert('Adicione itens à cesta primeiro.');
+
+                let items = [];
                 let sub = 0;
-                
-                for (const [id, q] of Object.entries(this.cart)) {
-                    const p = this.products.find(x => x.id == id);
-                    if (p) {
-                        sub += p.valor * q;
-                        items.push({...p, qty: q}); 
+                for (const [id, qty] of Object.entries(this.cart)) {
+                    const p = this.data.find(x => x.id === id);
+                    if(p) {
+                        items.push({ ...p, qty });
+                        sub += p.valor * qty;
                     }
                 }
 
-                if (items.length === 0) return alert('Sua cesta está vazia!');
+                const shipping = sub >= 85 ? 0 : 15;
+                const total = sub + shipping;
 
-                const del = sub >= 85 ? 0 : 15;
-                const tot = sub + del;
-
-                let t = "*PEDIDO PERSONALIZADO - DONA ANTÔNIA*\n\n";
+                let msg = "*PEDIDO VIA SITE - DONA ANTÔNIA*\n--------------------------------\n";
                 items.forEach(i => {
-                    const cod = i.codigo ? `[${i.codigo}] ` : '';
-                    t += `${cod}${i.nome} (x${i.qty})\n`
+                    msg += `• [${i.codigo || 'S/COD'}] ${i.nome}\n   Qtd: ${i.qty} x R$ ${i.valor.toFixed(2)}\n`;
                 });
-                
-                t += `\nSubtotal: R$ ${sub.toFixed(2).replace('.', ',')}`;
-                if (del > 0) t += `\nTaxa de Entrega: R$ ${del.toFixed(2).replace('.', ',')}`;
-                else t += `\nTaxa de Entrega: GRÁTIS`;
-                
-                t += `\n*TOTAL: R$ ${tot.toFixed(2).replace('.', ',')}*`;
-                
-                window.open(`https://api.whatsapp.com/send?phone=${this.phone}&text=${encodeURIComponent(t)}`, '_blank');
+                msg += `--------------------------------\n`;
+                msg += `Subtotal: R$ ${sub.toFixed(2).replace('.', ',')}\n`;
+                msg += `Entrega: ${shipping === 0 ? 'GRÁTIS' : 'R$ ' + shipping.toFixed(2).replace('.', ',')}\n`;
+                msg += `*TOTAL: R$ ${total.toFixed(2).replace('.', ',')}*`;
+
+                const phone = "5565999999999"; // Configure o número aqui
+                window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(msg)}`, '_blank');
             }
         };
 
-        document.addEventListener('DOMContentLoaded', () => { MonteCestaApp.init(); });
-
-        // Facebook Pixel
-        setTimeout(function(){
-            !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-            n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-            if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-            n.queue=[];t=b.createElement(e);t.async=!0;
-            t.src=v;s=b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t,s)}(window, document,'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', 'YOUR_PIXEL_ID');
-            fbq('track', 'PageView');
-        }, 3000);
+        // Init
+        document.addEventListener('DOMContentLoaded', () => App.init());
     </script>
 </body>
 </html>
