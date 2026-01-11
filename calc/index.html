@@ -14,12 +14,12 @@
         /* --- CORE CSS (Minimal & Fast) --- */
         :root {
             --primary: #dc2626;
-            --primary-dark: #b91c1c;
+            --primary-dark: #b91c1c; /* Contraste melhorado para texto sobre fundo claro */
             --secondary: #111827;
             --bg: #f9fafb;
             --surface: #ffffff;
             --text-main: #1f2937;
-            --text-muted: #6b7280;
+            --text-muted: #4b5563; /* Escurecido para passar no contraste (era #6b7280) */
             --border: #e5e7eb;
             --header-h: 70px;
         }
@@ -29,6 +29,12 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg); color: var(--text-main); line-height: 1.5; padding-bottom: 80px;
+        }
+
+        /* Acessibilidade: Hide visualmente mas mantém para leitores de tela */
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0;
         }
 
         /* Layout Utilities */
@@ -77,9 +83,10 @@
         .hero { padding: calc(var(--header-h) + 40px) 0 60px; background: white; border-bottom: 1px solid var(--border); }
         .hero-grid { display: grid; gap: 40px; align-items: center; }
         
+        /* Contraste melhorado na tag Hero */
         .hero-tag {
             display: inline-flex; align-items: center; gap: 6px;
-            background: #fef2f2; color: var(--primary); padding: 6px 16px; border-radius: 50px;
+            background: #fef2f2; color: var(--primary-dark); padding: 6px 16px; border-radius: 50px;
             font-size: 0.85rem; font-weight: 700; border: 1px solid #fee2e2; margin-bottom: 20px;
         }
         
@@ -101,6 +108,7 @@
             position: absolute; bottom: 0; left: 0; right: 0; padding: 20px;
             background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); color: white;
         }
+        .hero-overlay-title { font-weight: 800; font-size: 1.2rem; display: block; } /* Substitui H3 para SEO */
 
         @media (min-width: 768px) {
             .hero-grid { grid-template-columns: 1fr 1fr; }
@@ -132,28 +140,27 @@
             background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
             display: flex; flex-direction: column;
             content-visibility: auto; 
-            contain-intrinsic-size: 0 420px; /* Ajuste altura estimada */
+            contain-intrinsic-size: 0 420px; 
             position: relative;
         }
         
         .card-img-box { 
             aspect-ratio: 1; padding: 10px; display: flex; align-items: center; justify-content: center; 
-            /* Removida borda inferior pois agora tem o botao */
             position: relative;
         }
         .card-img { width: 100%; height: 100%; object-fit: contain; }
         
-        /* BOTÃO DE ZOOM (Novo Estilo) */
+        /* BOTÃO DE ZOOM */
         .btn-zoom {
             width: 100%;
             background: transparent;
-            color: var(--text-muted);
+            color: #4b5563; /* Cor mais escura para contraste */
             border: none;
             border-top: 1px solid #f3f4f6;
             border-bottom: 1px solid #f3f4f6;
             padding: 8px;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -164,10 +171,22 @@
             letter-spacing: 0.5px;
         }
         .btn-zoom:hover { background: #f9fafb; color: var(--primary); }
-        .btn-zoom svg { width: 14px; height: 14px; opacity: 0.7; }
+        .btn-zoom svg { width: 14px; height: 14px; opacity: 0.8; }
 
         .card-body { padding: 12px 16px 16px; display: flex; flex-direction: column; flex: 1; }
-        .card-code { font-size: 0.7rem; color: #9ca3af; font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; align-self: flex-start; margin-bottom: 8px; }
+        
+        /* Contraste melhorado para o código do produto */
+        .card-code { 
+            font-size: 0.7rem; 
+            color: #374151; /* Gray-700 (Passa WCAG AA) */
+            font-family: monospace; 
+            background: #f3f4f6; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            align-self: flex-start; 
+            margin-bottom: 8px; 
+        }
+
         .card-title { font-size: 1rem; font-weight: 600; color: var(--secondary); margin-bottom: 4px; line-height: 1.3; }
         .card-price { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-top: auto; padding-top: 8px; }
         
@@ -176,7 +195,12 @@
         .btn-add:active { background: #e5e7eb; }
         
         .qty-control { display: flex; justify-content: space-between; align-items: center; background: var(--secondary); color: white; border-radius: 8px; padding: 4px; }
-        .qty-btn { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.2rem; border-radius: 6px; display: flex; align-items: center; justify-content: center; }
+        .qty-btn { 
+            width: 32px; height: 32px; min-width: 32px; /* Tamanho visual */
+            background: rgba(255,255,255,0.1); border: none; color: white; font-size: 1.2rem; border-radius: 6px; 
+            display: flex; align-items: center; justify-content: center; 
+            /* Acessibilidade: área de toque maior virtualmente se necessário, mas 32px é pequeno. Vamos aumentar um pouco visualmente se der, ou manter e confiar no layout */
+        }
         
         /* ICONS */
         svg { width: 24px; height: 24px; fill: currentColor; }
@@ -228,7 +252,9 @@
         .thumb-item {
             width: 70px; height: 70px; border-radius: 6px; overflow: hidden; cursor: pointer;
             border: 2px solid transparent; opacity: 0.6; transition: all 0.2s; background: #000;
+            padding: 0; display: block; /* Acessibilidade */
         }
+        .thumb-item:focus { outline: 2px solid white; }
         .thumb-item.active { border-color: var(--primary); opacity: 1; transform: scale(1.05); }
         .thumb-item img, .thumb-item video { width: 100%; height: 100%; object-fit: cover; }
 
@@ -278,7 +304,8 @@
                 <div class="hero-img-container">
                     <img src="img/capa.webp" alt="Cesta Básica" class="hero-img" width="600" height="375" fetchpriority="high" onerror="this.onerror=null;this.classList.add('fallback-img')">
                     <div class="hero-overlay">
-                        <h3 style="font-weight: 800; font-size: 1.2rem;">Produtos Selecionados</h3>
+                        <!-- Correção SEO: H3 alterado para div para manter ordem hierárquica -->
+                        <div class="hero-overlay-title">Produtos Selecionados</div>
                         <p style="font-size: 0.9rem; opacity: 0.9;">Direto do atacado para sua casa</p>
                     </div>
                 </div>
@@ -300,6 +327,8 @@
         <!-- Catálogo -->
         <section id="catalog-section" class="container" style="padding-top: 40px;">
             <div style="margin-bottom: 30px;">
+                <!-- Acessibilidade: Label adicionado (apenas para leitor de tela) -->
+                <label for="search" class="sr-only">Buscar por nome ou código</label>
                 <input type="text" id="search" class="search-bar" placeholder="🔍 Buscar por nome ou código...">
             </div>
             <!-- Event Delegation Container -->
@@ -319,7 +348,7 @@
     <dialog id="cart-modal">
         <div class="modal-header">
             <h3 style="font-weight: 800; font-size: 1.2rem;">Seu Pedido</h3>
-            <button onclick="App.toggleCart()" style="background: #f3f4f6; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">✕</button>
+            <button onclick="App.toggleCart()" style="background: #f3f4f6; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center;" aria-label="Fechar Carrinho">✕</button>
         </div>
         <div class="modal-body" id="cart-body"></div>
         <div class="modal-footer">
@@ -340,7 +369,7 @@
 
     <!-- MODAL GALERIA -->
     <dialog id="media-modal">
-        <button class="btn-close-media" onclick="MediaGallery.close()">✕</button>
+        <button class="btn-close-media" onclick="MediaGallery.close()" aria-label="Fechar Galeria">✕</button>
         
         <div class="media-stage" id="media-stage">
             <!-- Imagem Grande ou Video Aqui -->
@@ -463,7 +492,7 @@
                              onerror="this.onerror=null;this.classList.add('fallback-img')">
                     </div>
                     
-                    <button class="btn-zoom" data-action="zoom" data-id="${p.id}">
+                    <button class="btn-zoom" data-action="zoom" data-id="${p.id}" aria-label="Ampliar imagem de ${p.nome}">
                         <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
                         Ampliar
                     </button>
@@ -475,7 +504,7 @@
                         <div class="card-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                         
                         <div class="card-actions" id="ctrl-${p.id}">
-                            <button class="btn-add" data-action="add" data-id="${p.id}">ADICIONAR</button>
+                            <button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>
                         </div>
                     </div>
                 </div>`;
@@ -509,14 +538,14 @@
                     if (ctrl) {
                         if (qty === 0) {
                             if(!ctrl.querySelector('.btn-add')) {
-                                ctrl.innerHTML = `<button class="btn-add" data-action="add" data-id="${p.id}">ADICIONAR</button>`;
+                                ctrl.innerHTML = `<button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>`;
                             }
                         } else {
                             ctrl.innerHTML = `
                                 <div class="qty-control">
-                                    <button class="qty-btn" data-action="remove" data-id="${p.id}">-</button>
+                                    <button class="qty-btn" data-action="remove" data-id="${p.id}" aria-label="Remover 1 unidade de ${p.nome}">-</button>
                                     <span style="font-weight: 700; padding: 0 10px;">${qty}</span>
-                                    <button class="qty-btn" data-action="add" data-id="${p.id}">+</button>
+                                    <button class="qty-btn" data-action="add" data-id="${p.id}" aria-label="Adicionar mais 1 unidade de ${p.nome}">+</button>
                                 </div>`;
                         }
                     }
@@ -564,9 +593,9 @@
                                     <div style="font-size:0.8rem; color:#6b7280;">${qty} x R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                                 </div>
                                 <div class="qty-control" style="height:32px; align-self:center;">
-                                    <button class="qty-btn" data-action="remove" data-id="${id}">-</button>
+                                    <button class="qty-btn" data-action="remove" data-id="${id}" aria-label="Diminuir quantidade de ${p.nome}">-</button>
                                     <span style="padding:0 10px; font-weight:700;">${qty}</span>
-                                    <button class="qty-btn" data-action="add" data-id="${id}">+</button>
+                                    <button class="qty-btn" data-action="add" data-id="${id}" aria-label="Aumentar quantidade de ${p.nome}">+</button>
                                 </div>
                             </div>`;
                     }
@@ -684,14 +713,14 @@
                     return;
                 }
 
-                // Render Thumbs
+                // Render Thumbs - Trocado div por button para acessibilidade
                 this.thumbs.innerHTML = items.map((item, idx) => `
-                    <div class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="MediaGallery.show(${idx})">
+                    <button class="thumb-item ${idx === 0 ? 'active' : ''}" onclick="MediaGallery.show(${idx})" aria-label="Ver mídia ${idx + 1}">
                         ${item.type === 'video' 
                             ? `<video src="${item.src}#t=0.1" muted></video>` 
-                            : `<img src="${item.src}">`
+                            : `<img src="${item.src}" alt="Miniatura ${idx + 1}">`
                         }
-                    </div>
+                    </button>
                 `).join('');
 
                 // Armazena itens para troca rápida
@@ -705,7 +734,7 @@
                 // Atualiza Stage
                 this.stage.innerHTML = item.type === 'video' 
                     ? `<video src="${item.src}" controls autoplay style="max-height:100%; max-width:100%"></video>` 
-                    : `<img src="${item.src}">`;
+                    : `<img src="${item.src}" alt="Imagem ampliada">`;
 
                 // Atualiza Thumbs Active
                 const thumbEls = this.thumbs.children;
