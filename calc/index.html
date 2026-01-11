@@ -186,7 +186,7 @@
         /* Galeria Slide */
         .pm-gallery { 
             background: #fff; flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
-            aspect-ratio: 1/1; width: 100%; touch-action: pan-y; 
+            aspect-ratio: 1/1; width: 100%;
         }
         @media(min-width: 768px) {
             .pm-gallery { width: 50%; flex: none; height: auto; }
@@ -205,23 +205,6 @@
         }
         .pm-arrow.prev { left: 15px; }
         .pm-arrow.next { right: 15px; }
-
-        /* NAVEGAÇÃO PRODUTOS (DESKTOP) */
-        .prod-nav-btn {
-            display: none; position: absolute; top: 50%; transform: translateY(-50%);
-            width: 60px; height: 60px; border-radius: 50%;
-            background: white; border: none; color: var(--text-main);
-            font-size: 1.5rem; cursor: pointer; z-index: 310;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3); align-items: center; justify-content: center;
-            transition: transform 0.2s, background 0.2s;
-        }
-        .prod-nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
-        .prod-nav-btn:active { transform: translateY(-50%) scale(0.95); }
-        @media(min-width: 768px) {
-            .prod-nav-btn { display: flex; }
-            .prod-nav-btn.prev { left: -80px; }
-            .prod-nav-btn.next { right: -80px; }
-        }
 
         /* Informações do Produto */
         .pm-info { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; background: white; }
@@ -247,6 +230,19 @@
         .pm-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); }
         .pm-price { font-size: 2rem; font-weight: 800; color: var(--primary); margin-bottom: 16px; }
         
+        /* Botões de Navegação Entre Produtos (Rodapé do Modal) */
+        .pm-nav-actions {
+            display: flex; justify-content: space-between; gap: 12px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border);
+        }
+        .btn-prod-nav {
+            flex: 1; background: white; border: 1px solid var(--border); color: var(--text-muted);
+            padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem;
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            transition: all 0.2s;
+        }
+        .btn-prod-nav:hover { background: #f9fafb; border-color: #d1d5db; color: var(--secondary); }
+        .btn-prod-nav:active { background: #f3f4f6; }
+
         .btn-close-pm { 
             position: absolute; top: 16px; right: 16px; z-index: 20;
             background: rgba(0,0,0,0.1); color: #333; width: 36px; height: 36px; 
@@ -255,10 +251,6 @@
         @media(min-width: 768px) { .btn-close-pm { background: #f3f4f6; } }
 
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
-        .anim-up { animation: slideInUp 0.3s ease-out; }
-        .anim-down { animation: slideInDown 0.3s ease-out; }
 
         /* Comuns */
         .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
@@ -365,10 +357,6 @@
 
     <!-- NOVO MODAL DE DETALHES DO PRODUTO -->
     <dialog id="product-modal">
-        <!-- Setas de Navegação (Desktop) - Fora do Grid -->
-        <button class="prod-nav-btn prev" data-action="prev-prod" aria-label="Produto Anterior">❮</button>
-        <button class="prod-nav-btn next" data-action="next-prod" aria-label="Próximo Produto">❯</button>
-
         <div class="pm-grid" id="pm-content">
             <!-- Conteúdo injetado via JS -->
         </div>
@@ -707,23 +695,14 @@
             currentItemIndex: 0,
             mediaItems: [],
             currentProductId: null,
-            touchStartY: 0,
-            touchEndY: 0,
+            
+            // Removido touchStartY e touchEndY pois navegação por arrasto será desativada
 
             init() {
                 this.modal = document.getElementById('product-modal');
                 this.content = document.getElementById('pm-content');
                 
-                if(this.content) {
-                    this.content.addEventListener('touchstart', e => {
-                        this.touchStartY = e.changedTouches[0].screenY;
-                    }, {passive: true});
-                    
-                    this.content.addEventListener('touchend', e => {
-                        this.touchEndY = e.changedTouches[0].screenY;
-                        this.handleSwipe();
-                    }, {passive: true});
-                }
+                // Removidos listeners de 'touchstart' e 'touchend'
             },
 
             async open(productId) {
@@ -770,18 +749,16 @@
                 App.updateUI(product.id);
             },
 
-            handleSwipe() {
-                const diff = this.touchStartY - this.touchEndY;
-                if (Math.abs(diff) > 50) {
-                    if (diff > 0) this.navigate(1); 
-                    else this.navigate(-1); 
-                }
-            },
+            // Removido handleSwipe()
 
             navigate(direction) {
+                // Navegação baseada na ordem visual atual (filteredData)
                 let list = App.filteredData;
+                
+                // Encontra índice do produto atual na lista filtrada
                 let idx = list.findIndex(p => p.id === this.currentProductId);
                 
+                // Fallback: Se não achou na filtrada (ex: veio de Destaques mas a busca mudou), procura na lista completa
                 if (idx === -1) {
                     list = App.data;
                     idx = list.findIndex(p => p.id === this.currentProductId);
@@ -791,6 +768,11 @@
 
                 let newIdx = idx + direction;
                 
+                // Lógica de loop opcional (se estiver no fim, volta pro inicio?)
+                // Se quiser loop, descomente:
+                // if (newIdx >= list.length) newIdx = 0;
+                // if (newIdx < 0) newIdx = list.length - 1;
+
                 if (newIdx >= 0 && newIdx < list.length) {
                     this.open(list[newIdx].id); // Troca simples e direta
                 }
@@ -844,6 +826,16 @@
                             <div class="pm-price">R$ ${product.valor.toFixed(2).replace('.', ',')}</div>
                             <div id="pm-ctrl-${product.id}">
                                 <!-- Botão injetado pelo App.updateUI -->
+                            </div>
+                            
+                            <!-- NOVOS BOTÕES DE NAVEGAÇÃO -->
+                            <div class="pm-nav-actions">
+                                <button class="btn-prod-nav" onclick="ProductModal.navigate(-1)">
+                                    ❮ ANTERIOR
+                                </button>
+                                <button class="btn-prod-nav" onclick="ProductModal.navigate(1)">
+                                    PRÓXIMO ❯
+                                </button>
                             </div>
                         </div>
                     </div>
