@@ -160,11 +160,12 @@
         .pm-gallery { 
             background: #000; flex: 1; position: relative; display: flex; align-items: center; justify-content: center; 
             min-height: 300px; 
+            touch-action: pan-y; /* Permite scroll se necessário, mas capturaremos swipes */
         }
-        .pm-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
+        .pm-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; transition: transform 0.3s ease; }
         .pm-stage img, .pm-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
         
-        /* SETAS DA GALERIA (SLIDER) */
+        /* SETAS DA GALERIA (SLIDER FOTOS) */
         .pm-arrow {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: rgba(220, 220, 220, 0.6);
@@ -180,27 +181,14 @@
         .pm-arrow.prev { left: 15px; }
         .pm-arrow.next { right: 15px; }
 
-        /* NAVEGAÇÃO ENTRE PRODUTOS (Botões Flutuantes) */
-        .prod-nav-btn {
-            position: fixed; top: 50%; transform: translateY(-50%);
-            width: 50px; height: 50px; border-radius: 50%;
-            background: white; border: 1px solid var(--border);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; z-index: 310; color: var(--text-main);
-            transition: all 0.2s;
+        /* DICA DE SWIPE */
+        .swipe-hint {
+            position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            color: rgba(255,255,255,0.7); font-size: 0.8rem; pointer-events: none;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            animation: bounce 2s infinite;
         }
-        .prod-nav-btn:active { transform: translateY(-50%) scale(0.95); background: #f3f4f6; }
-        .prod-nav-btn.prev { left: 10px; }
-        .prod-nav-btn.next { right: 10px; }
-        
-        @media(min-width: 768px) {
-            /* No desktop, afastar um pouco mais para fora do modal se possível, ou manter na borda */
-            .prod-nav-btn { background: white; width: 60px; height: 60px; font-size: 1.2rem; }
-            .prod-nav-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
-            .prod-nav-btn.prev { left: 20px; }
-            .prod-nav-btn.next { right: 20px; }
-        }
+        @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 40% {transform: translateX(-50%) translateY(-10px);} 60% {transform: translateX(-50%) translateY(-5px);} }
 
         /* Informações do Produto */
         .pm-info { 
@@ -227,6 +215,11 @@
         @media(min-width: 768px) { .btn-close-pm { background: #f3f4f6; } }
 
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        /* Animações de Troca de Produto */
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(50px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInDown { from { opacity: 0; transform: translateY(-50px); } to { opacity: 1; transform: translateY(0); } }
+        .anim-up { animation: slideInUp 0.3s ease-out; }
+        .anim-down { animation: slideInDown 0.3s ease-out; }
 
         /* Comuns */
         .modal-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f9fafb; }
@@ -408,9 +401,6 @@
                     if (action === 'add') this.add(id);
                     if (action === 'remove') this.remove(id);
                     if (action === 'details') ProductModal.open(id);
-                    // Navigation actions
-                    if (action === 'prev-prod') ProductModal.navigate(-1);
-                    if (action === 'next-prod') ProductModal.navigate(1);
                 });
             },
 
@@ -644,13 +634,15 @@
             currentItemIndex: 0,
             mediaItems: [],
             currentProductId: null,
+            touchStartY: 0,
+            touchEndY: 0,
 
             init() {
                 this.modal = document.getElementById('product-modal');
                 this.content = document.getElementById('pm-content');
             },
 
-            async open(productId) {
+            async open(productId, direction = 'fade') {
                 if(!this.modal) this.init();
                 
                 const product = App.data.find(p => p.id === productId);
@@ -690,9 +682,32 @@
 
                 this.mediaItems = mediaItems;
                 this.currentItemIndex = 0;
-                this.render(product);
                 
+                this.render(product, direction);
+                
+                // Setup swipe listeners
+                const gallery = document.querySelector('.pm-gallery');
+                if(gallery) {
+                    gallery.addEventListener('touchstart', e => {
+                        this.touchStartY = e.changedTouches[0].screenY;
+                    }, {passive: true});
+                    
+                    gallery.addEventListener('touchend', e => {
+                        this.touchEndY = e.changedTouches[0].screenY;
+                        this.handleSwipe();
+                    }, {passive: true});
+                }
+
                 App.updateUI(product.id);
+            },
+
+            handleSwipe() {
+                const diff = this.touchStartY - this.touchEndY;
+                // Threshold de 50px
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) this.navigate(1); // Swipe up -> next
+                    else this.navigate(-1); // Swipe down -> prev
+                }
             },
 
             // 🚀 Navegação entre produtos no modal
@@ -713,24 +728,29 @@
                 
                 // Loop ou trava nas pontas? Vamos travar para não pular de categoria bruscamente
                 if (newIdx >= 0 && newIdx < list.length) {
-                    this.open(list[newIdx].id);
+                    // Direção da animação
+                    const animDirection = direction > 0 ? 'up' : 'down';
+                    this.open(list[newIdx].id, animDirection);
                 }
             },
 
-            render(product) {
+            render(product, direction) {
                 const qty = App.cart[product.id] || 0;
                 const hasMediaArrows = this.mediaItems.length > 1;
+                
+                const animClass = direction === 'up' ? 'anim-up' : (direction === 'down' ? 'anim-down' : '');
 
                 this.content.innerHTML = `
                     <button class="btn-close-pm" onclick="ProductModal.close()">✕</button>
                     
-                    <!-- Botões de Navegação Entre Produtos -->
-                    <button class="prod-nav-btn prev" data-action="prev-prod" aria-label="Produto Anterior">❮</button>
-                    <button class="prod-nav-btn next" data-action="next-prod" aria-label="Próximo Produto">❯</button>
-
-                    <div class="pm-gallery">
+                    <div class="pm-gallery ${animClass}">
                         <div class="pm-stage" id="pm-stage">
                             ${this.getMediaHTML(0)}
+                        </div>
+                        <div class="swipe-hint">
+                            <span>▲</span>
+                            <span>Arraste para navegar</span>
+                            <span>▼</span>
                         </div>
                         ${hasMediaArrows ? `
                             <button class="pm-arrow prev" onclick="ProductModal.slide(-1)">❮</button>
