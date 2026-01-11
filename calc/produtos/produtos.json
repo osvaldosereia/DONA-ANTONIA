@@ -244,7 +244,7 @@
     "unidade": "UN",
     "obs": "",
     "items": [],
-    "caracteristicas": "Arroz tipo 1 de Alta Qualidade. Esse produto pertence ao mesmo fabricante do Arroz Tio Urbano."
+    "caracteristicas": ""
   },
   {
     "id": "1767967449487660",
@@ -909,53 +909,6 @@
     "items": [],
     "caracteristicas": "",
     "imagem": "img/produtos/p028.webp"
-  },
-  {
-    "id": "1767995536749843",
-    "codigo": "P029",
-    "nome": "FEIJAO CARIOCA DA CASA 1KG (UN)",
-    "variacoesNome": [
-      "FEIJAO CARIOCA DA CASA 1KG (UN)"
-    ],
-    "ean": "7897923022225",
-    "variacoesEan": [
-      "7897923022225"
-    ],
-    "custo": 4.49,
-    "valor": 0,
-    "estoque": -2,
-    "estoqueFiscal": 1000,
-    "tipo": "normal",
-    "nota": "262085",
-    "ncm": "07133990",
-    "cest": "",
-    "cfop": "5102",
-    "csosn": "102",
-    "unidade": "UN",
-    "fator": 10,
-    "refId": "NFe51251106057223029153553000002620851476643305-1",
-    "jsonData": {
-      "id_referencia": "NFe51251106057223029153553000002620851476643305-1",
-      "Numero_Nota": "262085",
-      "Quantidade_Nota": 100,
-      "cProd_Sugestao": "1715-UN",
-      "cEAN": "7897923022225",
-      "xProd": "FEIJAO CARIOCA DA CASA 1KG (UN)",
-      "NCM": "07133990",
-      "CEST": "",
-      "CFOP_SAIDA": "5102",
-      "CSOSN_SAIDA": "102",
-      "Unidade_Venda": "UN",
-      "Fator_Conversao_Entrada": 10,
-      "Quantidade_Total_Unidades": 1000,
-      "Custo_Unitario": 4.49,
-      "Custo_Real_Caixa": 44.9,
-      "Valor_Desconto_Total": 0,
-      "_TIPO": "VAREJO (SAIDA)",
-      "_OBS": "Desconto de R$ 0 abatido do custo"
-    },
-    "caracteristicas": "",
-    "imagem": "img/produtos/p029.webp"
   },
   {
     "id": "1767995536751991",
@@ -2498,5 +2451,168 @@
     "items": [],
     "imagem": "img/produtos/p073.webp",
     "caracteristicas": ""
+  },
+  {
+    "id": "1768168952018329",
+    "codigo": "P074",
+    "nome": "CESTA ECONÔMICA",
+    "ean": "",
+    "categoria": "CESTA BÁSICA",
+    "caracteristicas": "",
+    "custo": 0,
+    "valor": 0,
+    "estoque": 0,
+    "estoqueFiscal": 0,
+    "peso": 0,
+    "imagem": "img/produtos/p074.webp",
+    "items": [
+      {
+        "id": "1767965736886738",
+        "codigo": "P004",
+        "nome": "ACUCAR DOCE DIA 2KG (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1768088776290036",
+        "codigo": "P073",
+        "nome": "ARROZ TIO ALVINO FT 6X5",
+        "qty": 1
+      },
+      {
+        "id": "1767967765190617",
+        "codigo": "P011",
+        "nome": "BISC MYBIT 110G - CHOCOLATE",
+        "qty": 1
+      },
+      {
+        "id": "1767970374575367",
+        "codigo": "P019",
+        "nome": "CAFE PREMIADO ALMOF 250G SUPER (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767995341587629",
+        "codigo": "P026",
+        "nome": "FAR TRIGO VITORIOSA 1KG (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767995536751991",
+        "codigo": "P029",
+        "nome": "FEIJAO CARIOCA DACASA TP (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767996301404728",
+        "codigo": "P035",
+        "nome": "MAC BADOTTI SEMOLA 400G ESPAGUETE (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767996433420002",
+        "codigo": "P036",
+        "nome": "MAC INST APTI 70G GALINHA (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767997067942921",
+        "codigo": "P043",
+        "nome": "MILHO VD PREDILECTA 170G (AGRUPADO)",
+        "qty": 1
+      },
+      {
+        "id": "1767997372171002",
+        "codigo": "P049",
+        "nome": "MOLHO TOM.TRAD.FUGINI SC.36X300GR 36SC X 300GR",
+        "qty": 1
+      },
+      {
+        "id": "1768011018049449",
+        "codigo": "P068",
+        "nome": "SAL REF CRISTAL OURO 1KG (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1768169552725639",
+        "codigo": "P076",
+        "nome": "SUCO PÓ FRISCO 85G - LARANJA",
+        "qty": 1
+      },
+      {
+        "id": "1767997510556640",
+        "codigo": "P052",
+        "nome": "OLEO SOJA LIZA 900ML",
+        "qty": 1
+      }
+    ],
+    "personalized": false,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": ""
+  },
+  {
+    "id": "1768169294366535",
+    "codigo": "P075",
+    "nome": "FARINHA DE MANDIOCA DONA DÊ DE 1KG",
+    "ean": "",
+    "categoria": "ALIMENTOS",
+    "caracteristicas": "",
+    "custo": 5,
+    "valor": 7.5,
+    "estoque": 30,
+    "estoqueFiscal": 0,
+    "peso": 1,
+    "imagem": "img/produtos/p075.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": ""
+  },
+  {
+    "id": "1768169552725639",
+    "codigo": "P076",
+    "nome": "SUCO PÓ FRISCO 85G - LARANJA",
+    "ean": "",
+    "categoria": "ALIMENTOS",
+    "caracteristicas": "",
+    "custo": 0.49,
+    "valor": 1,
+    "estoque": 100,
+    "estoqueFiscal": 0,
+    "peso": 0.085,
+    "imagem": "img/produtos/p076.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": ""
   }
 ]
