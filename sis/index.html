@@ -318,9 +318,9 @@
             <div id="view-cliente" class="view-section active">
                 <div class="split-view">
                     <div class="panel-left">
-                        <div class="card">
+                        <div class="card full-h">
                             <div class="card-header">
-                                <span>Novo Cliente</span>
+                                <span>Dados do Cliente</span>
                                 <button onclick="UI.resetForm('cliente')" class="btn-ghost"><i class="fa-solid fa-eraser"></i></button>
                             </div>
                             <div class="card-body">
@@ -335,12 +335,22 @@
                                         <div class="form-group"><label>Telefone</label><input type="text" id="c-tel"></div>
                                         <div class="form-group"><label>Cidade</label><select id="c-cidade"><option>Cuiabá</option><option>Várzea Grande</option></select></div>
                                     </div>
-                                    <!-- NOVO CAMPO BAIRRO -->
+                                    <!-- CAMPO BAIRRO -->
                                     <div class="form-group"><label>Bairro</label><input type="text" id="c-bairro"></div>
                                     
-                                    <div class="form-group"><label>Endereço</label><textarea id="c-endereco" rows="3"></textarea></div>
+                                    <div class="form-group"><label>Endereço</label><textarea id="c-endereco" rows="2"></textarea></div>
                                     <button class="btn btn-primary btn-block">Salvar Cliente</button>
                                 </form>
+
+                                <!-- HISTÓRICO DE PEDIDOS (NOVO) -->
+                                <div id="client-history-area" style="margin-top: 1.5rem; border-top: 1px solid var(--slate-200); padding-top: 1rem; display: none;">
+                                    <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 5px;">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Pedidos
+                                    </div>
+                                    <div id="c-history-list" class="item-list" style="max-height: 200px; background: var(--slate-50);">
+                                        <!-- Lista preenchida via JS -->
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -378,7 +388,7 @@
                                 <form onsubmit="App.handleSave('produto', event)" id="form-produto">
                                     <input type="hidden" id="p-id">
                                     
-                                    <!-- CATEGORIA (NOVO CAMPO) -->
+                                    <!-- CATEGORIA -->
                                     <div class="form-group"><label>Categoria</label><select id="p-categoria"></select></div>
 
                                     <div class="row-2">
@@ -387,10 +397,10 @@
                                         <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
                                     </div>
                                     
-                                    <!-- NOME (Antiga Descrição) -->
+                                    <!-- NOME -->
                                     <div class="form-group"><label>Nome</label><input type="text" id="p-nome" required></div>
                                     
-                                    <!-- CARACTERÍSTICAS (Novo Campo) -->
+                                    <!-- CARACTERÍSTICAS -->
                                     <div class="form-group"><label>Características</label><textarea id="p-caracteristicas" rows="2"></textarea></div>
                                     
                                     <!-- CONTROLE DE ESTOQUE -->
@@ -428,14 +438,21 @@
                                         </div>
                                     </div>
 
-                                    <!-- ÁREA COMBO -->
+                                    <!-- ÁREA COMBO & PERSONALIZADO -->
                                     <div style="border-top: 1px solid var(--slate-200); padding-top: 10px; margin-top: 1rem;">
                                         <div class="form-group">
                                             <label style="display: flex; align-items: center; gap: 5px;">
                                                 <input type="checkbox" id="p-is-combo" onchange="UI.toggleComboArea(this.checked)" style="width: auto;"> É Combo / Kit?
                                             </label>
                                         </div>
-                                        <div id="combo-area" style="display: none; background: var(--slate-50); padding: 10px; border-radius: 6px;">
+                                        <!-- NOVO: CHECKBOX PERSONALIZADO -->
+                                        <div class="form-group" style="margin-top: 5px;">
+                                            <label style="display: flex; align-items: center; gap: 5px; color: var(--warning);">
+                                                <input type="checkbox" id="p-personalized" style="width: auto;"> Produto Personalizado (Não Exportar)
+                                            </label>
+                                        </div>
+
+                                        <div id="combo-area" style="display: none; background: var(--slate-50); padding: 10px; border-radius: 6px; margin-top: 10px;">
                                             <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; align-items: flex-end;">
                                                 <div class="form-group" style="flex: 1;">
                                                     <label>Selecionar Produto</label>
@@ -455,7 +472,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- ÁREA DE VARIAÇÕES (NOVA) -->
+                                    <!-- ÁREA DE VARIAÇÕES -->
                                     <details style="margin-top: 10px; border: 1px solid var(--slate-200); border-radius: 6px;">
                                         <summary style="background: var(--slate-50);">VARIAÇÕES / APELIDOS</summary>
                                         <div class="details-content">
@@ -635,9 +652,11 @@
                         <div class="card full-h">
                             <div class="card-header">
                                 <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                    <input type="date" id="v-filter-start" style="width: 130px;">
-                                    <input type="date" id="v-filter-end" style="width: 130px;">
-                                    <button onclick="Views.venda.render()" class="btn btn-ghost" style="border: 1px solid var(--slate-200);">Filtrar</button>
+                                    <div class="search-bar">
+                                        <i class="fa-solid fa-magnifying-glass"></i>
+                                        <input type="text" id="v-search-input" oninput="UI.filter('venda', this.value)" placeholder="Buscar pedido..." style="width: 150px;">
+                                    </div>
+                                    <button onclick="Views.venda.render()" class="btn btn-ghost" style="border: 1px solid var(--slate-200);">Limpar</button>
                                 </div>
                                 <div class="stat-box">Pedidos: <b id="count-venda">0</b></div>
                             </div>
@@ -904,11 +923,14 @@
                 a.click();
             },
             exportProducts: () => {
-                const data = DB.load().produto.map(p => ({
-                    ...p,
-                    caracteristicas: p.caracteristicas || '', // Ensure field is present
-                    imagem: `img/produtos/${p.codigo.toLowerCase()}.webp`
-                }));
+                // FILTRO ADICIONADO: Não exportar produtos marcados como personalizados
+                const data = DB.load().produto
+                    .filter(p => !p.personalized) 
+                    .map(p => ({
+                        ...p,
+                        caracteristicas: p.caracteristicas || '', 
+                        imagem: `img/produtos/${p.codigo.toLowerCase()}.webp`
+                    }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -1507,11 +1529,14 @@
                         
                         const hasVar = (p.variacoesEan && p.variacoesEan.length > 1) || (p.variacoesNome && p.variacoesNome.length > 1);
                         const varBadge = hasVar ? '<i class="fa-solid fa-layer-group" title="Possui variações cadastradas" style="color:var(--slate-400); font-size:0.7rem; margin-left:4px;"></i>' : '';
+                        
+                        // Icone personalizado
+                        const personBadge = p.personalized ? '<i class="fa-solid fa-star" title="Personalizado" style="color:var(--warning); font-size:0.7rem; margin-left:4px;"></i>' : '';
 
                         return `
                         <tr>
                             <td>
-                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome} ${isCombo} ${varBadge}</div>
+                                <div style="font-weight: 700; color: var(--slate-800);">${p.codigo} - ${p.nome} ${isCombo} ${varBadge} ${personBadge}</div>
                                 <div style="font-size: 0.7rem; color: var(--slate-400); font-family: monospace; margin-top: 2px;">${p.ean || '<span style="font-style: italic; color: var(--slate-300);">Sem EAN</span>'}</div>
                             </td>
                             <td style="text-align: center; font-weight: 700; ${estStyle}">${p.estoque}</td>
@@ -1645,6 +1670,9 @@
                         data.items = [];
                     }
 
+                    // Personalizado (NEW)
+                    data.personalized = document.getElementById('p-personalized').checked;
+
                     // Variations
                     const vNomes = document.getElementById('p-variacoesNome').value;
                     data.variacoesNome = vNomes ? vNomes.split('|').map(s => s.trim()).filter(Boolean) : [];
@@ -1688,6 +1716,7 @@
                     Views.catalogo.render();
                 } else if(type === 'cliente') {
                     document.getElementById('c-id').value = '';
+                    document.getElementById('client-history-area').style.display = 'none'; // Hide history on reset
                     Views.cliente.render();
                 }
             },
@@ -1698,7 +1727,7 @@
                 // Populate fields
                 for(let k in item) {
                     const el = document.getElementById(`${type.charAt(0)}-${k}`);
-                    // Handle special case for obs (ID mismatch in original code: p-obs-produto vs key obs)
+                    // Handle special case for obs
                     if (k === 'obs' && type === 'produto') {
                          document.getElementById('p-obs-produto').value = item[k];
                          continue;
@@ -1721,6 +1750,10 @@
                         document.getElementById('p-is-combo').checked = false;
                         UI.toggleComboArea(false);
                     }
+
+                    // Populate personalized check
+                    document.getElementById('p-personalized').checked = !!item.personalized;
+
                     document.getElementById('p-variacoesNome').value = (item.variacoesNome || []).join(' | ');
                     document.getElementById('p-variacoesEan').value = (item.variacoesEan || []).join(' | ');
                     
@@ -1742,6 +1775,26 @@
                         imgEl.style.display = 'none';
                         iconEl.style.display = 'block';
                     };
+                } else if (type === 'cliente') {
+                    // LOAD HISTORY
+                    const db = DB.load();
+                    const sales = db.venda.filter(v => v.cliId === item.id).sort((a,b) => b.date - a.date);
+                    const historyArea = document.getElementById('client-history-area');
+                    const historyList = document.getElementById('c-history-list');
+                    
+                    if(sales.length > 0) {
+                        historyArea.style.display = 'block';
+                        historyList.innerHTML = sales.map(s => `
+                            <div class="item-row" style="cursor: pointer;" onclick="UI.goToOrder('${s.codigo}')">
+                                <span>${new Date(s.date).toLocaleDateString()}</span>
+                                <span style="font-weight: 700;">#${s.codigo}</span>
+                                <span style="color: var(--success);">R$ ${s.total.toFixed(2)}</span>
+                            </div>
+                        `).join('');
+                    } else {
+                        historyArea.style.display = 'block';
+                        historyList.innerHTML = '<div style="padding:0.5rem; text-align:center; color:var(--slate-400);">Nenhuma compra encontrada.</div>';
+                    }
                 }
             },
             delete: (type, id) => {
@@ -1759,7 +1812,13 @@
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 document.getElementById(`view-${view}`).classList.add('active');
-                btn.classList.add('active');
+                if(btn) btn.classList.add('active'); // btn can be null if called programmatically
+                else {
+                    // Try to find the button
+                    // const navBtn = document.querySelector(`.nav-item[onclick*="'${view}'"]`);
+                    // if(navBtn) navBtn.classList.add('active');
+                }
+
                 document.getElementById('page-title').innerText = view === 'logistica' ? 'Logística & Estoque' : view.charAt(0).toUpperCase() + view.slice(1);
                 
                 if(view === 'catalogo') {
@@ -1799,6 +1858,9 @@
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
                 }
+                if(t === 'cliente') {
+                    document.getElementById('client-history-area').style.display = 'none';
+                }
             },
             toggleStockInputs: () => {
                 const type = document.querySelector('input[name="p-stock-type"]:checked').value;
@@ -1826,6 +1888,19 @@
                     const current = sel.value;
                     sel.innerHTML = '<option value="">Sem Categoria</option>' + db.categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
                     sel.value = current;
+                }
+            },
+            // FUNÇÃO PARA IR PARA O PEDIDO AO CLICAR NO HISTÓRICO
+            goToOrder: (orderCode) => {
+                // Switch to Venda View
+                const btnVenda = document.querySelector("button[onclick*='venda']");
+                UI.switchView('venda', btnVenda);
+                
+                // Set Filter
+                const searchInput = document.getElementById('v-search-input');
+                if(searchInput) {
+                    searchInput.value = orderCode;
+                    UI.filter('venda', orderCode);
                 }
             }
         };
