@@ -143,7 +143,7 @@
         /* HERO */
         .hero { padding: calc(var(--header-h) + 60px) 0 40px; background: white; border-bottom: 1px solid var(--border); }
         .hero-grid { display: grid; gap: 40px; align-items: center; }
-        .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; color: var(--primary-dark); padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; border: 1px solid #fee2e2; margin-bottom: 20px; }
+        .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: #fef2f2; color: var(--primary-dark); padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: 700; border: 1px solid #fee2e2; margin-bottom: 20px; text-align: left; line-height: 1.4; }
         .hero-content h1 { font-size: 2.2rem; line-height: 1.1; color: var(--secondary); margin-bottom: 16px; letter-spacing: -0.02em; }
         .hero-content p { font-size: 1rem; color: var(--text-muted); margin-bottom: 24px; max-width: 500px; line-height: 1.6; }
         .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
@@ -338,6 +338,8 @@
         .cart-item { display: flex; gap: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border); margin-bottom: 15px; }
         .cart-total-row { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 800; color: var(--secondary); margin-bottom: 15px; }
         .btn-checkout { width: 100%; padding: 16px; background: #25D366; color: white; border: none; border-radius: 12px; font-weight: 700; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-checkout:disabled { background: #9ca3af; cursor: not-allowed; opacity: 0.7; }
+        .cart-warning { font-size: 0.85rem; color: #b91c1c; background: #fee2e2; padding: 8px 12px; border-radius: 8px; margin-bottom: 12px; border: 1px solid #fecaca; display: flex; align-items: center; gap: 8px; }
         
         .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; border-radius: 50%; background: var(--primary); color: white; box-shadow: 0 10px 25px rgba(220, 38, 38, 0.5); display: flex; align-items: center; justify-content: center; z-index: 90; border: none; }
         .cart-badge { position: absolute; top: 0; right: 0; background: white; color: var(--primary); border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; font-weight: 800; display: none; align-items: center; justify-content: center; border: 2px solid var(--primary); transform: translate(25%, -25%); }
@@ -507,6 +509,7 @@
         </div>
         <div class="modal-body" id="cart-body"></div>
         <div class="modal-footer">
+            <div id="cart-warnings"></div>
             <div class="cart-total-row">
                 <span>Taxa Entrega:</span>
                 <span id="delivery-fee">-</span>
@@ -515,7 +518,7 @@
                 <span>Total:</span>
                 <span id="cart-total" style="color: var(--primary);">R$ 0,00</span>
             </div>
-            <button class="btn-checkout" onclick="App.checkout()">
+            <button id="btn-checkout-action" class="btn-checkout" onclick="App.checkout()">
                 <svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2z"/></svg>
                 Enviar Pedido
             </button>
@@ -969,12 +972,21 @@
 
             renderCartModal() {
                 const body = document.getElementById('cart-body');
-                let sub = 0; let html = '';
+                const warningsDiv = document.getElementById('cart-warnings');
+                const btnCheckout = document.getElementById('btn-checkout-action');
+                
+                let sub = 0; 
+                let html = '';
+                let uniqueItems = 0;
+                let hasCesta = false;
                 
                 for (const [id, qty] of Object.entries(this.cart)) {
                     const p = this.data.find(x => x.id === id);
                     if (p) {
                         sub += p.valor * qty;
+                        uniqueItems++;
+                        if(p.categoria === 'CESTA BÁSICA') hasCesta = true;
+
                         html += `
                             <div class="cart-item">
                                 <div style="flex:1">
@@ -994,25 +1006,72 @@
                     body.innerHTML = `<div class="text-center" style="padding:40px; color:var(--text-muted)">Seu carrinho está vazio.</div>`;
                     document.getElementById('cart-total').innerText = 'R$ 0,00';
                     document.getElementById('delivery-fee').innerText = '-';
+                    warningsDiv.innerHTML = '';
+                    btnCheckout.disabled = true;
                     return;
                 }
 
                 body.innerHTML = html;
                 const delivery = sub >= 85 ? 0 : 15;
+                
+                // REGRAS DE NEGÓCIO PARA VALIDAÇÃO
+                let messages = [];
+                let canCheckout = true;
+
+                // Regra 1: Valor mínimo R$ 85
+                if (sub < 85) {
+                    messages.push(`Faltam R$ ${(85 - sub).toFixed(2).replace('.', ',')} para o pedido mínimo (R$ 85,00).`);
+                    canCheckout = false;
+                }
+
+                // Regra 2: Mínimo 12 itens OU Cesta Básica
+                if (!hasCesta && uniqueItems < 12) {
+                    messages.push(`Faltam ${12 - uniqueItems} itens diferentes para montar sua cesta (Mín. 12).`);
+                    canCheckout = false;
+                }
+
+                // Atualiza UI de Avisos
+                if (messages.length > 0) {
+                    warningsDiv.innerHTML = messages.map(m => `<div class="cart-warning">⚠️ ${m}</div>`).join('');
+                    btnCheckout.disabled = true;
+                    btnCheckout.style.opacity = '0.5';
+                    btnCheckout.innerText = "Requisitos Pendentes";
+                } else {
+                    warningsDiv.innerHTML = '';
+                    btnCheckout.disabled = false;
+                    btnCheckout.style.opacity = '1';
+                    btnCheckout.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01C17.18 3.03 14.69 2 12.04 2z"/></svg> Enviar Pedido`;
+                }
+
                 document.getElementById('delivery-fee').innerHTML = delivery === 0 ? '<span style="color:green; font-weight:bold">GRÁTIS</span>' : `R$ ${delivery.toFixed(2).replace('.', ',')}`;
                 document.getElementById('cart-total').innerText = `R$ ${(sub + delivery).toFixed(2).replace('.', ',')}`;
             },
 
             checkout() {
-                if (Object.keys(this.cart).length === 0) return alert('Seu carrinho está vazio.');
-                
-                let msg = `*PEDIDO DONA ANTÔNIA*\n--------------------------------\n`;
+                // Validação redundante por segurança
                 let sub = 0;
+                let uniqueItems = 0;
+                let hasCesta = false;
+
+                if (Object.keys(this.cart).length === 0) return alert('Seu carrinho está vazio.');
 
                 for (const [id, qty] of Object.entries(this.cart)) {
                     const p = this.data.find(x => x.id === id);
                     if (p) {
                         sub += p.valor * qty;
+                        uniqueItems++;
+                        if(p.categoria === 'CESTA BÁSICA') hasCesta = true;
+                    }
+                }
+
+                if (sub < 85) return alert('O valor mínimo do pedido é de R$ 85,00.');
+                if (!hasCesta && uniqueItems < 12) return alert('Para montar sua própria cesta, escolha no mínimo 12 produtos diferentes ou inclua uma Cesta Básica pronta.');
+                
+                let msg = `*PEDIDO DONA ANTÔNIA*\n--------------------------------\n`;
+                
+                for (const [id, qty] of Object.entries(this.cart)) {
+                    const p = this.data.find(x => x.id === id);
+                    if (p) {
                         msg += `• [${p.codigo || 'S/COD'}] ${p.nome}\n   ${qty}un x R$ ${p.valor.toFixed(2)}\n`;
                     }
                 }
