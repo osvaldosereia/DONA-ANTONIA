@@ -783,8 +783,12 @@
 
             renderCatalog(term = '') {
                 const container = document.getElementById('main-catalog');
+                
+                // --- MODIFICAÇÃO PRINCIPAL AQUI ---
+                // Adicionada a condição (p.estoque > 0) para esconder produtos sem estoque
                 const filtered = this.data.filter(p => 
-                    p.nome.toLowerCase().includes(term) || (p.codigo && p.codigo.toLowerCase().includes(term))
+                    (p.nome.toLowerCase().includes(term) || (p.codigo && p.codigo.toLowerCase().includes(term))) &&
+                    (p.estoque > 0) 
                 );
 
                 if (filtered.length === 0) {
