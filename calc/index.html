@@ -112,7 +112,7 @@
     </script>
 
     <style>
-        /* MANTIDO O CSS ORIGINAL COM PEQUENAS OTIMIZAÇÕES DE ACESSIBILIDADE */
+        /* CSS REVISADO */
         :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
         
         :root { --primary: #dc2626; --primary-dark: #b91c1c; --secondary: #111827; --bg: #f9fafb; --surface: #ffffff; --text-main: #1f2937; --text-muted: #4b5563; --border: #e5e7eb; --header-h: 70px; --nav-h: 50px; }
@@ -125,6 +125,9 @@
         .hidden { display: none !important; }
         img, video { display: block; max-width: 100%; height: auto; }
         button, a { cursor: pointer; text-decoration: none; font-family: inherit; }
+        /* Garante que ícones dentro de botões não roubem o clique */
+        button svg { pointer-events: none; } 
+        
         .fallback-img { content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50' y='50' font-family='sans-serif' font-size='12' fill='%239ca3af' text-anchor='middle' dy='.3em'%3ESem Foto%3C/text%3E%3C/svg%3E"); object-fit: contain; padding: 10px; }
         header { position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h); background: rgba(255,255,255,0.98); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); z-index: 100; contain: layout size; }
         .header-inner { display: flex; justify-content: space-between; align-items: center; height: 100%; }
@@ -180,7 +183,9 @@
         .card-body { padding: 12px 16px 16px; display: flex; flex-direction: column; flex: 1; }
         .card-code { font-size: 0.7rem; color: #374151; font-family: monospace; background: #f3f4f6; padding: 2px 6px; border-radius: 4px; align-self: flex-start; margin-bottom: 8px; }
         .card-title { font-size: 0.95rem; font-weight: 600; color: var(--secondary); margin-bottom: 4px; line-height: 1.3; }
-        .card-desc-preview { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; min-height: 2.4em; }
+        /* Ajuste para exibir características no card */
+        .card-desc-preview { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; min-height: 2.4em; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
         .card-price { font-size: 1.25rem; font-weight: 800; color: var(--primary); margin-top: auto; padding-top: 8px; }
         .card-actions { margin-top: 12px; }
         .btn-add { width: 100%; padding: 10px; background: #f3f4f6; border-radius: 8px; font-weight: 600; font-size: 0.9rem; color: var(--text-main); border: none; }
@@ -202,7 +207,8 @@
         @media(min-width: 768px) { .pm-gallery { width: 50%; flex: none; height: auto; } }
         .pm-stage { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; position: relative; }
         .pm-stage img, .pm-stage video { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .pm-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(220, 220, 220, 0.6); color: #1f2937; width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 10; }
+        .pm-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(220, 220, 220, 0.6); color: #1f2937; width: 44px; height: 44px; border-radius: 50%; font-size: 1.5rem; border: none; cursor: pointer; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); z-index: 10; }
+        .pm-arrow.visible { display: flex; }
         .pm-arrow.prev { left: 15px; } .pm-arrow.next { right: 15px; }
         .prod-nav-btn { display: none; position: absolute; top: 50%; transform: translateY(-50%); width: 60px; height: 60px; border-radius: 50%; background: white; border: none; color: var(--text-main); font-size: 1.5rem; cursor: pointer; z-index: 310; box-shadow: 0 4px 20px rgba(0,0,0,0.3); align-items: center; justify-content: center; transition: transform 0.2s, background 0.2s; }
         .prod-nav-btn:hover { background: var(--primary); color: white; transform: translateY(-50%) scale(1.1); }
@@ -423,12 +429,13 @@
     </dialog>
 
     <script>
-        // CONFIGURAÇÃO DA ORDEM DAS CATEGORIAS (Conforme solicitado)
         const CATEGORY_ORDER = ['CESTA BÁSICA', 'ALIMENTOS', 'LIMPEZA', 'HIGIENE', 'BEBIDAS', 'OUTROS'];
         
-        // Product Modal Logic extracted for cleaner code
+        // MODAL DE PRODUTO REFINADO (COM GALERIA)
         const ProductModal = {
             currentId: null,
+            images: [],
+            imgIdx: 0,
             
             init() {
                 const modal = document.getElementById('product-modal');
@@ -439,10 +446,57 @@
             },
 
             open(id) {
+                const p = App.data.find(x => x.id === id);
+                if (!p) return;
+
                 this.currentId = id;
-                this.render();
+                this.images = [p.imagem]; // Sempre começa com a imagem principal
+                this.imgIdx = 0;
+                
+                this.render(); // Renderiza imediatamente
                 const modal = document.getElementById('product-modal');
                 App.openModal(modal);
+
+                // Check extra images in background (A, B, C)
+                this.detectExtraImages(p.imagem);
+            },
+
+            detectExtraImages(mainUrl) {
+                if (!mainUrl) return;
+                // Tenta encontrar p001A.webp, p001B.webp, p001C.webp
+                const suffixes = ['A', 'B', 'C'];
+                suffixes.forEach(s => {
+                    // Inserir sufixo antes da extensão
+                    const extraUrl = mainUrl.replace(/(\.[\w\d_-]+)$/i, s + '$1');
+                    const img = new Image();
+                    img.onload = () => {
+                        this.images.push(extraUrl);
+                        this.updateGalleryUI();
+                    };
+                    img.src = extraUrl;
+                });
+            },
+
+            updateGalleryUI() {
+                // Atualiza setas se houver mais de uma imagem
+                const prev = document.querySelector('.pm-arrow.prev');
+                const next = document.querySelector('.pm-arrow.next');
+                if(this.images.length > 1) {
+                    prev.classList.add('visible');
+                    next.classList.add('visible');
+                }
+            },
+
+            navigateImage(dir) {
+                if (this.images.length <= 1) return;
+                let next = this.imgIdx + dir;
+                if (next < 0) next = this.images.length - 1;
+                if (next >= this.images.length) next = 0;
+                this.imgIdx = next;
+                
+                // Atualiza apenas a imagem
+                const imgEl = document.querySelector('.pm-stage img');
+                if (imgEl) imgEl.src = this.images[this.imgIdx];
             },
 
             navigate(dir) {
@@ -451,8 +505,9 @@
                 let nextIdx = currentIdx + dir;
                 if (nextIdx < 0) nextIdx = App.visualOrderData.length - 1;
                 if (nextIdx >= App.visualOrderData.length) nextIdx = 0;
-                this.currentId = App.visualOrderData[nextIdx].id;
-                this.render();
+                
+                // Abre o próximo produto completamente
+                this.open(App.visualOrderData[nextIdx].id);
             },
 
             render() {
@@ -462,7 +517,6 @@
                 const qty = App.cart[p.id] || 0;
                 const formattedPrice = p.valor.toFixed(2).replace('.', ',');
                 
-                // Sanitização e renderização da lista de itens do combo
                 let comboHTML = '';
                 if(p.items && p.items.length > 0) {
                      comboHTML = `<div class="pm-combo-list"><div class="pm-combo-title">Itens da Cesta:</div>` + 
@@ -478,10 +532,10 @@
                     <div class="pm-gallery">
                         <button class="btn-close-pm" onclick="App.closeModal(document.getElementById('product-modal'))" aria-label="Fechar">✕</button>
                         <div class="pm-stage">
-                            <img src="${p.imagem}" alt="${p.nome}" width="400" height="400">
+                            <img src="${this.images[this.imgIdx]}" alt="${p.nome}" width="400" height="400">
                         </div>
-                        <button class="pm-arrow prev" onclick="ProductModal.navigate(-1)">❮</button>
-                        <button class="pm-arrow next" onclick="ProductModal.navigate(1)">❯</button>
+                        <button class="pm-arrow prev" onclick="ProductModal.navigateImage(-1)">❮</button>
+                        <button class="pm-arrow next" onclick="ProductModal.navigateImage(1)">❯</button>
                     </div>
                     <div class="pm-info">
                         <div class="pm-header">
@@ -489,7 +543,7 @@
                             ${p.codigo ? `<span class="pm-code">Cód: ${p.codigo}</span>` : ''}
                         </div>
                         <div class="pm-desc">
-                            ${p.caracteristicas}
+                            ${p.caracteristicas ? `<p style="margin-bottom:15px; font-weight:500;">${p.caracteristicas}</p>` : ''}
                             ${comboHTML}
                         </div>
                         <div class="pm-footer">
@@ -499,6 +553,7 @@
                     </div>
                 `;
                 App.updateControlUI(`pm-ctrl-${p.id}`, p.id, qty);
+                this.updateGalleryUI();
             }
         };
 
@@ -507,7 +562,6 @@
             
             async init() {
                 try {
-                    // Tenta carregar localmente primeiro
                     const paths = ['produtos/produtos.json', 'produtos.json'];
                     let response;
                     
@@ -532,7 +586,6 @@
                     this.setupDelegation();
                     ProductModal.init();
 
-                    // Search Debounce
                     let timeout;
                     document.getElementById('nav-search-input').addEventListener('input', (e) => {
                         clearTimeout(timeout);
@@ -550,10 +603,10 @@
             },
 
             setupDelegation() {
-                // Delegation unificado
                 document.body.addEventListener('click', (e) => {
                     const btn = e.target.closest('button[data-action]');
                     if(btn) {
+                        e.preventDefault(); // Previne comportamentos padrão
                         const { action, id } = btn.dataset;
                         if(action === 'add') this.add(id);
                         if(action === 'remove') this.remove(id);
@@ -562,11 +615,15 @@
                         if(action === 'next-prod') ProductModal.navigate(1);
                         return;
                     }
-                    // Clique na imagem do card
+                    
+                    // Tratamento para clique na imagem
                     const imgBox = e.target.closest('.card-img-box');
                     if(imgBox) {
                         const card = imgBox.closest('.card');
-                        if(card) ProductModal.open(card.id.replace('card-', ''));
+                        if(card) {
+                            const id = card.id.replace('card-', '');
+                            ProductModal.open(id);
+                        }
                     }
                 });
             },
@@ -590,13 +647,9 @@
 
                 const cats = Object.keys(groups).sort((a, b) => {
                     const ia = CATEGORY_ORDER.indexOf(a), ib = CATEGORY_ORDER.indexOf(b);
-                    // Se ambos estão na lista, ordena pelo index
                     if (ia !== -1 && ib !== -1) return ia - ib;
-                    // Se apenas A está na lista, A vem primeiro
                     if (ia !== -1) return -1;
-                    // Se apenas B está na lista, B vem primeiro
                     if (ib !== -1) return 1;
-                    // Se nenhum está, ordem alfabética
                     return a.localeCompare(b);
                 });
 
@@ -631,15 +684,16 @@
             },
 
             cardHTML(p) {
+                // Tratamento de características
                 const desc = p.caracteristicas ? p.caracteristicas.replace(/<[^>]*>?/gm, '') : ''; 
-                
-                // LÓGICA DO BOTÃO "VER PRODUTOS" PARA CESTA BÁSICA
+                const descHTML = desc ? `<div class="card-desc-preview">${desc}</div>` : '';
+
                 const isCombo = p.categoria === 'CESTA BÁSICA' || (p.items && p.items.length > 0);
                 const btnLabel = isCombo ? 'VER ITENS DA CESTA' : 'VER DETALHES';
                 const btnClassAdd = isCombo ? 'btn-combo-action' : '';
                 const icon = isCombo 
-                    ? '<svg viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"/></svg>' // List icon
-                    : '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>'; // Eye icon
+                    ? '<svg viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"/></svg>'
+                    : '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
 
                 return `
                 <div class="card" id="card-${p.id}">
@@ -653,6 +707,7 @@
                     <div class="card-body">
                         ${p.codigo ? `<div class="card-code">${p.codigo}</div>` : ''}
                         <h4 class="card-title">${p.nome}</h4>
+                        ${descHTML}
                         <div class="card-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                         <div class="card-actions" id="ctrl-${p.id}">
                             <button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>
