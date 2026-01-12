@@ -612,8 +612,8 @@
             
             async init() {
                 try {
-                    // Try to fetch data
                     let raw = null;
+                    // Simplificando: tenta o caminho padrão primeiro
                     const paths = ['produtos/produtos.json', 'produtos.json'];
                     
                     for (const path of paths) {
@@ -624,18 +624,12 @@
                                 break; 
                             }
                         } catch(e) {
-                            console.warn(`Erro ao tentar carregar ${path}:`, e);
+                            console.warn(`Tentativa falhou para ${path}`);
                         }
                     }
 
                     if (!raw) {
-                        console.error("Nenhum arquivo de produtos encontrado. Usando dados de backup.");
-                        // Fallback data if JSON fails
-                        raw = [
-                            {id: "1", nome: "Cesta Básica Econômica", valor: 150.00, imagem: "img/produtos/p001.webp", categoria: "CESTA BÁSICA", caracteristicas: "Arroz, Feijão, Óleo...", items: [{nome: "Arroz 5kg", qty: 1}, {nome: "Feijão 1kg", qty: 2}]},
-                            {id: "2", nome: "Arroz Tio Alvino 5kg", valor: 28.90, imagem: "img/produtos/p002.webp", categoria: "ALIMENTOS", caracteristicas: "Arroz agulhinha tipo 1"},
-                            {id: "3", nome: "Feijão Carioca Novo", valor: 8.50, imagem: "img/produtos/p003.webp", categoria: "ALIMENTOS", caracteristicas: "Feijão novo, caldo grosso"}
-                        ];
+                        throw new Error("Não foi possível carregar o arquivo de produtos.");
                     }
                     
                     this.data = raw.map(p => ({
@@ -663,11 +657,11 @@
                     }
 
                 } catch (e) {
-                    console.error("Erro fatal na inicialização:", e);
+                    console.error("Erro:", e);
                     document.getElementById('main-catalog').innerHTML = `
-                        <div style="text-align:center;padding:40px;color:#ef4444">
-                            <h3>Erro ao carregar loja.</h3>
-                            <p>Verifique o console para mais detalhes.</p>
+                        <div style="text-align:center;padding:60px 20px;color:#ef4444">
+                            <h3 style="margin-bottom:10px">Não foi possível carregar os produtos.</h3>
+                            <p style="color:#666">Verifique se o arquivo <strong>produtos/produtos.json</strong> existe e está acessível.</p>
                         </div>`;
                 }
             },
