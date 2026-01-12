@@ -418,9 +418,20 @@
                                         </div>
                                     </div>
 
-                                    <div class="row-2">
-                                        <div class="form-group"><label>Custo (R$)</label><input type="number" id="p-custo" step="0.0001"></div>
-                                        <div class="form-group"><label style="color: var(--primary);">Venda (R$)</label><input type="number" id="p-valor" step="0.01" style="font-weight: 700; color: var(--primary); background: #eff6ff; border-color: #bfdbfe;"></div>
+                                    <!-- PREÇOS E MARGEM (NOVA LINHA DE 3 COLUNAS) -->
+                                    <div class="row-3">
+                                        <div class="form-group">
+                                            <label>Custo (R$)</label>
+                                            <input type="number" id="p-custo" step="0.0001" oninput="UI.calcMargin()">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Margem (%)</label>
+                                            <input type="text" id="p-margem" readonly style="background-color: var(--slate-100); color: var(--slate-600); font-weight: 700; text-align: center;" placeholder="0%">
+                                        </div>
+                                        <div class="form-group">
+                                            <label style="color: var(--primary);">Venda (R$)</label>
+                                            <input type="number" id="p-valor" step="0.01" style="font-weight: 700; color: var(--primary); background: #eff6ff; border-color: #bfdbfe;" oninput="UI.calcMargin()">
+                                        </div>
                                     </div>
 
                                     <!-- PESO E FOTO -->
@@ -438,7 +449,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Foto (.../calc/img/produtos/CODIGO.webp)</label>
+                                            <label>Foto (/calc/img/produtos/CODIGO.webp)</label>
                                             <div style="width: 100%; aspect-ratio: 1/1; border: 1px solid var(--slate-200); border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--slate-50); position: relative;">
                                                 <img id="p-img-preview" src="" onerror="this.style.display='none'; document.getElementById('p-img-icon').style.display='block';" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                                                 <i id="p-img-icon" class="fa-solid fa-box-open" style="color: var(--slate-300); font-size: 3rem;"></i>
@@ -937,7 +948,7 @@
                     .map(p => ({
                         ...p,
                         caracteristicas: p.caracteristicas || '', 
-                        imagem: `.../calc/img/produtos/${p.codigo.toLowerCase()}.webp`,
+                        imagem: `/calc/img/produtos/${p.codigo.toLowerCase()}.webp`,
                         Limit: p.limit || 0 // Campo Limite adicionado conforme solicitado
                     }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
@@ -1725,6 +1736,8 @@
                     document.getElementById('p-img-preview').src = '';
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
+                    // Reset Margin
+                    document.getElementById('p-margem').value = '';
                     Views.catalogo.render();
                 } else if(type === 'cliente') {
                     document.getElementById('c-id').value = '';
@@ -1769,6 +1782,9 @@
                     document.getElementById('p-variacoesNome').value = (item.variacoesNome || []).join(' | ');
                     document.getElementById('p-variacoesEan').value = (item.variacoesEan || []).join(' | ');
                     
+                    // Calc Margin on Edit
+                    UI.calcMargin();
+
                     // Load Image Preview based on Code
                     const imgCode = item.codigo.toLowerCase();
                     // Caminho atualizado conforme solicitado
@@ -1870,6 +1886,7 @@
                     document.getElementById('p-img-preview').src = '';
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
+                    document.getElementById('p-margem').value = '';
                 }
                 if(t === 'cliente') {
                     document.getElementById('client-history-area').style.display = 'none';
@@ -1879,6 +1896,20 @@
                 const type = document.querySelector('input[name="p-stock-type"]:checked').value;
                 document.getElementById('grp-fisico').style.display = type === 'fiscal' ? 'none' : 'block';
                 document.getElementById('grp-fiscal').style.display = type === 'fisico' ? 'none' : 'block';
+            },
+            calcMargin: () => {
+                const cost = parseFloat(document.getElementById('p-custo').value) || 0;
+                const sale = parseFloat(document.getElementById('p-valor').value) || 0;
+                const marginEl = document.getElementById('p-margem');
+                
+                if (cost > 0 && sale > 0) {
+                    const margin = ((sale - cost) / cost) * 100;
+                    marginEl.value = margin.toFixed(2) + '%';
+                    marginEl.style.color = margin < 0 ? 'var(--danger)' : 'var(--success)';
+                } else {
+                    marginEl.value = '0%';
+                    marginEl.style.color = 'var(--slate-500)';
+                }
             },
             searchProduct: (val) => {
                 const db = DB.load();
