@@ -239,10 +239,10 @@
             }
             .card:last-child { border-bottom: none; }
 
-            /* Imagem quadrada e ajustada */
+            /* Imagem quadrada e ajustada - AUMENTADA */
             .card-img-box { 
-                width: 110px; 
-                min-width: 110px; 
+                width: 130px; 
+                min-width: 130px; 
                 aspect-ratio: 1/1; 
                 padding: 0 0 0 5px; 
                 border-right: none; 
@@ -252,12 +252,14 @@
             /* Corpo do card */
             .card-body { padding: 0 10px 0 12px; justify-content: flex-start; }
             
-            .card-title { font-size: 0.95rem; margin-bottom: 4px; }
-            .card-desc-preview { font-size: 0.8rem; -webkit-line-clamp: 2; margin-bottom: 6px; }
-            .card-price { font-size: 1.2rem; margin-top: auto; padding-top: 4px; }
+            /* Tipografia reduzida para compensar imagem maior */
+            .card-title { font-size: 0.9rem; margin-bottom: 3px; }
+            .card-desc-preview { font-size: 0.75rem; -webkit-line-clamp: 2; margin-bottom: 4px; }
+            .card-price { font-size: 1.1rem; margin-top: auto; padding-top: 2px; }
             
-            .card-footer-row { padding-top: 8px; gap: 8px; margin-top: 8px; }
-            .btn-details-inline, .btn-add, .qty-control { height: 36px; font-size: 0.8rem; }
+            /* Botões reduzidos */
+            .card-footer-row { padding-top: 6px; gap: 6px; margin-top: 6px; }
+            .btn-details-inline, .btn-add, .qty-control { height: 32px; font-size: 0.75rem; }
         }
 
         /* Botões alinhados no rodapé do card */
