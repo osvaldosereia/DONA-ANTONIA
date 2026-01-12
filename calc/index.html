@@ -176,29 +176,65 @@
         /* PRODUCTS GRID */
         .featured-section { padding: 40px 0; background: #f9fafb; }
         .grid-products { display: grid; grid-template-columns: 1fr; gap: 20px; margin-bottom: 30px; }
-        @media(min-width: 600px) { .grid-products { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 24px; } }
+        
+        /* Desktop/Tablet Rules (Clean Grid with Separators) */
+        @media(min-width: 600px) {
+            .grid-products {
+                /* 3 Columns for Tablets */
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0;
+                border-top: 1px solid var(--border);
+                border-left: 1px solid var(--border);
+                background: white; /* Ensure borders are visible against white */
+            }
+        }
+        
+        /* Large Desktop (5 Columns) */
+        @media(min-width: 1024px) {
+            .grid-products {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
         .category-separator { padding: 20px 0 10px; margin-top: 10px; border-bottom: 2px solid var(--border); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; scroll-margin-top: 140px; }
         .category-title { font-size: 1.2rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.05em; }
         
-        /* CARD */
-        .card { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; content-visibility: auto; contain-intrinsic-size: 0 450px; position: relative; }
+        /* CARD (Base Styles - now optimized for Desktop Clean Grid) */
+        .card { 
+            background: white; 
+            border: none;
+            border-right: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            border-radius: 0; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            content-visibility: auto; 
+            contain-intrinsic-size: 0 450px; 
+            position: relative; 
+        }
         .card-img-box { aspect-ratio: 1; padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
         .card-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
         
-        /* Ajuste Mobile: Lista Horizontal Limpa */
+        /* Ajuste Mobile: Lista Horizontal Limpa (Preserva o layout anterior) */
         @media (max-width: 599px) {
-            /* Remove espaçamento da grid para criar lista contínua */
-            .grid-products { gap: 0; }
+            /* Remove a grade de desktop e bordas externas */
+            .grid-products { 
+                gap: 0; 
+                border-top: none; 
+                border-left: none;
+                grid-template-columns: 1fr;
+            }
             
-            /* Card estilo lista: sem bordas laterais, com separador inferior */
+            /* Card estilo lista: apenas separador inferior */
             .card { 
                 flex-direction: row; 
                 align-items: stretch; 
                 min-height: auto; 
                 border: none; 
+                border-right: none;
                 border-bottom: 1px solid var(--border); 
-                border-radius: 0; 
-                padding: 15px 0; /* Espaçamento vertical entre itens */
+                padding: 15px 0; 
                 margin: 0;
             }
             .card:last-child { border-bottom: none; }
@@ -207,21 +243,19 @@
             .card-img-box { 
                 width: 110px; 
                 min-width: 110px; 
-                aspect-ratio: 1/1; /* Garante imagem quadrada */
-                padding: 0 0 0 5px; /* Leve recuo da esquerda */
+                aspect-ratio: 1/1; 
+                padding: 0 0 0 5px; 
                 border-right: none; 
-                align-self: flex-start; /* Alinha imagem ao topo */
+                align-self: flex-start;
             }
             
             /* Corpo do card */
             .card-body { padding: 0 10px 0 12px; justify-content: flex-start; }
             
-            /* Tipografia e espaçamentos */
             .card-title { font-size: 0.95rem; margin-bottom: 4px; }
             .card-desc-preview { font-size: 0.8rem; -webkit-line-clamp: 2; margin-bottom: 6px; }
             .card-price { font-size: 1.2rem; margin-top: auto; padding-top: 4px; }
             
-            /* Botões */
             .card-footer-row { padding-top: 8px; gap: 8px; margin-top: 8px; }
             .btn-details-inline, .btn-add, .qty-control { height: 36px; font-size: 0.8rem; }
         }
