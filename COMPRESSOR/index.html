@@ -70,7 +70,7 @@
             border-color: var(--primary);
             background-color: #eef2ff;
         }
-        .drop-zone input {
+        .drop-zone input[type="file"] {
             position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer;
         }
         .btn-upload {
@@ -82,6 +82,31 @@
             display: inline-block;
             margin-bottom: 0.5rem;
             pointer-events: none; /* Let the input handle clicks */
+        }
+
+        /* Options Checkbox */
+        .options-bar {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            cursor: pointer;
+            user-select: none;
+            z-index: 10; /* Ensure it's clickable above the file input overlay if needed */
+            position: relative;
+        }
+        .checkbox-wrapper input {
+            accent-color: var(--primary);
+            width: 1.1rem;
+            height: 1.1rem;
+            cursor: pointer;
         }
 
         /* Result List */
@@ -194,6 +219,7 @@
             .meta-row { justify-content: center; }
             .actions { flex-direction: column; }
             .btn { width: 100%; }
+            .options-bar { flex-direction: column; align-items: center; gap: 0.5rem; }
         }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -220,6 +246,14 @@
                 <input type="file" id="file-input" accept="image/*" multiple>
             </div>
             <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.875rem;">Ou arraste e solte seus arquivos</p>
+
+            <!-- Logo Option -->
+            <div class="options-bar">
+                <label class="checkbox-wrapper" title="Adiciona a logo no canto inferior direito">
+                    <input type="checkbox" id="chk-use-logo">
+                    <span>Incluir Logo (Dona Antônia)</span>
+                </label>
+            </div>
         </div>
 
         <!-- Results -->
@@ -252,7 +286,13 @@
                     <span id="zoom-value">100%</span>
                 </div>
                 <input type="range" id="zoom-slider" min="1" max="4" step="0.05" value="1">
-                <p style="text-align: center; font-size: 0.75rem; color: var(--text-muted);">Arraste a imagem para mover</p>
+                
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--border);">
+                    <label class="checkbox-wrapper" style="justify-content: center;">
+                        <input type="checkbox" id="chk-use-logo-modal">
+                        <small>Incluir Logo nesta imagem</small>
+                    </label>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -269,7 +309,8 @@
             targetWidth: 400,
             targetHeight: 400,
             maxSizeBytes: 30 * 1024, // 30KB
-            formats: ['image/avif', 'image/webp', 'image/jpeg']
+            formats: ['image/avif', 'image/webp', 'image/jpeg'],
+            logoPath: 'img/logo-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.avif'
         };
 
         // --- ESTADO GLOBAL DO EDITOR ---
@@ -283,12 +324,16 @@
             minScale: 1
         };
 
+        // Cache para a logo
+        let logoImage = null;
+
         // --- DOM ELEMENTS ---
         const fileInput = document.getElementById('file-input');
         const dropZone = document.getElementById('drop-zone');
         const resultsArea = document.getElementById('results-area');
         const imageList = document.getElementById('image-list');
         const statusCounter = document.getElementById('status-counter');
+        const chkUseLogo = document.getElementById('chk-use-logo');
         
         const modal = document.getElementById('edit-modal');
         const editorCanvas = document.getElementById('editor-canvas');
@@ -297,6 +342,7 @@
         const zoomValue = document.getElementById('zoom-value');
         const btnConfirmCrop = document.getElementById('confirm-crop');
         const btnCloseModal = document.getElementById('close-modal');
+        const chkUseLogoModal = document.getElementById('chk-use-logo-modal');
 
         // --- EVENT LISTENERS GERAIS ---
         fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
@@ -308,11 +354,67 @@
             dropZone.classList.remove('dragover');
             handleFiles(e.dataTransfer.files);
         });
+        
+        // Sincronizar checkbox do modal com o principal
+        chkUseLogo.addEventListener('change', () => {
+            chkUseLogoModal.checked = chkUseLogo.checked;
+        });
+
+        // --- LOGO LOADING ---
+        async function loadLogo() {
+            if (logoImage) return logoImage;
+            
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.src = CONFIG.logoPath;
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    logoImage = img;
+                    resolve(img);
+                };
+                img.onerror = () => {
+                    console.warn("Logo não encontrada em: " + CONFIG.logoPath);
+                    resolve(null);
+                }
+            });
+        }
+
+        async function drawLogoOnCanvas(ctx, canvasW, canvasH) {
+            const logo = await loadLogo();
+            if (!logo) return;
+
+            // Configurações de tamanho e posição da logo
+            // Vamos definir a logo com largura de aprox 25% do canvas (100px em 400px)
+            const targetLogoWidth = 100; 
+            const scaleFactor = targetLogoWidth / logo.width;
+            const logoW = logo.width * scaleFactor;
+            const logoH = logo.height * scaleFactor;
+
+            // Margem da borda (quase encostando)
+            const padding = 12;
+
+            const x = canvasW - logoW - padding;
+            const y = canvasH - logoH - padding;
+
+            // Sombra leve para garantir contraste se a imagem for branca
+            ctx.shadowColor = "rgba(0,0,0,0.3)";
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+
+            ctx.drawImage(logo, x, y, logoW, logoH);
+            
+            // Reset shadow
+            ctx.shadowColor = "transparent";
+        }
 
         // --- CORE: FILE PROCESSING ---
         async function handleFiles(files) {
             if (files.length > 0) resultsArea.style.display = 'block';
             
+            // Se o user marcou logo, garante que está carregada
+            if (chkUseLogo.checked) await loadLogo();
+
             const filesArray = Array.from(files);
             let processed = 0;
             statusCounter.textContent = `Processando 0/${filesArray.length}...`;
@@ -332,6 +434,12 @@
                     canvas.height = CONFIG.targetHeight;
                     
                     performSmartCrop(canvas, bitmap);
+
+                    // Aplica Logo se selecionado
+                    if (chkUseLogo.checked) {
+                        const ctx = canvas.getContext('2d');
+                        await drawLogoOnCanvas(ctx, canvas.width, canvas.height);
+                    }
                     
                     // Compressão
                     const result = await compressImage(canvas, file.name);
@@ -474,6 +582,9 @@
             editorState.activeFile = file;
             editorState.activeCardId = cardId;
             
+            // Sincroniza checkbox do modal com a escolha global
+            chkUseLogoModal.checked = chkUseLogo.checked;
+
             // Carrega imagem para edição
             editorState.imgBitmap = await createImageBitmap(file);
             
@@ -629,11 +740,16 @@
                 ctxFinal.drawImage(editorState.imgBitmap, finalX, finalY, 
                                    editorState.imgBitmap.width * finalScale, 
                                    editorState.imgBitmap.height * finalScale);
+
+                // 4. Aplica Logo se selecionado no modal
+                if (chkUseLogoModal.checked) {
+                    await drawLogoOnCanvas(ctxFinal, finalCanvas.width, finalCanvas.height);
+                }
                 
-                // 4. Comprimir novamente
+                // 5. Comprimir novamente
                 const result = await compressImage(finalCanvas, editorState.activeFile.name);
                 
-                // 5. Atualizar UI
+                // 6. Atualizar UI
                 updateResultCard(editorState.activeCardId, result, editorState.activeFile);
                 
                 modal.close();
