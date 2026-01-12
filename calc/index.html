@@ -667,8 +667,13 @@
 
             async init() {
                 try {
+                    // Tenta carregar o JSON
                     const res = await fetch('produtos/produtos.json');
-                    if (!res.ok) throw new Error('Erro JSON');
+                    
+                    if (!res.ok) {
+                        throw new Error(`Erro HTTP: ${res.status}`);
+                    }
+                    
                     const raw = await res.json();
                     
                     this.data = raw.map(p => ({
@@ -689,14 +694,37 @@
                     this.setupDelegation('cart-body');
                     this.setupDelegation('product-modal');
                     
+                    this.setupScrollSpy(); // Inicia o Scroll Spy apenas se carregar com sucesso
+                    
                     ProductModal.init();
 
                     document.getElementById('search').addEventListener('input', (e) => {
                         this.renderCatalog(e.target.value.toLowerCase());
                     });
                 } catch (e) {
-                    console.error(e);
-                    document.getElementById('main-catalog').innerHTML = `<p class="text-center" style="color:red">Erro ao carregar produtos.</p>`;
+                    console.error("Falha ao carregar produtos:", e);
+                    
+                    // Mensagem de Erro Profissional e Didática na Interface
+                    document.getElementById('main-catalog').innerHTML = `
+                        <div style="text-align: center; padding: 60px 20px; color: var(--text-muted);">
+                            <div style="font-size: 4rem; margin-bottom: 20px;">🔌</div>
+                            <h3 style="font-size: 1.5rem; color: var(--secondary); margin-bottom: 10px; font-weight: 800;">Conexão com Produtos Perdida</h3>
+                            <p style="margin-bottom: 10px;">Não foi possível carregar o catálogo de <code>produtos/produtos.json</code>.</p>
+                            
+                            <div style="background: #fef2f2; border: 1px solid #fee2e2; border-radius: 12px; padding: 20px; max-width: 500px; margin: 20px auto; text-align: left;">
+                                <strong style="color: #b91c1c; display: block; margin-bottom: 8px;">Dica do Desenvolvedor:</strong>
+                                <ul style="margin-left: 20px; color: #7f1d1d; font-size: 0.9rem; line-height: 1.6;">
+                                    <li>Se você abriu o arquivo direto (file://), o navegador bloqueia por segurança. Use um servidor local (Live Server).</li>
+                                    <li>Verifique se a pasta <strong>produtos</strong> está junto do index.html.</li>
+                                    <li>Verifique se o nome do arquivo é exatamente <strong>produtos.json</strong>.</li>
+                                </ul>
+                            </div>
+
+                            <button onclick="location.reload()" style="background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-weight: 700; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);">
+                                Tentar Novamente
+                            </button>
+                        </div>
+                    `;
                 }
             },
 
