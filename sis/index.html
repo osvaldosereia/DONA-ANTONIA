@@ -425,12 +425,20 @@
 
                                     <!-- PESO E FOTO -->
                                     <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
-                                        <div class="form-group">
-                                            <label>Peso (Kg)</label>
-                                            <input type="number" id="p-peso" step="0.001" placeholder="0.000">
+                                        <!-- NOVO: Linha com Peso e Limite -->
+                                        <div class="row-2">
+                                            <div class="form-group">
+                                                <label>Peso (Kg)</label>
+                                                <input type="number" id="p-peso" step="0.001" placeholder="0.000">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Limite (Qtd)</label>
+                                                <input type="number" id="p-limit" placeholder="0">
+                                            </div>
                                         </div>
+
                                         <div class="form-group">
-                                            <label>Foto (img/produtos/CODIGO.webp)</label>
+                                            <label>Foto (calc/img/produtos/CODIGO.webp)</label>
                                             <div style="width: 100%; aspect-ratio: 1/1; border: 1px solid var(--slate-200); border-radius: 6px; overflow: hidden; display: flex; align-items: center; justify-content: center; background: var(--slate-50); position: relative;">
                                                 <img id="p-img-preview" src="" onerror="this.style.display='none'; document.getElementById('p-img-icon').style.display='block';" style="width: 100%; height: 100%; object-fit: cover; display: none;">
                                                 <i id="p-img-icon" class="fa-solid fa-box-open" style="color: var(--slate-300); font-size: 3rem;"></i>
@@ -929,7 +937,8 @@
                     .map(p => ({
                         ...p,
                         caracteristicas: p.caracteristicas || '', 
-                        imagem: `img/produtos/${p.codigo.toLowerCase()}.webp`
+                        imagem: `calc/img/produtos/${p.codigo.toLowerCase()}.webp`,
+                        Limit: p.limit || 0 // Campo Limite adicionado conforme solicitado
                     }));
                 const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
                 const url = URL.createObjectURL(blob);
@@ -1659,9 +1668,12 @@
                     data.estoque = Number(document.getElementById('p-estoque').value) || 0;
                     data.estoqueFiscal = Number(document.getElementById('p-estoqueFiscal').value) || 0;
                     data.peso = Number(document.getElementById('p-peso').value) || 0;
+                    // Campo Limite adicionado
+                    data.limit = Number(document.getElementById('p-limit').value) || 0;
 
                     // Images (auto-generated path)
-                    data.imagem = `img/produtos/${data.codigo.toLowerCase()}.webp`;
+                    // Caminho atualizado conforme solicitado: calc/img/produtos/...
+                    data.imagem = `calc/img/produtos/${data.codigo.toLowerCase()}.webp`;
 
                     // Combos
                     if(document.getElementById('p-is-combo').checked) {
@@ -1759,7 +1771,8 @@
                     
                     // Load Image Preview based on Code
                     const imgCode = item.codigo.toLowerCase();
-                    const imgUrl = `img/produtos/${imgCode}.webp`;
+                    // Caminho atualizado conforme solicitado
+                    const imgUrl = `calc/img/produtos/${imgCode}.webp`;
                     const imgEl = document.getElementById('p-img-preview');
                     const iconEl = document.getElementById('p-img-icon');
 
