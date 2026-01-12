@@ -615,15 +615,14 @@
                     let response;
                     
                     try {
-                        // Tenta carregar usando a estrutura de pastas do projeto
-                        // No GitHub Pages ou local, o caminho relativo ./produtos/produtos.json é o mais seguro
-                        // se o arquivo estiver em uma subpasta "produtos"
+                        // Tenta carregar usando a estrutura de pastas do projeto com caminho relativo explícito
+                        // ./produtos/produtos.json é o padrão quando o arquivo está na subpasta "produtos"
                         response = await fetch('./produtos/produtos.json');
                     } catch (e) {
                         console.warn("Tentando caminho alternativo...");
                     }
 
-                    // Se a primeira tentativa falhar (ex: arquivo movido para raiz), tenta na raiz
+                    // Se a primeira tentativa falhar, tenta na raiz com caminho relativo explícito
                     if (!response || !response.ok) {
                         try {
                             response = await fetch('./produtos.json');
