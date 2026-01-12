@@ -612,28 +612,29 @@
             
             async init() {
                 try {
-                    let raw = null;
-                    // Procura o arquivo nas duas localizações padrão
-                    const paths = ['produtos/produtos.json', 'produtos.json'];
-                    let errorDetails = "";
+                    // Simplificação: tenta carregar do caminho padrão
+                    // Se falhar, tenta da raiz como fallback
+                    let response;
                     
-                    for (const path of paths) {
+                    try {
+                        // Tentativa 1: Pasta produtos
+                        const res = await fetch('produtos/produtos.json');
+                        if(res.ok) response = res;
+                        else throw new Error('404');
+                    } catch(e) {
+                        console.warn("Tentando raiz...");
+                        // Tentativa 2: Raiz
                         try {
-                            const res = await fetch(path);
-                            if (res.ok) { 
-                                raw = await res.json(); 
-                                break; 
-                            } else {
-                                errorDetails += `[${path}: ${res.status}] `;
-                            }
-                        } catch(e) {
-                            errorDetails += `[${path}: ${e.message}] `;
-                        }
+                            const resRoot = await fetch('produtos.json');
+                            if(resRoot.ok) response = resRoot;
+                        } catch(e2) {}
                     }
 
-                    if (!raw) {
-                        throw new Error(`Não foi possível carregar 'produtos.json'. Detalhes: ${errorDetails}`);
+                    if (!response || !response.ok) {
+                        throw new Error("Arquivo 'produtos.json' não encontrado. Verifique se o nome do arquivo está correto (sem o número 3).");
                     }
+                    
+                    const raw = await response.json();
                     
                     this.data = raw.map(p => ({
                         ...p, 
@@ -664,9 +665,8 @@
                     document.getElementById('main-catalog').innerHTML = `
                         <div style="text-align:center;padding:60px 20px;color:#b91c1c;background:#fef2f2;border:1px solid #fee2e2;border-radius:12px;margin:20px;">
                             <h3 style="margin-bottom:10px;font-weight:800;">Falha ao carregar produtos</h3>
-                            <p style="margin-bottom:15px">O arquivo <strong>produtos.json</strong> não foi encontrado ou não pôde ser lido.</p>
+                            <p style="margin-bottom:15px">Não foi possível ler o arquivo de dados.</p>
                             <div style="font-family:monospace;font-size:0.8rem;background:#fff;padding:10px;border-radius:6px;overflow-x:auto;">${e.message}</div>
-                            <p style="margin-top:15px;font-size:0.9rem;">Dica: Verifique o nome do arquivo e se você está usando um servidor local (não use file://).</p>
                         </div>`;
                 }
             },
