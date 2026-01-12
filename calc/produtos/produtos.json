@@ -2446,7 +2446,7 @@
     "caracteristicas": "",
     "custo": 0,
     "valor": 0,
-    "estoque": 0,
+    "estoque": 100,
     "estoqueFiscal": 0,
     "peso": 0,
     "imagem": "../calc/img/produtos/p074.webp",
