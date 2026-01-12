@@ -214,6 +214,13 @@
             contain-intrinsic-size: 0 450px; 
             position: relative; 
         }
+        /* Visual para produto sem estoque */
+        .card.out-of-stock .card-img-box,
+        .card.out-of-stock .card-title,
+        .card.out-of-stock .card-desc-preview,
+        .card.out-of-stock .card-price { opacity: 0.5; filter: grayscale(1); }
+        .stock-badge { background: #9ca3af; color: white; font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; display: inline-block; width: 100%; text-align: center; }
+
         .card-img-box { aspect-ratio: 1; padding: 10px; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer; }
         .card-img { width: 100%; height: 100%; object-fit: contain; transition: transform 0.3s; }
         
@@ -260,7 +267,7 @@
             
             /* Botões reduzidos */
             .card-footer-row { padding-top: 6px; gap: 6px; margin-top: 6px; }
-            .btn-details-inline, .btn-add, .qty-control { height: 32px; font-size: 0.75rem; }
+            .btn-details-inline, .btn-add, .qty-control, .stock-badge { height: 32px; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
         }
 
         /* Botões alinhados no rodapé do card */
@@ -616,6 +623,7 @@
                 const container = document.getElementById('pm-content');
                 const qty = App.cart[p.id] || 0;
                 const formattedPrice = p.valor.toFixed(2).replace('.', ',');
+                const isOutOfStock = (p.estoque !== undefined && p.estoque <= 0);
                 
                 let comboHTML = '';
                 if(p.items && p.items.length > 0) {
@@ -647,11 +655,14 @@
                         </div>
                         <div class="pm-footer">
                             <div class="pm-price">R$ ${formattedPrice}</div>
-                            <div id="pm-ctrl-${p.id}"></div>
+                            ${isOutOfStock 
+                                ? '<div style="background:#e5e7eb; padding:10px; text-align:center; font-weight:bold; border-radius:8px; color:#6b7280;">PRODUTO INDISPONÍVEL</div>' 
+                                : `<div id="pm-ctrl-${p.id}"></div>`
+                            }
                         </div>
                     </div>
                 `;
-                App.updateControl(`pm-ctrl-${p.id}`, p.id, qty);
+                if(!isOutOfStock) App.updateControl(`pm-ctrl-${p.id}`, p.id, qty);
                 this.updateGalleryUI();
             }
         };
@@ -687,7 +698,10 @@
                         categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
                         // Garante que a imagem tenha o caminho correto se não vier completo
                         imagem: (p.imagem && !p.imagem.includes('/')) ? `img/produtos/${p.imagem}` : (p.imagem || ''),
-                        items: p.items || []
+                        items: p.items || [],
+                        // LOGICA DE ESTOQUE E LIMITES
+                        estoque: p.estoque !== undefined ? parseInt(p.estoque) : 9999, // Se não tiver, assume muito estoque
+                        limit: p.limit !== undefined ? parseInt(p.limit) : null // Limite por pedido opcional
                     }));
 
                     // Renderização inicial
@@ -834,8 +848,12 @@
                     ? '<svg viewBox="0 0 24 24"><path d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z"/></svg>'
                     : '<svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>';
 
+                // Lógica de Disponibilidade
+                const isOutOfStock = (p.estoque !== undefined && p.estoque <= 0);
+                const cardClass = isOutOfStock ? 'card out-of-stock' : 'card';
+
                 return `
-                <div class="card" id="card-${p.id}">
+                <div class="${cardClass}" id="card-${p.id}">
                     <div class="card-img-box">
                         <img src="${p.imagem}" loading="lazy" alt="${p.nome}" class="card-img" width="200" height="200" onerror="this.onerror=null;this.classList.add('fallback-img')">
                     </div>
@@ -851,7 +869,10 @@
                                 ${btnLabel}
                             </button>
                             <div class="card-actions-wrapper" id="ctrl-${p.id}">
-                                <button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>
+                                ${isOutOfStock 
+                                    ? '<span class="stock-badge">INDISPONÍVEL</span>' 
+                                    : `<button class="btn-add" data-action="add" data-id="${p.id}" aria-label="Adicionar ${p.nome} ao carrinho">ADICIONAR</button>`
+                                }
                             </div>
                         </div>
                     </div>
@@ -859,6 +880,22 @@
             },
 
             add(id) {
+                const p = this.data.find(x => x.id === id);
+                if (!p) return;
+
+                // Lógica de Limite e Estoque
+                const currentQty = this.cart[id] || 0;
+                const maxStock = p.estoque !== undefined ? p.estoque : 9999;
+                const maxLimit = p.limit !== undefined ? p.limit : 9999; // Se limit não existir, usa estoque ou alto valor
+                
+                // O limite real é o menor valor entre o estoque físico e o limite imposto por política
+                const effectiveLimit = Math.min(maxStock, maxLimit);
+
+                if (currentQty >= effectiveLimit) {
+                    alert(`Limite máximo atingido para este item (${effectiveLimit} un).`);
+                    return;
+                }
+
                 if (!this.cart[id]) this.cart[id] = 0;
                 this.cart[id]++;
                 this.updateUI(id); 
@@ -879,6 +916,9 @@
 
                 items.forEach(p => {
                     if(!p) return;
+                    // Se estiver sem estoque, não atualiza controles para evitar mostrar botões de +
+                    if (p.estoque !== undefined && p.estoque <= 0) return;
+
                     const qty = this.cart[p.id] || 0;
                     this.updateControl(`ctrl-${p.id}`, p.id, qty);
                     this.updateControl(`pm-ctrl-${p.id}`, p.id, qty);
