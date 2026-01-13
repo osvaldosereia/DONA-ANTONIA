@@ -155,7 +155,9 @@
         .search-input:focus { outline: none; border-color: var(--secondary); background: white; }
         .search-icon { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--text-muted); pointer-events: none; }
 
+        /* Badge de Alterações - ESCONDIDO NO MOBILE */
         .changes-counter { 
+            display: none; /* Mobile Hidden */
             font-size: 0.8rem; font-weight: 600; color: #b45309; 
             background: #fffbeb; padding: 6px 14px; border-radius: 50px; 
             border: 1px solid #fde68a; white-space: nowrap;
@@ -255,7 +257,6 @@
         }
         .extra-img-box:hover .extra-img { transform: scale(1.08); }
 
-        /* Botão Lupa */
         .btn-gallery-overlay {
             position: absolute; bottom: 0; right: 0;
             background: white; border-radius: 50%; width: 44px; height: 44px;
@@ -339,6 +340,17 @@
             box-shadow: 0 4px 15px rgba(22, 163, 74, 0.25); transition: transform 0.2s;
         }
         .btn-finish:active { transform: scale(0.97); }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
+            background: #333; color: white; padding: 12px 24px; border-radius: 50px;
+            z-index: 2000; opacity: 0; pointer-events: none; transition: opacity 0.3s, top 0.3s;
+            font-size: 0.9rem; font-weight: 600; text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); width: max-content; max-width: 90%;
+        }
+        .toast.visible { opacity: 1; top: 120px; }
+        .toast.error { background: #ef4444; }
 
         /* --- BOTÕES FLUTUANTES (MOBILE) --- */
         .floating-actions {
@@ -443,6 +455,9 @@
             .ch-inner { flex-wrap: nowrap; }
             .search-container { width: 300px; margin-top: 0; margin-left: auto; margin-right: 20px; }
             
+            /* Mostra Badge no Desktop */
+            .changes-counter { display: block; }
+
             .customizer-grid { 
                 display: grid; 
                 grid-template-columns: 1fr 380px; 
@@ -549,6 +564,7 @@
                     <span>Personalize sua escolha</span>
                 </div>
 
+                <!-- BUSCA INTELIGENTE -->
                 <div class="search-container">
                     <input type="text" id="product-search" class="search-input" placeholder="Buscar produto extra..." aria-label="Buscar produto extra">
                     <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -763,10 +779,7 @@
             scrollToCategory(catId) {
                 const el = document.getElementById(catId);
                 if (el) {
-                    // Mobile close menu
                     document.getElementById('mobile-cat-sheet').classList.remove('open');
-                    
-                    // Offset for header
                     const y = el.getBoundingClientRect().top + window.scrollY - 140;
                     window.scrollTo({top: y, behavior: 'smooth'});
                 }
@@ -1024,7 +1037,10 @@
 
                 if (this.currentLimit && delta < 0 && this.originalCart[id]) {
                     const removals = this.calculateRemovals(simulatedCart);
-                    if (removals > this.currentLimit) return alert(`Limite de ${this.currentLimit} trocas atingido.`);
+                    if (removals > this.currentLimit) {
+                        this.showToast(`Limite de ${this.currentLimit} trocas atingido.`, 'error');
+                        return;
+                    }
                 }
 
                 if (!this.cart[id]) this.cart[id] = 0;
@@ -1083,7 +1099,10 @@
             },
 
             finishOrder() {
-                if (Object.keys(this.cart).length === 0) return alert("Cesta vazia.");
+                if (Object.keys(this.cart).length === 0) {
+                    this.showToast("Cesta vazia.", 'error');
+                    return;
+                }
                 let productsTotal = 0;
                 let msg = `*PEDIDO: ${this.currentBasket.nome}*\n--------------------------------\n`;
                 for (const [id, qty] of Object.entries(this.cart)) {
@@ -1099,6 +1118,19 @@
                 const finalTotal = Math.max(calculatedTotal, originalPrice);
                 msg += `--------------------------------\n*TOTAL: R$ ${finalTotal.toFixed(2).replace('.', ',')}*`;
                 window.open(`https://api.whatsapp.com/send?phone=${this.phone}&text=${encodeURIComponent(msg)}`, '_blank');
+            },
+
+            showToast(msg, type = 'normal') {
+                let toast = document.getElementById('toast-msg');
+                if(!toast) {
+                    toast = document.createElement('div');
+                    toast.id = 'toast-msg';
+                    toast.className = 'toast';
+                    document.body.appendChild(toast);
+                }
+                toast.textContent = msg;
+                toast.className = 'toast visible ' + type;
+                setTimeout(() => { toast.classList.remove('visible'); }, 3000);
             }
         };
 
