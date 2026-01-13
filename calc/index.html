@@ -17,7 +17,7 @@
             --primary: #dc2626; 
             --primary-dark: #b91c1c; 
             --secondary: #1f2937; 
-            --bg: #f3f4f6; 
+            --bg: #f9fafb; 
             --surface: #ffffff; 
             --text-main: #333333; 
             --text-muted: #666666; 
@@ -171,7 +171,7 @@
             display: flex; align-items: center; gap: 12px; border-bottom: 2px solid var(--border); margin-bottom: 30px;
         }
         
-        /* LIST LAYOUT (Itens Inclusos - NOVO LAYOUT) */
+        /* LIST LAYOUT (Itens Inclusos) */
         .basket-group { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 0 20px; margin-bottom: 40px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
 
         .c-item-list { 
@@ -180,48 +180,38 @@
         }
         .c-item-list:last-child { border-bottom: none; }
         
-        /* Imagem Padrão (Desktop) */
+        /* Box da Imagem na Lista (Com suporte a botão) */
+        .c-img-box-list {
+            width: 80px; height: 80px; border-radius: 8px; 
+            background: white; flex-shrink: 0; border: 1px solid #f3f4f6; 
+            position: relative; display: flex; align-items: center; justify-content: center;
+        }
         .c-img-list { 
-            width: 110px; height: 110px; border-radius: 8px; object-fit: contain; 
-            background: white; flex-shrink: 0; mix-blend-mode: multiply;
-            border: 1px solid #f3f4f6; padding: 5px;
+            width: 100%; height: 100%; object-fit: contain; 
+            mix-blend-mode: multiply; padding: 5px;
         }
         
-        /* Coluna de Conteúdo (Direita da Imagem) */
         .c-content-col { 
             flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0;
         }
         
-        /* Título - Permite 2 linhas */
         .c-name { 
             font-weight: 600; font-size: 0.95rem; line-height: 1.4; 
             margin-bottom: 8px; color: var(--secondary); 
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-            padding-right: 5px; /* Margem de respiro */
+            padding-right: 5px; 
         }
         
-        /* Linha de Baixo: Meta + Seletor */
-        .c-bottom-row {
-            display: flex; align-items: center; justify-content: space-between; width: 100%;
-        }
-        
+        .c-bottom-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .c-meta { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
         .c-control-box { width: 100px; flex-shrink: 0; }
 
         /* Ajustes Mobile Específicos para Lista */
         @media (max-width: 768px) {
             .c-item-list { gap: 16px; align-items: flex-start; }
-            
-            /* Imagem 20% maior no mobile (~135px) */
-            .c-img-list { width: 135px; height: 135px; }
-            
-            /* Garante que o conteúdo ocupe a altura da imagem */
+            .c-img-box-list { width: 135px; height: 135px; } /* Mobile */
             .c-content-col { height: 135px; justify-content: space-between; padding: 5px 0; }
-            
-            /* Título com mais espaço */
             .c-name { font-size: 1rem; margin-bottom: 0; }
-            
-            /* Move seletor para baixo */
             .c-bottom-row { margin-top: auto; }
         }
 
@@ -231,29 +221,20 @@
             font-size: 1.1rem; font-weight: 700; color: var(--secondary); 
             text-transform: uppercase; letter-spacing: 1px; text-align: center;
             display: flex; align-items: center; justify-content: center; gap: 20px;
+            scroll-margin-top: 140px; /* Para o scroll parar no lugar certo */
         }
         .cat-separator::before, .cat-separator::after { content: ""; height: 1px; background: #e5e5e5; flex: 1; margin: 0 10px; }
         .cat-badge { font-size: 0.7rem; background: var(--offer-color); color: white; padding: 4px 10px; border-radius: 50px; font-weight: 700; }
 
         /* --- GRID DE PRODUTOS EXTRAS --- */
-        .extras-grid {
-            display: grid;
-            grid-template-columns: 1fr; 
-            gap: 40px; 
-            padding: 0;
-        }
+        .extras-grid { display: grid; grid-template-columns: 1fr; gap: 40px; padding: 0; }
         
         @media(min-width: 600px) { .extras-grid { grid-template-columns: repeat(2, 1fr); gap: 30px 20px; } }
         @media(min-width: 1024px) { .extras-grid { grid-template-columns: repeat(3, 1fr); gap: 50px 30px; } }
 
         .extra-card {
-            background: white; 
-            border-radius: 12px;
-            padding: 16px;
-            border: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            position: relative;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
+            background: white; border-radius: 12px; padding: 16px; border: 1px solid var(--border);
+            display: flex; flex-direction: column; position: relative; box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
         }
         @media(min-width: 1024px) { 
             .extra-card { background: transparent; padding: 0; border: none; box-shadow: none; } 
@@ -261,31 +242,26 @@
         
         .extra-img-box { 
             width: 100%; aspect-ratio: 1/1; position: relative; 
-            background: white; border-radius: 8px;
-            overflow: visible; 
-            margin-bottom: 12px;
-            display: flex; align-items: center; justify-content: center;
+            background: white; border-radius: 8px; overflow: visible; 
+            margin-bottom: 12px; display: flex; align-items: center; justify-content: center;
         }
         @media(min-width: 1024px) { 
              .extra-img-box { background: white; border: 1px solid var(--border); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         }
         
         .extra-img { 
-            width: 100%; height: 100%; object-fit: contain; 
-            mix-blend-mode: multiply; transition: transform 0.5s ease;
-            filter: contrast(1.02); padding: 8px;
+            width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; 
+            transition: transform 0.5s ease; filter: contrast(1.02); padding: 8px;
         }
         .extra-img-box:hover .extra-img { transform: scale(1.08); }
 
+        /* Botão Lupa */
         .btn-gallery-overlay {
             position: absolute; bottom: 0; right: 0;
-            background: white; border-radius: 50%;
-            width: 44px; height: 44px;
-            display: none; 
-            align-items: center; justify-content: center;
+            background: white; border-radius: 50%; width: 44px; height: 44px;
+            display: none; align-items: center; justify-content: center;
             color: var(--secondary); z-index: 10; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: all 0.2s;
         }
         .btn-gallery-overlay:hover { transform: scale(1.1); box-shadow: 0 6px 16px rgba(0,0,0,0.15); }
 
@@ -304,19 +280,14 @@
             position: absolute; top: 0; left: 0;
             background: var(--offer-color); color: white;
             font-size: 0.7rem; font-weight: 700;
-            padding: 4px 10px; border-radius: 4px;
-            z-index: 5;
+            padding: 4px 10px; border-radius: 4px; z-index: 5;
         }
 
         .btn-add-lg {
-            width: 100%; min-height: 44px;
-            background: white; color: var(--secondary);
-            border: 1px solid #d1d5db; 
-            font-weight: 600; font-size: 0.85rem;
-            padding: 0 16px; border-radius: 50px;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.2s;
+            width: 100%; min-height: 44px; background: white; color: var(--secondary);
+            border: 1px solid #d1d5db; font-weight: 600; font-size: 0.85rem;
+            padding: 0 16px; border-radius: 50px; text-transform: uppercase; letter-spacing: 0.5px;
+            display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s;
         }
         .btn-add-lg:hover { border-color: var(--text-main); background: #f9fafb; }
         .btn-add-lg:active { transform: scale(0.98); }
@@ -341,10 +312,8 @@
         }
         .credit-pill {
             background: var(--secondary); color: #fff;
-            padding: 10px 24px; border-radius: 50px;
-            font-size: 0.9rem; font-weight: 600;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            pointer-events: auto;
+            padding: 10px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2); pointer-events: auto;
             transform: translateY(20px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex; align-items: center; gap: 10px;
         }
@@ -371,19 +340,76 @@
         }
         .btn-finish:active { transform: scale(0.97); }
 
-        /* Botão Scroll Top */
-        .btn-scroll-top {
-            position: fixed; bottom: 100px; left: 20px; z-index: 95;
+        /* --- BOTÕES FLUTUANTES (MOBILE) --- */
+        .floating-actions {
+            position: fixed; bottom: 100px; right: 20px; z-index: 95;
+            display: flex; flex-direction: column; gap: 12px;
+            align-items: flex-end;
+        }
+
+        .btn-float-round {
             width: 48px; height: 48px; border-radius: 50%;
             background: white; border: 1px solid var(--border);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex; align-items: center; justify-content: center;
-            color: var(--secondary); font-size: 1.5rem;
-            opacity: 0; pointer-events: none; transition: all 0.3s;
+            color: var(--secondary); font-size: 1.3rem;
+            transition: all 0.3s;
         }
-        .btn-scroll-top.visible { opacity: 1; pointer-events: auto; }
-        .btn-scroll-top:active { transform: translateY(2px); }
+        .btn-float-round:active { transform: translateY(2px); background: #f9fafb; }
+        
+        /* Botão Scroll: Escondido por padrão, aparece com classe visible */
+        #btn-scroll-top { opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+        #btn-scroll-top.visible { opacity: 1; pointer-events: auto; }
 
+        /* Botão Menu Categoria: Azul/Destaque */
+        #btn-cat-menu { 
+            background: var(--secondary); color: white; border: none; 
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        #btn-cat-menu.visible { opacity: 1; pointer-events: auto; }
+
+        /* MENU DE CATEGORIAS (MOBILE SHEET) */
+        #mobile-cat-sheet {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 200;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+            display: flex; flex-direction: column; justify-content: flex-end;
+        }
+        #mobile-cat-sheet.open { opacity: 1; pointer-events: auto; }
+        
+        .mcs-content {
+            background: white; border-radius: 20px 20px 0 0;
+            padding: 24px; max-height: 70vh; overflow-y: auto;
+            transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #mobile-cat-sheet.open .mcs-content { transform: translateY(0); }
+        
+        .mcs-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .mcs-title { font-size: 1.2rem; font-weight: 700; color: var(--secondary); }
+        .mcs-close { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; padding: 5px; }
+        
+        .mcs-list { display: grid; gap: 10px; }
+        .mcs-link {
+            padding: 16px; background: #f9fafb; border-radius: 12px;
+            font-weight: 600; color: var(--text-main); display: flex; justify-content: space-between;
+            align-items: center; border: 1px solid var(--border);
+        }
+        .mcs-link:active { background: #e5e7eb; }
+
+        /* --- SIDEBAR NAV (DESKTOP) --- */
+        .sidebar-nav {
+            margin-bottom: 20px; background: white; border-radius: 12px; border: 1px solid var(--border);
+            padding: 20px; display: none; /* Mobile hidden */
+        }
+        .sidebar-nav-title { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; }
+        .sn-link { 
+            display: block; padding: 8px 0; color: var(--text-main); font-weight: 500; 
+            border-bottom: 1px solid #f3f4f6; transition: color 0.2s; cursor: pointer;
+        }
+        .sn-link:last-child { border-bottom: none; }
+        .sn-link:hover { color: var(--primary); padding-left: 5px; }
+
+        /* GALLERY MODAL */
         dialog#gallery-modal {
             width: 100%; height: 100%; max-width: 100%; max-height: 100%;
             border: none; margin: 0; background: rgba(255,255,255,0.98);
@@ -423,23 +449,35 @@
                 gap: 60px; 
             }
             .products-col { padding-bottom: 60px; }
-            .credit-banner-container { 
-                position: absolute; top: -70px; bottom: auto; left: 0; 
-                width: 100%; justify-content: center; 
-            }
-            .order-summary-card {
+            .credit-banner-container { position: absolute; top: -70px; bottom: auto; left: 0; width: 100%; justify-content: center; }
+            
+            /* Wrapper Sticky para Sidebar */
+            .sidebar-wrapper {
                 position: sticky; 
-                top: calc(var(--header-h) + 40px); /* Topo do viewport + header */
+                top: calc(var(--header-h) + 40px);
                 bottom: auto; left: auto; width: auto; height: auto;
+                align-self: start; 
+                z-index: 80;
+            }
+
+            .sidebar-nav { display: block; } /* Show nav on desktop */
+
+            .order-summary-card {
+                position: static; /* Reset fixed */
+                width: auto; height: auto;
                 border: 1px solid var(--border); border-radius: 12px;
                 flex-direction: column; padding: 30px; background: white;
-                box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); gap: 24px; z-index: 80;
-                align-self: start; 
+                box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05); gap: 24px;
             }
             .ff-info { align-items: center; text-align: center; padding-bottom: 24px; border-bottom: 1px solid var(--border); width: 100%; }
             .ff-value { font-size: 2.5rem; margin-top: 8px; color: var(--secondary); font-weight: 700; }
             .btn-finish { width: 100%; justify-content: center; height: 56px; font-size: 1.1rem; }
-            .btn-scroll-top { left: 40px; bottom: 40px; }
+            
+            /* Ajustes lista desktop */
+            .c-img-box-list { width: 140px; height: 140px; }
+            
+            /* Esconde botões flutuantes mobile */
+            .floating-actions { display: none; }
         }
 
         .fade-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
@@ -459,10 +497,26 @@
         </div>
     </header>
 
-    <!-- Scroll Top Button -->
-    <button id="btn-scroll-top" class="btn-scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Voltar ao topo">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-    </button>
+    <!-- Floating Actions (Mobile Only) -->
+    <div class="floating-actions">
+        <button id="btn-cat-menu" class="btn-float-round" onclick="App.toggleMobileMenu()" aria-label="Menu de Categorias">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <button id="btn-scroll-top" class="btn-float-round" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Voltar ao topo">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+        </button>
+    </div>
+
+    <!-- Mobile Category Sheet -->
+    <div id="mobile-cat-sheet">
+        <div class="mcs-content">
+            <div class="mcs-header">
+                <div class="mcs-title">Navegar por Categoria</div>
+                <div class="mcs-close" onclick="App.toggleMobileMenu()">✕</div>
+            </div>
+            <div class="mcs-list" id="mobile-cat-list"></div>
+        </div>
+    </div>
 
     <!-- VIEW: HOME (VITRINE) -->
     <main id="home-view">
@@ -495,7 +549,6 @@
                     <span>Personalize sua escolha</span>
                 </div>
 
-                <!-- BUSCA INTELIGENTE (Linha 2 no Mobile, Linha 1 no Desktop) -->
                 <div class="search-container">
                     <input type="text" id="product-search" class="search-input" placeholder="Buscar produto extra..." aria-label="Buscar produto extra">
                     <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -523,21 +576,31 @@
                 </div>
             </div>
 
-            <!-- COLUNA DIREITA: RESUMO -->
-            <div style="position:relative;">
-                <div class="credit-banner-container">
-                    <div id="credit-pill" class="credit-pill"></div>
+            <!-- COLUNA DIREITA: RESUMO + SIDEBAR -->
+            <div class="sidebar-wrapper">
+                
+                <!-- Desktop Category Navigation -->
+                <div class="sidebar-nav" id="desktop-cat-nav">
+                    <div class="sidebar-nav-title">Navegação Rápida</div>
+                    <div id="desktop-cat-list"></div>
                 </div>
 
-                <div class="order-summary-card">
-                    <div class="ff-info">
-                        <span class="ff-label">Total Estimado</span>
-                        <span class="ff-value" id="ff-total-val">R$ 0,00</span>
+                <!-- Resumo -->
+                <div style="position:relative;">
+                    <div class="credit-banner-container">
+                        <div id="credit-pill" class="credit-pill"></div>
                     </div>
-                    <button class="btn-finish" onclick="App.finishOrder()" aria-label="Finalizar pedido no WhatsApp">
-                        <span>Finalizar Pedido</span>
-                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                    </button>
+
+                    <div class="order-summary-card">
+                        <div class="ff-info">
+                            <span class="ff-label">Total Estimado</span>
+                            <span class="ff-value" id="ff-total-val">R$ 0,00</span>
+                        </div>
+                        <button class="btn-finish" onclick="App.finishOrder()" aria-label="Finalizar pedido no WhatsApp">
+                            <span>Finalizar Pedido</span>
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -565,18 +628,12 @@
 
         const GalleryModal = {
             currentImages: [],
-            // Verifica fotos extras. Se Desktop, sempre exibe o botão.
             checkMultipleImages(mainImg, elementId) {
                 const btn = document.getElementById(elementId);
                 if (!btn) return;
-
-                // Regra: Desktop sempre mostra. Mobile só se tiver extras.
-                const isDesktop = window.innerWidth >= 1024;
                 
-                if (isDesktop) {
-                    btn.style.display = 'flex';
-                    return;
-                }
+                // Desktop sempre mostra galeria
+                if (window.innerWidth >= 1024) { btn.style.display = 'flex'; return; }
 
                 const baseName = mainImg.replace(/(\.[\w\d_-]+)$/i, '');
                 const ext = mainImg.match(/(\.[\w\d_-]+)$/i)[0];
@@ -632,6 +689,7 @@
             lockedRiceId: null,
             phone: "5565998150975",
             searchTerm: "",
+            availableCategories: [],
 
             async init() {
                 try {
@@ -672,10 +730,10 @@
             setupScroll() {
                 let lastScrollY = window.scrollY;
                 const scrollBtn = document.getElementById('btn-scroll-top');
+                const menuBtn = document.getElementById('btn-cat-menu');
                 
                 window.addEventListener('scroll', () => {
                     const currentScrollY = window.scrollY;
-                    // Header Logic
                     if (currentScrollY > 70 && currentScrollY > lastScrollY) {
                         document.body.classList.add('header-hidden');
                     } else if (currentScrollY < lastScrollY) {
@@ -683,13 +741,35 @@
                     }
                     lastScrollY = currentScrollY;
 
-                    // Scroll Button Logic
-                    if (currentScrollY > 300) {
+                    if (currentScrollY > 400) {
                         scrollBtn.classList.add('visible');
+                        if (this.availableCategories.length > 0) menuBtn.classList.add('visible');
                     } else {
                         scrollBtn.classList.remove('visible');
+                        menuBtn.classList.remove('visible');
                     }
                 });
+            },
+
+            toggleMobileMenu() {
+                const sheet = document.getElementById('mobile-cat-sheet');
+                if (sheet.classList.contains('open')) {
+                    sheet.classList.remove('open');
+                } else {
+                    sheet.classList.add('open');
+                }
+            },
+
+            scrollToCategory(catId) {
+                const el = document.getElementById(catId);
+                if (el) {
+                    // Mobile close menu
+                    document.getElementById('mobile-cat-sheet').classList.remove('open');
+                    
+                    // Offset for header
+                    const y = el.getBoundingClientRect().top + window.scrollY - 140;
+                    window.scrollTo({top: y, behavior: 'smooth'});
+                }
             },
 
             sortProducts(products) {
@@ -744,7 +824,7 @@
                 this.cart = {};
                 this.lockedRiceId = null;
                 this.searchTerm = "";
-                document.getElementById('product-search').value = ""; // Reset search input
+                document.getElementById('product-search').value = ""; 
 
                 if (basket.items && basket.items.length > 0) {
                     basket.items.forEach(item => {
@@ -790,6 +870,21 @@
                 this.currentLimit = null;
             },
 
+            renderCategoryNav(cats) {
+                this.availableCategories = cats;
+                const desktopList = document.getElementById('desktop-cat-list');
+                const mobileList = document.getElementById('mobile-cat-list');
+                
+                const html = cats.map(cat => 
+                    `<div class="sn-link mcs-link" onclick="App.scrollToCategory('cat-sec-${cat}')">
+                        ${cat} <span style="font-size:0.8em">▼</span>
+                    </div>`
+                ).join('');
+
+                if (desktopList) desktopList.innerHTML = html;
+                if (mobileList) mobileList.innerHTML = html;
+            },
+
             renderCustomizerLists() {
                 const basketContainer = document.getElementById('basket-items-container');
                 const othersContainer = document.getElementById('other-items-container');
@@ -805,14 +900,11 @@
                     basketContainer.innerHTML = basketItems.map(p => this.itemRowHTML(p)).join('');
                 }
 
-                // 2. LISTA DE EXTRAS COM BUSCA
+                // 2. LISTA DE EXTRAS
                 let otherProducts = this.data.filter(p => {
                     if (p.categoria === 'CESTA BÁSICA') return false;
                     if (p.nome.toLowerCase().includes('arroz') && this.lockedRiceId && p.id !== this.lockedRiceId) return false; 
-                    
-                    // Lógica de Busca
                     if (this.searchTerm && !p.nome.toLowerCase().includes(this.searchTerm)) return false;
-
                     return true;
                 });
 
@@ -830,8 +922,10 @@
                     return a.localeCompare(b);
                 });
 
+                // Renderiza Navegação
+                this.renderCategoryNav(cats);
+
                 let othersHTML = '';
-                
                 if (otherProducts.length === 0) {
                     othersHTML = `<div style="padding:40px; text-align:center; color:var(--text-muted);">Nenhum produto encontrado.</div>`;
                 } else {
@@ -839,7 +933,7 @@
                         const isSpecial = /^(Oferta|Dica|Só Hoje)/i.test(cat);
                         const badge = isSpecial ? '<span class="cat-badge">Destaque</span>' : '';
                         
-                        othersHTML += `<div class="cat-separator">${cat} ${badge}</div>`;
+                        othersHTML += `<div id="cat-sec-${cat}" class="cat-separator">${cat} ${badge}</div>`;
                         let sortedGroup = this.sortProducts(groups[cat]);
                         othersHTML += `<div class="extras-grid">`;
                         othersHTML += sortedGroup.map(p => this.itemCardHTML(p)).join('');
@@ -856,19 +950,27 @@
                 const isOriginal = this.originalCart[p.id] && this.originalCart[p.id] > 0;
                 const label = isOriginal ? 'Incluso' : 'Adicionado';
                 const labelColor = isOriginal ? 'var(--text-muted)' : 'var(--primary)';
+                const galleryBtnId = `btn-gal-list-${p.id}`;
+                
+                setTimeout(() => GalleryModal.checkMultipleImages(p.imagem, galleryBtnId), 100);
 
                 return `
                 <div class="c-item-list" id="row-${p.id}">
-                    <img src="${p.imagem}" class="c-img-list" loading="lazy" alt="${p.nome}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\' fill=\'%23f3f4f6\'%3E%3C/svg%3E'">
+                    <div class="c-img-box-list">
+                        <img src="${p.imagem}" class="c-img-list" loading="lazy" alt="${p.nome}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\' fill=\'%23f3f4f6\'%3E%3C/svg%3E'">
+                        <button id="${galleryBtnId}" class="btn-gallery-overlay" onclick="GalleryModal.open('${p.imagem}', '${p.nome}')">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
+                        </button>
+                    </div>
                     <div class="c-content-col">
                         <div class="c-name">${p.nome}</div>
                         <div class="c-bottom-row">
                             <span class="c-meta" style="color:${labelColor}; font-weight:600;">${label}</span>
                             <div class="c-control-box">
                                 <div class="qty-control-compact">
-                                    <button class="qty-btn-c" onclick="App.changeQty('${p.id}', -1)" aria-label="Diminuir quantidade de ${p.nome}">-</button>
+                                    <button class="qty-btn-c" onclick="App.changeQty('${p.id}', -1)">-</button>
                                     <span class="qty-val-c">${qty}</span>
-                                    <button class="qty-btn-c" onclick="App.changeQty('${p.id}', 1)" aria-label="Aumentar quantidade de ${p.nome}">+</button>
+                                    <button class="qty-btn-c" onclick="App.changeQty('${p.id}', 1)">+</button>
                                 </div>
                             </div>
                         </div>
