@@ -130,8 +130,17 @@
         .ch-inner { display: flex; align-items: center; gap: 16px; }
         .btn-back { width: 40px; height: 40px; border-radius: 50%; background: #f3f4f6; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-main); flex-shrink: 0; transition: background 0.2s; }
         .btn-back:hover { background: #e5e7eb; }
+        .cust-basket-info { flex: 1; }
         .cust-basket-info h2 { font-size: 1.1rem; font-weight: 800; line-height: 1.1; margin: 0; color: var(--secondary); }
         .cust-basket-info span { font-size: 0.85rem; color: var(--text-muted); }
+        
+        /* Contador de alterações */
+        .changes-counter { 
+            font-size: 0.8rem; font-weight: 700; color: #b45309; 
+            background: #fffbeb; padding: 4px 10px; border-radius: 20px; 
+            border: 1px solid #fcd34d; white-space: nowrap;
+        }
+        .changes-counter.limit-reached { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
 
         /* GRID DO CUSTOMIZER (Mobile: Block, Desktop: 2 Colunas) */
         .customizer-grid {
@@ -340,6 +349,9 @@
                     <h2 id="cust-basket-name">Nome da Cesta</h2>
                     <span>Monte do seu jeito</span>
                 </div>
+                <div id="changes-badge" class="changes-counter">
+                    Alterações: 0/0
+                </div>
             </div>
         </div>
 
@@ -380,10 +392,24 @@
     </div>
 
     <script>
+        // CONFIGURAÇÃO DAS REGRAS DE LIMITE DAS CESTAS
+        const BASKET_LIMITS = {
+            'economica': 5,
+            'econômica': 5,
+            'mini': 7,
+            'pequena': 9,
+            'média': 11,
+            'media': 11,
+            'grande': 13
+        };
+
         const App = {
             data: [], 
             cart: {}, 
+            originalCart: {}, // Estado original para comparação
+            baseFee: 0,       // Valor oculto para atingir o preço alvo da cesta
             currentBasket: null,
+            currentLimit: null, // Limite de alterações da cesta atual
             phone: "5565998150975",
 
             async init() {
@@ -449,6 +475,7 @@
                 this.currentBasket = basket;
                 this.cart = {};
 
+                // 1. Popula o carrinho inicial com os produtos da cesta
                 if (basket.items && basket.items.length > 0) {
                     basket.items.forEach(item => {
                         let productMatch = null;
@@ -465,6 +492,25 @@
                     });
                 }
 
+                // 2. Salva o estado original para comparação de mudanças
+                this.originalCart = JSON.parse(JSON.stringify(this.cart));
+
+                // 3. Define o limite de alterações baseado no nome da cesta
+                const ruleKey = basket.nome.toLowerCase().replace('cesta ', '').trim();
+                this.currentLimit = BASKET_LIMITS[ruleKey] || 99; // 99 se não tiver regra definida
+                
+                // 4. Calcula a "Taxa Oculta" (Base Fee) Dinamicamente
+                // Base Fee = Preço da Cesta (JSON) - Soma dos Produtos Iniciais
+                let initialProductsSum = 0;
+                for (const [id, qty] of Object.entries(this.cart)) {
+                    const p = this.data.find(x => x.id === id);
+                    if (p) initialProductsSum += p.valor * qty;
+                }
+
+                this.baseFee = basket.valor - initialProductsSum;
+                console.log("Basket Price:", basket.valor, "Items Sum:", initialProductsSum, "Hidden Fee:", this.baseFee);
+
+                // UI Updates
                 document.getElementById('cust-basket-name').innerText = basket.nome;
                 
                 document.getElementById('home-view').classList.add('hidden');
@@ -480,6 +526,7 @@
                 document.getElementById('customizer-view').classList.add('hidden');
                 document.getElementById('home-view').classList.remove('hidden');
                 this.currentBasket = null;
+                this.currentLimit = null;
             },
 
             renderCustomizerLists() {
@@ -525,7 +572,7 @@
                 });
                 
                 othersContainer.innerHTML = othersHTML;
-                this.updateTotal();
+                this.updateTotalAndLimits();
             },
 
             itemRowHTML(p, isBasketItem) {
@@ -554,6 +601,24 @@
             },
 
             changeQty(id, delta) {
+                const currentQty = this.cart[id] || 0;
+                const newQty = currentQty + delta;
+                
+                // Simula a mudança para verificar limites
+                const simulatedCart = { ...this.cart };
+                if (newQty <= 0) delete simulatedCart[id];
+                else simulatedCart[id] = newQty;
+
+                // Verifica alterações
+                if (this.currentLimit) {
+                    const changes = this.calculateChanges(simulatedCart);
+                    if (changes > this.currentLimit) {
+                        alert(`Você atingiu o limite de ${this.currentLimit} alterações para a ${this.currentBasket.nome}.`);
+                        return;
+                    }
+                }
+
+                // Aplica mudança real
                 if (!this.cart[id]) this.cart[id] = 0;
                 this.cart[id] += delta;
                 
@@ -561,41 +626,74 @@
                 this.renderCustomizerLists();
             },
 
-            updateTotal() {
-                let total = 0;
+            // Calcula quantos itens diferentes foram alterados em relação ao original
+            calculateChanges(testCart) {
+                let changes = 0;
+                const allIds = new Set([...Object.keys(testCart), ...Object.keys(this.originalCart)]);
+                
+                allIds.forEach(id => {
+                    const originalQty = this.originalCart[id] || 0;
+                    const newQty = testCart[id] || 0;
+                    
+                    if (originalQty !== newQty) {
+                        changes++;
+                    }
+                });
+                return changes;
+            },
+
+            updateTotalAndLimits() {
+                // 1. Calcular Total (Produtos + Taxa Base)
+                let productsTotal = 0;
                 for (const [id, qty] of Object.entries(this.cart)) {
                     const p = this.data.find(x => x.id === id);
-                    if (p) total += p.valor * qty;
+                    if (p) productsTotal += p.valor * qty;
                 }
+                
+                const finalTotal = productsTotal + this.baseFee;
+                
                 const el = document.getElementById('ff-total-val');
-                // Pequena animação no preço ao mudar
                 el.style.transform = "scale(1.1)";
                 setTimeout(() => el.style.transform = "scale(1)", 150);
-                el.innerText = `R$ ${total.toFixed(2).replace('.', ',')}`;
+                el.innerText = `R$ ${finalTotal.toFixed(2).replace('.', ',')}`;
+
+                // 2. Atualizar Badge de Alterações
+                if (this.currentLimit) {
+                    const changes = this.calculateChanges(this.cart);
+                    const badge = document.getElementById('changes-badge');
+                    badge.innerText = `Alterações: ${changes}/${this.currentLimit}`;
+                    
+                    if (changes >= this.currentLimit) badge.classList.add('limit-reached');
+                    else badge.classList.remove('limit-reached');
+                } else {
+                    document.getElementById('changes-badge').innerText = '';
+                }
             },
 
             directOrder(id) {
                 const p = this.data.find(x => x.id === id);
-                let msg = `Olá! Gostaria de encomendar a *${p.nome}* (R$ ${p.valor.toFixed(2)}) conforme anúncio no site.`;
+                let msg = `Olá! Gostaria de encomendar a *${p.nome}* (R$ ${p.valor.toFixed(2).replace('.', ',')}) conforme anúncio no site.`;
                 window.open(`https://api.whatsapp.com/send?phone=${this.phone}&text=${encodeURIComponent(msg)}`, '_blank');
             },
 
             finishOrder() {
                 if (Object.keys(this.cart).length === 0) return alert("Sua cesta está vazia.");
 
-                let total = 0;
+                let productsTotal = 0;
                 let msg = `*PEDIDO PERSONALIZADO: ${this.currentBasket.nome}*\n--------------------------------\n`;
 
                 for (const [id, qty] of Object.entries(this.cart)) {
                     const p = this.data.find(x => x.id === id);
                     if (p) {
                         const sub = p.valor * qty;
-                        total += sub;
+                        productsTotal += sub;
                         msg += `${qty}x ${p.nome}\n`;
                     }
                 }
                 
-                msg += `--------------------------------\n*TOTAL ESTIMADO: R$ ${total.toFixed(2).replace('.', ',')}*\n\nGostaria de confirmar a disponibilidade e entrega.`;
+                const finalTotal = productsTotal + this.baseFee;
+                
+                msg += `--------------------------------\n*TOTAL FINAL: R$ ${finalTotal.toFixed(2).replace('.', ',')}*\n(Incluso taxa base da cesta)\n\nGostaria de confirmar a disponibilidade e entrega.`;
                 
                 window.open(`https://api.whatsapp.com/send?phone=${this.phone}&text=${encodeURIComponent(msg)}`, '_blank');
             }
