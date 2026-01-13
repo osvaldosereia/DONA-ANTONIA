@@ -17,13 +17,13 @@
         :root { 
             --primary: #dc2626; 
             --primary-dark: #b91c1c; 
-            --secondary: #1e293b; 
+            --secondary: #0f172a; /* Slate-900 (Mais contraste) */
             --bg: #f8fafc; 
             --surface: #ffffff; 
             --text-main: #334155; 
-            --text-muted: #64748b; 
+            --text-muted: #475569; /* Slate-600 (Mais escuro para acessibilidade) */
             --border: #e2e8f0; 
-            --header-h: 60px; /* Reduzido para ganhar espaço no mobile */
+            --header-h: 64px; 
             --radius: 12px; 
             --offer-color: #b45309;
             --focus-ring: #dc2626;
@@ -45,10 +45,10 @@
         .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; width: 100%; }
         .hidden { display: none !important; }
         button { cursor: pointer; border: none; font-family: inherit; background: none; }
-        button:focus-visible, a:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+        button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
         img { display: block; max-width: 100%; height: auto; }
 
-        /* --- 2. HEADER COMPACTO --- */
+        /* --- 2. HEADER --- */
         header { 
             position: fixed; top: 0; left: 0; width: 100%; height: var(--header-h); 
             background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border); z-index: 100; 
@@ -59,19 +59,20 @@
 
         .header-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--secondary); text-decoration: none; letter-spacing: -0.02em; }
-        .logo-div { width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-weight: 800; font-size: 0.8rem; border: 1px solid var(--border); }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.15rem; color: var(--secondary); text-decoration: none; letter-spacing: -0.02em; }
+        /* Acessibilidade: Contraste aumentado no logo-div */
+        .logo-div { width: 38px; height: 38px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary); font-weight: 900; font-size: 0.9rem; border: 1px solid #cbd5e1; }
         
         .location-badge { 
-            font-size: 0.75rem; font-weight: 600; color: var(--text-main); 
-            background: #f1f5f9; padding: 4px 10px; border-radius: 50px; 
+            font-size: 0.8rem; font-weight: 700; color: var(--secondary); 
+            background: #f1f5f9; padding: 6px 12px; border-radius: 50px; border: 1px solid var(--border);
         }
 
         /* --- 3. HOME VIEW --- */
         #home-view { padding-top: var(--header-h); min-height: 100vh; display: flex; flex-direction: column; background: var(--bg); }
         .hero { padding: 40px 0 30px; text-align: center; }
-        .hero h1 { font-size: 1.8rem; font-weight: 800; color: var(--secondary); margin-bottom: 10px; letter-spacing: -0.03em; line-height: 1.1; }
-        .hero p { color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+        .hero h1 { font-size: 2rem; font-weight: 800; color: var(--secondary); margin-bottom: 12px; letter-spacing: -0.03em; line-height: 1.1; }
+        .hero p { color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
 
         .baskets-grid { display: grid; grid-template-columns: 1fr; gap: 24px; padding-bottom: 60px; }
         @media (min-width: 640px) { .baskets-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -89,20 +90,21 @@
         .big-card:hover .bc-image { transform: scale(1.05); }
         
         .bc-content { padding: 20px; display: flex; flex-direction: column; flex: 1; text-align: center; }
-        .bc-title { font-size: 1.4rem; font-weight: 700; color: var(--secondary); margin-bottom: 6px; }
+        /* Acessibilidade: Alterado de h3 para h2 para manter hierarquia correta após h1 */
+        .bc-title { font-size: 1.5rem; font-weight: 700; color: var(--secondary); margin-bottom: 6px; }
         .bc-price { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 20px; font-feature-settings: "tnum"; }
         
         .bc-actions { display: grid; gap: 10px; }
         .btn-full { 
-            width: 100%; min-height: 46px; padding: 0 20px; border-radius: 50px; 
-            font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;
+            width: 100%; min-height: 48px; padding: 0 20px; border-radius: 50px; 
+            font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; transition: all 0.2s;
         }
         .btn-customize { background: var(--secondary); color: white; }
-        .btn-customize:hover { background: #0f172a; transform: translateY(-1px); }
-        .btn-whatsapp-outline { background: white; color: var(--text-main); border: 2px solid var(--border); }
+        .btn-customize:hover { background: #000; transform: translateY(-1px); }
+        .btn-whatsapp-outline { background: white; color: var(--secondary); border: 2px solid var(--border); }
         .btn-whatsapp-outline:hover { border-color: var(--secondary); background: #f8fafc; }
 
-        /* --- 4. CUSTOMIZER VIEW (OTIMIZADO MOBILE) --- */
+        /* --- 4. CUSTOMIZER VIEW --- */
         #customizer-view { padding-top: var(--header-h); background: var(--bg); min-height: 100vh; }
         
         .customizer-header { 
@@ -111,110 +113,122 @@
         }
         body.header-hidden .customizer-header { top: 0; }
 
-        .ch-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        .ch-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
         
         .btn-back { 
-            width: 40px; height: 40px; border-radius: 50%; background: white; border: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text-main); flex-shrink: 0;
+            width: 44px; height: 44px; border-radius: 50%; background: white; border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--secondary); flex-shrink: 0;
+            transition: background 0.2s;
         }
+        .btn-back:hover { background: #f1f5f9; border-color: var(--text-muted); }
         
         .cust-basket-info { flex: 1; min-width: 140px; }
-        .cust-basket-info h2 { font-size: 1rem; font-weight: 700; line-height: 1.2; margin: 0; color: var(--secondary); }
-        .cust-basket-info span { font-size: 0.8rem; color: var(--text-muted); }
+        .cust-basket-info h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; margin: 0; color: var(--secondary); }
+        .cust-basket-info span { font-size: 0.85rem; color: var(--text-muted); }
         
-        /* Busca Compacta */
         .search-container { width: 100%; margin-top: 5px; position: relative; }
         .search-input {
             width: 100%; height: 44px; padding: 0 40px 0 16px;
             border-radius: 50px; border: 1px solid var(--border); background: white;
-            font-size: 0.95rem; color: var(--text-main); transition: border-color 0.2s;
+            font-size: 1rem; color: var(--text-main); transition: border-color 0.2s;
         }
         .search-input:focus { outline: none; border-color: var(--secondary); }
         .search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-muted); pointer-events: none; }
 
         .changes-counter { 
-            font-size: 0.75rem; font-weight: 600; color: #b45309; 
+            font-size: 0.8rem; font-weight: 700; color: #b45309; 
             background: #fffbeb; padding: 4px 12px; border-radius: 50px; 
             border: 1px solid #fde68a; white-space: nowrap;
         }
         .changes-counter.limit-reached { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
 
-        .customizer-grid { display: block; margin-top: 20px; }
+        .customizer-grid { display: block; margin-top: 24px; }
         .products-col { padding-bottom: 120px; } 
         
+        /* Cabeçalhos de Seção (Acessibilidade: h3) */
         .section-header { 
-            padding: 0 0 10px; font-size: 0.9rem; font-weight: 700; color: var(--text-main); 
-            text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
+            width: 100%; padding: 0 0 12px; font-size: 1.1rem; font-weight: 800; color: var(--secondary); 
+            text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 12px; 
+            border-bottom: 2px solid var(--border); margin-bottom: 24px;
         }
         
-        /* LIST ITEM */
-        .basket-group { background: white; border-radius: 12px; border: 1px solid var(--border); padding: 0 16px; margin-bottom: 30px; }
-        .c-item-list { display: flex; align-items: center; padding: 16px 0; border-bottom: 1px solid #f1f5f9; gap: 16px; }
-        .c-item-list:last-child { border-bottom: none; }
-        
-        .c-img-list { 
-            width: 80px; height: 80px; border-radius: 8px; object-fit: contain; 
-            flex-shrink: 0; cursor: zoom-in; mix-blend-mode: multiply;
+        /* CONTAINER DE ITENS INCLUSOS (Agora Grid) */
+        .basket-grid {
+            display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px;
         }
-        .c-content-col { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        .c-name { font-weight: 600; font-size: 0.95rem; line-height: 1.3; margin-bottom: 6px; color: var(--secondary); }
-        .c-bottom-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
-        .c-meta { font-size: 0.8rem; color: var(--text-muted); }
-        .c-control-box { width: 100px; flex-shrink: 0; }
+        @media(min-width: 600px) { .basket-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media(min-width: 1024px) { .basket-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
 
-        /* EXTRAS GRID */
+        /* CONTAINER DE EXTRAS */
         .extras-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
         @media(min-width: 600px) { .extras-grid { grid-template-columns: repeat(2, 1fr); } }
         @media(min-width: 1024px) { .extras-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
 
-        .extra-card {
-            background: white; border-radius: 12px; padding: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid transparent;
-            display: flex; flex-direction: row; gap: 12px; align-items: center;
+        /* TÍTULOS DE CATEGORIA (Melhorado) */
+        .cat-separator {
+            grid-column: 1 / -1;
+            padding: 40px 0 20px;
+            font-size: 1.25rem; font-weight: 800; color: var(--secondary);
+            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 16px;
+            scroll-margin-top: 140px;
+        }
+        .cat-separator::after { content: ""; height: 2px; background: var(--border); flex: 1; }
+
+        /* CARD PADRÃO (Usado para Inclusos e Extras) */
+        .product-card {
+            background: white; border-radius: 12px; padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04); border: 1px solid transparent;
+            display: flex; flex-direction: row; gap: 16px; align-items: center;
             transition: all 0.2s; position: relative;
         }
-        .extra-card:hover { border-color: var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .product-card:hover { border-color: #cbd5e1; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08); }
 
-        .extra-img-box { 
+        .pc-img-box { 
             width: 90px; height: 90px; flex-shrink: 0; 
             display: flex; align-items: center; justify-content: center;
-            cursor: zoom-in;
+            cursor: zoom-in; background: #fff;
         }
-        .extra-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+        .pc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
-        .extra-info-box { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
-        .extra-name { 
-            font-size: 0.9rem; font-weight: 600; line-height: 1.3; color: var(--text-main); margin-bottom: 4px;
+        .pc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+        .pc-name { 
+            font-size: 0.95rem; font-weight: 600; line-height: 1.35; color: var(--secondary); margin-bottom: 6px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
         }
-        .extra-price { font-size: 1rem; font-weight: 700; color: var(--primary); }
+        .pc-price { font-size: 1.1rem; font-weight: 700; color: var(--primary); font-feature-settings: "tnum"; }
+        .pc-meta { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
         
-        .btn-add-lg {
-            height: 32px; padding: 0 14px; border-radius: 50px; border: 1px solid var(--border);
-            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
-            background: white; color: var(--secondary); margin-left: auto;
-        }
+        .pc-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .pc-actions { width: auto; flex-shrink: 0; }
         
-        /* CARD NO DESKTOP */
-        @media(min-width: 1024px) {
-            .extra-card { flex-direction: column; align-items: stretch; padding: 20px; text-align: center; gap: 16px; }
-            .extra-img-box { width: 100%; height: 160px; margin: 0 auto; }
-            .extra-info-box { justify-content: flex-start; }
-            .extra-name { font-size: 1rem; -webkit-line-clamp: 2; height: 2.6em; margin-bottom: 10px; }
-            .c-bottom-row { margin-top: auto; flex-direction: column; gap: 10px; align-items: center; }
-            .btn-add-lg { width: 100%; margin: 0; height: 40px; font-size: 0.85rem; }
-            .c-control-box { width: 100%; }
+        .btn-add-sm {
+            height: 36px; padding: 0 16px; border-radius: 50px; border: 1px solid var(--border);
+            font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            background: white; color: var(--secondary); margin-left: auto; cursor: pointer;
+            transition: all 0.2s;
         }
-
-        .qty-control-compact { 
+        .btn-add-sm:hover { border-color: var(--secondary); background: #f8fafc; }
+        
+        .qty-control { 
             display: flex; align-items: center; justify-content: space-between;
             background: white; border: 1px solid var(--border); border-radius: 50px; 
-            height: 32px; width: 100%;
+            height: 36px; width: 100px;
         }
-        @media(min-width: 1024px) { .qty-control-compact { height: 40px; } }
+        .qty-btn { width: 32px; height: 100%; font-size: 1.2rem; color: var(--secondary); display:flex; align-items:center; justify-content:center; }
+        .qty-val { font-weight: 700; font-size: 0.95rem; color: var(--secondary); }
 
-        .qty-btn-c { width: 32px; height: 100%; font-size: 1.1rem; color: var(--text-main); }
-        .qty-val-c { font-weight: 600; font-size: 0.95rem; }
+        /* --- DESKTOP CARDS (Vertical Layout) --- */
+        @media(min-width: 1024px) {
+            .product-card { flex-direction: column; align-items: stretch; padding: 20px; text-align: center; gap: 16px; height: 100%; }
+            .pc-img-box { width: 100%; height: 160px; margin: 0 auto; }
+            .pc-info { justify-content: flex-start; height: 100%; }
+            .pc-name { font-size: 1.05rem; -webkit-line-clamp: 2; height: 2.7em; margin-bottom: 12px; }
+            .pc-bottom { margin-top: auto; flex-direction: column; gap: 12px; align-items: center; }
+            .btn-add-sm, .qty-control { width: 100%; height: 42px; font-size: 0.9rem; }
+            .qty-control { width: 100%; }
+            .pc-actions { width: 100%; }
+        }
 
         /* --- CHECKOUT BAR FIXA --- */
         .order-summary-card {
@@ -230,14 +244,15 @@
             border-radius: 50px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3); transition: transform 0.2s;
         }
+        .btn-finish:hover { background: #15803d; }
 
-        /* CREDIT TOAST (Discreto na base) */
+        /* CREDIT TOAST */
         .credit-toast {
             position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--secondary); color: white; padding: 10px 20px; border-radius: 50px;
-            font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: var(--secondary); color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 0.95rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 95;
-            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+            display: flex; align-items: center; gap: 10px; white-space: nowrap;
         }
         .credit-toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
 
@@ -249,38 +264,40 @@
         }
         dialog::backdrop { background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
         
-        .modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
-        .modal-title { font-size: 1.2rem; font-weight: 700; color: var(--secondary); }
-        .modal-close { width: 32px; height: 32px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .modal-header { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 1.25rem; font-weight: 700; color: var(--secondary); }
+        .modal-close { width: 36px; height: 36px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; color: var(--secondary); transition: background 0.2s; }
+        .modal-close:hover { background: #e2e8f0; }
         
-        .modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+        .modal-body { padding: 24px; max-height: 60vh; overflow-y: auto; }
         .checkout-list { list-style: none; margin-bottom: 24px; }
-        .checkout-item { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--border); font-size: 0.9rem; }
-        .checkout-item:last-child { border-bottom: none; }
+        .checkout-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 0.95rem; color: var(--text-main); }
         
-        .payment-section h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; color: var(--secondary); }
-        .payment-options { display: grid; gap: 8px; }
+        .payment-section h4 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--secondary); }
+        .payment-options { display: grid; gap: 10px; }
         .payment-opt { 
-            display: flex; align-items: center; gap: 12px; padding: 12px; 
+            display: flex; align-items: center; gap: 12px; padding: 14px; 
             border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.2s;
         }
-        .payment-opt:hover { background: #f8fafc; }
+        .payment-opt:hover { background: #f8fafc; border-color: #cbd5e1; }
         .payment-opt:has(input:checked) { border-color: var(--primary); background: #fef2f2; }
-        .payment-opt input { accent-color: var(--primary); width: 18px; height: 18px; }
+        .payment-opt input { accent-color: var(--primary); width: 20px; height: 20px; }
 
-        .modal-footer { padding: 20px; background: #f8fafc; border-top: 1px solid var(--border); }
-        .btn-confirm { width: 100%; height: 48px; background: #16a34a; color: white; border-radius: 8px; font-weight: 700; font-size: 1.1rem; }
+        .modal-footer { padding: 20px 24px; background: #f8fafc; border-top: 1px solid var(--border); }
+        .btn-confirm { width: 100%; height: 50px; background: #16a34a; color: white; border-radius: 8px; font-weight: 700; font-size: 1.1rem; }
+        .btn-confirm:hover { background: #15803d; }
 
         /* FLOATING ACTIONS */
-        .floating-actions { position: fixed; bottom: 100px; right: 20px; z-index: 90; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+        .floating-actions { position: fixed; bottom: 100px; right: 20px; z-index: 90; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
         .fab-btn {
-            width: 48px; height: 48px; border-radius: 50%; background: white; 
+            width: 50px; height: 50px; border-radius: 50%; background: white; 
             border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.3rem;
             transition: transform 0.2s, opacity 0.2s; opacity: 0; pointer-events: none;
         }
         .fab-btn.visible { opacity: 1; pointer-events: auto; }
         .fab-btn.primary { background: var(--secondary); color: white; border: none; }
+        .fab-btn:active { transform: scale(0.95); }
         
         /* CATEGORY SHEET (Mobile) */
         .cat-sheet {
@@ -294,7 +311,7 @@
             transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
         }
         .cat-sheet.open .cat-sheet-content { transform: translateY(0); }
-        .cat-link { display: block; padding: 12px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: var(--text-main); }
+        .cat-link { display: block; padding: 14px 0; border-bottom: 1px solid #f1f5f9; font-weight: 600; color: var(--text-main); font-size: 1.05rem; }
 
         /* GALERIA/ZOOM */
         .gallery-overlay {
@@ -303,34 +320,38 @@
         }
         .gallery-overlay.open { opacity: 1; pointer-events: auto; }
         .gallery-stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
-        .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; transform: scale(0.9); transition: transform 0.3s; }
+        .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; transform: scale(0.95); transition: transform 0.3s; }
         .gallery-overlay.open .gallery-img { transform: scale(1); }
         .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; padding: 20px; cursor: pointer; z-index: 310; }
         .gallery-thumbs { height: 100px; display: flex; justify-content: center; gap: 10px; padding: 20px; overflow-x: auto; }
         .g-thumb { width: 60px; height: 60px; border-radius: 6px; border: 2px solid transparent; opacity: 0.5; object-fit: cover; cursor: pointer; }
         .g-thumb.active { border-color: white; opacity: 1; }
 
-        /* DESKTOP STYLES */
+        /* DESKTOP LAYOUT */
         @media(min-width: 1024px) {
             .container { padding: 0 40px; }
             .hero h1 { font-size: 3rem; }
             .search-container { width: 320px; margin-top: 0; margin-left: auto; }
-            .customizer-grid { display: grid; grid-template-columns: 1fr 380px; gap: 40px; }
+            
+            .customizer-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
             .products-col { padding-bottom: 60px; }
-            .sidebar-col { position: sticky; top: 90px; height: fit-content; }
+            
+            /* Sidebar Fixa */
+            .sidebar-col { 
+                position: sticky; top: 90px; height: fit-content; 
+                display: flex; flex-direction: column; gap: 24px; align-self: start;
+            }
+            
             .order-summary-card { position: static; height: auto; border: 1px solid var(--border); border-radius: 16px; flex-direction: column; padding: 24px; gap: 20px; box-shadow: none; }
             .floating-actions { display: none; }
             
-            /* Lista de Categorias no Desktop */
-            .desktop-cat-nav { display: block; background: white; padding: 20px; border-radius: 12px; border: 1px solid var(--border); margin-bottom: 24px; }
-            .desktop-cat-link { display: block; padding: 8px 0; color: var(--text-muted); transition: 0.2s; cursor: pointer; border-bottom: 1px solid #f8fafc; }
+            /* Lista de Categorias */
+            .desktop-cat-nav { display: block; background: white; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
+            .desktop-cat-link { display: block; padding: 10px 0; color: var(--text-muted); transition: 0.2s; cursor: pointer; border-bottom: 1px solid #f8fafc; font-weight: 500; }
             .desktop-cat-link:last-child { border-bottom: none; }
             .desktop-cat-link:hover { color: var(--primary); padding-left: 5px; }
         }
         .desktop-cat-nav { display: none; }
-
-        /* TOAST ANIMATION */
-        @keyframes slideUp { from { transform: translate(-50%, 100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
 
     </style>
 </head>
@@ -339,7 +360,7 @@
     <header>
         <div class="container header-inner">
             <a href="#" class="logo" onclick="location.reload()" aria-label="Voltar ao início">
-                <div class="logo-div">DA</div>
+                <div class="logo-div" aria-hidden="true">DA</div>
                 <span>Dona Antônia</span>
             </a>
             <span class="location-badge">Cuiabá & VG</span>
@@ -348,11 +369,9 @@
 
     <!-- FLOATING ACTIONS (MOBILE) -->
     <div class="floating-actions">
-        <!-- Botão Categorias (Acima do Topo) -->
         <button id="btn-cat-fab" class="fab-btn primary" onclick="App.toggleCategorySheet()" aria-label="Ver Categorias">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>
         </button>
-        <!-- Botão Topo -->
         <button id="btn-scroll-top" class="fab-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Voltar ao topo">
             <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
         </button>
@@ -362,8 +381,8 @@
     <div id="cat-sheet" class="cat-sheet" onclick="if(event.target === this) App.toggleCategorySheet()">
         <div class="cat-sheet-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="font-weight:700; color:var(--secondary);">Categorias</h3>
-                <button onclick="App.toggleCategorySheet()" style="font-size:1.5rem; padding:10px;">✕</button>
+                <h3 style="font-weight:700; color:var(--secondary); margin:0;">Categorias</h3>
+                <button onclick="App.toggleCategorySheet()" style="font-size:1.5rem; padding:10px; border:none; background:none;">✕</button>
             </div>
             <div id="mobile-cat-list"></div>
         </div>
@@ -399,14 +418,14 @@
     <div id="customizer-view" class="hidden">
         <div class="customizer-header">
             <div class="container ch-inner">
-                <button class="btn-back" onclick="App.showHome()">❮</button>
+                <button class="btn-back" onclick="App.showHome()" aria-label="Voltar">❮</button>
                 <div class="cust-basket-info">
                     <h2 id="cust-basket-name">Nome da Cesta</h2>
                     <span>Personalize sua escolha</span>
                 </div>
                 <!-- BUSCA -->
                 <div class="search-container">
-                    <input type="text" id="product-search" class="search-input" placeholder="Buscar item extra...">
+                    <input type="text" id="product-search" class="search-input" placeholder="Buscar item extra..." aria-label="Buscar produtos">
                     <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                 </div>
                 <div id="changes-badge" class="changes-counter" style="display:none;">Trocas: 0/0</div>
@@ -417,29 +436,29 @@
             <div class="products-col">
                 <!-- ITENS INCLUSOS -->
                 <div class="basket-group">
-                    <div class="section-header" style="border:none; padding-top:20px; margin-bottom:0;">Itens Inclusos</div>
-                    <div id="basket-items-container"></div>
+                    <h3 class="section-header">Itens Inclusos</h3>
+                    <div id="basket-items-container" class="basket-grid"></div>
                 </div>
 
                 <!-- EXTRAS -->
                 <div>
-                    <div class="section-header">Adicionar Extras</div>
+                    <h3 class="section-header">Adicionar Extras</h3>
                     <div id="other-items-container"></div>
                 </div>
             </div>
 
             <!-- SIDEBAR (Desktop) -->
-            <div class="sidebar-col">
+            <aside class="sidebar-col">
                 <!-- Nav Categorias Desktop -->
-                <nav class="desktop-cat-nav">
-                    <h4 style="margin-bottom:15px; font-weight:700; color:var(--text-main);">Navegação Rápida</h4>
+                <nav class="desktop-cat-nav" aria-label="Navegação de categorias">
+                    <h3 style="margin-bottom:15px; font-weight:800; color:var(--secondary); font-size:1.1rem;">Navegação Rápida</h3>
                     <div id="desktop-cat-list"></div>
                 </nav>
 
                 <!-- Resumo -->
                 <div class="order-summary-card">
                     <div class="ff-info">
-                        <span style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:600;">Total Estimado</span>
+                        <span style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:700;">Total Estimado</span>
                         <span class="ff-value" id="ff-total-val">R$ 0,00</span>
                     </div>
                     <button class="btn-finish" onclick="App.openCheckout()">
@@ -447,15 +466,15 @@
                         <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </button>
                 </div>
-            </div>
+            </aside>
         </div>
     </div>
 
     <!-- GALLERY OVERLAY (ZOOM) -->
-    <div id="gallery-overlay" class="gallery-overlay">
-        <div class="gallery-close" onclick="Gallery.close()">✕</div>
+    <div id="gallery-overlay" class="gallery-overlay" aria-modal="true" role="dialog" aria-label="Galeria de Imagens">
+        <button class="gallery-close" onclick="Gallery.close()" aria-label="Fechar Galeria">✕</button>
         <div class="gallery-stage" onclick="Gallery.close()">
-            <img src="" id="gallery-img" class="gallery-img" onclick="event.stopPropagation()">
+            <img src="" id="gallery-img" class="gallery-img" onclick="event.stopPropagation()" alt="Imagem ampliada">
         </div>
         <div id="gallery-thumbs" class="gallery-thumbs"></div>
     </div>
@@ -464,7 +483,7 @@
     <dialog id="checkout-modal">
         <div class="modal-header">
             <h3 class="modal-title">Revisar Pedido</h3>
-            <button class="modal-close" onclick="document.getElementById('checkout-modal').close()">✕</button>
+            <button class="modal-close" onclick="document.getElementById('checkout-modal').close()" aria-label="Fechar">✕</button>
         </div>
         <div class="modal-body">
             <!-- Lista de Produtos -->
@@ -525,13 +544,13 @@
                 const thumbs = document.getElementById('gallery-thumbs');
                 
                 img.src = mainSrc;
+                img.alt = productName; // Accessibility fix
                 ol.classList.add('open');
 
                 const baseName = mainSrc.replace(/(\.[\w\d_-]+)$/i, '');
                 const ext = mainSrc.match(/(\.[\w\d_-]+)$/i) ? mainSrc.match(/(\.[\w\d_-]+)$/i)[0] : '';
                 
-                // Thumbs placeholder
-                let html = `<img src="${mainSrc}" class="g-thumb active" onclick="Gallery.swap(this, '${mainSrc}')">`;
+                let html = `<img src="${mainSrc}" class="g-thumb active" onclick="Gallery.swap(this, '${mainSrc}')" alt="Miniatura ${productName}">`;
                 thumbs.innerHTML = html;
             },
             swap(el, src) {
@@ -549,7 +568,6 @@
 
             async init() {
                 try {
-                    // MODO PRODUÇÃO: Busca os dados reais
                     const response = await fetch('produtos/produtos.json');
                     const raw = await response.json();
 
@@ -558,7 +576,6 @@
                         id: String(p.id), 
                         valor: parseFloat(p.valor || 0),
                         categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
-                        // Ajusta caminho da imagem
                         imagem: (p.imagem && !p.imagem.includes('/')) ? `img/produtos/${p.imagem}` : (p.imagem || ''),
                         items: p.items || [], 
                         isOffer: p.oferta && p.oferta.toLowerCase() === 'sim'
@@ -607,7 +624,7 @@
                             <img src="${p.imagem}" alt="${p.nome}" class="bc-image">
                         </div>
                         <div class="bc-content">
-                            <h3 class="bc-title">${p.nome}</h3>
+                            <h2 class="bc-title">${p.nome}</h2>
                             <div class="bc-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
                             <div class="bc-actions">
                                 <button class="btn-full btn-customize" onclick="App.openCustomizer('${p.id}')">Personalizar</button>
@@ -636,13 +653,10 @@
                 }
                 this.originalCart = {...this.cart};
                 
-                // Define Limit based on Name
                 const nameKey = basket.nome.toLowerCase().replace('cesta', '').trim();
-                // Tenta achar chave exata ou parcial
                 let limitKey = Object.keys(BASKET_LIMITS).find(k => nameKey.includes(k));
                 this.currentLimit = limitKey ? BASKET_LIMITS[limitKey] : 99;
 
-                // Calc base fee (Price of Basket - Price of items inside)
                 let sumItems = 0;
                 for(let id in this.cart) {
                     let p = this.data.find(x => x.id === id);
@@ -672,23 +686,25 @@
                 const catListMobile = document.getElementById('mobile-cat-list');
                 const badge = document.getElementById('changes-badge');
 
-                // 1. Items Inclusos
+                // 1. Itens Inclusos (Agora usando card unificado)
                 let basketItems = Object.keys(this.cart).map(id => this.data.find(x => x.id === id)).filter(p => p);
                 
-                if (basketItems.length === 0) basketContainer.innerHTML = '<div style="text-align:center; padding:20px; color:#999;">Cesta vazia</div>';
+                if (basketItems.length === 0) basketContainer.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:#999;">Cesta vazia</div>';
                 else {
                     basketContainer.innerHTML = basketItems.map(p => `
-                        <div class="c-item-list">
-                            <img src="${p.imagem}" class="c-img-list" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                            <div class="c-content-col">
-                                <div class="c-name">${p.nome}</div>
-                                <div class="c-bottom-row">
-                                    <span class="c-meta">${this.originalCart[p.id] ? 'Incluso' : 'Adicionado'}</span>
-                                    <div class="c-control-box">
-                                        <div class="qty-control-compact">
-                                            <button class="qty-btn-c" onclick="App.changeQty('${p.id}', -1)">-</button>
-                                            <span class="qty-val-c">${this.cart[p.id]}</span>
-                                            <button class="qty-btn-c" onclick="App.changeQty('${p.id}', 1)">+</button>
+                        <div class="product-card">
+                            <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
+                                <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy">
+                            </div>
+                            <div class="pc-info">
+                                <div class="pc-name">${p.nome}</div>
+                                <div class="pc-bottom">
+                                    <div class="pc-meta">${this.originalCart[p.id] ? 'Incluso' : 'Adicionado'}</div>
+                                    <div class="pc-actions">
+                                        <div class="qty-control">
+                                            <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
+                                            <span class="qty-val">${this.cart[p.id]}</span>
+                                            <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
                                         </div>
                                     </div>
                                 </div>
@@ -705,36 +721,34 @@
                 let cats = Object.keys(groups).sort();
                 this.categories = cats;
 
-                // Render Navs
                 const navHTML = cats.map(c => `<a class="desktop-cat-link cat-link" onclick="App.scrollToCat('${c}')">${c}</a>`).join('');
                 catListDesktop.innerHTML = navHTML;
                 catListMobile.innerHTML = navHTML;
 
-                // Render Products
                 let html = '';
-                if(extras.length === 0) html = '<div style="padding:40px; text-align:center;">Nenhum produto encontrado.</div>';
+                if(extras.length === 0) html = '<div style="text-align:center; padding:40px;">Nenhum produto encontrado.</div>';
                 else {
                     cats.forEach(c => {
-                        html += `<div id="cat-${c}" class="cat-separator">${c}</div><div class="extras-grid">`;
+                        html += `<div id="cat-${c}" class="cat-separator"><span>${c}</span></div><div class="extras-grid">`;
                         html += groups[c].map(p => {
                             let qty = this.cart[p.id] || 0;
                             let btn = qty === 0 
-                                ? `<button class="btn-add-lg" onclick="App.changeQty('${p.id}', 1)">Adicionar</button>` 
-                                : `<div class="qty-control-compact" style="background:#f0fdf4; border-color:#dcfce7;">
-                                     <button class="qty-btn-c" style="color:#16a34a" onclick="App.changeQty('${p.id}', -1)">-</button>
-                                     <span class="qty-val-c" style="color:#15803d">${qty}</span>
-                                     <button class="qty-btn-c" style="color:#16a34a" onclick="App.changeQty('${p.id}', 1)">+</button>
+                                ? `<button class="btn-add-sm" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar ${p.nome}">Adicionar</button>` 
+                                : `<div class="qty-control">
+                                     <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
+                                     <span class="qty-val">${qty}</span>
+                                     <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
                                    </div>`;
                             return `
-                                <div class="extra-card">
-                                    <div class="extra-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                                        <img src="${p.imagem}" class="extra-img" loading="lazy">
+                                <div class="product-card">
+                                    <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
+                                        <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy">
                                     </div>
-                                    <div class="extra-info-box">
-                                        <div class="extra-name">${p.nome}</div>
-                                        <div class="c-bottom-row">
-                                            <div class="extra-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
-                                            <div class="c-control-box">${btn}</div>
+                                    <div class="pc-info">
+                                        <div class="pc-name">${p.nome}</div>
+                                        <div class="pc-bottom">
+                                            <div class="pc-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
+                                            <div class="pc-actions">${btn}</div>
                                         </div>
                                     </div>
                                 </div>`;
@@ -744,7 +758,6 @@
                 }
                 othersContainer.innerHTML = html;
 
-                // Update Limits UI
                 const removals = this.countRemovals();
                 badge.innerText = `Excluídos: ${removals}/${this.currentLimit}`;
                 badge.style.display = 'block';
@@ -756,7 +769,6 @@
 
             countRemovals() {
                 let removals = 0;
-                // Conta quantos produtos originais foram removidos totalmente (qty = 0)
                 for(let id in this.originalCart) {
                     if (this.originalCart[id] > 0 && (!this.cart[id] || this.cart[id] === 0)) {
                         removals++;
@@ -769,7 +781,6 @@
                 const currentQty = this.cart[id] || 0;
                 const newQty = currentQty + delta;
                 
-                // Verifica limite antes de remover um item original
                 if (this.originalCart[id] && delta < 0 && newQty === 0) {
                     const currentRemovals = this.countRemovals();
                     if (currentRemovals >= this.currentLimit) {
@@ -791,28 +802,17 @@
                     if(p) itemsSum += p.valor * this.cart[id];
                 }
 
-                // Lógica de Crédito:
-                // Preço Base da Cesta (Original)
                 const originalPrice = this.currentBasket.valor;
-                
-                // Cálculo: (Itens Atuais + Taxa Base)
-                // Taxa Base = Valor Cesta - Valor Itens Originais
-                // Logo: Se tirar itens, o calculatedTotal cai.
                 let calculatedTotal = itemsSum + this.baseFee;
-
-                // Garante que o total nunca fica abaixo do preço da cesta original
                 let finalTotal = Math.max(calculatedTotal, originalPrice);
                 
-                // Crédito é a diferença se o calculado for menor
                 let credit = 0;
                 if (calculatedTotal < originalPrice) {
                     credit = originalPrice - calculatedTotal;
                 }
 
-                // Atualiza UI
                 document.getElementById('ff-total-val').innerText = 'R$ ' + finalTotal.toFixed(2).replace('.', ',');
                 
-                // Toast de Crédito
                 const toast = document.getElementById('credit-toast');
                 if (credit > 0) {
                     document.getElementById('credit-text').innerText = `Crédito para gastar: R$ ${credit.toFixed(2).replace('.', ',')}`;
@@ -824,19 +824,17 @@
                 return finalTotal;
             },
 
-            // --- CATEGORY SHEET ---
             toggleCategorySheet() {
                 document.getElementById('cat-sheet').classList.toggle('open');
             },
             scrollToCat(cat) {
                 const el = document.getElementById('cat-'+cat);
                 if(el) {
-                    window.scrollTo({top: el.offsetTop - 100, behavior: 'smooth'});
+                    window.scrollTo({top: el.offsetTop - 140, behavior: 'smooth'});
                     document.getElementById('cat-sheet').classList.remove('open');
                 }
             },
 
-            // --- CHECKOUT FLOW ---
             openCheckout() {
                 if(Object.keys(this.cart).length === 0) return alert("Cesta vazia");
                 
