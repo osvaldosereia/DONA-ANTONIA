@@ -27,6 +27,7 @@
             --radius-md: 12px;
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --footer-h: 80px;
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -102,7 +103,7 @@
         .changes-counter.limit-reached { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
 
         .customizer-grid { display: block; margin-top: 20px; }
-        .products-col { padding-bottom: 100px; }
+        .products-col { padding-bottom: 140px; /* Mais espaço para o banner de crédito */ }
         
         .section-card { 
             background: var(--surface); border-radius: var(--radius-lg); 
@@ -124,103 +125,94 @@
         }
         .cat-badge { font-size: 0.7rem; background: #fee2e2; color: #b91c1c; padding: 2px 8px; border-radius: 4px; }
 
-        /* LIST LAYOUT (Itens da Cesta - Mantido Compacto) */
+        /* LIST LAYOUT (Topo) - Ajustado para imagens maiores */
         .c-item-list { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid #f3f4f6; gap: 16px; background: white; }
         .c-item-list:last-child { border-bottom: none; }
-        .c-img-list { width: 50px; height: 50px; border-radius: 8px; object-fit: contain; background: #f9fafb; border: 1px solid #f3f4f6; flex-shrink: 0; }
+        /* Aumentado de 50px para 72px */
+        .c-img-list { width: 72px; height: 72px; border-radius: 8px; object-fit: contain; background: #f9fafb; border: 1px solid #f3f4f6; flex-shrink: 0; }
         .c-info { flex: 1; min-width: 0; }
-        .c-name { font-weight: 600; font-size: 0.9rem; line-height: 1.3; margin-bottom: 2px; }
+        /* Fonte reduzida para equilíbrio */
+        .c-name { font-weight: 600; font-size: 0.85rem; line-height: 1.3; margin-bottom: 2px; color: var(--text-main); }
+        .c-meta { font-size: 0.75rem; color: var(--text-muted); }
 
-        /* --- VISUAL DE EXTRAS OTIMIZADO (Clean / Sem Bordas) --- */
+        /* --- VISUAL DE EXTRAS (Clean / Sem Bordas) --- */
         .extras-grid {
             display: grid;
             grid-template-columns: 1fr 1fr; 
-            gap: 15px 10px;
+            gap: 24px 12px; /* Mais espaço vertical */
             padding: 0 10px;
         }
         @media(min-width: 640px) { .extras-grid { grid-template-columns: repeat(3, 1fr); } }
         @media(min-width: 1024px) { .extras-grid { grid-template-columns: repeat(4, 1fr); } }
 
         .extra-card {
-            background: transparent; /* Remove o fundo do card container */
+            background: transparent; 
             display: flex; flex-direction: column;
             position: relative;
-            /* Zero borda, Zero padding externo */
         }
         
         .extra-img-box { 
-            width: 100%; 
-            aspect-ratio: 1/1; /* Quadrado Perfeito */
-            position: relative; 
-            background: #fff; /* Fundo branco puro para a foto */
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 8px;
-            /* Sombra suave apenas na imagem */
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            width: 100%; aspect-ratio: 1/1; position: relative; 
+            background: #fff; border-radius: 16px; overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); /* Sombra muito sutil */
         }
         
         .extra-img { 
-            width: 100%; height: 100%; 
-            object-fit: contain; 
-            padding: 5px; /* Pequeno respiro interno da imagem */
-            mix-blend-mode: multiply; 
+            width: 100%; height: 100%; object-fit: contain; padding: 8px;
+            mix-blend-mode: multiply; transition: transform 0.3s;
         }
+        .extra-img-box:hover .extra-img { transform: scale(1.05); }
 
-        /* Botão de Galeria sobre a foto */
+        /* Botão de Galeria sobre a foto - SÓ APARECE VIA JS */
         .btn-gallery-overlay {
-            position: absolute;
-            bottom: 8px; right: 8px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50%;
-            width: 32px; height: 32px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            color: var(--secondary);
-            z-index: 10;
+            position: absolute; bottom: 8px; right: 8px;
+            background: rgba(255,255,255,0.95); border-radius: 50%;
+            width: 36px; height: 36px;
+            display: none; /* Default hidden */
+            align-items: center; justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            color: var(--secondary); z-index: 10;
+            transition: transform 0.2s;
         }
+        .btn-gallery-overlay:active { transform: scale(0.9); }
 
         .extra-info-box { 
             display: flex; flex-direction: column; flex: 1; 
-            padding: 0 4px; /* Leve recuo para alinhar com a curva da imagem */
+            padding: 0 2px;
         }
         
         .extra-name { 
-            font-size: 0.9rem; font-weight: 600; line-height: 1.25; 
+            font-size: 0.85rem; font-weight: 500; line-height: 1.3; 
             margin-bottom: 4px; color: var(--text-main); 
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
-            min-height: 2.5em;
+            min-height: 2.6em;
         }
         
         .extra-price { 
-            font-size: 1.15rem; font-weight: 800; color: var(--primary); 
-            margin-bottom: 8px; 
+            font-size: 1rem; font-weight: 800; color: var(--primary); 
+            margin-bottom: 10px; 
         }
         
-        /* Botão Adicionar Moderno */
         .btn-add-lg {
-            width: 100%;
-            background: white; 
-            color: #15803d;
-            border: 1px solid #dcfce7;
-            font-weight: 700; font-size: 0.85rem;
-            padding: 8px; border-radius: 50px; /* Redondo estilo 'chip' */
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            width: 100%; background: white; color: #15803d;
+            border: 1px solid #dcfce7; font-weight: 700; font-size: 0.8rem;
+            padding: 8px; border-radius: 50px;
+            text-transform: uppercase; letter-spacing: 0.5px;
             display: flex; align-items: center; justify-content: center; gap: 4px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: all 0.2s;
         }
-        .btn-add-lg:active { background: #f0fdf4; transform: scale(0.98); }
+        .btn-add-lg:active { background: #f0fdf4; transform: scale(0.95); }
 
-        /* CARROUSEL LAYOUT */
+        /* CARROUSEL */
         .carousel-track {
             display: flex; gap: 12px; overflow-x: auto; padding: 10px 16px 20px;
             scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .carousel-track::-webkit-scrollbar { display: none; }
         .carousel-card {
-            min-width: 160px; max-width: 160px; flex-shrink: 0;
-            display: flex; flex-direction: column;
+            min-width: 160px; max-width: 160px; flex-shrink: 0; display: flex; flex-direction: column;
         }
 
         .qty-control-compact { 
@@ -235,45 +227,63 @@
         }
         .qty-val-c { font-weight: 700; font-size: 0.9rem; flex: 1; text-align: center; }
 
-        /* GALLERY MODAL */
+        /* GALLERY MODAL PROFISSIONAL */
         dialog#gallery-modal {
-            width: 100%; max-width: 600px; max-height: 90vh;
-            border: none; border-radius: 16px; margin: auto;
-            background: white; padding: 0; position: fixed; inset: 0; z-index: 200;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            width: 100%; height: 100%; max-width: 100%; max-height: 100%;
+            border: none; margin: 0; background: rgba(0,0,0,0.9);
+            position: fixed; inset: 0; z-index: 200;
+            display: flex; flex-direction: column; opacity: 0; pointer-events: none; transition: opacity 0.3s;
         }
-        dialog#gallery-modal::backdrop { background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); }
-        .gm-close { position: absolute; top: 15px; right: 15px; z-index: 10; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .gm-stage { width: 100%; height: 500px; max-height: 60vh; background: #fff; display: flex; align-items: center; justify-content: center; position: relative; }
-        .gm-img { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .gm-nav { display: flex; justify-content: center; gap: 10px; padding: 15px; background: #f9fafb; overflow-x: auto; }
-        .gm-thumb { width: 60px; height: 60px; border-radius: 8px; border: 2px solid transparent; object-fit: cover; opacity: 0.6; cursor: pointer; }
-        .gm-thumb.active { border-color: var(--primary); opacity: 1; }
+        dialog#gallery-modal[open] { opacity: 1; pointer-events: auto; display: flex; }
+        
+        .gm-header { padding: 20px; display: flex; justify-content: flex-end; }
+        .gm-close { 
+            color: white; font-size: 2rem; cursor: pointer; opacity: 0.8;
+            background: rgba(255,255,255,0.1); width: 44px; height: 44px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .gm-stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
+        .gm-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 4px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .gm-nav { display: flex; justify-content: center; gap: 12px; padding: 30px 20px; overflow-x: auto; }
+        .gm-thumb { 
+            width: 60px; height: 60px; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); 
+            object-fit: cover; opacity: 0.5; cursor: pointer; transition: all 0.2s;
+        }
+        .gm-thumb.active { border-color: white; opacity: 1; transform: scale(1.1); }
 
-        /* FOOTER / SIDEBAR */
+        /* FOOTER + CREDIT BANNER */
+        .credit-banner-container {
+            position: fixed; bottom: var(--footer-h); left: 0; width: 100%;
+            z-index: 99; pointer-events: none;
+            display: flex; justify-content: center; padding-bottom: 10px;
+        }
+        .credit-pill {
+            background: #111827; color: #4ade80;
+            padding: 8px 20px; border-radius: 50px;
+            font-size: 0.85rem; font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            pointer-events: auto;
+            transform: translateY(20px); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .credit-pill.visible { transform: translateY(0); opacity: 1; }
+
         .order-summary-card {
-            background: var(--surface); border-top: 1px solid var(--border); padding: 16px;
+            background: var(--surface); border-top: 1px solid var(--border); 
+            height: var(--footer-h);
+            padding: 0 20px;
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
             display: flex; align-items: center; justify-content: space-between; gap: 15px;
-            padding-bottom: max(16px, env(safe-area-inset-bottom));
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
         }
         
-        .ff-info { display: flex; flex-direction: column; }
-        .ff-label { font-size: 0.8rem; color: var(--text-muted); }
-        .ff-value { font-size: 1.5rem; font-weight: 800; color: var(--primary); line-height: 1; }
-        
-        .credit-badge {
-            font-size: 0.75rem; color: #15803d; background: #dcfce7;
-            padding: 2px 8px; border-radius: 4px; margin-top: 4px;
-            font-weight: 700; border: 1px solid #bbf7d0;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+        .ff-info { display: flex; flex-direction: column; justify-content: center; }
+        .ff-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .ff-value { font-size: 1.4rem; font-weight: 800; color: var(--secondary); line-height: 1; }
         
         .btn-finish { 
-            background: #16a34a; color: white; padding: 14px 24px; 
+            background: #16a34a; color: white; padding: 0 24px; height: 48px;
             border-radius: 50px; font-weight: 700; font-size: 1rem; 
             display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3); white-space: nowrap;
@@ -283,17 +293,22 @@
         @media (min-width: 1024px) {
             .container { padding: 0 24px; }
             .hero h1 { font-size: 2.5rem; }
-            .customizer-grid { display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start; }
+            .customizer-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
             .products-col { padding-bottom: 40px; }
+            
+            .credit-banner-container { 
+                position: absolute; top: -50px; bottom: auto; left: 0; 
+                width: 100%; justify-content: center; 
+            }
             .order-summary-card {
-                position: sticky; top: calc(var(--header-h) + 20px); 
-                bottom: auto; left: auto; width: auto;
+                position: sticky; top: calc(var(--header-h) + 60px); 
+                bottom: auto; left: auto; width: auto; height: auto;
                 border: 1px solid var(--border); border-radius: var(--radius-lg);
                 flex-direction: column; padding: 24px;
                 box-shadow: var(--shadow-lg); gap: 20px; z-index: 80;
             }
-            .ff-info { align-items: center; text-align: center; padding-bottom: 20px; border-bottom: 1px dashed var(--border); }
-            .ff-value { font-size: 2rem; margin-top: 5px; }
+            .ff-info { align-items: center; text-align: center; padding-bottom: 20px; border-bottom: 1px dashed var(--border); width: 100%; }
+            .ff-value { font-size: 2rem; margin-top: 5px; color: var(--primary); }
             .btn-finish { width: 100%; justify-content: center; height: 54px; font-size: 1.1rem; }
             .carousel-card { min-width: 180px; max-width: 180px; }
         }
@@ -353,16 +368,16 @@
         <div class="container customizer-grid">
             <!-- COLUNA ESQUERDA: LISTAS -->
             <div class="products-col">
-                <!-- SESSÃO 1: ITENS DA CESTA (LISTA COMPACTA) -->
+                <!-- SESSÃO 1: SEU PEDIDO (COMPLETO) -->
                 <div class="section-card">
                     <div class="section-header primary">
-                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                        Itens Inclusos
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        Itens na Cesta
                     </div>
                     <div id="basket-items-container"></div>
                 </div>
 
-                <!-- SESSÃO 2: ADICIONAR MAIS (VITRINE SEM BORDAS) -->
+                <!-- SESSÃO 2: ADICIONAR EXTRAS (VITRINE) -->
                 <div style="margin-top: 30px;">
                     <div class="section-header" style="border-radius: 12px; margin-bottom: 20px; background: #fff; border: 1px solid var(--border);">
                         <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
@@ -373,23 +388,31 @@
             </div>
 
             <!-- COLUNA DIREITA (OU FOOTER MOBILE): RESUMO -->
-            <div class="order-summary-card">
-                <div class="ff-info">
-                    <span class="ff-label">Total do Pedido</span>
-                    <span class="ff-value" id="ff-total-val">R$ 0,00</span>
-                    <div id="credit-display" class="credit-badge hidden"></div>
+            <div style="position:relative;">
+                <!-- Banner de Crédito Flutuante -->
+                <div class="credit-banner-container">
+                    <div id="credit-pill" class="credit-pill"></div>
                 </div>
-                <button class="btn-finish" onclick="App.finishOrder()">
-                    <span>Finalizar no Zap</span>
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-                </button>
+
+                <div class="order-summary-card">
+                    <div class="ff-info">
+                        <span class="ff-label">Total Final</span>
+                        <span class="ff-value" id="ff-total-val">R$ 0,00</span>
+                    </div>
+                    <button class="btn-finish" onclick="App.finishOrder()">
+                        <span>Pedir no Zap</span>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- GALLERY MODAL -->
     <dialog id="gallery-modal">
-        <div class="gm-close" onclick="GalleryModal.close()">✕</div>
+        <div class="gm-header">
+            <div class="gm-close" onclick="GalleryModal.close()">✕</div>
+        </div>
         <div class="gm-stage">
             <img src="" class="gm-img" id="gm-main-img">
         </div>
@@ -407,17 +430,32 @@
 
         const GalleryModal = {
             currentImages: [],
+            // Função para verificar silenciosamente se existe mais de 1 imagem
+            checkMultipleImages(mainImg, elementId) {
+                const baseName = mainImg.replace(/(\.[\w\d_-]+)$/i, '');
+                const ext = mainImg.match(/(\.[\w\d_-]+)$/i)[0];
+                const testUrl = baseName + 'A' + ext;
+                
+                const img = new Image();
+                img.onload = () => {
+                    // Se carregou, mostra o botão de galeria
+                    const btn = document.getElementById(elementId);
+                    if(btn) {
+                        btn.style.display = 'flex';
+                        btn.classList.add('visible');
+                    }
+                };
+                img.src = testUrl;
+            },
             open(mainImg, productName) {
                 const modal = document.getElementById('gallery-modal');
                 const stage = document.getElementById('gm-main-img');
                 const thumbs = document.getElementById('gm-thumbs');
                 
-                // Tenta gerar lista de imagens potenciais: Principal, A, B, C
                 this.currentImages = [mainImg];
-                const baseName = mainImg.replace(/(\.[\w\d_-]+)$/i, ''); // remove extensão
-                const ext = mainImg.match(/(\.[\w\d_-]+)$/i)[0]; // pega extensão
+                const baseName = mainImg.replace(/(\.[\w\d_-]+)$/i, '');
+                const ext = mainImg.match(/(\.[\w\d_-]+)$/i)[0];
                 
-                // Adiciona potenciais extras (vamos filtrar com onerror no img)
                 ['A', 'B', 'C'].forEach(suffix => {
                     this.currentImages.push(baseName + suffix + ext);
                 });
@@ -425,7 +463,6 @@
                 stage.src = mainImg;
                 stage.alt = productName;
 
-                // Renderiza thumbnails
                 thumbs.innerHTML = this.currentImages.map((src, idx) => `
                     <img src="${src}" class="gm-thumb ${idx===0?'active':''}" 
                     onclick="GalleryModal.setImage('${src}', this)"
@@ -440,7 +477,9 @@
                 thumbEl.classList.add('active');
             },
             close() {
-                document.getElementById('gallery-modal').close();
+                const m = document.getElementById('gallery-modal');
+                m.style.opacity = '0';
+                setTimeout(() => { m.close(); m.style.opacity = ''; }, 300);
             }
         };
 
@@ -451,7 +490,7 @@
             baseFee: 0,       
             currentBasket: null,
             currentLimit: null,
-            lockedRiceId: null, // ID do arroz obrigatório
+            lockedRiceId: null,
             phone: "5565998150975",
 
             async init() {
@@ -507,7 +546,7 @@
 
                 this.currentBasket = basket;
                 this.cart = {};
-                this.lockedRiceId = null; // Resetar trava de arroz
+                this.lockedRiceId = null;
 
                 if (basket.items && basket.items.length > 0) {
                     basket.items.forEach(item => {
@@ -515,15 +554,14 @@
                         if (item.id) productMatch = this.data.find(p => p.id === String(item.id));
                         if (!productMatch) {
                             const itemName = (item.nome || item).toString().toLowerCase();
-                            productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase().includes(itemName));
+                            productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase() === itemName);
+                            if (!productMatch) productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase().includes(itemName));
                         }
                         
                         if (productMatch) {
                             const qtd = item.qtd || item.qty || 1;
                             this.cart[productMatch.id] = parseInt(qtd);
 
-                            // LÓGICA DE TRAVA DO ARROZ
-                            // Se encontrar um arroz nos itens originais, trava esse ID
                             if (productMatch.nome.toLowerCase().includes('arroz')) {
                                 this.lockedRiceId = productMatch.id;
                             }
@@ -564,32 +602,28 @@
                 const basketContainer = document.getElementById('basket-items-container');
                 const othersContainer = document.getElementById('other-items-container');
                 
-                // 1. LISTA DE ITENS INCLUSOS
-                const basketProductIds = Object.keys(this.cart).filter(id => this.originalCart[id] && this.originalCart[id] > 0);
+                // 1. LISTA COMPLETA (ITENS NA CESTA - ORIGINAIS + EXTRAS)
+                // Agora iteramos sobre o carrinho atual, não apenas os originais
+                const allCartIds = Object.keys(this.cart);
                 
-                if (basketProductIds.length === 0) {
-                    basketContainer.innerHTML = `<div style="padding:30px; text-align:center; color:var(--text-muted); font-size:0.9rem;">Você removeu todos os itens originais.</div>`;
+                if (allCartIds.length === 0) {
+                    basketContainer.innerHTML = `<div style="padding:30px; text-align:center; color:var(--text-muted); font-size:0.9rem;">Cesta vazia.</div>`;
                 } else {
-                    basketContainer.innerHTML = basketProductIds.map(id => {
+                    basketContainer.innerHTML = allCartIds.map(id => {
                         const p = this.data.find(x => x.id === id);
                         return this.itemRowHTML(p); 
                     }).join('');
                 }
 
-                // 2. LISTA DE EXTRAS (FILTRADA)
+                // 2. LISTA DE EXTRAS (TUDO MENOS A CESTA EM SI E ARROZ CONCORRENTE)
+                // Itens já adicionados continuam aparecendo aqui para controle de quantidade
                 const otherProducts = this.data.filter(p => {
-                    // Exclui Cestas
                     if (p.categoria === 'CESTA BÁSICA') return false;
                     
-                    // Exclui produtos que já estão na lista de inclusos
-                    if (basketProductIds.includes(p.id)) return false;
-
-                    // REGRA DO ARROZ: 
-                    // Se o produto for arroz E houver um arroz travado para esta cesta E o ID não for o mesmo
+                    // REGRA DO ARROZ
                     if (p.nome.toLowerCase().includes('arroz') && this.lockedRiceId && p.id !== this.lockedRiceId) {
-                        return false; // Esconde arrozes concorrentes
+                        return false; 
                     }
-
                     return true;
                 });
 
@@ -632,12 +666,17 @@
 
             itemRowHTML(p) {
                 const qty = this.cart[p.id] || 0;
+                // Identifica se é item original ou extra
+                const isOriginal = this.originalCart[p.id] && this.originalCart[p.id] > 0;
+                const label = isOriginal ? 'Incluso na cesta' : 'Item Adicionado';
+                const labelColor = isOriginal ? 'var(--text-muted)' : 'var(--primary)';
+
                 return `
                 <div class="c-item-list" id="row-${p.id}">
-                    <img src="${p.imagem}" class="c-img-list" loading="lazy" width="50" height="50" alt="${p.nome}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\' fill=\'%23f3f4f6\'%3E%3C/svg%3E'">
+                    <img src="${p.imagem}" class="c-img-list" loading="lazy" alt="${p.nome}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\' fill=\'%23f3f4f6\'%3E%3C/svg%3E'">
                     <div class="c-info">
                         <div class="c-name">${p.nome}</div>
-                        <span style="font-size:0.8rem; color:var(--text-muted)">Incluso na cesta</span>
+                        <span style="font-size:0.75rem; color:${labelColor}; font-weight:600;">${label}</span>
                     </div>
                     <div style="width: 100px;">
                         <div class="qty-control-compact">
@@ -652,7 +691,11 @@
             itemCardHTML(p, type) {
                 const qty = this.cart[p.id] || 0;
                 const cardClass = type === 'carousel' ? 'carousel-card' : 'extra-card';
+                const galleryBtnId = `btn-gal-${p.id}`;
                 
+                // Dispara verificação de imagens extras
+                setTimeout(() => GalleryModal.checkMultipleImages(p.imagem, galleryBtnId), 100);
+
                 let actionBtn;
                 if (qty === 0) {
                     actionBtn = `<button class="btn-add-lg" onclick="App.changeQty('${p.id}', 1)">
@@ -661,10 +704,10 @@
                     </button>`;
                 } else {
                     actionBtn = `
-                        <div class="qty-control-compact">
-                            <button class="qty-btn-c" onclick="App.changeQty('${p.id}', -1)">-</button>
-                            <span class="qty-val-c">${qty}</span>
-                            <button class="qty-btn-c" onclick="App.changeQty('${p.id}', 1)">+</button>
+                        <div class="qty-control-compact" style="background:#dcfce7;">
+                            <button class="qty-btn-c" style="background:white; color:#16a34a;" onclick="App.changeQty('${p.id}', -1)">-</button>
+                            <span class="qty-val-c" style="color:#15803d;">${qty}</span>
+                            <button class="qty-btn-c" style="background:white; color:#16a34a;" onclick="App.changeQty('${p.id}', 1)">+</button>
                         </div>`;
                 }
 
@@ -672,7 +715,7 @@
                 <div class="${cardClass}" id="card-${p.id}">
                     <div class="extra-img-box">
                         <img src="${p.imagem}" class="extra-img" loading="lazy" alt="${p.nome}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 1 1\' fill=\'%23f3f4f6\'%3E%3C/svg%3E'">
-                        <button class="btn-gallery-overlay" onclick="GalleryModal.open('${p.imagem}', '${p.nome}')" aria-label="Ver mais fotos">
+                        <button id="${galleryBtnId}" class="btn-gallery-overlay" onclick="GalleryModal.open('${p.imagem}', '${p.nome}')">
                             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                         </button>
                     </div>
@@ -729,16 +772,19 @@
 
                 let displayTotal = calculatedTotal;
                 let credit = 0;
-                const creditEl = document.getElementById('credit-display');
+                const creditEl = document.getElementById('credit-pill');
 
                 if (calculatedTotal < originalPrice) {
                     displayTotal = originalPrice;
                     credit = originalPrice - calculatedTotal;
                     
-                    creditEl.innerHTML = `Crédito a usar: R$ ${credit.toFixed(2).replace('.', ',')}`;
-                    creditEl.classList.remove('hidden');
+                    creditEl.innerHTML = `
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                        Adicione mais produtos, você tem R$ ${credit.toFixed(2).replace('.', ',')} de crédito.
+                    `;
+                    creditEl.classList.add('visible');
                 } else {
-                    creditEl.classList.add('hidden');
+                    creditEl.classList.remove('visible');
                 }
                 
                 const el = document.getElementById('ff-total-val');
