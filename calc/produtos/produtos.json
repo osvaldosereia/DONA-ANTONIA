@@ -2451,12 +2451,14 @@
     "nome": "CESTA ECONÔMICA",
     "ean": "",
     "categoria": "CESTA BÁSICA",
+    "fornecedor": "",
     "caracteristicas": "",
     "custo": 0,
     "valor": 0,
-    "estoque": 0,
+    "estoque": 100,
     "estoqueFiscal": 0,
     "peso": 0,
+    "limit": 12,
     "imagem": "../calc/img/produtos/p074.webp",
     "items": [
       {
@@ -2551,7 +2553,7 @@
     "refId": "",
     "fator": "",
     "unidade": "",
-    "Limit": 0
+    "Limit": 12
   },
   {
     "id": "1768169294366535",
