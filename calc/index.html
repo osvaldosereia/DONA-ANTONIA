@@ -4,8 +4,8 @@
     <!-- 
         ================================================================
         SEO CONFIGURATION: OPTIMIZED
-        - Fix: Carregamento exato de produtos por ID
-        - Fix: Limpeza automática de caminhos de imagem
+        - Visual Limpo e Otimizado (Mobile & Desktop)
+        - Ajustes de Grid e Tipografia
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -42,7 +42,7 @@
     
     <link rel="icon" href="img/favicon.ico" sizes="any">
 
-    <!-- SCHEMA.ORG JSON-LD (Google Local Business) -->
+    <!-- SCHEMA.ORG JSON-LD -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -111,7 +111,7 @@
             --text-main: #334155; 
             --text-muted: #475569; 
             --border: #e2e8f0; 
-            --header-h: 64px; 
+            --header-h: 60px; /* Reduced header height slightly */
             --radius: 12px; 
             --offer-color: #b45309;
             --focus-ring: #dc2626;
@@ -130,7 +130,7 @@
             -webkit-font-smoothing: antialiased; 
         }
         
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 16px; width: 100%; }
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 16px; width: 100%; }
         .hidden { display: none !important; }
         button { cursor: pointer; border: none; font-family: inherit; background: none; }
         button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
@@ -163,7 +163,8 @@
 
         .baskets-grid { display: grid; grid-template-columns: 1fr; gap: 24px; padding-bottom: 60px; }
         @media (min-width: 640px) { .baskets-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .baskets-grid { grid-template-columns: repeat(3, 1fr); } }
+        /* AJUSTE DESKTOP: 4 colunas */
+        @media (min-width: 1024px) { .baskets-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
         
         .big-card { 
             background: var(--surface); border-radius: 16px; overflow: hidden; 
@@ -199,32 +200,38 @@
         }
         body.header-hidden .customizer-header { top: 0; }
 
+        /* HEADER FLEX LAYOUT AJUSTADO */
         .ch-inner { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
         
         .btn-back { 
-            width: 44px; height: 44px; border-radius: 50%; background: white; border: 1px solid var(--border);
+            width: 40px; height: 40px; border-radius: 50%; background: white; border: 1px solid var(--border);
             display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--secondary); flex-shrink: 0;
             transition: background 0.2s;
         }
         .btn-back:hover { background: #f1f5f9; border-color: var(--text-muted); }
         
-        .cust-basket-info { flex: 1; min-width: 140px; }
-        .cust-basket-info h2 { font-size: 1.1rem; font-weight: 700; line-height: 1.2; margin: 0; color: var(--secondary); }
-        .cust-basket-info span { font-size: 0.85rem; color: var(--text-muted); }
+        .cust-basket-info { flex: 1; min-width: 120px; }
+        .cust-basket-info h2 { font-size: 1rem; font-weight: 700; line-height: 1.2; margin: 0; color: var(--secondary); }
+        .cust-basket-info span { font-size: 0.8rem; color: var(--text-muted); }
         
-        .search-container { width: 100%; margin-top: 5px; position: relative; }
+        /* NOVO CONTAINER DE BUSCA + BADGE NA MESMA LINHA */
+        .search-row {
+            width: 100%; margin-top: 5px; display: flex; align-items: center; gap: 8px;
+        }
+
+        .search-container { flex: 1; position: relative; }
         .search-input {
-            width: 100%; height: 44px; padding: 0 40px 0 16px;
+            width: 100%; height: 40px; padding: 0 40px 0 16px;
             border-radius: 50px; border: 1px solid var(--border); background: white;
-            font-size: 1rem; color: var(--text-main); transition: border-color 0.2s;
+            font-size: 0.95rem; color: var(--text-main); transition: border-color 0.2s;
         }
         .search-input:focus { outline: none; border-color: var(--secondary); }
         .search-icon { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; color: var(--text-muted); pointer-events: none; }
 
         .changes-counter { 
             font-size: 0.8rem; font-weight: 700; color: #b45309; 
-            background: #fffbeb; padding: 4px 12px; border-radius: 50px; 
-            border: 1px solid #fde68a; white-space: nowrap;
+            background: #fffbeb; padding: 0 12px; height: 40px; border-radius: 50px; 
+            border: 1px solid #fde68a; white-space: nowrap; display: flex; align-items: center;
         }
         .changes-counter.limit-reached { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
 
@@ -237,15 +244,18 @@
             border-bottom: 2px solid var(--border); margin-bottom: 24px;
         }
         
-        .basket-grid {
-            display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 40px;
+        /* GRID DE PRODUTOS */
+        .basket-grid, .extras-grid {
+            display: grid; grid-template-columns: 1fr; gap: 0; /* Gap 0 para linhas separadoras visuais */
+            margin-bottom: 40px;
         }
-        @media(min-width: 600px) { .basket-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media(min-width: 1024px) { .basket-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
-
-        .extras-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-        @media(min-width: 600px) { .extras-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media(min-width: 1024px) { .extras-grid { grid-template-columns: repeat(3, 1fr); gap: 24px; } }
+        @media(min-width: 600px) { 
+            .basket-grid, .extras-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; } 
+        }
+        @media(min-width: 1024px) { 
+            /* AJUSTE DESKTOP: 4 colunas */
+            .basket-grid, .extras-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } 
+        }
 
         .cat-separator {
             grid-column: 1 / -1;
@@ -257,35 +267,47 @@
         }
         .cat-separator::after { content: ""; height: 2px; background: var(--border); flex: 1; }
 
+        /* --- PRODUCT CARDS (Estilo Global/Mobile Limpo) --- */
         .product-card {
-            background: white; border-radius: 12px; padding: 12px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.04); border: 1px solid transparent;
+            background: transparent; 
+            border-radius: 0;
+            padding: 16px 0;
+            box-shadow: none; 
+            border: none;
+            border-bottom: 1px solid #f1f5f9; /* Linha separadora horizontal */
             display: flex; flex-direction: row; gap: 16px; align-items: center;
             transition: all 0.2s; position: relative;
         }
-        .product-card:hover { border-color: #cbd5e1; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08); }
-
+        /* Remove a borda do último item para não duplicar se necessário, mas opcional */
+        
         .pc-img-box { 
-            width: 90px; height: 90px; flex-shrink: 0; 
+            /* AJUSTE MOBILE: Imagem +10% (de 90px para 100px) */
+            width: 100px; height: 100px; flex-shrink: 0; 
             display: flex; align-items: center; justify-content: center;
-            cursor: zoom-in; background: #fff;
+            cursor: zoom-in; background: transparent; /* Sem fundo branco marcado */
         }
         .pc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
         .pc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+        
+        /* AJUSTE MOBILE: Fontes menores */
         .pc-name { 
-            font-size: 0.95rem; font-weight: 600; line-height: 1.35; color: var(--secondary); margin-bottom: 6px;
+            font-size: 0.9rem; /* Reduzido de 0.95rem */
+            font-weight: 600; line-height: 1.35; color: var(--secondary); margin-bottom: 4px;
             display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
         }
-        .pc-price { font-size: 1.1rem; font-weight: 700; color: var(--primary); font-feature-settings: "tnum"; }
-        .pc-meta { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+        .pc-price { 
+            font-size: 1rem; /* Reduzido de 1.1rem */
+            font-weight: 700; color: var(--primary); font-feature-settings: "tnum"; 
+        }
+        .pc-meta { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
         
-        .pc-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+        .pc-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 4px; }
         .pc-actions { width: auto; flex-shrink: 0; }
         
         .btn-add-sm {
-            height: 36px; padding: 0 16px; border-radius: 50px; border: 1px solid var(--border);
-            font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            height: 32px; padding: 0 14px; border-radius: 50px; border: 1px solid var(--border);
+            font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
             background: white; color: var(--secondary); margin-left: auto; cursor: pointer;
             transition: all 0.2s;
         }
@@ -294,42 +316,55 @@
         .qty-control { 
             display: flex; align-items: center; justify-content: space-between;
             background: white; border: 1px solid var(--border); border-radius: 50px; 
-            height: 36px; width: 100px;
+            height: 32px; width: 90px;
         }
-        .qty-btn { width: 32px; height: 100%; font-size: 1.2rem; color: var(--secondary); display:flex; align-items:center; justify-content:center; }
-        .qty-val { font-weight: 700; font-size: 0.95rem; color: var(--secondary); }
+        .qty-btn { width: 30px; height: 100%; font-size: 1.1rem; color: var(--secondary); display:flex; align-items:center; justify-content:center; }
+        .qty-val { font-weight: 700; font-size: 0.9rem; color: var(--secondary); }
 
-        /* --- DESKTOP CARDS (Vertical Layout) --- */
+        /* --- DESKTOP CARDS (Layout Vertical Limpo) --- */
         @media(min-width: 1024px) {
-            .product-card { flex-direction: column; align-items: stretch; padding: 20px; text-align: center; gap: 16px; height: 100%; }
+            .product-card { 
+                flex-direction: column; align-items: stretch; padding: 24px 10px; 
+                text-align: center; gap: 16px; height: 100%; 
+                border-bottom: none; /* Reset mobile border */
+                /* Opcional: Borda sutil apenas no desktop se desejar, mas o pedido foi "sem box" */
+            }
+            /* Linhas separadoras em grid desktop podem ser complexas, então vamos focar no "respiro" */
+            
             .pc-img-box { width: 100%; height: 160px; margin: 0 auto; }
             .pc-info { justify-content: flex-start; height: 100%; }
-            .pc-name { font-size: 1.05rem; -webkit-line-clamp: 2; height: 2.7em; margin-bottom: 12px; }
+            .pc-name { font-size: 1rem; -webkit-line-clamp: 2; height: 2.7em; margin-bottom: 12px; }
             .pc-bottom { margin-top: auto; flex-direction: column; gap: 12px; align-items: center; }
-            .btn-add-sm, .qty-control { width: 100%; height: 42px; font-size: 0.9rem; }
+            .btn-add-sm, .qty-control { width: 100%; height: 38px; font-size: 0.9rem; }
             .qty-control { width: 100%; }
             .pc-actions { width: 100%; }
         }
 
+        /* --- BOTTOM BAR (Elegante & Organizada) --- */
         .order-summary-card {
             background: rgba(255,255,255,0.98); border-top: 1px solid var(--border); 
-            height: 80px; padding: 0 20px; backdrop-filter: blur(12px);
+            height: 64px; /* Mais fina que 80px */
+            padding: 0 16px; backdrop-filter: blur(12px);
             position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100;
             display: flex; align-items: center; justify-content: space-between; gap: 16px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
         }
-        .ff-value { font-size: 1.4rem; font-weight: 800; color: var(--primary); }
+        /* Fontes reduzidas e layout limpo */
+        .ff-value { font-size: 1.15rem; font-weight: 800; color: var(--primary); }
+        .ff-info { display: flex; flex-direction: column; justify-content: center; }
+        .ff-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 600; }
+        
         .btn-finish { 
-            background: #16a34a; color: white; padding: 0 24px; height: 48px;
-            border-radius: 50px; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3); transition: transform 0.2s;
+            background: #16a34a; color: white; padding: 0 20px; height: 40px; /* Menor e mais elegante */
+            border-radius: 50px; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2); transition: transform 0.2s;
         }
         .btn-finish:hover { background: #15803d; }
 
         .credit-toast {
-            position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: var(--secondary); color: white; padding: 12px 24px; border-radius: 50px;
-            font-size: 0.95rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+            background: var(--secondary); color: white; padding: 10px 20px; border-radius: 50px;
+            font-size: 0.9rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 95;
             display: flex; align-items: center; gap: 10px; white-space: nowrap;
         }
@@ -366,12 +401,13 @@
         .btn-confirm { width: 100%; height: 50px; background: #16a34a; color: white; border-radius: 8px; font-weight: 700; font-size: 1.1rem; }
         .btn-confirm:hover { background: #15803d; }
 
-        /* FLOATING ACTIONS */
-        .floating-actions { position: fixed; bottom: 100px; right: 20px; z-index: 90; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+        /* FLOATING ACTIONS (MOBILE) - Ajuste de tamanho */
+        .floating-actions { position: fixed; bottom: 80px; right: 16px; z-index: 90; display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
         .fab-btn {
-            width: 50px; height: 50px; border-radius: 50%; background: white; 
-            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.3rem;
+            width: 44px; height: 44px; /* Reduzido de 50px */
+            border-radius: 50%; background: white; 
+            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.2rem;
             transition: transform 0.2s, opacity 0.2s; opacity: 0; pointer-events: none;
         }
         .fab-btn.visible { opacity: 1; pointer-events: auto; }
@@ -406,22 +442,20 @@
         .g-thumb { width: 60px; height: 60px; border-radius: 6px; border: 2px solid transparent; opacity: 0.5; object-fit: cover; cursor: pointer; }
         .g-thumb.active { border-color: white; opacity: 1; }
 
-        /* --- STYLES FOR FAQ & INFO (NEW) --- */
+        /* --- FAQ & INFO --- */
         details.faq-item { background: white; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
         details.faq-item summary { padding: 16px; cursor: pointer; font-weight: 600; display: flex; justify-content: space-between; list-style: none; align-items: center; color: var(--secondary); }
         details.faq-item summary::after { content: "+"; font-size: 1.5rem; color: var(--primary); line-height: 0.5; font-weight: 700; }
         details.faq-item[open] summary::after { content: "-"; }
         .faq-answer { padding: 16px; color: var(--text-muted); line-height: 1.6; border-top: 1px solid #f3f4f6; }
-        .hood-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; list-style: none; margin-top: 10px; }
-        .hood-tag { background: #fee2e2; color: #991b1b; padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; }
 
         /* DESKTOP LAYOUT */
         @media(min-width: 1024px) {
             .container { padding: 0 40px; }
             .hero h1 { font-size: 3rem; }
-            .search-container { width: 320px; margin-top: 0; margin-left: auto; }
+            .search-row { width: 400px; margin-top: 0; margin-left: auto; }
             
-            .customizer-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+            .customizer-grid { display: grid; grid-template-columns: 1fr 300px; gap: 40px; align-items: start; }
             .products-col { padding-bottom: 60px; }
             
             .sidebar-col { 
@@ -429,7 +463,11 @@
                 display: flex; flex-direction: column; gap: 24px; align-self: start;
             }
             
-            .order-summary-card { position: static; height: auto; border: 1px solid var(--border); border-radius: 16px; flex-direction: column; padding: 24px; gap: 20px; box-shadow: none; }
+            .order-summary-card { position: static; height: auto; border: 1px solid var(--border); border-radius: 16px; flex-direction: column; padding: 24px; gap: 20px; box-shadow: none; align-items: stretch; text-align: center; }
+            .ff-info { align-items: center; }
+            .ff-value { font-size: 1.5rem; }
+            .btn-finish { height: 48px; width: 100%; justify-content: center; font-size: 1rem; }
+
             .floating-actions { display: none; }
             
             .desktop-cat-nav { display: block; background: white; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
@@ -495,7 +533,7 @@
             </div>
         </section>
 
-        <!-- FAQ SECTION (INTEGRADO DA PÁGINA SEO) -->
+        <!-- FAQ SECTION -->
         <section class="container" style="padding-top: 60px; padding-bottom: 20px;">
             <h2 style="font-size: 1.4rem; margin-bottom: 20px; color: var(--secondary); font-weight: 800;">Dúvidas Frequentes & Atendimento</h2>
             
@@ -593,12 +631,14 @@
                     <h2 id="cust-basket-name">Nome da Cesta</h2>
                     <span>Personalize sua escolha</span>
                 </div>
-                <!-- BUSCA -->
-                <div class="search-container">
-                    <input type="text" id="product-search" class="search-input" placeholder="Buscar item extra..." aria-label="Buscar produtos">
-                    <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                <!-- BUSCA + BADGE -->
+                <div class="search-row">
+                    <div class="search-container">
+                        <input type="text" id="product-search" class="search-input" placeholder="Buscar item..." aria-label="Buscar produtos">
+                        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </div>
+                    <div id="changes-badge" class="changes-counter" style="display:none;">Excluídos: 0/0</div>
                 </div>
-                <div id="changes-badge" class="changes-counter" style="display:none;">Trocas: 0/0</div>
             </div>
         </div>
 
@@ -619,23 +659,23 @@
 
             <!-- SIDEBAR (Desktop) -->
             <aside class="sidebar-col">
-                <!-- Nav Categorias Desktop -->
-                <nav class="desktop-cat-nav" aria-label="Navegação de categorias">
-                    <h3 style="margin-bottom:15px; font-weight:800; color:var(--secondary); font-size:1.1rem;">Navegação Rápida</h3>
-                    <div id="desktop-cat-list"></div>
-                </nav>
-
-                <!-- Resumo -->
+                <!-- 1. Resumo (AGORA EM CIMA) -->
                 <div class="order-summary-card">
                     <div class="ff-info">
-                        <span style="font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; color:var(--text-muted); font-weight:700;">Total Estimado</span>
+                        <span class="ff-label">Total Estimado</span>
                         <span class="ff-value" id="ff-total-val">R$ 0,00</span>
                     </div>
                     <button class="btn-finish" onclick="App.openCheckout()">
                         <span>Finalizar Pedido</span>
-                        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </button>
                 </div>
+
+                <!-- 2. Nav Categorias Desktop (AGORA EMBAIXO) -->
+                <nav class="desktop-cat-nav" aria-label="Navegação de categorias">
+                    <h3 style="margin-bottom:15px; font-weight:800; color:var(--secondary); font-size:1.1rem;">Categorias</h3>
+                    <div id="desktop-cat-list"></div>
+                </nav>
             </aside>
         </div>
     </div>
@@ -742,12 +782,9 @@
                     const raw = await response.json();
 
                     this.data = raw.map(p => {
-                        // Limpeza robusta do caminho da imagem
-                        // Se o JSON trouxer caminhos complexos, forçamos 'img/produtos/nomedoarquivo'
                         let imgPath = p.imagem || '';
                         if (imgPath && imgPath.includes('/')) {
                             const parts = imgPath.split('/');
-                            // Pega a última parte (o nome do arquivo)
                             const fileName = parts[parts.length - 1];
                             imgPath = `img/produtos/${fileName}`;
                         } else if (imgPath) {
@@ -827,23 +864,15 @@
                 this.searchTerm = "";
                 document.getElementById('product-search').value = "";
 
-                // POPULA O CARRINHO COM BASE NOS IDS (Correção Principal)
                 if (basket.items && Array.isArray(basket.items)) {
                     basket.items.forEach(item => {
                         let productMatch = null;
-
-                        // 1. Tenta buscar EXATAMENTE pelo ID (Mais seguro e preciso)
                         if (item.id) {
                             productMatch = this.data.find(p => p.id === String(item.id));
                         }
-
-                        // 2. Fallback: Se não achar por ID, tenta pelo nome (Modo legado)
                         if (!productMatch && (item.nome || typeof item === 'string')) {
                             const nameToSearch = (item.nome || item).toString().toLowerCase();
-                            // Tenta match exato primeiro
                             productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase() === nameToSearch);
-                            
-                            // Se ainda não achar, tenta parcial (primeira palavra) - Cuidado com falsos positivos
                             if (!productMatch) {
                                 const firstWord = nameToSearch.split(' ')[0];
                                 if (firstWord.length > 3) { 
@@ -851,8 +880,6 @@
                                 }
                             }
                         }
-
-                        // Se encontrou o produto, adiciona ao carrinho
                         if (productMatch) {
                             const qty = parseInt(item.qty || item.qtd || 1);
                             this.cart[productMatch.id] = (this.cart[productMatch.id] || 0) + qty;
@@ -969,7 +996,7 @@
 
                 const removals = this.countRemovals();
                 badge.innerText = `Excluídos: ${removals}/${this.currentLimit}`;
-                badge.style.display = 'block';
+                badge.style.display = 'flex';
                 if(removals >= this.currentLimit) badge.classList.add('limit-reached');
                 else badge.classList.remove('limit-reached');
 
