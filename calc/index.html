@@ -331,23 +331,33 @@
                 this.currentBasket = basket;
                 this.cart = {}; // Limpa o carrinho anterior
 
-                // LOGICA INTELIGENTE: Tenta encontrar os produtos reais baseados nos nomes dos itens da cesta
+                // LOGICA INTELIGENTE ATUALIZADA: Prioriza ID, depois Nome
                 if (basket.items && basket.items.length > 0) {
                     basket.items.forEach(item => {
-                        // Tenta achar o produto pelo nome no catálogo geral
-                        // Procura uma correspondência parcial de nome
-                        const itemName = (item.nome || item).toLowerCase();
-                        const productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase().includes(itemName));
+                        let productMatch = null;
+                        
+                        // 1. Tenta correspondência exata por ID se disponível
+                        if (item.id) {
+                            productMatch = this.data.find(p => p.id === String(item.id));
+                        }
+                        
+                        // 2. Se não achou por ID, tenta por Nome
+                        if (!productMatch) {
+                            const itemName = (item.nome || item).toString().toLowerCase();
+                            // Tenta nome exato primeiro
+                            productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase() === itemName);
+                            // Fallback para nome parcial
+                            if (!productMatch) {
+                                productMatch = this.data.find(p => p.categoria !== 'CESTA BÁSICA' && p.nome.toLowerCase().includes(itemName));
+                            }
+                        }
                         
                         if (productMatch) {
                             // Se achou o produto real, adiciona ao carrinho
                             const qtd = item.qtd || item.qty || 1;
                             this.cart[productMatch.id] = parseInt(qtd);
                         } else {
-                            // Se não achou (é apenas um texto descritivo no JSON), infelizmente não podemos somar ao carrinho como produto editável
-                            // Neste caso, ignoramos para o carrinho editável ou precisaríamos de uma lógica de "Item Virtual".
-                            // Para simplificar e manter funcional: Adicionaremos apenas se houver match.
-                            console.log("Item não encontrado no catálogo para edição:", itemName);
+                            console.warn("Item da cesta não encontrado no catálogo:", item);
                         }
                     });
                 }
@@ -372,6 +382,7 @@
             renderCustomizerLists() {
                 const basketContainer = document.getElementById('basket-items-container');
                 const othersContainer = document.getElementById('other-items-container');
+                const CATEGORY_ORDER = ['ALIMENTOS', 'LIMPEZA', 'HIGIENE', 'BEBIDAS', 'OUTROS'];
                 
                 // 1. Identificar produtos que estão na cesta (SESSÃO 1)
                 const basketProductIds = Object.keys(this.cart);
@@ -401,7 +412,15 @@
                 });
 
                 let othersHTML = '';
-                const cats = Object.keys(groups).sort(); // Ordem alfabética ou customizada
+                // Ordenar categorias conforme ordem lógica (Alimentos primeiro, etc)
+                const cats = Object.keys(groups).sort((a, b) => {
+                    const ia = CATEGORY_ORDER.indexOf(a);
+                    const ib = CATEGORY_ORDER.indexOf(b);
+                    if (ia !== -1 && ib !== -1) return ia - ib;
+                    if (ia !== -1) return -1;
+                    if (ib !== -1) return 1;
+                    return a.localeCompare(b);
+                });
                 
                 cats.forEach(cat => {
                     othersHTML += `<div class="cat-separator">${cat}</div>`;
