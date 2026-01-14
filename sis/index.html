@@ -986,10 +986,9 @@
                 a.click();
             },
             exportProducts: () => {
-                // FILTRO ADICIONADO: Não exportar produtos marcados como personalizados
-                // MODIFICAÇÃO: Incluir campo Oferta e Valor_Oferta e Sufixo na Imagem
+                // FILTRO ADICIONADO: Não exportar produtos marcados como personalizados E estoque > 0
                 const data = DB.load().produto
-                    .filter(p => !p.personalized) 
+                    .filter(p => !p.personalized && p.estoque > 0) 
                     .map(p => {
                         // FORCE REGENERATE SLUG from current Name to fix old data
                         // This strictly ignores any saved 'imageName' property
