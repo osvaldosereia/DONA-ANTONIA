@@ -312,17 +312,21 @@
 
                 <!-- File Name Input -->
                 <div style="margin-top: 1rem; margin-bottom: 1rem;">
-                    <label style="display:block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;">Nome do Arquivo</label>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <input type="text" id="fileNameInput" placeholder="nome-do-produto" value="produto" 
-                               style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
-                        <span style="color: var(--text-light); font-weight: 500;">.webp</span>
+                    <label style="display:block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;">Nome do Produto</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="text" id="fileNameInput" placeholder="ex: arroz-tio-joao" value="produto" 
+                                   style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
+                        </div>
+                        <p class="text-sm" style="color: var(--text-light); word-break: break-all;">
+                            Arquivo final: <span id="fileNamePreview" style="font-family: monospace; color: var(--primary); font-weight: 600;">produto-super-cesta-basica-dona-antonia-cuiaba-varzea-grande.webp</span>
+                        </p>
                     </div>
                 </div>
 
                 <button id="downloadBtn" class="btn-primary" disabled style="background: #10b981; border-color: #10b981;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Baixar WebP (Max 30kb)
+                    Baixar WebP (Max 10kb)
                 </button>
             </div>
         </section>
@@ -341,7 +345,8 @@
             empty: document.getElementById('emptyState'),
             drop: document.getElementById('dropZone'),
             download: document.getElementById('downloadBtn'),
-            fileNameInput: document.getElementById('fileNameInput'), // Novo
+            fileNameInput: document.getElementById('fileNameInput'),
+            fileNamePreview: document.getElementById('fileNamePreview'), // Novo
             scale: document.getElementById('scaleRange'),
             scaleVal: document.getElementById('scaleVal'),
             brightness: document.getElementById('brightnessRange'),
@@ -357,7 +362,7 @@
             shadowOp: document.getElementById('shadowOpRange'),
             shadowY: document.getElementById('shadowYRange'),
             btnFit: document.getElementById('btnFit'),
-            btnMax: document.getElementById('btnMax'), // Novo
+            btnMax: document.getElementById('btnMax'),
             btnCenter: document.getElementById('btnCenter')
         };
 
@@ -382,6 +387,9 @@
             shadowOpacity: 0.3, // 0-1
             shadowY: 0          // px offset
         };
+
+        // Constante de Sufixo SEO
+        const SEO_SUFFIX = '-super-cesta-basica-dona-antonia-cuiaba-varzea-grande';
 
         // Inicialização
         function init() {
@@ -408,6 +416,9 @@
             els.sharp.addEventListener('input', (e) => updateState('sharpness', parseInt(e.target.value)));
             els.removeBg.addEventListener('change', (e) => updateState('removeBg', e.target.checked));
             
+            // File Name Preview
+            els.fileNameInput.addEventListener('input', updateFileNamePreview);
+
             // Shadow Controls
             els.shadow.addEventListener('change', (e) => {
                 updateState('shadow', e.target.checked);
@@ -444,6 +455,12 @@
 
         function varCss(name) {
             return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+        }
+
+        function updateFileNamePreview() {
+            const userText = els.fileNameInput.value.trim() || 'produto';
+            const cleanName = userText.replace(/\s+/g, '-').toLowerCase();
+            els.fileNamePreview.innerText = `${cleanName}${SEO_SUFFIX}.webp`;
         }
 
         // Carregamento de Arquivo
@@ -618,15 +635,15 @@
         }
 
         function downloadImage() {
-            // Meta: WebP < 30kb (30720 bytes)
+            // Meta: WebP < 10kb (10240 bytes)
             // Lógica de compressão iterativa "Good enough"
             
             let quality = 0.9; // Começa alto
             let dataUrl = els.canvas.toDataURL('image/webp', quality);
             
             // Cálculo aproximado de tamanho base64: (n * 3) / 4 - padding
-            // 30kb ~= 41,000 caracteres base64 (segurança)
-            const MAX_CHARS = 41000; 
+            // 10kb ~= 13700 caracteres base64 (margem de segurança)
+            const MAX_CHARS = 13700; 
 
             // Loop simples de redução de qualidade se exceder o tamanho
             // Para 400x400px, raramente precisará de muitos loops
@@ -635,10 +652,12 @@
                 dataUrl = els.canvas.toDataURL('image/webp', quality);
             }
 
-            const fileName = els.fileNameInput.value.trim() || 'produto';
-
+            // Gerar nome final com sufixo
+            const userText = els.fileNameInput.value.trim() || 'produto';
+            const cleanName = userText.replace(/\s+/g, '-').toLowerCase();
+            
             const link = document.createElement('a');
-            link.download = `${fileName}.webp`;
+            link.download = `${cleanName}${SEO_SUFFIX}.webp`;
             link.href = dataUrl;
             link.click();
         }
