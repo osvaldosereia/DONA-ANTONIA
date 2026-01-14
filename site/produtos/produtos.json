@@ -1823,6 +1823,7 @@
     "nome": "OLEO SOJA LIZA 900ML",
     "ean": "7896036090244",
     "categoria": "ALIMENTOS",
+    "fornecedor": "TIO ALVINO",
     "caracteristicas": "",
     "custo": 6,
     "valor": 6.9,
@@ -1830,9 +1831,12 @@
     "estoqueFiscal": 12444,
     "peso": 0.9,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "OLEO-SOJA-LIZA-900ML",
+    "imagem": "../site/img/produtos/OLEO-SOJA-LIZA-900ML-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "OLEO SOJA LIZA 900ML",
       "OLEO SOJA LIZA PET 900ML (AGRUPADO)"
