@@ -471,7 +471,7 @@
                                                 <input type="text" id="p-image-slug" readonly style="background-color: var(--slate-50); color: var(--slate-500); font-family: monospace;">
                                                 <button type="button" onclick="UI.copyImageSlug()" class="btn btn-ghost" title="Copiar Nome"><i class="fa-regular fa-copy"></i></button>
                                             </div>
-                                            <small style="font-size: 0.65rem; color: var(--slate-400);">../site/img/produtos/<b>nome-gerado</b>.webp</small>
+                                            <small style="font-size: 0.65rem; color: var(--slate-400);">../site/img/produtos/<b>nome-gerado</b>-cesta-basica-cuiaba-varzea-grande.webp</small>
                                         </div>
 
                                         <div class="form-group">
@@ -987,26 +987,31 @@
             },
             exportProducts: () => {
                 // FILTRO ADICIONADO: Não exportar produtos marcados como personalizados
-                // MODIFICAÇÃO: Incluir campo Oferta e Valor_Oferta
+                // MODIFICAÇÃO: Incluir campo Oferta e Valor_Oferta e Sufixo na Imagem
                 const data = DB.load().produto
                     .filter(p => !p.personalized) 
                     .map(p => {
-                        // Logic for image name export based on product name (slugified)
-                        let imgName = p.codigo.toLowerCase();
-                        if (p.nome) {
-                            imgName = p.nome.toString().toLowerCase()
-                                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // remove accents
-                                .replace(/\s+/g, '-')           // Replace spaces with -
-                                .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-                                .replace(/\-\-+/g, '-')         // Replace multiple - with single -
-                                .replace(/^-+/, '')             // Trim - from start
-                                .replace(/-+$/, '');            // Trim - from end
+                        // Use saved slug (imageName) or regenerate if missing
+                        let imgName = p.imageName;
+                        if (!imgName) {
+                             if (p.nome) {
+                                imgName = p.nome.toString().toLowerCase()
+                                    .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
+                                    .replace(/\s+/g, '-')           
+                                    .replace(/[^\w\-]+/g, '')       
+                                    .replace(/\-\-+/g, '-')         
+                                    .replace(/^-+/, '')             
+                                    .replace(/-+$/, '');            
+                             } else {
+                                 imgName = p.codigo.toLowerCase();
+                             }
                         }
                         
                         return {
                             ...p,
                             caracteristicas: p.caracteristicas || '', 
-                            imagem: `../site/img/produtos/${imgName}.webp`, // Updated to use slugified name and new path
+                            // MODIFICADO: Sufixo padrão adicionado
+                            imagem: `../site/img/produtos/${imgName}-cesta-basica-cuiaba-varzea-grande.webp`, 
                             Limit: p.limit || 0,
                             Oferta: p.isOffer ? 'Sim' : 'Não',
                             Valor_Oferta: p.isOffer ? Number(p.offerPrice || 0) : 0
@@ -1785,8 +1790,9 @@
                     const imgNameInput = document.getElementById('p-image-slug').value.trim();
                     const imgName = imgNameInput || data.codigo.toLowerCase();
                     
-                    // The path is now strictly based on the slug
-                    data.imagem = `../site/img/produtos/${imgName}.webp`; 
+                    data.imageName = imgNameInput; // Store the raw input (slug)
+                    // MODIFICADO: Inclui sufixo padrão no caminho interno
+                    data.imagem = `../site/img/produtos/${imgName}-cesta-basica-cuiaba-varzea-grande.webp`; 
 
                     // Combos
                     if(document.getElementById('p-is-combo').checked) {
@@ -2048,8 +2054,9 @@
                 const copyText = document.getElementById("p-image-slug");
                 copyText.select();
                 copyText.setSelectionRange(0, 99999); // For mobile devices
-                navigator.clipboard.writeText(copyText.value + ".webp").then(() => {
-                    alert("Nome copiado: " + copyText.value + ".webp");
+                // MODIFICADO: Copia apenas o nome, sem a extensão, conforme solicitado
+                navigator.clipboard.writeText(copyText.value).then(() => {
+                    alert("Nome copiado: " + copyText.value);
                 });
             },
             calcMargin: () => {
