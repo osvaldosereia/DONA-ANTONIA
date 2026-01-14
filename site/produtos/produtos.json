@@ -13,9 +13,12 @@
     "estoqueFiscal": 3012,
     "peso": 2,
     "limit": 2,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "amaciante-ype-2l-aconchego",
+    "imagem": "../site/img/produtos/amaciante-ype-2l-aconchego-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "AMAC YPE ACONCH 2L CX6",
       "AMAC YPE 2L ACONCHEGO",
@@ -53,9 +56,12 @@
     "estoqueFiscal": 360,
     "peso": 0,
     "limit": 2,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "amaciante-ype-2l-ternura",
+    "imagem": "../site/img/produtos/amaciante-ype-2l-ternura-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "AMAC YPE 2L TERNURA (UN)"
     ],
@@ -90,7 +96,7 @@
     "estoqueFiscal": 500,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/acucar-cristal-barralcool-2kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -127,8 +133,8 @@
     "estoqueFiscal": 9530,
     "peso": 2,
     "limit": 5,
-    "imageName": "ACUCAR-CRISTAL-DOCE-DIA-2KG",
-    "imagem": "../site/img/produtos/ACUCAR-CRISTAL-DOCE-DIA-2KG-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "acucar-cristal-doce-dia-2kg",
+    "imagem": "../site/img/produtos/acucar-cristal-doce-dia-2kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "isOffer": false,
@@ -167,7 +173,7 @@
     "estoqueFiscal": 4500,
     "peso": 1,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/agua-sanitaria-qboa-1-litro-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -206,8 +212,8 @@
     "estoqueFiscal": 2454,
     "peso": 2,
     "limit": 6,
-    "imageName": "AMACIANTE-YPE-INTENSO-2L",
-    "imagem": "../site/img/produtos/AMACIANTE-YPE-INTENSO-2L-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "amaciante-ype-2l-intenso",
+    "imagem": "../site/img/produtos/amaciante-ype-2l-intenso-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "isOffer": false,
@@ -290,7 +296,7 @@
     "estoqueFiscal": 7602,
     "peso": 5,
     "limit": 5,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/arroz-tio-bonini-5kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -327,7 +333,7 @@
     "estoqueFiscal": 3600,
     "peso": 0.2,
     "limit": 20,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/bisc-mybit-110g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -363,7 +369,7 @@
     "estoqueFiscal": 2000,
     "peso": 0.2,
     "limit": 15,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/bisc-rancheiro-78g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -399,7 +405,7 @@
     "estoqueFiscal": 2360,
     "peso": 0.2,
     "limit": 36,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/bisc-wafer-my-bit-80g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -435,7 +441,7 @@
     "estoqueFiscal": 80,
     "peso": 0.2,
     "limit": 36,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/bisc-waf-my-bit-80g-morango-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -472,7 +478,7 @@
     "estoqueFiscal": 200,
     "peso": 0.25,
     "limit": 4,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/cafe-3-coracoes-250g-tradicional-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -553,9 +559,12 @@
     "estoqueFiscal": 940,
     "peso": 0.25,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "cafe-caboclo-250g",
+    "imagem": "../site/img/produtos/cafe-caboclo-250g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "CAFE CABOCLO VACUO 250G (UN)"
     ],
@@ -590,9 +599,12 @@
     "estoqueFiscal": 800,
     "peso": 0,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "cafe-caboclo-500g-extraforte",
+    "imagem": "../site/img/produtos/cafe-caboclo-500g-extraforte-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "CAFE CABOCLO VACUO 500G EXTRA FORTE (UN)"
     ],
@@ -627,9 +639,12 @@
     "estoqueFiscal": 920,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "cafe-premiado-250g",
+    "imagem": "../site/img/produtos/cafe-premiado-250g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "CAFE PREMIADO ALMOF 250G SUPER (UN)"
     ],
@@ -664,7 +679,7 @@
     "estoqueFiscal": 3804,
     "peso": 120,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/creme-dental-sorriso-70g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -703,7 +718,7 @@
     "estoqueFiscal": 2400,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/desinfetante-remmus-2l-desaflora-roxo-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -743,7 +758,7 @@
     "estoqueFiscal": 5740,
     "peso": 0.8,
     "limit": 6,
-    "imageName": "LAVA-ROUPA-PO-OMO-800G",
+    "imageName": "lava-roupa-po-omo-800g",
     "imagem": "../site/img/produtos/lava-roupa-po-omo-800g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
@@ -788,7 +803,7 @@
     "estoqueFiscal": 600,
     "peso": 2,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/desinfetante-remmus-2l-amazon-verde-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -825,8 +840,8 @@
     "estoqueFiscal": 3400,
     "peso": 0.1,
     "limit": 6,
-    "imageName": "ESPONJA-ACO-ASSOLAN",
-    "imagem": "../site/img/produtos/ESPONJA-ACO-ASSOLAN-cesta-basica-cuiaba-varzea-grande.webp",
+    "imageName": "esponja-acho-assolan",
+    "imagem": "../site/img/produtos/esponja-acho-assolan-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "isOffer": false,
@@ -867,7 +882,7 @@
     "estoqueFiscal": 3400,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/bucha-assolan-dupla-face-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -906,7 +921,7 @@
     "estoqueFiscal": 3950,
     "peso": 1,
     "limit": 20,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/trigo-vitoriosa-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -943,7 +958,7 @@
     "estoqueFiscal": 1040,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/trigo-buque-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -980,7 +995,7 @@
     "estoqueFiscal": 9300,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/feijao-dona-de-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1059,7 +1074,7 @@
     "estoqueFiscal": 500,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/feijao-vila-nova-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1096,7 +1111,7 @@
     "estoqueFiscal": 110,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/fuba-diodoro-500g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1133,7 +1148,7 @@
     "estoqueFiscal": 5736,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/lava-louca-ype-500ml-clear-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1170,7 +1185,7 @@
     "estoqueFiscal": 3936,
     "peso": 0.5,
     "limit": 24,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/lava-louca-ype-500ml-neutro-amarelo-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1207,7 +1222,7 @@
     "estoqueFiscal": 220,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/lava-roupa-girando-sol-800g-clear-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1244,7 +1259,7 @@
     "estoqueFiscal": 1000,
     "peso": 0.4,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/espaguete-badotti-400g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1281,7 +1296,7 @@
     "estoqueFiscal": 1250,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/macarrao-instantaneo-apti-70g-galinha-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1318,7 +1333,7 @@
     "estoqueFiscal": 1250,
     "peso": 0.1,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/macarrao-instantaneo-apti-70g-galinha-caipira-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1355,7 +1370,7 @@
     "estoqueFiscal": 2000,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mac-inst-yolle-galinha-caipira-63g-0050-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1392,7 +1407,7 @@
     "estoqueFiscal": 500,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mac-inst-yolle-galinha-63g-0050-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1429,7 +1444,7 @@
     "estoqueFiscal": 1500,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mac-inst-yolle-carne-63g-0050-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1506,7 +1521,7 @@
     "estoqueFiscal": 1008,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/macarmarata-instcarne-gr-48pc-x-74gr-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1543,7 +1558,7 @@
     "estoqueFiscal": 2880,
     "peso": 0.17,
     "limit": 8,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/milho-verde-predilecta-170g-lata-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1580,7 +1595,7 @@
     "estoqueFiscal": 3060,
     "peso": 0.17,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/milho-verde-fugini-sh-170gr-0036-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1617,7 +1632,7 @@
     "estoqueFiscal": 1740,
     "peso": 0.4,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mistura-pra-bolo-apti-400g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1655,7 +1670,7 @@
     "estoqueFiscal": 180,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mist-bolo-apti-400g-lar-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1691,7 +1706,7 @@
     "estoqueFiscal": 300,
     "peso": 0,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/mist-bolo-apti-400g-quatro-leites-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1729,7 +1744,7 @@
     "estoqueFiscal": 7416,
     "peso": 0.3,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/molho-tomate-fugini-300gr-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1766,7 +1781,7 @@
     "estoqueFiscal": 320,
     "peso": 0,
     "limit": 0,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/molho-tom-pomodoro-sache-300g-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1801,7 +1816,7 @@
     "valor": 2,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/molho-tom-stel-doro-300g-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -1882,7 +1897,7 @@
     "estoqueFiscal": 150,
     "peso": 0,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/ovo-branco-12un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1917,7 +1932,7 @@
     "valor": 1,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/po-prefresco-frisco-18g-guarana-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -1956,7 +1971,7 @@
     "estoqueFiscal": 2700,
     "peso": 0.018,
     "limit": 23,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/suco-po-frisco-18g-laranja-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -1993,7 +2008,7 @@
     "valor": 1,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/refresco-po-frisco-18g-pt18-maracuja-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2034,7 +2049,7 @@
     "estoqueFiscal": 4500,
     "peso": 0.018,
     "limit": 24,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/po-prefresco-frisco-18g-uva-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -2071,7 +2086,7 @@
     "valor": 10,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sab-barra-nova-900g-c-5-agrupado-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2150,7 +2165,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-nivea-hidrat-85g-lavanda-agrupado-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2187,7 +2202,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-nivea-hidrat-85g-orquideas-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2224,7 +2239,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-nivea-hidrat-85g-prot-leite-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2261,7 +2276,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palm-naturals-g-melanc-e-lichia-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2299,7 +2314,7 @@
     "estoqueFiscal": 568,
     "peso": 0.086,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palmolive-85g-frescor-purificante-carvao-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -2335,7 +2350,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palm-naturals-g-rosas-lv-pg-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2372,7 +2387,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palm-naturals-g-tanger-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2409,7 +2424,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palm-naturals-lv12-pg9-85g-framb-e-amora-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2449,7 +2464,7 @@
     "estoqueFiscal": 3000,
     "peso": 0,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sal-ref-cristal-ouro-1kg-un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -2484,7 +2499,7 @@
     "valor": 2.5,
     "peso": 0,
     "img": "",
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/st-palmolive-n-85g-sens-un-cesta-basica-cuiaba-varzea-grande.webp",
     "is": false,
     "combo": "",
     "variacoesNome": [
@@ -2523,7 +2538,7 @@
     "estoqueFiscal": 984,
     "peso": 0.3,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/tempero-tio-jonas-300g-alho-e-sal-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -2561,7 +2576,7 @@
     "estoqueFiscal": 1200,
     "peso": 0.3,
     "limit": 7,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/tempero-tio-jonas-300g-temp-completo-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [],
@@ -2594,7 +2609,7 @@
     "estoqueFiscal": 1968,
     "peso": 5,
     "limit": 5,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/arroz-tio-alvino-5kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [
@@ -2633,7 +2648,7 @@
     "estoqueFiscal": 0,
     "peso": 0,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/cesta-economica-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [
       {
         "id": "1767965736886738",
@@ -2745,7 +2760,7 @@
     "estoqueFiscal": 0,
     "peso": 1,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/farinha-de-mandioca-dona-de-de-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [],
@@ -2778,7 +2793,7 @@
     "estoqueFiscal": 0,
     "peso": 0.085,
     "limit": 12,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/sabonete-palmolive-85g-nutricao-intensiva-karite-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [],
@@ -2811,7 +2826,7 @@
     "estoqueFiscal": 0,
     "peso": 0.2,
     "limit": 6,
-    "imagem": "../site/img/produtos/-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/papel-higienico-soberano-c-4un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "variacoesNome": [],
