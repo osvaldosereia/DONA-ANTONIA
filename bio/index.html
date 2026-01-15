@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMAS | Product Studio 300</title>
-    <meta name="description" content="Ferramenta ultra-leve para padronização de imagens 300x300. Mobile-first, suporta Ctrl+V.">
+    <title>SISTEMAS | Product Studio 300 HQ</title>
+    <meta name="description" content="Ferramenta para imagens 300x300. Alta qualidade (Max 30KB). Mobile-first, suporta Ctrl+V.">
     
     <style>
         :root {
@@ -111,20 +111,6 @@
             font-size: 0.9rem;
             font-weight: 500;
         }
-        
-        .sub-controls {
-            padding-left: 0.75rem;
-            border-left: 2px solid var(--border);
-            margin-top: 0.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            transition: opacity 0.2s;
-        }
-        .sub-controls.disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
 
         input[type="range"] {
             width: 100%;
@@ -194,7 +180,7 @@
 
     <header>
         <h1>SISTEMAS Studio 300</h1>
-        <p>Processamento 300x300px ultra-leve (Max 5KB).</p>
+        <p>Alta Qualidade (Max 30KB). Arraste ou Cole (Ctrl+V).</p>
     </header>
 
     <main>
@@ -262,29 +248,6 @@
                     <input type="range" id="sharpRange" min="0" max="10" value="0">
                 </fieldset>
 
-                <fieldset>
-                    <legend>3. Acabamento</legend>
-                    <label style="margin-bottom: 0;">
-                        <input type="checkbox" id="checkShadow">
-                        <span>Sombra de Apoio (Drop Shadow)</span>
-                    </label>
-                    
-                    <div id="shadowControls" class="sub-controls disabled">
-                        <label>
-                            Tamanho
-                            <input type="range" id="shadowSizeRange" min="20" max="150" value="60">
-                        </label>
-                        <label>
-                            Intensidade
-                            <input type="range" id="shadowOpRange" min="0" max="100" value="30">
-                        </label>
-                        <label>
-                            Posição Vertical
-                            <input type="range" id="shadowYRange" min="-400" max="50" value="0">
-                        </label>
-                    </div>
-                </fieldset>
-
                 <div style="margin-top: 1rem; margin-bottom: 1rem;">
                     <label style="display:block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;">Nome do Produto</label>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -298,7 +261,7 @@
 
                 <button id="downloadBtn" class="btn-primary" disabled style="background: #10b981; border-color: #10b981;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Baixar WebP (Max 5kb)
+                    Baixar WebP (Max 30kb)
                 </button>
             </div>
         </section>
@@ -307,7 +270,7 @@
     <script>
         /**
          * SISTEMAS CORE - Image Processing Logic
-         * Atualizado: 300x300px, 5KB Limit, Paste Support.
+         * Config: 300x300px, 30KB Limit, No Shadows.
          */
         
         const els = {
@@ -327,22 +290,17 @@
             sharp: document.getElementById('sharpRange'),
             sharpVal: document.getElementById('sharpVal'),
             removeBg: document.getElementById('checkRemoveBg'),
-            shadow: document.getElementById('checkShadow'),
-            shadowControls: document.getElementById('shadowControls'),
-            shadowSize: document.getElementById('shadowSizeRange'),
-            shadowOp: document.getElementById('shadowOpRange'),
-            shadowY: document.getElementById('shadowYRange'),
             btnFit: document.getElementById('btnFit'),
             btnMax: document.getElementById('btnMax'),
             btnCenter: document.getElementById('btnCenter')
         };
 
-        // Estado da Aplicação (Configurações Iniciais)
+        // Estado da Aplicação
         const state = {
             originalImage: null,
             ctx: els.canvas.getContext('2d', { willReadFrequently: true }),
-            width: 300,  // ATUALIZADO: 300px
-            height: 300, // ATUALIZADO: 300px
+            width: 300,
+            height: 300,
             scale: 0.85,
             offsetX: 0,
             offsetY: 0,
@@ -350,13 +308,9 @@
             startPanX: 0,
             startPanY: 0,
             brightness: 0,
-            contrast: 0,   // ATUALIZADO: Padrão 0
+            contrast: 0,
             sharpness: 0,
-            removeBg: false, // ATUALIZADO: Padrão false (opcional)
-            shadow: false, // ATUALIZADO: Padrão false
-            shadowSize: 0.6,
-            shadowOpacity: 0.3,
-            shadowY: 0
+            removeBg: false
         };
 
         const SEO_SUFFIX = '-cesta-basica-cuiaba-varzea-grande';
@@ -377,13 +331,12 @@
                 if(e.dataTransfer.files.length) handleFile({ target: { files: e.dataTransfer.files } });
             });
 
-            // NOVA FUNCIONALIDADE: Colar (Paste)
+            // Colar (Paste)
             document.addEventListener('paste', (e) => {
                 const items = e.clipboardData.items;
                 for (let i = 0; i < items.length; i++) {
                     if (items[i].type.indexOf('image') !== -1) {
                         const blob = items[i].getAsFile();
-                        // Simulamos o evento que a função handleFile espera
                         handleFile({ target: { files: [blob] } });
                         break;
                     }
@@ -399,15 +352,7 @@
             
             els.fileNameInput.addEventListener('input', updateFileNamePreview);
 
-            // Shadow Controls
-            els.shadow.addEventListener('change', (e) => {
-                updateState('shadow', e.target.checked);
-                els.shadowControls.classList.toggle('disabled', !e.target.checked);
-            });
-            els.shadowSize.addEventListener('input', (e) => updateState('shadowSize', e.target.value / 100));
-            els.shadowOp.addEventListener('input', (e) => updateState('shadowOpacity', e.target.value / 100));
-            els.shadowY.addEventListener('input', (e) => updateState('shadowY', parseInt(e.target.value)));
-            
+            // Botões de Posição
             els.btnCenter.addEventListener('click', () => { state.offsetX = 0; state.offsetY = 0; render(); });
             els.btnFit.addEventListener('click', () => { state.scale = 0.85; els.scale.value = 85; els.scaleVal.innerText = '85%'; render(); });
             els.btnMax.addEventListener('click', () => { 
@@ -510,24 +455,6 @@
             const x = (state.width - drawWidth) / 2 + state.offsetX;
             const y = (state.height - drawHeight) / 2 + state.offsetY;
 
-            // Sombra (Opcional)
-            if (state.shadow) {
-                ctx.save();
-                const shadowX = x + drawWidth / 2;
-                const shadowY = y + drawHeight + state.shadowY;
-                ctx.translate(shadowX, shadowY);
-                ctx.scale(1, 0.15); 
-                const radius = Math.max(1, drawWidth * state.shadowSize);
-                const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
-                gradient.addColorStop(0, `rgba(0,0,0,${state.shadowOpacity})`);
-                gradient.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = gradient;
-                ctx.beginPath();
-                ctx.arc(0, 0, radius, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.restore();
-            }
-
             // Filtros CSS
             const brightCSS = 100 + state.brightness;
             const contrastCSS = 100 + state.contrast; 
@@ -560,22 +487,18 @@
             }
 
             ctx.filter = 'none';
-
-            if (state.sharpness > 0) {
-                // Placeholder para nitidez (se necessário)
-            }
         }
 
         function downloadImage() {
-            // Meta: WebP < 5kb (Aprox 5120 bytes)
-            let quality = 0.9;
+            // Meta: WebP < 30kb (Aprox 30720 bytes)
+            // Base64 overhead ~33% -> 30720 * 1.33 = ~40857 chars
+            const MAX_CHARS = 40000; 
+
+            // Começamos com qualidade quase máxima
+            let quality = 0.95;
             let dataUrl = els.canvas.toDataURL('image/webp', quality);
             
-            // 5KB bytes = 5120 bytes
-            // Base64 overhead ~33% -> 5120 * 1.33 = ~6826 chars
-            const MAX_CHARS = 6800; 
-
-            // Compressão agressiva se necessário
+            // Só reduzimos se realmente passar de 30KB
             while (dataUrl.length > MAX_CHARS && quality > 0.1) {
                 quality -= 0.1;
                 dataUrl = els.canvas.toDataURL('image/webp', quality);
