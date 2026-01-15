@@ -2201,5 +2201,230 @@
     "Limit": 2,
     "Oferta": "Não",
     "Valor_Oferta": 0
+  },
+  {
+    "id": "1768481606882714",
+    "codigo": "P092",
+    "nome": "FOSFORO PARANA 10UN",
+    "ean": "7896080902043",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.88,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.8,
+    "limit": 2,
+    "imagem": "../site/img/produtos/fosforo-parana-10un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FOSFORO PARANA  20PC X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7896080902043"
+    ],
+    "ncm": "36050000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-30",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768481776769378",
+    "codigo": "P093",
+    "nome": "FUBA MIMOSO SINHA 500GR",
+    "ean": "7892300026629",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.49,
+    "valor": 2.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
+    "estoque": 30,
+    "estoqueFiscal": 30,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/fuba-mimoso-sinha-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FUBA MILHO SINHA GR 30PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300026629"
+    ],
+    "ncm": "11022000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-10",
+    "fator": "30",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768487229787530",
+    "codigo": "P094",
+    "nome": "GELATINA APTI UVA 20GR",
+    "ean": "7896327516125",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.1,
+    "valor": 1.75,
+    "batches": [
+      {
+        "date": "",
+        "qty": 18
+      }
+    ],
+    "estoque": 18,
+    "estoqueFiscal": 18,
+    "peso": 0.02,
+    "limit": 3,
+    "imagem": "../site/img/produtos/gelatina-apti-uva-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "GELATINA APTI UVA GR 18UN X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896327516125"
+    ],
+    "ncm": "21069029",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-16",
+    "fator": "18",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768487547404420",
+    "codigo": "P095",
+    "nome": "LAMPADA LED FOXLUX 12W BIVOLT",
+    "ean": "7898586132139",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.9,
+    "valor": 4.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 1,
+    "peso": 0.02,
+    "limit": 5,
+    "imagem": "../site/img/produtos/lampada-led-foxlux-12w-bivolt-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LAMPADA LED FOXLUX 12W BIVOLT UN 1X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7898586132139"
+    ],
+    "ncm": "85395200",
+    "cest": "0900100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-39",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768487547405666",
+    "codigo": "P095",
+    "nome": "LAMPADA LED FOXLUX 9W BIVOLT",
+    "ean": "7898586133563",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.74,
+    "valor": 4.2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 1,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/lampada-led-foxlux-9w-bivolt-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LAMPADA LED FOXLUX 9W BIVOLT UN 1X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7898586133563"
+    ],
+    "ncm": "85395200",
+    "cest": "0900100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-40",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
   }
 ]
