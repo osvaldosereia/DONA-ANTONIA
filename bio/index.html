@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMAS | Product Studio</title>
-    <meta name="description" content="Ferramenta ultra-rápida para padronização de imagens de e-commerce. Mobile-first, sem dependências.">
+    <title>SISTEMAS | Product Studio 300</title>
+    <meta name="description" content="Ferramenta ultra-leve para padronização de imagens 300x300. Mobile-first, suporta Ctrl+V.">
     
     <style>
         :root {
@@ -19,7 +19,7 @@
             --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
         }
 
-        /* Reset & Base - The Classless Way */
+        /* Reset & Base */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
         body {
@@ -90,6 +90,7 @@
             flex-direction: column;
             align-items: center;
             gap: 1rem;
+            padding: 1rem;
         }
 
         /* Controls */
@@ -111,7 +112,6 @@
             font-weight: 500;
         }
         
-        /* Sub-controls for shadow */
         .sub-controls {
             padding-left: 0.75rem;
             border-left: 2px solid var(--border);
@@ -185,38 +185,25 @@
             border-color: var(--primary) !important;
         }
 
-        /* Utilities */
         .hidden { display: none !important; }
         .text-sm { font-size: 0.8rem; }
         
-        /* Loading */
-        .spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--border);
-            border-top-color: var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
     </style>
 </head>
 <body>
 
     <header>
-        <h1>SISTEMAS Studio</h1>
-        <p>Processamento de imagem para E-commerce. Rápido. Local. Minimalista.</p>
+        <h1>SISTEMAS Studio 300</h1>
+        <p>Processamento 300x300px ultra-leve (Max 5KB).</p>
     </header>
 
     <main>
-        <!-- Área Visual -->
         <section class="preview-area">
             <div class="card">
                 <div class="preview-container" id="dropZone">
                     <div id="emptyState" class="empty-state">
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-light);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        <span>Arraste uma imagem ou clique abaixo</span>
+                        <span>Arraste, <strong>Cole (Ctrl+V)</strong> ou clique</span>
                     </div>
                     <canvas id="canvas" class="hidden"></canvas>
                 </div>
@@ -230,7 +217,6 @@
             </div>
         </section>
 
-        <!-- Controles -->
         <section class="controls-area">
             <div class="card">
                 
@@ -243,18 +229,9 @@
                     <input type="range" id="scaleRange" min="50" max="200" value="85">
                     
                     <div class="btn-group" style="margin-top: 0.5rem; grid-template-columns: 1fr 1fr 1fr;">
-                         <button id="btnFit" type="button" title="Padrão (85%)">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 3 21 3 21 9"></polyline><polyline points="9 21 3 21 3 15"></polyline><line x1="21" y1="3" x2="14" y2="10"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-                            Fit
-                        </button>
-                         <button id="btnMax" type="button" title="Maximizar (100%)">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
-                            Max
-                        </button>
-                        <button id="btnCenter" type="button" title="Centralizar Absoluto">
-                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
-                            Centro
-                        </button>
+                         <button id="btnFit" type="button" title="Padrão (85%)">Fit</button>
+                         <button id="btnMax" type="button" title="Maximizar (100%)">Max</button>
+                         <button id="btnCenter" type="button" title="Centralizar Absoluto">Centro</button>
                     </div>
                 </fieldset>
 
@@ -265,10 +242,9 @@
                         <input type="checkbox" id="checkRemoveBg">
                         <span>Remover Fundo (Luma Key)</span>
                     </label>
-                    <p class="text-sm" style="color:var(--text-light); margin-bottom:0.5rem;">Ideal para fotos em fundo branco.</p>
 
                     <label>
-                        Brilho / Studio Light
+                        Brilho
                         <span id="brightnessVal">0</span>
                     </label>
                     <input type="range" id="brightnessRange" min="-50" max="50" value="0">
@@ -277,7 +253,7 @@
                         Contraste
                         <span id="contrastVal">0</span>
                     </label>
-                    <input type="range" id="contrastRange" min="-50" max="50" value="10">
+                    <input type="range" id="contrastRange" min="-50" max="50" value="0">
 
                     <label>
                         Nitidez (Sharpen)
@@ -289,12 +265,11 @@
                 <fieldset>
                     <legend>3. Acabamento</legend>
                     <label style="margin-bottom: 0;">
-                        <input type="checkbox" id="checkShadow" checked>
+                        <input type="checkbox" id="checkShadow">
                         <span>Sombra de Apoio (Drop Shadow)</span>
                     </label>
                     
-                    <!-- Shadow Controls -->
-                    <div id="shadowControls" class="sub-controls">
+                    <div id="shadowControls" class="sub-controls disabled">
                         <label>
                             Tamanho
                             <input type="range" id="shadowSizeRange" min="20" max="150" value="60">
@@ -310,23 +285,20 @@
                     </div>
                 </fieldset>
 
-                <!-- File Name Input -->
                 <div style="margin-top: 1rem; margin-bottom: 1rem;">
                     <label style="display:block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;">Nome do Produto</label>
                     <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <input type="text" id="fileNameInput" placeholder="ex: arroz-tio-joao" value="produto" 
-                                   style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
-                        </div>
+                        <input type="text" id="fileNameInput" placeholder="ex: arroz-tio-joao" value="produto" 
+                               style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
                         <p class="text-sm" style="color: var(--text-light); word-break: break-all;">
-                            Arquivo final: <span id="fileNamePreview" style="font-family: monospace; color: var(--primary); font-weight: 600;">cesta-basica-cuiaba-varzea-grande.webp</span>
+                            Final: <span id="fileNamePreview" style="font-family: monospace; color: var(--primary); font-weight: 600;">produto-cesta.webp</span>
                         </p>
                     </div>
                 </div>
 
                 <button id="downloadBtn" class="btn-primary" disabled style="background: #10b981; border-color: #10b981;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Baixar WebP (Max 10kb)
+                    Baixar WebP (Max 5kb)
                 </button>
             </div>
         </section>
@@ -335,10 +307,9 @@
     <script>
         /**
          * SISTEMAS CORE - Image Processing Logic
-         * Vanilla JS, No Frameworks.
+         * Atualizado: 300x300px, 5KB Limit, Paste Support.
          */
         
-        // Elementos
         const els = {
             input: document.getElementById('uploadInput'),
             canvas: document.getElementById('canvas'),
@@ -346,7 +317,7 @@
             drop: document.getElementById('dropZone'),
             download: document.getElementById('downloadBtn'),
             fileNameInput: document.getElementById('fileNameInput'),
-            fileNamePreview: document.getElementById('fileNamePreview'), // Novo
+            fileNamePreview: document.getElementById('fileNamePreview'),
             scale: document.getElementById('scaleRange'),
             scaleVal: document.getElementById('scaleVal'),
             brightness: document.getElementById('brightnessRange'),
@@ -366,12 +337,12 @@
             btnCenter: document.getElementById('btnCenter')
         };
 
-        // Estado da Aplicação
+        // Estado da Aplicação (Configurações Iniciais)
         const state = {
             originalImage: null,
             ctx: els.canvas.getContext('2d', { willReadFrequently: true }),
-            width: 400,
-            height: 400,
+            width: 300,  // ATUALIZADO: 300px
+            height: 300, // ATUALIZADO: 300px
             scale: 0.85,
             offsetX: 0,
             offsetY: 0,
@@ -379,26 +350,23 @@
             startPanX: 0,
             startPanY: 0,
             brightness: 0,
-            contrast: 10,
-            sharpness: 80,
-            removeBg: true,
-            shadow: false,
-            shadowSize: 0.6,    // % relative to width
-            shadowOpacity: 0.3, // 0-1
-            shadowY: 0          // px offset
+            contrast: 0,   // ATUALIZADO: Padrão 0
+            sharpness: 0,
+            removeBg: false, // ATUALIZADO: Padrão false (opcional)
+            shadow: false, // ATUALIZADO: Padrão false
+            shadowSize: 0.6,
+            shadowOpacity: 0.3,
+            shadowY: 0
         };
 
-        // Constante de Sufixo SEO
         const SEO_SUFFIX = '-cesta-basica-cuiaba-varzea-grande';
 
-        // Inicialização
         function init() {
             setupListeners();
-            resizeCanvasDisplay();
         }
 
         function setupListeners() {
-            // Upload
+            // Upload Tradicional
             els.input.addEventListener('change', handleFile);
             
             // Drag & Drop
@@ -409,6 +377,19 @@
                 if(e.dataTransfer.files.length) handleFile({ target: { files: e.dataTransfer.files } });
             });
 
+            // NOVA FUNCIONALIDADE: Colar (Paste)
+            document.addEventListener('paste', (e) => {
+                const items = e.clipboardData.items;
+                for (let i = 0; i < items.length; i++) {
+                    if (items[i].type.indexOf('image') !== -1) {
+                        const blob = items[i].getAsFile();
+                        // Simulamos o evento que a função handleFile espera
+                        handleFile({ target: { files: [blob] } });
+                        break;
+                    }
+                }
+            });
+
             // Controles
             els.scale.addEventListener('input', (e) => updateState('scale', e.target.value / 100));
             els.brightness.addEventListener('input', (e) => updateState('brightness', parseInt(e.target.value)));
@@ -416,7 +397,6 @@
             els.sharp.addEventListener('input', (e) => updateState('sharpness', parseInt(e.target.value)));
             els.removeBg.addEventListener('change', (e) => updateState('removeBg', e.target.checked));
             
-            // File Name Preview
             els.fileNameInput.addEventListener('input', updateFileNamePreview);
 
             // Shadow Controls
@@ -428,11 +408,8 @@
             els.shadowOp.addEventListener('input', (e) => updateState('shadowOpacity', e.target.value / 100));
             els.shadowY.addEventListener('input', (e) => updateState('shadowY', parseInt(e.target.value)));
             
-            // Botões de Posição & Geometria
             els.btnCenter.addEventListener('click', () => { state.offsetX = 0; state.offsetY = 0; render(); });
             els.btnFit.addEventListener('click', () => { state.scale = 0.85; els.scale.value = 85; els.scaleVal.innerText = '85%'; render(); });
-            
-            // Botão MAX (100% Scale)
             els.btnMax.addEventListener('click', () => { 
                 state.scale = 1.0; 
                 els.scale.value = 100; 
@@ -440,15 +417,12 @@
                 render(); 
             });
 
-            // Download
             els.download.addEventListener('click', downloadImage);
 
-            // Pan (Arrastar imagem no canvas)
+            // Pan
             els.canvas.addEventListener('mousedown', startPan);
             window.addEventListener('mouseup', () => state.isDragging = false);
             window.addEventListener('mousemove', doPan);
-            
-            // Touch Pan
             els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]));
             els.canvas.addEventListener('touchmove', (e) => { e.preventDefault(); doPan(e.touches[0]); });
         }
@@ -463,7 +437,6 @@
             els.fileNamePreview.innerText = `${cleanName}${SEO_SUFFIX}.webp`;
         }
 
-        // Carregamento de Arquivo
         function handleFile(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -487,17 +460,13 @@
 
         function updateState(key, value) {
             state[key] = value;
-            
-            // Atualizar textos dos labels
             if(key === 'scale') els.scaleVal.innerText = Math.round(value * 100) + '%';
             if(key === 'brightness') els.brightVal.innerText = value;
             if(key === 'contrast') els.contrastVal.innerText = value;
             if(key === 'sharpness') els.sharpVal.innerText = value;
-
             render();
         }
 
-        // Lógica de Panning (Arrastar)
         function startPan(e) {
             if(!state.originalImage) return;
             state.isDragging = true;
@@ -512,37 +481,28 @@
             render();
         }
 
-        /**
-         * RENDER PIPELINE
-         * O coração da ultra-performance.
-         */
         function render() {
             if (!state.originalImage) return;
 
-            // 1. Setup Canvas
             const ctx = state.ctx;
             els.canvas.width = state.width;
             els.canvas.height = state.height;
 
-            // 2. Fundo Branco Puro (padrão de e-commerce)
+            // Fundo Branco
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, state.width, state.height);
 
-            // 3. Calcular Dimensões
             const img = state.originalImage;
             const aspect = img.width / img.height;
             
-            let drawWidth, drawHeight;
-            
-            // Lógica "Contain" com escala customizável
+            // Lógica Contain
             const targetSize = state.width * state.scale;
+            let drawWidth, drawHeight;
 
             if (aspect > 1) {
-                // Mais largo que alto
                 drawWidth = targetSize;
                 drawHeight = targetSize / aspect;
             } else {
-                // Mais alto que largo
                 drawHeight = targetSize;
                 drawWidth = targetSize * aspect;
             }
@@ -550,23 +510,17 @@
             const x = (state.width - drawWidth) / 2 + state.offsetX;
             const y = (state.height - drawHeight) / 2 + state.offsetY;
 
-            // 4. Sombra de Apoio (Simulada & Editável)
+            // Sombra (Opcional)
             if (state.shadow) {
                 ctx.save();
-                // Base shadow position at the bottom of the image rect + Y offset
                 const shadowX = x + drawWidth / 2;
                 const shadowY = y + drawHeight + state.shadowY;
-                
                 ctx.translate(shadowX, shadowY);
-                ctx.scale(1, 0.15); // Achatamento oval constante
-                
-                // Shadow radius based on image width and user setting
+                ctx.scale(1, 0.15); 
                 const radius = Math.max(1, drawWidth * state.shadowSize);
-                
                 const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, radius);
                 gradient.addColorStop(0, `rgba(0,0,0,${state.shadowOpacity})`);
                 gradient.addColorStop(1, 'rgba(0,0,0,0)');
-                
                 ctx.fillStyle = gradient;
                 ctx.beginPath();
                 ctx.arc(0, 0, radius, 0, Math.PI * 2);
@@ -574,85 +528,59 @@
                 ctx.restore();
             }
 
-            // 5. Aplicar Filtros CSS no Contexto (Performance Nativa)
-            // Ordem: Brilho -> Contraste -> (Sharpness é manual)
-            // Conversão dos valores do range para filtros CSS
-            const brightCSS = 100 + state.brightness; // 100 é base
+            // Filtros CSS
+            const brightCSS = 100 + state.brightness;
             const contrastCSS = 100 + state.contrast; 
-            
             ctx.filter = `brightness(${brightCSS}%) contrast(${contrastCSS}%)`;
 
-            // 6. Desenhar Imagem
-            // Se "Remove Background" estiver ativo, precisamos de um passo intermediário
+            // Desenhar Imagem
             if (state.removeBg) {
-                // Criar canvas temporário para processamento de pixel
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = img.width;
                 tempCanvas.height = img.height;
                 const tempCtx = tempCanvas.getContext('2d');
                 tempCtx.drawImage(img, 0, 0);
                 
-                // Luma Key Algorithm (Rápido e sujo para branco)
                 const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
                 const data = imgData.data;
-                const threshold = 230; // Tolerância de branco
+                const threshold = 230;
 
                 for (let i = 0; i < data.length; i += 4) {
                     const r = data[i];
                     const g = data[i+1];
                     const b = data[i+2];
-                    
-                    // Se for muito claro, torna transparente
                     if (r > threshold && g > threshold && b > threshold) {
-                        data[i+3] = 0; // Alpha
+                        data[i+3] = 0; 
                     }
                 }
                 tempCtx.putImageData(imgData, 0, 0);
-                
-                // Desenhar a imagem processada
                 ctx.drawImage(tempCanvas, x, y, drawWidth, drawHeight);
             } else {
-                // Desenho direto ultra-rápido
                 ctx.drawImage(img, x, y, drawWidth, drawHeight);
             }
 
-            ctx.filter = 'none'; // Reset filtro para próximos draws
+            ctx.filter = 'none';
 
-            // 7. Nitidez (Convolution Kernel Simples)
-            // Aplicado apenas se valor > 0, pois é custoso
             if (state.sharpness > 0) {
-                applySharpen(ctx, state.width, state.height, state.sharpness * 0.1);
+                // Placeholder para nitidez (se necessário)
             }
         }
 
-        // Algoritmo de Nitidez Manual (Já que ctx.filter não tem sharpen nativo cross-browser)
-        function applySharpen(ctx, w, h, amount) {
-            // Placeholder: Em mobile a convolução pode ser lenta.
-        }
-
-        function resizeCanvasDisplay() {
-            // Mantém o canvas responsivo no CSS, mas resolução interna fixa
-        }
-
         function downloadImage() {
-            // Meta: WebP < 10kb (10240 bytes)
-            // Lógica de compressão iterativa "Good enough"
-            
-            let quality = 0.9; // Começa alto
+            // Meta: WebP < 5kb (Aprox 5120 bytes)
+            let quality = 0.9;
             let dataUrl = els.canvas.toDataURL('image/webp', quality);
             
-            // Cálculo aproximado de tamanho base64: (n * 3) / 4 - padding
-            // 10kb ~= 13700 caracteres base64 (margem de segurança)
-            const MAX_CHARS = 13700; 
+            // 5KB bytes = 5120 bytes
+            // Base64 overhead ~33% -> 5120 * 1.33 = ~6826 chars
+            const MAX_CHARS = 6800; 
 
-            // Loop simples de redução de qualidade se exceder o tamanho
-            // Para 300x300px, raramente precisará de muitos loops
+            // Compressão agressiva se necessário
             while (dataUrl.length > MAX_CHARS && quality > 0.1) {
                 quality -= 0.1;
                 dataUrl = els.canvas.toDataURL('image/webp', quality);
             }
 
-            // Gerar nome final com sufixo
             const userText = els.fileNameInput.value.trim() || '';
             const cleanName = userText.replace(/\s+/g, '-').toLowerCase();
             
@@ -662,9 +590,7 @@
             link.click();
         }
 
-        // Start
         init();
-
     </script>
 </body>
 </html>
