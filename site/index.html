@@ -4,12 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 3.8 - Robust Image Detection (No JSON Edits)
+        VERSION: 4.0 - Video Support & Dual Media Indicators
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - Fix: Added naturalWidth check to prevent "soft 404" broken images
-        - Fix: Thumbnails auto-remove if rendering fails
-        - Logic: Enhanced sequential loading A->B->C reliability
+        - Logic: Added support for product videos (.mp4 detection)
+        - Visual: Added Video Icon alongside Camera Icon
+        - UX: Gallery now supports Video playback
+        - Logic: Consolidated media checking (A-Z suffixes + Video extension)
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -397,27 +398,32 @@
         }
         .pc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
-        /* NEW: GALLERY INDICATOR (EYE) */
-        .gallery-indicator {
+        /* UPDATED: MEDIA INDICATORS CONTAINER */
+        .media-indicators {
             position: absolute;
             bottom: 6px;
             right: 6px;
-            background: rgba(255,255,255,0.9);
+            display: flex;
+            gap: 4px;
+            pointer-events: none;
+        }
+        
+        /* SHARED ICON STYLE */
+        .indicator-icon {
+            background: rgba(255,255,255,0.95);
             color: var(--secondary);
-            border: 1px solid #cbd5e1;
+            border: 1px solid #e2e8f0;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
             opacity: 0;
             transition: opacity 0.3s;
-            pointer-events: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-        .gallery-indicator.has-more { opacity: 1; }
+        .indicator-icon.visible { opacity: 1; }
 
         .pc-info { flex: 1; display: flex; flex-direction: column; justify-content: center; min-width: 0; }
         
@@ -572,6 +578,7 @@
         .gallery-overlay.open { opacity: 1; pointer-events: auto; }
         .gallery-stage { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; }
         .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; transform: scale(0.95); transition: transform 0.3s; }
+        .gallery-video { max-width: 100%; max-height: 100%; }
         .gallery-overlay.open .gallery-img { transform: scale(1); }
         .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; padding: 20px; cursor: pointer; z-index: 310; }
         .gallery-thumbs { height: 100px; display: flex; justify-content: center; gap: 10px; padding: 20px; overflow-x: auto; }
@@ -914,6 +921,7 @@
         <button class="gallery-close" onclick="Gallery.close()" aria-label="Fechar Galeria">✕</button>
         <div class="gallery-stage" onclick="Gallery.close()">
             <img src="" id="gallery-img" class="gallery-img" onclick="event.stopPropagation()" alt="Imagem ampliada">
+            <video id="gallery-video" class="gallery-video hidden" controls onclick="event.stopPropagation()"></video>
         </div>
         <div id="gallery-thumbs" class="gallery-thumbs"></div>
     </div>
@@ -1010,32 +1018,56 @@
             open(mainSrc, productName) {
                 const ol = document.getElementById('gallery-overlay');
                 const img = document.getElementById('gallery-img');
+                const video = document.getElementById('gallery-video');
                 const thumbs = document.getElementById('gallery-thumbs');
                 
                 // Clear and Setup
                 thumbs.innerHTML = '';
                 img.src = mainSrc;
                 img.alt = `Foto de ${productName}`;
+                
+                // Reset Video State
+                video.pause();
+                video.src = "";
+                video.classList.add('hidden');
+                img.classList.remove('hidden');
+
                 ol.classList.add('open');
 
                 // Add Main Image Thumb
-                this.addThumb(mainSrc, true);
+                this.addThumb(mainSrc, 'image', true);
 
-                // Auto-detect suffixes A-Z
-                // Logic: Try to fetch 'NameA.jpg', 'NameB.jpg' etc.
-                // If it loads, add to thumbs.
+                // 1. Check Extra Photos (A-Z)
                 this.checkSuffixes(mainSrc);
+
+                // 2. Check Video (.mp4)
+                this.checkVideo(mainSrc);
             },
 
-            addThumb(src, active) {
+            addThumb(src, type, active) {
                 const thumbs = document.getElementById('gallery-thumbs');
                 const cls = active ? 'g-thumb active' : 'g-thumb';
-                const el = document.createElement('img');
-                el.src = src;
-                el.className = cls;
-                el.onclick = () => Gallery.swap(el, src);
-                // Robustness: If image fails to load/render, remove it
-                el.onerror = () => { el.remove(); };
+                
+                let el;
+                if (type === 'video') {
+                    // Create a video thumbnail wrapper or icon
+                    el = document.createElement('div');
+                    el.className = cls;
+                    el.style.backgroundImage = 'url("img/video-placeholder.png")'; // Fallback or logic to get thumb
+                    // For simplicity, we use a Play Icon SVG inside a container
+                    el.innerHTML = '<svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24" style="color:#333"><path d="M8 5v14l11-7z"/></svg>';
+                    el.style.display = 'flex';
+                    el.style.alignItems = 'center';
+                    el.style.justifyContent = 'center';
+                    el.style.background = '#f1f5f9';
+                } else {
+                    el = document.createElement('img');
+                    el.src = src;
+                    el.className = cls;
+                    el.onerror = () => { el.remove(); };
+                }
+                
+                el.onclick = () => Gallery.swap(el, src, type);
                 thumbs.appendChild(el);
             },
 
@@ -1060,17 +1092,14 @@
                     img.onload = () => {
                         // Image exists AND has content (width > 0)
                         if (img.naturalWidth > 0) {
-                            this.addThumb(testUrl, false);
+                            this.addThumb(testUrl, 'image', false);
                             idx++;
                             tryNext();
                         } else {
-                            // Empty/Corrupt file, stop or skip
-                            // Usually safer to stop to save data
                             return; 
                         }
                     };
                     img.onerror = () => {
-                        // Image missing: stop sequence
                         return;
                     };
                     img.src = testUrl;
@@ -1079,12 +1108,47 @@
                 tryNext();
             },
 
-            swap(el, src) {
-                document.getElementById('gallery-img').src = src;
+            checkVideo(mainSrc) {
+                const lastDot = mainSrc.lastIndexOf('.');
+                if(lastDot === -1) return;
+                
+                const base = mainSrc.substring(0, lastDot);
+                // Assume .mp4 extension for videos
+                const videoUrl = base + '.mp4';
+
+                const video = document.createElement('video');
+                video.preload = 'metadata';
+                video.onloadedmetadata = () => {
+                    this.addThumb(videoUrl, 'video', false);
+                };
+                video.onerror = () => {
+                    // No video found
+                };
+                video.src = videoUrl;
+            },
+
+            swap(el, src, type) {
+                const img = document.getElementById('gallery-img');
+                const video = document.getElementById('gallery-video');
+                
                 document.querySelectorAll('.g-thumb').forEach(t => t.classList.remove('active'));
                 el.classList.add('active');
+
+                if (type === 'video') {
+                    img.classList.add('hidden');
+                    video.src = src;
+                    video.classList.remove('hidden');
+                    video.play();
+                } else {
+                    video.pause();
+                    video.classList.add('hidden');
+                    img.src = src;
+                    img.classList.remove('hidden');
+                }
             },
             close() {
+                const video = document.getElementById('gallery-video');
+                video.pause();
                 document.getElementById('gallery-overlay').classList.remove('open');
             }
         };
@@ -1164,7 +1228,10 @@
                     <article class="big-card">
                         <div class="bc-image-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
                             <img src="${p.imagem}" alt="Cesta Básica ${p.nome}" class="bc-image" width="500" height="500" fetchpriority="high">
-                            <div class="gallery-indicator" id="gal-ind-home-${p.id}">👁️</div>
+                            <div class="media-indicators" id="media-ind-home-${p.id}">
+                                <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                            </div>
                         </div>
                         <div class="bc-content">
                             <h2 class="bc-title">${p.nome}</h2>
@@ -1261,7 +1328,10 @@
                         <article class="product-card">
                             <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
                                 <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy" width="200" height="200">
-                                <div class="gallery-indicator" id="gal-ind-${p.id}">👁️</div>
+                                <div class="media-indicators" id="media-ind-${p.id}">
+                                    <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                    <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                                </div>
                             </div>
                             <div class="pc-info">
                                 <h3 class="pc-name">${p.nome}</h3>
@@ -1325,7 +1395,10 @@
                                 <article class="product-card">
                                     <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
                                         <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy" width="200" height="200">
-                                        <div class="gallery-indicator" id="gal-ind-${p.id}">👁️</div>
+                                        <div class="media-indicators" id="media-ind-${p.id}">
+                                            <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                            <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                                        </div>
                                     </div>
                                     <div class="pc-info">
                                         <h3 class="pc-name">${p.nome}</h3>
@@ -1355,24 +1428,39 @@
 
             checkGalleryIndicators(prefix = '') {
                 // For every product rendered, check if 'NameA.ext' exists. If so, show icon.
+                // Also check if 'Name.mp4' exists.
                 // We use a small timeout to not block UI rendering.
-                const cards = document.querySelectorAll('.gallery-indicator');
-                cards.forEach(el => {
-                    if (!el.id.includes(prefix)) return; // Filter by scope (home or customizer)
-                    
-                    const pid = el.id.replace('gal-ind-' + prefix, '').replace('gal-ind-', ''); // Cleanup ID
+                const containers = document.querySelectorAll(`[id^='media-ind-${prefix}']`);
+                
+                containers.forEach(container => {
+                    const pid = container.id.replace('media-ind-' + prefix, '').replace('media-ind-', ''); // Cleanup ID
                     
                     const p = this.data.find(x => x.id === pid);
                     if(p && p.imagem) {
                         const lastDot = p.imagem.lastIndexOf('.');
                         if(lastDot > -1) {
-                            const testUrl = p.imagem.substring(0, lastDot) + 'A' + p.imagem.substring(lastDot);
+                            const base = p.imagem.substring(0, lastDot);
+                            
+                            // CHECK 1: Extra Photos
+                            const testUrlImg = base + 'A' + p.imagem.substring(lastDot);
                             const img = new Image();
                             img.onload = () => { 
-                                // Only show if valid image content
-                                if(img.naturalWidth > 0) el.classList.add('has-more'); 
+                                if(img.naturalWidth > 0) {
+                                    const camIcon = container.querySelector('.camera-icon');
+                                    if(camIcon) camIcon.classList.add('visible');
+                                }
                             };
-                            img.src = testUrl;
+                            img.src = testUrlImg;
+
+                            // CHECK 2: Video
+                            const testUrlVideo = base + '.mp4';
+                            const video = document.createElement('video');
+                            video.preload = 'metadata';
+                            video.onloadedmetadata = () => {
+                                const vidIcon = container.querySelector('.video-icon');
+                                if(vidIcon) vidIcon.classList.add('visible');
+                            };
+                            video.src = testUrlVideo;
                         }
                     }
                 });
