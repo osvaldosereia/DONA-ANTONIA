@@ -472,12 +472,12 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label>Nome do Arquivo de Imagem (Manual)</label>
+                                            <label>Nome do Arquivo (Automático + Prefixo)</label>
                                             <div style="display: flex; gap: 0.5rem;">
-                                                <input type="text" id="p-image-slug" oninput="UI.updatePreviewManual()" placeholder="Ex: arroz-5kg" style="background-color: var(--white); color: var(--slate-700); font-family: monospace; border: 1px solid var(--primary);">
+                                                <input type="text" id="p-image-slug" oninput="UI.updatePreviewManual()" placeholder="Nome base (ex: arroz-5kg)" style="background-color: var(--white); color: var(--slate-700); font-family: monospace; border: 1px solid var(--primary);">
                                                 <button type="button" onclick="UI.copyImageSlug()" class="btn btn-ghost" title="Copiar Nome"><i class="fa-regular fa-copy"></i></button>
                                             </div>
-                                            <small style="font-size: 0.65rem; color: var(--slate-400);">Escreva o nome exato. O sistema adiciona .webp no final.</small>
+                                            <small style="font-size: 0.65rem; color: var(--slate-400);">Caminho: ../site/img/produtos/<b>[nome]</b>-cesta-basica-cuiaba-varzea-grande.webp</small>
                                         </div>
 
                                         <div class="form-group">
@@ -1049,6 +1049,7 @@
                             ...p,
                             imageName: undefined, // Explicitly remove manual name field from export
                             caracteristicas: p.caracteristicas || '', 
+                            // FORÇA O SUFIXO PADRÃO
                             imagem: `../site/img/produtos/${imgName}-cesta-basica-cuiaba-varzea-grande.webp`, 
                             Limit: p.limit || 0,
                             Oferta: p.isOffer ? 'Sim' : 'Não',
@@ -1842,25 +1843,25 @@
                     data.peso = Number(document.getElementById('p-peso').value) || 0;
                     data.limit = Number(document.getElementById('p-limit').value) || 0;
 
-                    // --- NOVA LÓGICA DE IMAGEM ---
-                    const imgNameInput = document.getElementById('p-image-slug').value.trim();
-                    if(imgNameInput) {
-                        // MANUAL: Usa exatamente o que foi digitado + .webp
-                        data.imageName = imgNameInput;
-                        data.imagem = `../site/img/produtos/${imgNameInput}.webp`;
-                    } else {
-                        // AUTOMÁTICO: Usa padrão longo
-                        const slug = data.nome.toLowerCase()
+                    // --- NOVA LÓGICA DE IMAGEM OBRIGATÓRIA ---
+                    // Se o usuário digitou algo no campo manual, usa como PREFIXO
+                    let prefixo = document.getElementById('p-image-slug').value.trim();
+                    
+                    if(!prefixo) {
+                        // Se vazio, gera do nome
+                        prefixo = data.nome.toLowerCase()
                             .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
                             .replace(/\s+/g, '-')           
                             .replace(/[^\w\-]+/g, '')       
                             .replace(/\-\-+/g, '-')         
                             .replace(/^-+/, '')             
                             .replace(/-+$/, '');   
-                        
-                        data.imageName = ''; // Limpa manual
-                        data.imagem = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
                     }
+
+                    // SALVA O PREFIXO PARA EDIÇÃO FUTURA
+                    data.imageName = prefixo;
+                    // FORÇA O SUFIXO
+                    data.imagem = `../site/img/produtos/${prefixo}-cesta-basica-cuiaba-varzea-grande.webp`;
 
                     if(document.getElementById('p-is-combo').checked) {
                         data.items = ComboApp.comboItems;
@@ -1907,7 +1908,7 @@
                     document.getElementById('p-img-preview').src = '';
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
-                    document.getElementById('debug-path').innerText = ''; // Clear debug
+                    document.getElementById('debug-path').innerText = ''; 
                     document.getElementById('p-margem').value = '';
                     document.getElementById('p-is-offer').checked = false;
                     UI.toggleOfferInput();
@@ -1973,11 +1974,11 @@
 
                     // --- PREVIEW LOGIC ---
                     if(item.imageName) {
-                        // Se tem nome manual salvo, usa ele
+                        // Se tem prefixo salvo, carrega ele
                         document.getElementById('p-image-slug').value = item.imageName;
                         UI.updatePreviewManual();
                     } else {
-                        // Se não, tenta o automático
+                        // Se não tem, gera do nome
                         document.getElementById('p-image-slug').value = '';
                         UI.updateImageSlug();
                     }
@@ -2092,7 +2093,7 @@
                                 .replace(/^-+/, '')             
                                 .replace(/-+$/, '');            
                 
-                // AUTOMÁTICO = COM O SUFIXO
+                // AUTOMÁTICO = COM O SUFIXO OBRIGATÓRIO
                 const previewUrl = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
                 UI.updatePreviewCommon(previewUrl);
             },
@@ -2102,8 +2103,8 @@
                     UI.updateImageSlug(); // Se apagar manual, volta pro auto
                     return;
                 }
-                // MANUAL = SEM SUFIXO EXTRA
-                const previewUrl = `../site/img/produtos/${slug}.webp`;
+                // MANUAL = USA O QUE DIGITOU + SUFIXO OBRIGATÓRIO
+                const previewUrl = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
                 UI.updatePreviewCommon(previewUrl);
             },
             updatePreviewCommon: (url) => {
