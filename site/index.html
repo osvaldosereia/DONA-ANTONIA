@@ -4,13 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 4.4 - PageSpeed & Accessibility Fixes
+        VERSION: 4.5 - Stock Control & Offers System
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - A11y: Improved contrast ratios for Social Buttons (WhatsApp/Insta)
-        - Perf: Implemented IntersectionObserver for Media Discovery (Lazy Checks)
-        - Perf: Reduced initial network contention by deferring 404 checks
-        - Fix: Solved console flooding of 404 errors on page load
+        - Logic: Implemented Stock vs Limit check (uses the lowest value)
+        - Logic: Added Offer System (Old Price vs New Price logic)
+        - Visual: Added 'OFERTA' badge and strike-through pricing style
+        - Data: Updated JSON parsing to handle 'Limit', 'Oferta', 'Valor_Oferta'
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -408,6 +408,27 @@
         }
         .pc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
+        /* NEW: OFFER TAG */
+        .pc-offer-tag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #16a34a; /* Green */
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 0 0 8px 0;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+        
+        /* NEW: PRICES */
+        .price-container { display: flex; align-items: center; gap: 8px; }
+        .price-old { text-decoration: line-through; color: #94a3b8; font-size: 0.85rem; }
+        .price-new { color: #dc2626; font-weight: 700; font-size: 1.05rem; }
+
         /* UPDATED: MEDIA INDICATORS CONTAINER */
         .media-indicators {
             position: absolute;
@@ -1237,14 +1258,23 @@
                             imgPath = `img/produtos/${imgPath}`;
                         }
 
+                        // NEW: Parse Offers and Limits
+                        const isOffer = (p.Oferta && p.Oferta.toLowerCase() === 'sim');
+                        const offerPrice = parseFloat(p.Valor_Oferta || 0);
+                        const normalPrice = parseFloat(p.valor || 0);
+                        const limitVal = parseInt(p.Limit || p.limit || 0); // Handle both casings
+
                         return {
                             ...p, 
                             id: String(p.id), 
-                            valor: parseFloat(p.valor || 0),
+                            valor: normalPrice,
                             categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
                             imagem: imgPath,
                             items: p.items || [], 
-                            isOffer: p.oferta && p.oferta.toLowerCase() === 'sim'
+                            isOffer: isOffer,
+                            offerPrice: offerPrice,
+                            estoque: parseInt(p.estoque || 0),
+                            limit: limitVal
                         };
                     });
 
@@ -1296,6 +1326,9 @@
                     const loadingAttr = index < 2 ? 'eager' : 'lazy';
                     const fetchPriority = index < 2 ? 'high' : 'auto';
                     
+                    // Use offer price if available for display, else normal
+                    const displayPrice = (p.isOffer && p.offerPrice > 0) ? p.offerPrice : p.valor;
+
                     return `
                     <article class="big-card">
                         <div class="bc-image-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
@@ -1307,7 +1340,7 @@
                         </div>
                         <div class="bc-content">
                             <h2 class="bc-title">${p.nome}</h2>
-                            <div class="bc-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
+                            <div class="bc-price">R$ ${displayPrice.toFixed(2).replace('.', ',')}</div>
                             <div class="bc-actions">
                                 <button class="btn-full btn-customize" onclick="App.openCustomizer('${p.id}')">
                                     <span>Personalizar</span>
@@ -1365,8 +1398,17 @@
                 let sumItems = 0;
                 for(let id in this.cart) {
                     let p = this.data.find(x => x.id === id);
-                    if(p) sumItems += p.valor * this.cart[id];
+                    if(p) {
+                         const price = (p.isOffer && p.offerPrice > 0) ? p.offerPrice : p.valor;
+                         sumItems += price * this.cart[id];
+                    }
                 }
+                // Recalculate base fee based on potentially new prices? 
+                // Usually base fee is fixed, but let's stick to initial logic: 
+                // The base fee is the difference between Basket Price and Sum of Default Items.
+                // NOTE: If items inside basket are on offer, the basket price might already reflect that, 
+                // or we just calculate base fee using standard prices to keep consistent math.
+                // For simplicity, let's use the current prices of items.
                 this.baseFee = basket.valor - sumItems;
 
                 document.getElementById('cust-basket-name').innerText = basket.nome;
@@ -1397,30 +1439,9 @@
                 
                 if (basketItems.length === 0) basketContainer.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:#999;">Cesta vazia</div>';
                 else {
-                    basketContainer.innerHTML = basketItems.map(p => `
-                        <article class="product-card">
-                            <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                                <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
-                                <div class="media-indicators" id="media-ind-${p.id}">
-                                    <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
-                                    <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
-                                </div>
-                            </div>
-                            <div class="pc-info">
-                                <h3 class="pc-name">${p.nome}</h3>
-                                <div class="pc-bottom">
-                                    <div class="pc-meta">${this.originalCart[p.id] ? 'Incluso' : 'Adicionado'}</div>
-                                    <div class="pc-actions">
-                                        <div class="qty-control">
-                                            <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
-                                            <span class="qty-val">${this.cart[p.id]}</span>
-                                            <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
-                    `).join('');
+                    basketContainer.innerHTML = basketItems.map(p => {
+                        return this.renderProductCard(p, true);
+                    }).join('');
                 }
 
                 // 2. Extras (Filtrados)
@@ -1455,34 +1476,8 @@
                             <div class="category-box" style="background-color: ${theme.bg};">
                                 <div class="extras-grid">`;
                         
-                        html += groups[c].map(p => {
-                            let qty = this.cart[p.id] || 0;
-                            let btn = qty === 0 
-                                ? `<button class="btn-add-sm" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar ${p.nome}">Adicionar</button>` 
-                                : `<div class="qty-control">
-                                     <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
-                                     <span class="qty-val">${qty}</span>
-                                     <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
-                                   </div>`;
-                            return `
-                                <article class="product-card">
-                                    <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                                        <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
-                                        <div class="media-indicators" id="media-ind-${p.id}">
-                                            <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
-                                            <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
-                                        </div>
-                                    </div>
-                                    <div class="pc-info">
-                                        <h3 class="pc-name">${p.nome}</h3>
-                                        <div class="pc-bottom">
-                                            <div class="pc-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>
-                                            <div class="pc-actions">${btn}</div>
-                                        </div>
-                                    </div>
-                                </article>`;
-                        }).join('');
-                        html += `</div></div></div>`; // Close grid, box, container
+                        html += groups[c].map(p => this.renderProductCard(p, false)).join('');
+                        html += `</div></div></div>`; 
                     });
                 }
                 othersContainer.innerHTML = html;
@@ -1497,6 +1492,52 @@
                 
                 // Smart Check with Observer
                 setTimeout(() => this.setupMediaObserver(), 500);
+            },
+
+            // Helper to render product card with Offer Logic
+            renderProductCard(p, isIncluded) {
+                let qty = this.cart[p.id] || 0;
+                
+                let btn = qty === 0 
+                    ? `<button class="btn-add-sm" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar ${p.nome}">Adicionar</button>` 
+                    : `<div class="qty-control">
+                            <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
+                            <span class="qty-val">${qty}</span>
+                            <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
+                        </div>`;
+                
+                let priceHTML = '';
+                if (p.isOffer && p.offerPrice > 0) {
+                    priceHTML = `
+                        <div class="price-container">
+                            <span class="price-old">R$ ${p.valor.toFixed(2).replace('.', ',')}</span>
+                            <span class="price-new">R$ ${p.offerPrice.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                } else {
+                    priceHTML = `<div class="pc-price">R$ ${p.valor.toFixed(2).replace('.', ',')}</div>`;
+                }
+
+                let offerTag = (p.isOffer && p.offerPrice > 0) ? `<div class="pc-offer-tag">OFERTA</div>` : '';
+
+                return `
+                    <article class="product-card">
+                        <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
+                            ${offerTag}
+                            <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
+                            <div class="media-indicators" id="media-ind-${p.id}">
+                                <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
+                                <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
+                            </div>
+                        </div>
+                        <div class="pc-info">
+                            <h3 class="pc-name">${p.nome}</h3>
+                            <div class="pc-bottom">
+                                ${isIncluded ? `<div class="pc-meta">Incluso</div>` : priceHTML}
+                                <div class="pc-actions">${btn}</div>
+                            </div>
+                        </div>
+                    </article>`;
             },
 
             // --- SMART LAZY LOADING FOR MEDIA CHECKS ---
@@ -1564,9 +1605,30 @@
             },
 
             changeQty(id, delta) {
+                const product = this.data.find(p => p.id === id);
+                if (!product) return;
+
                 const currentQty = this.cart[id] || 0;
                 const newQty = currentQty + delta;
                 
+                // --- STOCK / LIMIT CHECK LOGIC ---
+                if (delta > 0) {
+                    // Determine Max Quantity
+                    // Use Stock as base
+                    let maxAllowed = product.estoque;
+                    
+                    // If limit is defined and greater than 0, take the smaller of the two
+                    if (product.limit > 0) {
+                        maxAllowed = Math.min(product.estoque, product.limit);
+                    }
+                    
+                    if (newQty > maxAllowed) {
+                        alert(`Quantidade máxima atingida para este produto.\nEstoque: ${product.estoque}\nLimite por cliente: ${product.limit > 0 ? product.limit : 'Ilimitado'}`);
+                        return;
+                    }
+                }
+
+                // Removal Logic Check
                 if (this.originalCart[id] && delta < 0 && newQty === 0) {
                     const currentRemovals = this.countRemovals();
                     if (currentRemovals >= this.currentLimit) {
@@ -1585,7 +1647,10 @@
                 let itemsSum = 0;
                 for(let id in this.cart) {
                     let p = this.data.find(x => x.id === id);
-                    if(p) itemsSum += p.valor * this.cart[id];
+                    if(p) {
+                         const price = (p.isOffer && p.offerPrice > 0) ? p.offerPrice : p.valor;
+                         itemsSum += price * this.cart[id];
+                    }
                 }
 
                 const originalPrice = this.currentBasket.valor;
