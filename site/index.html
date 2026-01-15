@@ -4,12 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 4.3 - Strict Filtering & Cache Busting
+        VERSION: 4.4 - PageSpeed & Accessibility Fixes
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - Fix: Added cache-busting timestamp to JSON fetch to prevent stale data
-        - Logic: Reinforced category filtering for Home Page (Strict Match)
-        - UX: Maintained Layout and Transitions
+        - A11y: Improved contrast ratios for Social Buttons (WhatsApp/Insta)
+        - Perf: Implemented IntersectionObserver for Media Discovery (Lazy Checks)
+        - Perf: Reduced initial network contention by deferring 404 checks
+        - Fix: Solved console flooding of 404 errors on page load
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -546,8 +547,9 @@
             width: 140px; height: 40px; border-radius: 50px; text-decoration: none;
             font-weight: 600; font-size: 0.9rem; color: white;
         }
-        .btn-social.whatsapp { background: #25D366; }
-        .btn-social.instagram { background: #E1306C; }
+        /* A11Y FIX: Darkened colors for better white text contrast */
+        .btn-social.whatsapp { background: #166534; } /* Darker green */
+        .btn-social.instagram { background: #be185d; } /* Darker pink */
         .btn-social:hover { opacity: 0.9; transform: translateY(-1px); }
 
         .credit-toast {
@@ -1318,8 +1320,9 @@
                     </article>
                 `}).join('');
                 
-                // Check indicators for home items
-                setTimeout(() => this.checkGalleryIndicators('home-'), 500);
+                // Use IntersectionObserver to lazy load media checks
+                // This prevents thousands of 404s on initial load
+                setTimeout(() => this.setupMediaObserver('home-'), 100);
             },
 
             openCustomizer(basketId) {
@@ -1492,48 +1495,62 @@
 
                 this.updateTotal();
                 
-                // TRIGGER CHECK FOR GALLERY INDICATORS
-                setTimeout(() => this.checkGalleryIndicators(), 500);
+                // Smart Check with Observer
+                setTimeout(() => this.setupMediaObserver(), 500);
             },
 
-            checkGalleryIndicators(prefix = '') {
-                // For every product rendered, check if 'NameA.ext' exists. If so, show icon.
-                // Also check if 'Name.mp4' exists.
-                // We use a small timeout to not block UI rendering.
+            // --- SMART LAZY LOADING FOR MEDIA CHECKS ---
+            // Replaces checkGalleryIndicators with IntersectionObserver logic
+            // Only checks for media existence when the element is near viewport
+            setupMediaObserver(prefix = '') {
                 const containers = document.querySelectorAll(`[id^='media-ind-${prefix}']`);
                 
-                containers.forEach(container => {
-                    const pid = container.id.replace('media-ind-' + prefix, '').replace('media-ind-', ''); // Cleanup ID
-                    
-                    const p = this.data.find(x => x.id === pid);
-                    if(p && p.imagem) {
-                        const lastDot = p.imagem.lastIndexOf('.');
-                        if(lastDot > -1) {
-                            const base = p.imagem.substring(0, lastDot);
-                            
-                            // CHECK 1: Extra Photos
-                            const testUrlImg = base + 'A' + p.imagem.substring(lastDot);
-                            const img = new Image();
-                            img.onload = () => { 
-                                if(img.naturalWidth > 0) {
-                                    const camIcon = container.querySelector('.camera-icon');
-                                    if(camIcon) camIcon.classList.add('visible');
-                                }
-                            };
-                            img.src = testUrlImg;
-
-                            // CHECK 2: Video
-                            const testUrlVideo = base + '.mp4';
-                            const video = document.createElement('video');
-                            video.preload = 'metadata';
-                            video.onloadedmetadata = () => {
-                                const vidIcon = container.querySelector('.video-icon');
-                                if(vidIcon) vidIcon.classList.add('visible');
-                            };
-                            video.src = testUrlVideo;
+                const observer = new IntersectionObserver((entries, obs) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const el = entry.target;
+                            this.performMediaCheck(el, prefix);
+                            obs.unobserve(el); // Check only once
                         }
+                    });
+                }, { rootMargin: '200px' }); // Pre-load just before view
+                
+                containers.forEach(el => observer.observe(el));
+            },
+
+            performMediaCheck(container, prefix) {
+                const pid = container.id.replace('media-ind-' + prefix, '').replace('media-ind-', '');
+                const p = this.data.find(x => x.id === pid);
+                
+                if(p && p.imagem) {
+                    const lastDot = p.imagem.lastIndexOf('.');
+                    if(lastDot > -1) {
+                        const base = p.imagem.substring(0, lastDot);
+                        
+                        // Check Photo A
+                        const testUrlImg = base + 'A' + p.imagem.substring(lastDot);
+                        const img = new Image();
+                        img.onload = () => { 
+                            if(img.naturalWidth > 0) {
+                                const camIcon = container.querySelector('.camera-icon');
+                                if(camIcon) camIcon.classList.add('visible');
+                            }
+                        };
+                        img.src = testUrlImg;
+
+                        // Check Video
+                        const testUrlVideo = base + '.mp4';
+                        const video = document.createElement('video');
+                        video.preload = 'metadata'; // Light check
+                        video.onloadedmetadata = () => {
+                            const vidIcon = container.querySelector('.video-icon');
+                            if(vidIcon) vidIcon.classList.add('visible');
+                        };
+                        // Note: 404s will still happen in console if file missing, 
+                        // but spread out over scroll time instead of all at once.
+                        video.src = testUrlVideo;
                     }
-                });
+                }
             },
 
             countRemovals() {
