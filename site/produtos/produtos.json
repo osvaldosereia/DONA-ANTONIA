@@ -9,6 +9,12 @@
     "caracteristicas": "",
     "custo": 7.49,
     "valor": 10.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 648
+      }
+    ],
     "estoque": 648,
     "estoqueFiscal": 3012,
     "peso": 2,
@@ -16,8 +22,8 @@
     "imagem": "../site/img/produtos/amaciante-ype-aconchego-2l-azul-claro-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
-    "isOffer": false,
-    "offerPrice": 0,
+    "isOffer": true,
+    "offerPrice": 8.99,
     "variacoesNome": [
       "AMAC YPE ACONCH 2L CX6",
       "AMAC YPE 2L ACONCHEGO",
@@ -38,8 +44,8 @@
     "fator": "1",
     "unidade": "UN",
     "Limit": 2,
-    "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Oferta": "Sim",
+    "Valor_Oferta": 8.99
   },
   {
     "id": "1767965736886738",
@@ -1990,7 +1996,7 @@
     "estoque": 20,
     "estoqueFiscal": 20,
     "peso": 0,
-    "limit": 0,
+    "limit": 3,
     "imagem": "../site/img/produtos/farinha-milho-sinha-biju-500gr-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
@@ -2012,7 +2018,187 @@
     "refId": "NFe51260103483492000101550020012126641214162198-8",
     "fator": "20",
     "unidade": "UN",
-    "Limit": 0,
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480378600279",
+    "codigo": "P089",
+    "nome": "FARINHA MILHO SINHA CUSCUZ 500GR",
+    "ean": "07892300000698",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.9637,
+    "valor": 3.19,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
+    "estoque": 30,
+    "estoqueFiscal": 30,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/farinha-milho-sinha-cuscuz-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FARINHA MILHO SINHA CUSCUZ GR 30PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "07892300000698"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-43",
+    "fator": "30",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480680184176",
+    "codigo": "P090",
+    "nome": "FILTRO CAFE 102 BRIGITTA 30 FILTROS",
+    "ean": "7891021002110",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.545,
+    "valor": 4.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 2,
+    "imagem": "../site/img/produtos/filtro-cafe-102-brigitta-30-filtros-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FILTRO CAFE 102 BRIGITTA FL 06CT X 30FL (UN)"
+    ],
+    "variacoesEan": [
+      "7891021002110"
+    ],
+    "ncm": "48232099",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-26",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480680184580",
+    "codigo": "P090",
+    "nome": "FILTRO CAFE 103 BRIGITTA 30 FILTROS",
+    "ean": "7891021002134",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.8,
+    "valor": 5.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 2,
+    "imagem": "../site/img/produtos/filtro-cafe-103-brigitta-30-filtros-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FILTRO CAFE 103 BRIGITTA FL 06CT X 30FL (UN)"
+    ],
+    "variacoesEan": [
+      "7891021002134"
+    ],
+    "ncm": "48232099",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-27",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480940583291",
+    "codigo": "P091",
+    "nome": "FLOCOS MILHO SINHA FLOCÃO 500GR",
+    "ean": "7892300000933",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.97,
+    "valor": 2.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 2,
+    "imagem": "../site/img/produtos/flocos-milho-sinha-flocao-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FLOCOS MILHO SINHA FLOCAO GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300000933"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-11",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 2,
     "Oferta": "Não",
     "Valor_Oferta": 0
   }
