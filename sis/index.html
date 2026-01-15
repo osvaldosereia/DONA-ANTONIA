@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA V3 | Professional Dashboard</title>
     
-    <!-- Fonte Inter -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -314,7 +312,6 @@
 
         <div class="content-area">
             
-            <!-- VIEW: CLIENTE -->
             <div id="view-cliente" class="view-section active">
                 <div class="split-view">
                     <div class="panel-left">
@@ -335,21 +332,18 @@
                                         <div class="form-group"><label>Telefone</label><input type="text" id="c-tel"></div>
                                         <div class="form-group"><label>Cidade</label><select id="c-cidade"><option>Cuiabá</option><option>Várzea Grande</option></select></div>
                                     </div>
-                                    <!-- CAMPO BAIRRO -->
                                     <div class="form-group"><label>Bairro</label><input type="text" id="c-bairro"></div>
                                     
                                     <div class="form-group"><label>Endereço</label><textarea id="c-endereco" rows="2"></textarea></div>
                                     <button class="btn btn-primary btn-block">Salvar Cliente</button>
                                 </form>
 
-                                <!-- HISTÓRICO DE PEDIDOS (NOVO) -->
                                 <div id="client-history-area" style="margin-top: 1.5rem; border-top: 1px solid var(--slate-200); padding-top: 1rem; display: none;">
                                     <div style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); text-transform: uppercase; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 5px;">
                                         <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Pedidos
                                     </div>
                                     <div id="c-history-list" class="item-list" style="max-height: 200px; background: var(--slate-50);">
-                                        <!-- Lista preenchida via JS -->
-                                    </div>
+                                        </div>
                                 </div>
                             </div>
                         </div>
@@ -375,7 +369,6 @@
                 </div>
             </div>
 
-            <!-- VIEW: CATÁLOGO -->
             <div id="view-catalogo" class="view-section">
                 <div class="split-view">
                     <div class="panel-left">
@@ -388,7 +381,6 @@
                                 <form onsubmit="App.handleSave('produto', event)" id="form-produto">
                                     <input type="hidden" id="p-id">
                                     
-                                    <!-- CATEGORIA & FORNECEDOR (ALTERADO) -->
                                     <div class="row-2">
                                         <div class="form-group"><label>Categoria</label><select id="p-categoria"></select></div>
                                         <div class="form-group"><label>Fornecedor</label><input type="text" id="p-fornecedor"></div>
@@ -396,17 +388,13 @@
 
                                     <div class="row-2">
                                         <div class="form-group"><label>Código</label><input type="text" id="p-codigo" readonly></div>
-                                        <!-- EAN EDITÁVEL -->
                                         <div class="form-group"><label>EAN (Unid)</label><input type="text" id="p-ean" class="font-mono"></div>
                                     </div>
                                     
-                                    <!-- NOME -->
                                     <div class="form-group"><label>Nome</label><input type="text" id="p-nome" required oninput="UI.updateImageSlug()"></div>
                                     
-                                    <!-- CARACTERÍSTICAS -->
                                     <div class="form-group"><label>Características</label><textarea id="p-caracteristicas" rows="2"></textarea></div>
                                     
-                                    <!-- CONTROLE DE ESTOQUE -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--slate-200);">
                                         <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
                                             <label>Estoque</label>
@@ -421,7 +409,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- PREÇOS E MARGEM (NOVA LINHA DE 3 COLUNAS) -->
                                     <div class="row-3">
                                         <div class="form-group">
                                             <label>Custo (R$)</label>
@@ -437,7 +424,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- NOVA ÁREA DE OFERTA -->
                                     <div class="row-2" style="background: #fff7ed; border: 1px solid #ffedd5; border-radius: 6px; padding: 10px; margin-top: 0.75rem;">
                                         <div class="form-group">
                                             <label style="display: flex; align-items: center; gap: 5px; cursor: pointer;">
@@ -450,9 +436,7 @@
                                         </div>
                                     </div>
 
-                                    <!-- PESO E FOTO -->
                                     <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
-                                        <!-- NOVO: Linha com Peso e Limite -->
                                         <div class="row-2">
                                             <div class="form-group">
                                                 <label>Peso (Kg)</label>
@@ -464,7 +448,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- NOVO CAMPO: NOME IMAGEM AUTO -->
                                         <div class="form-group">
                                             <label>Nome do Arquivo de Imagem (Auto)</label>
                                             <div style="display: flex; gap: 0.5rem;">
@@ -483,14 +466,12 @@
                                         </div>
                                     </div>
 
-                                    <!-- ÁREA COMBO & PERSONALIZADO -->
                                     <div style="border-top: 1px solid var(--slate-200); padding-top: 10px; margin-top: 1rem;">
                                         <div class="form-group">
                                             <label style="display: flex; align-items: center; gap: 5px;">
                                                 <input type="checkbox" id="p-is-combo" onchange="UI.toggleComboArea(this.checked)" style="width: auto;"> É Combo / Kit?
                                             </label>
                                         </div>
-                                        <!-- NOVO: CHECKBOX PERSONALIZADO -->
                                         <div class="form-group" style="margin-top: 5px;">
                                             <label style="display: flex; align-items: center; gap: 5px; color: var(--warning);">
                                                 <input type="checkbox" id="p-personalized" style="width: auto;"> Produto Personalizado (Não Exportar)
@@ -520,7 +501,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- ÁREA DE VARIAÇÕES -->
                                     <details style="margin-top: 10px; border: 1px solid var(--slate-200); border-radius: 6px;">
                                         <summary style="background: var(--slate-50);">VARIAÇÕES / APELIDOS</summary>
                                         <div class="details-content">
@@ -605,11 +585,9 @@
                 </div>
             </div>
 
-            <!-- VIEW: LOGÍSTICA -->
             <div id="view-logistica" class="view-section">
                 <div class="split-view">
                     <div class="panel-left">
-                        <!-- Import Card -->
                         <div class="card">
                             <div class="card-header"><span style="color: var(--primary);">Importação JSON</span></div>
                             <div class="card-body">
@@ -622,7 +600,6 @@
                             </div>
                         </div>
                         
-                        <!-- Manual Card -->
                         <div class="card" style="flex: 1;">
                             <div class="card-header"><span style="color: var(--warning);">Movimento Manual</span></div>
                             <div class="card-body">
@@ -656,7 +633,6 @@
                 </div>
             </div>
 
-            <!-- VIEW: VENDA -->
             <div id="view-venda" class="view-section">
                 <div class="split-view">
                     <div class="panel-left">
@@ -667,7 +643,6 @@
                                     <input type="hidden" id="v-id">
                                     <div class="form-group"><label>Cliente</label><select id="v-cliente" required></select></div>
                                     
-                                    <!-- Área de Inserção de Itens -->
                                     <div style="background: var(--slate-50); padding: 0.75rem; border: 1px solid var(--slate-200); border-radius: 6px;">
                                         <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                                             <div style="flex: 1;" class="form-group">
@@ -690,7 +665,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Lista de Itens do Carrinho -->
                                     <div id="v-cart-list" class="item-list" style="flex: 1; min-height: 150px;">
                                         <div style="text-align: center; color: var(--slate-400); padding: 1rem; font-size: 0.8rem;">Carrinho vazio</div>
                                     </div>
@@ -741,7 +715,6 @@
                 </div>
             </div>
 
-            <!-- VIEW: EXPEDIÇÃO -->
             <div id="view-expedicao" class="view-section">
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); height: 100%; gap: 1px; background: var(--slate-300); border: 1px solid var(--slate-300); border-radius: 8px; overflow: hidden;">
                     <div style="background: var(--slate-50); display: flex; flex-direction: column;">
@@ -774,7 +747,6 @@
         </div>
     </main>
 
-    <!-- MODAL CONFIRMAÇÃO VENDA -->
     <dialog id="sale-confirm-modal" style="width: 400px;">
         <div style="padding: 1.5rem;">
             <h3 style="font-weight: 700; font-size: 1.1rem; color: var(--slate-800); margin-bottom: 1rem;">Baixar de qual estoque?</h3>
@@ -795,7 +767,6 @@
         </div>
     </dialog>
 
-    <!-- MODAL IMPORTAÇÃO -->
     <dialog id="import-modal">
         <div class="card-header" style="background: var(--slate-800); color: white; border-bottom: none;">
             <div style="display: flex; align-items: center; gap: 0.5rem;">
@@ -817,7 +788,6 @@
                 </div>
             </div>
             
-            <!-- Botão Global de Vínculo -->
             <div style="margin-bottom: 1rem; display: flex; justify-content: flex-end;">
                 <button onclick="ImportEngine.openBatchLinkModal()" class="btn btn-warning" id="btn-batch-link" disabled style="opacity: 0.5; font-size: 0.75rem;">
                     <i class="fa-solid fa-link"></i> Vincular Selecionados
@@ -846,7 +816,6 @@
         </div>
     </dialog>
     
-    <!-- MODAL SELEÇÃO DE PRODUTO PARA VÍNCULO -->
     <dialog id="product-select-modal" style="width: 500px;">
         <div style="padding: 1.5rem;">
              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -858,12 +827,10 @@
                 <input type="text" id="product-link-search" oninput="ImportEngine.searchLinkProduct(this.value)" placeholder="Buscar produto no sistema..." style="width: 100%;">
             </div>
             <div id="product-link-list" style="border: 1px solid var(--slate-200); border-radius: 6px; max-height: 300px; overflow-y: auto;">
-                <!-- List will be populated here -->
-            </div>
+                </div>
         </div>
     </dialog>
 
-    <!-- MODAL CATEGORIAS -->
     <dialog id="cat-modal" style="width: 400px;">
         <div style="padding: 1.5rem;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1008,7 +975,7 @@
                             ...p,
                             imageName: undefined, // Explicitly remove manual name field from export
                             caracteristicas: p.caracteristicas || '', 
-                            // MODIFICADO: Sufixo padrão adicionado e forçado
+                            // MODIFICADO: Caminho relativo correto para estrutura SIS/SITE
                             imagem: `../site/img/produtos/${imgName}-cesta-basica-cuiaba-varzea-grande.webp`, 
                             Limit: p.limit || 0,
                             Oferta: p.isOffer ? 'Sim' : 'Não',
@@ -1789,7 +1756,7 @@
                     const imgName = imgNameInput || data.codigo.toLowerCase();
                     
                     data.imageName = imgNameInput; // Store the raw input (slug)
-                    // MODIFICADO: Inclui sufixo padrão no caminho interno
+                    // MODIFICADO: Caminho relativo correto com ../ para estrutura SIS/SITE
                     data.imagem = `../site/img/produtos/${imgName}-cesta-basica-cuiaba-varzea-grande.webp`; 
 
                     // Combos
@@ -1909,9 +1876,20 @@
                     // Calc Margin on Edit
                     UI.calcMargin();
 
-                    // Load Image Preview 
-                    // Priority: Saved full path > Generated from Code
-                    const imgUrl = item.imagem || `../site/img/produtos/${item.codigo.toLowerCase()}.webp`;
+                    // MODIFICADO: Lógica inteligente para encontrar a imagem pelo NOME (slug) e não pelo código
+                    let slugPadrao = item.codigo.toLowerCase();
+                    if (item.nome) {
+                        slugPadrao = item.nome.toLowerCase()
+                            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
+                            .replace(/\s+/g, '-')           
+                            .replace(/[^\w\-]+/g, '')       
+                            .replace(/\-\-+/g, '-')         
+                            .replace(/^-+/, '')             
+                            .replace(/-+$/, '');   
+                    }
+
+                    // Load Image Preview (Priority: Saved Path -> Slug Name -> Code)
+                    const imgUrl = item.imagem || `../site/img/produtos/${slugPadrao}-cesta-basica-cuiaba-varzea-grande.webp`;
                     const imgEl = document.getElementById('p-img-preview');
                     const iconEl = document.getElementById('p-img-icon');
 
@@ -2043,9 +2021,20 @@
                 
                 document.getElementById('p-image-slug').value = slug;
                 
-                // Update Preview immediately if wanted, but might be annoying if typing
-                // const imgUrl = `../site/img/produtos/${slug}.webp`;
-                // ... logic to update preview ...
+                // MODIFICADO: Preview em tempo real com caminho relativo correto
+                const previewUrl = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
+                const imgEl = document.getElementById('p-img-preview');
+                const iconEl = document.getElementById('p-img-icon');
+
+                imgEl.src = previewUrl;
+                imgEl.onload = () => {
+                    imgEl.style.display = 'block';
+                    iconEl.style.display = 'none';
+                };
+                imgEl.onerror = () => {
+                    imgEl.style.display = 'none';
+                    iconEl.style.display = 'block';
+                };
             },
             // COPIAR SLUG PARA CLIPBOARD
             copyImageSlug: () => {
