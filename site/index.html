@@ -4,13 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 4.1 - Compact Desktop Sidebar & Rich Footer
+        VERSION: 4.2 - Smart Lazy Load System & Fade-In Transitions
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - Layout: Desktop Order Summary card made significantly more compact
-        - Content: Checkout button text changed to "Encomendar no Whatsapp"
-        - Config: Main WhatsApp number updated to end in 88
-        - Visual: Added functional contact buttons (Phone, Insta, Zap) to Footer
+        - Performance: Implemented Native Lazy Loading with smart threshold
+        - Visual: Added CSS-based Fade-In transition for images upon load
+        - Logic: First 2 home items are eager-loaded (LCP optimization)
+        - Logic: List items use decoding="async" to prevent UI jank
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -269,6 +269,16 @@
             border-bottom: 1px solid #f8fafc; display: flex; align-items: center; justify-content: center; 
             padding: 20px; cursor: zoom-in; overflow: hidden;
         }
+        
+        /* LAZY LOAD FADE-IN SYSTEM */
+        .img-fade-in {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+        .img-fade-in.visible {
+            opacity: 1;
+        }
+
         .bc-image { width: 100%; height: 100%; object-fit: contain; transition: transform 0.5s ease; mix-blend-mode: multiply; }
         .big-card:hover .bc-image { transform: scale(1.05); }
         
@@ -955,12 +965,6 @@
                     </button>
                 </div>
 
-                <!-- NEW: DESKTOP FAQ BUTTON -->
-                <button class="btn-faq-sidebar" onclick="document.getElementById('faq-modal').showModal()" aria-label="Abrir Dúvidas">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <span>Dúvidas Frequentes?</span>
-                </button>
-
                 <!-- 2. Nav Categorias Desktop -->
                 <nav class="desktop-cat-nav" aria-label="Navegação rápida de categorias">
                     <h3 style="margin-bottom:15px; font-weight:600; color:var(--secondary); font-size:1.1rem;">Navegar por Categoria</h3>
@@ -1278,10 +1282,15 @@
             renderHome() {
                 const container = document.getElementById('baskets-list');
                 const cestas = this.data.filter(p => p.categoria === 'CESTA BÁSICA');
-                container.innerHTML = cestas.map(p => `
+                container.innerHTML = cestas.map((p, index) => {
+                    // Smart Lazy Load: First 2 items eager, rest lazy
+                    const loadingAttr = index < 2 ? 'eager' : 'lazy';
+                    const fetchPriority = index < 2 ? 'high' : 'auto';
+                    
+                    return `
                     <article class="big-card">
                         <div class="bc-image-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                            <img src="${p.imagem}" alt="Cesta Básica ${p.nome}" class="bc-image" width="500" height="500" fetchpriority="high">
+                            <img src="${p.imagem}" alt="Cesta Básica ${p.nome}" class="bc-image img-fade-in" width="500" height="500" loading="${loadingAttr}" fetchpriority="${fetchPriority}" onload="this.classList.add('visible')">
                             <div class="media-indicators" id="media-ind-home-${p.id}">
                                 <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                                 <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
@@ -1300,7 +1309,7 @@
                             </div>
                         </div>
                     </article>
-                `).join('');
+                `}).join('');
                 
                 // Check indicators for home items
                 setTimeout(() => this.checkGalleryIndicators('home-'), 500);
@@ -1381,7 +1390,7 @@
                     basketContainer.innerHTML = basketItems.map(p => `
                         <article class="product-card">
                             <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                                <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy" width="200" height="200">
+                                <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
                                 <div class="media-indicators" id="media-ind-${p.id}">
                                     <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                                     <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
@@ -1448,7 +1457,7 @@
                             return `
                                 <article class="product-card">
                                     <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                                        <img src="${p.imagem}" alt="${p.nome}" class="pc-img" loading="lazy" width="200" height="200">
+                                        <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
                                         <div class="media-indicators" id="media-ind-${p.id}">
                                             <div class="indicator-icon camera-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></div>
                                             <div class="indicator-icon video-icon"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg></div>
