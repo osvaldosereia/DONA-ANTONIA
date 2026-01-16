@@ -1574,7 +1574,7 @@
     "valor": 1.69,
     "batches": [
       {
-        "date": "",
+        "date": "2027-05-12",
         "qty": 48
       }
     ],
@@ -1605,7 +1605,8 @@
     "unidade": "UN",
     "Limit": 6,
     "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Valor_Oferta": 0,
+    "validade": "2027-05-12"
   },
   {
     "id": "1768439939365616",
@@ -2384,7 +2385,7 @@
     "valor": 1.75,
     "batches": [
       {
-        "date": "",
+        "date": "2026-10-17",
         "qty": 18
       }
     ],
@@ -2415,7 +2416,8 @@
     "unidade": "UN",
     "Limit": 3,
     "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Valor_Oferta": 0,
+    "validade": "2026-10-17"
   },
   {
     "id": "1768487547404420",
