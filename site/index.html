@@ -4,13 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 5.3 - Stability Fix & Visual Refinement
+        VERSION: 5.5 - Nutritional Info & Validity
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - FIX: Sanitização de aspas em nomes de produtos (prevenção de quebra de HTML).
-        - FIX: Fallback de visibilidade de imagens.
-        - UI: Refinamento final da barra lateral desktop (Grid 2 colunas compacta).
-        - UI: Modal de checkout mais discreto e organizado.
+        - FEAT: Campo "Validade" nos cards de ALIMENTOS.
+        - FEAT: Botão "Valor Nutricional" (abre foto A) condicional em ALIMENTOS.
+        - JS: Galeria suporta abertura direta em imagem específica.
+        - JS: Verificador de mídia agora ativa o botão nutricional se a imagem A existir.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -256,7 +256,11 @@
         /* SEO: Use CSS Grid for performance */
         .baskets-grid { display: grid; grid-template-columns: 1fr; gap: 24px; padding-bottom: 60px; list-style: none; }
         @media (min-width: 640px) { .baskets-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .baskets-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
+        
+        /* DESKTOP HOME GRID - Compact */
+        @media (min-width: 1024px) { 
+            .baskets-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } 
+        }
         
         .big-card { 
             background: var(--surface); border-radius: 16px; overflow: hidden; 
@@ -400,7 +404,8 @@
         }
         /* Mobile: 2 columns is standard now */
         @media(min-width: 600px) { .basket-grid, .extras-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-        @media(min-width: 1024px) { .basket-grid, .extras-grid { grid-template-columns: repeat(4, 1fr); gap: 24px; } }
+        /* Tablet */
+        @media(min-width: 900px) { .basket-grid, .extras-grid { grid-template-columns: repeat(4, 1fr); gap: 20px; } }
 
         /* PRODUCT CARD - STRICT VERTICAL LAYOUT */
         .product-card {
@@ -490,6 +495,35 @@
         
         .pc-meta { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; background: rgba(0,0,0,0.05); padding: 2px 8px; border-radius: 4px; width: fit-content; margin: 0 auto; }
         
+        /* NEW: Validity Text */
+        .pc-validity {
+            font-size: 0.75rem;
+            color: #65a30d; /* Fresh Green */
+            font-weight: 500;
+            margin-top: -2px;
+            margin-bottom: 4px;
+        }
+
+        /* NEW: Nutri Button (Chip) */
+        .btn-nutri {
+            display: inline-flex; align-items: center; justify-content: center;
+            padding: 4px 10px;
+            border: 1px solid #e2e8f0;
+            background: #fff;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            color: #475569;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: none; /* Hidden by default, JS reveals */
+        }
+        .btn-nutri:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            color: var(--secondary);
+        }
+
         .pc-actions { width: 100%; margin-top: auto; }
         
         /* BUTTON WIDE & HIGHLIGHTED */
@@ -519,10 +553,11 @@
         .qty-btn { width: 32px; height: 100%; font-size: 1.2rem; color: var(--secondary); display:flex; align-items:center; justify-content:center; }
         .qty-val { font-weight: 600; font-size: 0.95rem; color: var(--secondary); }
 
-        /* DESKTOP TWEAKS */
+        /* DESKTOP TWEAKS - OPTIMIZED FOR DENSITY */
         @media(min-width: 1024px) {
             .container { padding: 0 40px; }
-            .hero h1 { font-size: 3.5rem; }
+            .hero h1 { font-size: 3rem; } /* Slightly reduced heading */
+            .hero p { font-size: 1.15rem; }
             
             /* HEADER DESKTOP LAYOUT */
             .ch-inner { flex-wrap: nowrap; justify-content: space-between; }
@@ -545,19 +580,34 @@
             }
             .btn-header-checkout:hover { background: #15803d; transform: translateY(-1px); }
 
-            /* LAYOUT GRID - REDUCED SIDEBAR WIDTH */
-            .customizer-grid { display: grid; grid-template-columns: 1fr 180px; gap: 30px; align-items: start; }
+            /* LAYOUT GRID - INCREASED SIDEBAR WIDTH (260px) */
+            .customizer-grid { display: grid; grid-template-columns: 1fr 260px; gap: 30px; align-items: start; }
             .products-col { padding-bottom: 60px; }
             
+            /* DESKTOP PRODUCT GRID - 5 COLUMNS (COMPACT) */
+            .basket-grid, .extras-grid { 
+                grid-template-columns: repeat(5, 1fr); 
+                gap: 16px; 
+            }
+            
+            /* ULTRA WIDE SCREENS - 6 COLUMNS */
+            @media(min-width: 1400px) {
+                .basket-grid, .extras-grid { grid-template-columns: repeat(6, 1fr); }
+            }
+            
+            /* COMPACT CARD STYLING FOR DESKTOP */
             .product-card { 
                 /* Mantem vertical */
-                padding: 16px 16px; 
-                gap: 12px; height: 100%; border-bottom: none; border: 1px solid transparent; border-radius: 12px;
+                padding: 12px; /* Less padding */
+                gap: 8px; height: 100%; border-bottom: none; border: 1px solid transparent; border-radius: 12px;
             }
             .product-card:hover { border-color: var(--border); background: white; } 
-            .pc-name { font-size: 0.9rem; }
-            .pc-price { font-size: 1rem; }
-            .btn-add-sm, .qty-control { height: 40px; font-size: 0.9rem; }
+            
+            .pc-name { font-size: 0.8rem; height: 2.6em; line-height: 1.3; } /* Smaller & Tighter */
+            .pc-price { font-size: 0.9rem; margin-bottom: 4px; }
+            
+            /* SMALLER BUTTONS DESKTOP */
+            .btn-add-sm, .qty-control { height: 34px; font-size: 0.75rem; border-radius: 6px; }
             
             /* HIDE MOBILE BOTTOM BAR ON DESKTOP */
             .order-summary-card { display: none !important; }
@@ -618,7 +668,7 @@
             .desktop-cat-link { 
                 display: flex; align-items: center; justify-content: center;
                 text-align: center;
-                padding: 6px 4px; /* Ultra Compact */
+                padding: 8px 6px; /* Slightly more padding for clickability */
                 color: var(--secondary);
                 transition: 0.2s; 
                 cursor: pointer; 
@@ -1202,7 +1252,7 @@
         };
 
         const Gallery = {
-            open(mainSrc, productName) {
+            open(mainSrc, productName, startWith = null) {
                 const ol = document.getElementById('gallery-overlay');
                 const img = document.getElementById('gallery-img');
                 const video = document.getElementById('gallery-video');
@@ -1210,7 +1260,9 @@
                 
                 // Clear and Setup
                 thumbs.innerHTML = '';
-                img.src = mainSrc;
+                
+                // Set Initial Image
+                img.src = startWith || mainSrc;
                 img.alt = `Foto de ${productName}`;
                 
                 // Reset Video State
@@ -1222,10 +1274,10 @@
                 ol.classList.add('open');
 
                 // Add Main Image Thumb
-                this.addThumb(mainSrc, 'image', true);
+                this.addThumb(mainSrc, 'image', !startWith); // Active if no startWith provided
 
                 // 1. Check Extra Photos (A-Z)
-                this.checkSuffixes(mainSrc);
+                this.checkSuffixes(mainSrc, startWith);
 
                 // 2. Check Video (.mp4)
                 this.checkVideo(mainSrc);
@@ -1258,7 +1310,7 @@
                 thumbs.appendChild(el);
             },
 
-            checkSuffixes(mainSrc) {
+            checkSuffixes(mainSrc, startWith) {
                 const lastDot = mainSrc.lastIndexOf('.');
                 if(lastDot === -1) return;
                 
@@ -1279,7 +1331,9 @@
                     img.onload = () => {
                         // Image exists AND has content (width > 0)
                         if (img.naturalWidth > 0) {
-                            this.addThumb(testUrl, 'image', false);
+                            // Check if this url is the startWith url to mark as active
+                            const isActive = (testUrl === startWith);
+                            this.addThumb(testUrl, 'image', isActive);
                             idx++;
                             tryNext();
                         } else {
@@ -1369,6 +1423,7 @@
                             ...p, 
                             id: String(p.id), 
                             valor: normalPrice,
+                            validade: p.Validade || p.validade, // Map validity field
                             categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
                             imagem: imgPath,
                             items: p.items || [], 
@@ -1625,6 +1680,31 @@
                 
                 let uniqueContext = isIncluded ? 'inc' : 'ext'; 
 
+                // --- NEW LOGIC: VALIDITY & NUTRI BUTTON ---
+                let validityHTML = '';
+                let nutriBtnHTML = '';
+
+                if (p.categoria === 'ALIMENTOS') {
+                    if (p.validade) {
+                        validityHTML = `<div class="pc-validity">Validade: ${p.validade}</div>`;
+                    }
+                    
+                    // Logic to open 2nd photo (Nutri Table)
+                    const lastDot = p.imagem.lastIndexOf('.');
+                    if (lastDot > -1) {
+                        const base = p.imagem.substring(0, lastDot);
+                        const ext = p.imagem.substring(lastDot);
+                        const nutriSrc = base + 'A' + ext;
+                        
+                        // Button hidden by default (display:none), enabled by performMediaCheck if image exists
+                        nutriBtnHTML = `<button id="nutri-btn-${p.id}" class="btn-nutri" onclick="Gallery.open('${p.imagem}', '${p.nome.replace(/"/g, '&quot;')}', '${nutriSrc}')">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right:4px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Valor Nutricional
+                        </button>`;
+                    }
+                }
+                // -------------------------------------------
+
                 return `
                     <article class="product-card" data-pid="${p.id}">
                         <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
@@ -1638,7 +1718,11 @@
                         
                         <h3 class="pc-name">${p.nome}</h3>
                         
+                        ${validityHTML}
+                        
                         ${isIncluded ? `<div class="pc-meta">Incluso</div>` : priceHTML}
+                        
+                        ${nutriBtnHTML}
                         
                         <div class="pc-actions" id="btn-area-${p.id}-${uniqueContext}">${btnHtml}</div>
                     </article>`;
@@ -1670,13 +1754,19 @@
                     if(lastDot > -1) {
                         const base = p.imagem.substring(0, lastDot);
                         
-                        // Check Photo A
+                        // Check Photo A (Usually extra photo or Nutri Info)
                         const testUrlImg = base + 'A' + p.imagem.substring(lastDot);
                         const img = new Image();
                         img.onload = () => { 
                             if(img.naturalWidth > 0) {
+                                // 1. Show Camera Icon
                                 const camIcon = container.querySelector('.camera-icon');
                                 if(camIcon) camIcon.classList.add('visible');
+
+                                // 2. Show Nutri Button (if it exists)
+                                // We query all potential nutri buttons for this product ID (could be in Included or Extra list)
+                                const nutriBtns = document.querySelectorAll(`[id='nutri-btn-${pid}']`);
+                                nutriBtns.forEach(btn => btn.style.display = 'inline-flex');
                             }
                         };
                         img.src = testUrlImg;
