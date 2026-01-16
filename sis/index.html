@@ -893,18 +893,23 @@
         </div>
     </dialog>
 
-    <!-- MODAL CATEGORIAS -->
-    <dialog id="cat-modal" style="width: 400px;">
-        <div style="padding: 1.5rem;">
+    <!-- MODAL CATEGORIAS (ATUALIZADO) -->
+    <dialog id="cat-modal" style="width: 500px;">
+        <div style="padding: 1.5rem; display: flex; flex-direction: column; height: 80vh;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                <h3 style="font-weight: 700; color: var(--slate-700); font-size: 0.9rem; text-transform: uppercase;">Categorias</h3>
+                <h3 style="font-weight: 700; color: var(--slate-700); font-size: 0.9rem; text-transform: uppercase;">Gestão de Categorias</h3>
                 <button onclick="document.getElementById('cat-modal').close()" style="background: none; border: none; cursor: pointer; color: var(--slate-400);"><i class="fa-solid fa-times"></i></button>
             </div>
-            <form onsubmit="CategoryApp.addCategory(event)" style="flex-direction: row; gap: 0.5rem; margin-bottom: 1rem;">
-                <input type="text" id="new-cat-name" placeholder="Nova..." style="flex: 1;">
+            
+            <!-- Adicionar Raiz -->
+            <form onsubmit="CategoryApp.addRoot(event)" style="display:flex; flex-direction: row; gap: 0.5rem; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid var(--slate-100);">
+                <input type="text" id="new-cat-root-name" placeholder="Nova Categoria Principal..." style="flex: 1;" required>
                 <button class="btn btn-primary">ADD</button>
             </form>
-            <div id="cat-list-container" style="max-height: 250px; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem;"></div>
+
+            <div id="cat-list-container" style="flex: 1; overflow-y: auto; padding-right: 0.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <!-- Lista preenchida via JS -->
+            </div>
         </div>
     </dialog>
 
@@ -1486,91 +1491,6 @@
             }
         };
 
-        // --- COMBO APP ---
-        const ComboApp = {
-            comboItems: [],
-            processBulk: () => {
-                const text = document.getElementById('p-combo-bulk').value;
-                if(!text) return;
-                const lines = text.split('\n');
-                const db = DB.load();
-                
-                lines.forEach(line => {
-                    const match = line.match(/^\[(\d+)\]\s*(.*)$/);
-                    let qty = 1;
-                    let identifier = line.trim();
-
-                    if (match) {
-                        qty = parseInt(match[1], 10);
-                        identifier = match[2].trim();
-                    } else {
-                        const parts = line.split('|').map(s => s.trim());
-                        identifier = parts[0];
-                        if (parts[1]) qty = parseInt(parts[1], 10) || 1;
-                    }
-
-                    if (!identifier) return;
-                    const idUpper = identifier.toUpperCase();
-
-                    const prod = db.produto.find(p => {
-                        const pEans = [p.ean, ...(p.variacoesEan||[])].filter(Boolean);
-                        const pNames = [p.nome, ...(p.variacoesNome||[])].map(n => n.toUpperCase());
-                        return p.codigo.toUpperCase() === idUpper || pEans.includes(identifier) || pNames.includes(idUpper);
-                    });
-
-                    if (prod) {
-                        ComboApp.comboItems.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty });
-                    }
-                });
-                ComboApp.renderList();
-                document.getElementById('p-combo-bulk').value = '';
-            },
-            addFromSelector: () => {
-                const prodId = document.getElementById('p-combo-select').value;
-                const qty = Number(document.getElementById('p-combo-qty').value);
-                if (!prodId || qty <= 0) return;
-                
-                const db = DB.load();
-                const prod = db.produto.find(p => p.id === prodId);
-                
-                if (prod) {
-                    ComboApp.comboItems.push({ id: prod.id, codigo: prod.codigo, nome: prod.nome, qty: qty });
-                    ComboApp.renderList();
-                }
-            },
-            populateSelect: (filterText = '') => {
-                const db = DB.load();
-                const select = document.getElementById('p-combo-select');
-                let items = db.produto
-                    .filter(p => p.estoque > 0)
-                    .sort((a,b) => a.nome.localeCompare(b.nome));
-
-                if(filterText) {
-                    const t = filterText.toLowerCase();
-                    items = items.filter(p => p.nome.toLowerCase().includes(t) || p.codigo.toLowerCase().includes(t));
-                }
-
-                select.innerHTML = '<option value="">Selecione...</option>' + 
-                    items.map(p => `<option value="${p.id}">${p.codigo} - ${p.nome} (Q: ${p.estoque})</option>`).join('');
-            },
-            filterSelector: (val) => {
-                ComboApp.populateSelect(val);
-            },
-            renderList: () => {
-                const el = document.getElementById('p-combo-list');
-                el.innerHTML = ComboApp.comboItems.map((i, idx) => `
-                    <div class="item-row">
-                        <span><b>${i.codigo}</b> ${i.nome}</span>
-                        <span>x${i.qty} <button type="button" onclick="ComboApp.remove(${idx})" style="color:red; margin-left:5px;">&times;</button></span>
-                    </div>
-                `).join('');
-            },
-            remove: (idx) => {
-                ComboApp.comboItems.splice(idx, 1);
-                ComboApp.renderList();
-            }
-        };
-
         // --- CART SYSTEM ---
         const Cart = {
             items: [],
@@ -1668,11 +1588,13 @@
                     const prod = db.produto.find(p => p.id === cartItem.id);
                     if(prod) {
                         if(stockType === 'fisico') {
+                             // USAR LOGICA FEFO
                              StockManager.deduct(prod, cartItem.qty);
                         } else {
                              prod.estoqueFiscal = (prod.estoqueFiscal||0) - cartItem.qty;
                         }
 
+                        // Deduzir Combo também
                         if(prod.items && prod.items.length > 0) {
                             prod.items.forEach(childItem => {
                                 const childProd = db.produto.find(cp => cp.id === childItem.id);
@@ -1733,12 +1655,18 @@
                         
                         const hasVar = (p.variacoesEan && p.variacoesEan.length > 1) || (p.variacoesNome && p.variacoesNome.length > 1);
                         const varBadge = hasVar ? '<i class="fa-solid fa-layer-group" title="Possui variações cadastradas" style="color:var(--slate-400); font-size:0.7rem; margin-left:4px;"></i>' : '';
+                        
+                        // Icone personalizado
                         const personBadge = p.personalized ? '<i class="fa-solid fa-star" title="Personalizado" style="color:var(--warning); font-size:0.7rem; margin-left:4px;"></i>' : '';
+                        
+                        // Icone oferta
                         const offerBadge = p.isOffer ? '<span class="badge badge-orange">OFERTA</span>' : '';
 
+                        // Renderiza Lotes na Tabela
                         let batchDisplay = `<div style="font-weight:700; ${estStyle}">${p.estoque} <span style="font-size:0.6rem; color:var(--slate-400);">total</span></div>`;
                         
                         if(p.batches && p.batches.length > 0) {
+                            // Ordena para exibir vencimento proximo
                             const sorted = [...p.batches].sort((a,b) => {
                                 if(!a.date) return 1; if(!b.date) return -1;
                                 return new Date(a.date) - new Date(b.date);
@@ -1747,6 +1675,7 @@
                             batchDisplay += `<div style="margin-top:2px;">`;
                             sorted.forEach(b => {
                                 let d = b.date ? new Date(b.date).toLocaleDateString() : 'S/ Val';
+                                // Verifica se venceu
                                 let isExpired = b.date && new Date(b.date) < new Date();
                                 let color = isExpired ? 'color:var(--danger);' : 'color:var(--slate-500);';
                                 batchDisplay += `<div style="font-size:0.65rem; ${color}"><i class="fa-regular fa-calendar" style="margin-right:2px;"></i> ${d}: <b>${b.qty}</b></div>`;
@@ -1773,17 +1702,23 @@
                         </tr>`;
                     }).join('');
                 },
+                // MODIFICADO: Filtro unificado (Texto + Categoria + Estoque)
                 filter: () => {
                     const text = document.getElementById('catalogo-search').value.toLowerCase();
                     const cat = document.getElementById('filter-cat').value;
                     const stock = document.getElementById('filter-stock').value;
 
                     const list = DB.load().produto.filter(p => {
+                        // Filtro Texto
                         const pNames = [p.nome, ...(p.variacoesNome||[])].join(' ').toLowerCase();
                         const pEans = [p.ean, ...(p.variacoesEan||[])].join(' ');
                         const matchText = pNames.includes(text) || p.codigo.toLowerCase().includes(text) || pEans.includes(text);
                         if(!matchText) return false;
+
+                        // Filtro Categoria
                         if(cat && p.categoria !== cat) return false;
+
+                        // Filtro Estoque
                         if(stock) {
                             const q = p.estoque;
                             if(stock === '<=0' && q > 0) return false;
@@ -1792,6 +1727,7 @@
                             if(stock === '51-100' && (q < 51 || q > 100)) return false;
                             if(stock === '>100' && q <= 100) return false;
                         }
+
                         return true;
                     });
                     Views.catalogo.render(list);
@@ -1819,6 +1755,7 @@
             venda: {
                 render: () => {
                     const db = DB.load();
+                    // Ordena por data decrescente (mais recente primeiro)
                     const list = db.venda.sort((a, b) => b.date - a.date);
                     
                     document.getElementById('table-venda').innerHTML = list.map(v => {
@@ -1842,9 +1779,10 @@
                 render: () => {
                     const db = DB.load();
                     ['CX','VG','CBA','CPA'].forEach(r => {
-                        const pedidos = db.venda.filter(v => v.rota === r).slice(-8); 
+                        const pedidos = db.venda.filter(v => v.rota === r).slice(-8); // Show last 8
                         document.getElementById(`col-${r}`).innerHTML = pedidos.map(p => {
                             const cli = db.cliente.find(c => c.id === p.cliId);
+                            // Itens sum
                             const itemsText = p.items.map(i => `${i.qty}x ${i.nome.substring(0,10)}..`).join('<br>');
                             return `
                             <div style="background: white; padding: 0.75rem; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 0.75rem;">
@@ -1870,7 +1808,10 @@
                 let data = {};
 
                 if (type === 'produto') {
+                    // Manual object construction for Products to keep JSON clean
+                    // Core Data
                     data.id = document.getElementById('p-id').value;
+                    // Generate new code if missing (new product)
                     if (!data.id) {
                         data.id = Date.now().toString() + Math.random().toString().slice(2,5);
                         data.codigo = DB.nextCode('P');
@@ -1881,12 +1822,14 @@
                     data.nome = document.getElementById('p-nome').value;
                     data.ean = document.getElementById('p-ean').value;
                     data.categoria = document.getElementById('p-categoria').value;
-                    data.fornecedor = document.getElementById('p-fornecedor').value; 
+                    data.fornecedor = document.getElementById('p-fornecedor').value; // CAMPO FORNECEDOR ADICIONADO
                     data.caracteristicas = document.getElementById('p-caracteristicas').value;
                     
+                    // Numeric Data
                     data.custo = Number(document.getElementById('p-custo').value) || 0;
                     data.valor = Number(document.getElementById('p-valor').value) || 0;
                     
+                    // --- CAPTURA DE LOTES (3 SLOTS) ---
                     data.batches = [];
                     for(let i=1; i<=3; i++) {
                         const d = document.getElementById(`p-batch-date-${i}`).value;
@@ -1895,10 +1838,12 @@
                             data.batches.push({ date: d, qty: q });
                         }
                     }
+                    // Calcula Total Físico baseado nos lotes
                     data.estoque = data.batches.reduce((acc, b) => acc + b.qty, 0);
 
                     data.estoqueFiscal = Number(document.getElementById('p-estoqueFiscal').value) || 0;
                     data.peso = Number(document.getElementById('p-peso').value) || 0;
+                    // Campo Limite adicionado
                     data.limit = Number(document.getElementById('p-limit').value) || 0;
 
                     // --- NOVA LÓGICA DE IMAGEM OBRIGATÓRIA ---
@@ -1921,27 +1866,34 @@
                     // FORÇA O SUFIXO
                     data.imagem = `../site/img/produtos/${prefixo}-cesta-basica-cuiaba-varzea-grande.webp`;
 
+                    // Combos
                     if(document.getElementById('p-is-combo').checked) {
                         data.items = ComboApp.comboItems;
                     } else {
                         data.items = [];
                     }
 
+                    // Personalizado (NEW)
                     data.personalized = document.getElementById('p-personalized').checked;
+                    
+                    // OFERTA (NEW)
                     data.isOffer = document.getElementById('p-is-offer').checked;
                     data.offerPrice = data.isOffer ? (Number(document.getElementById('p-offer-price').value) || 0) : 0;
 
+                    // Variations
                     const vNomes = document.getElementById('p-variacoesNome').value;
                     data.variacoesNome = vNomes ? vNomes.split('|').map(s => s.trim()).filter(Boolean) : [];
                     const vEans = document.getElementById('p-variacoesEan').value;
                     data.variacoesEan = vEans ? vEans.split('|').map(s => s.trim()).filter(Boolean) : [];
 
+                    // Fiscal Data (Hidden/Details)
                     data.ncm = document.getElementById('p-ncm').value;
                     data.cest = document.getElementById('p-cest').value;
                     data.cfop = document.getElementById('p-cfop').value;
                     data.csosn = document.getElementById('p-csosn').value;
-                    data.obs = document.getElementById('p-obs-produto').value;
+                    data.obs = document.getElementById('p-obs-produto').value; // Using correct ID from HTML but saving as 'obs'
                     
+                    // Hidden Legacy/Import Fields
                     data.subcategoria = document.getElementById('p-subcategoria').value;
                     data.nota = document.getElementById('p-nota').value;
                     data.refId = document.getElementById('p-refId').value;
@@ -1949,6 +1901,7 @@
                     data.unidade = document.getElementById('p-unidade').value;
 
                 } else {
+                    // Standard Loop for other types (Cliente, Entrada)
                     Array.from(form.elements).forEach(el => {
                         if(el.id) {
                             const key = el.id.split('-')[1];
@@ -1961,21 +1914,26 @@
                 form.reset();
                 if(type === 'produto') {
                     document.getElementById('p-id').value = '';
-                    ComboApp.comboItems = []; 
+                    ComboApp.comboItems = []; // reset combo
                     ComboApp.renderList();
+                    // Reset Image Preview
                     document.getElementById('p-img-preview').src = '';
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
-                    document.getElementById('debug-path').innerText = ''; 
+                    document.getElementById('debug-path').innerText = ''; // Clear debug
+                    // Reset Margin
                     document.getElementById('p-margem').value = '';
+                    // Reset Offer
                     document.getElementById('p-is-offer').checked = false;
                     UI.toggleOfferInput();
+                    // Reset Image Name
                     document.getElementById('p-image-slug').value = '';
-                    document.getElementById('p-total-fisico-display').innerText = '0';
+                    document.getElementById('p-total-fisico-display').innerText = '0'; // Reset display
+                    
                     Views.catalogo.render();
                 } else if(type === 'cliente') {
                     document.getElementById('c-id').value = '';
-                    document.getElementById('client-history-area').style.display = 'none';
+                    document.getElementById('client-history-area').style.display = 'none'; // Hide history on reset
                     Views.cliente.render();
                 }
             },
@@ -1986,6 +1944,7 @@
                 // Populate fields
                 for(let k in item) {
                     const el = document.getElementById(`${type.charAt(0)}-${k}`);
+                    // Handle special case for obs
                     if (k === 'obs' && type === 'produto') {
                          document.getElementById('p-obs-produto').value = item[k];
                          continue;
@@ -2032,16 +1991,23 @@
                     }
                     StockManager.calcTotalDisplay();
 
+                    // Populate personalized check
                     document.getElementById('p-personalized').checked = !!item.personalized;
+                    
+                    // Populate Offer
                     document.getElementById('p-is-offer').checked = !!item.isOffer;
                     document.getElementById('p-offer-price').value = item.offerPrice || '';
                     UI.toggleOfferInput();
-                    UI.updateImageSlug(); // Tenta o slug automático
 
-                    // Se tiver nome manual salvo, usa ele
+                    // --- PREVIEW LOGIC ---
                     if(item.imageName) {
+                        // Se tem prefixo salvo, carrega ele
                         document.getElementById('p-image-slug').value = item.imageName;
                         UI.updatePreviewManual();
+                    } else {
+                        // Se não tem, gera do nome
+                        document.getElementById('p-image-slug').value = '';
+                        UI.updateImageSlug();
                     }
 
                     document.getElementById('p-variacoesNome').value = (item.variacoesNome || []).join(' | ');
@@ -2049,22 +2015,6 @@
                     
                     // Calc Margin on Edit
                     UI.calcMargin();
-
-                    // MODIFICADO: Lógica inteligente para encontrar a imagem pelo NOME (slug) e não pelo código
-                    let slugPadrao = item.codigo.toLowerCase();
-                    if (item.nome) {
-                        slugPadrao = item.nome.toLowerCase()
-                            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
-                            .replace(/\s+/g, '-')           
-                            .replace(/[^\w\-]+/g, '')       
-                            .replace(/\-\-+/g, '-')         
-                            .replace(/^-+/, '')             
-                            .replace(/-+$/, '');   
-                    }
-
-                    // Load Image Preview (Priority: Saved Path -> Slug Name -> Code)
-                    const imgUrl = item.imagem || `../site/img/produtos/${slugPadrao}-cesta-basica-cuiaba-varzea-grande.webp`;
-                    UI.updatePreviewCommon(imgUrl);
                 } else if (type === 'cliente') {
                     // LOAD HISTORY
                     const db = DB.load();
@@ -2102,7 +2052,12 @@
                 document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
                 document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
                 document.getElementById(`view-${view}`).classList.add('active');
-                if(btn) btn.classList.add('active'); 
+                if(btn) btn.classList.add('active'); // btn can be null if called programmatically
+                else {
+                    // Try to find the button
+                    // const navBtn = document.querySelector(`.nav-item[onclick*="'${view}'"]`);
+                    // if(navBtn) navBtn.classList.add('active');
+                }
 
                 document.getElementById('page-title').innerText = view === 'logistica' ? 'Logística & Estoque' : view.charAt(0).toUpperCase() + view.slice(1);
                 
@@ -2138,15 +2093,18 @@
                     ComboApp.renderList();
                     document.getElementById('p-is-combo').checked = false;
                     UI.toggleComboArea(false);
+                    // Reset Image
                     document.getElementById('p-img-preview').src = '';
                     document.getElementById('p-img-preview').style.display = 'none';
                     document.getElementById('p-img-icon').style.display = 'block';
-                    document.getElementById('debug-path').innerText = ''; 
+                    document.getElementById('debug-path').innerText = ''; // Clear debug
                     document.getElementById('p-margem').value = '';
+                    // Reset Offer
                     document.getElementById('p-is-offer').checked = false;
                     UI.toggleOfferInput();
+                    // Reset Image Name
                     document.getElementById('p-image-slug').value = '';
-                    document.getElementById('p-total-fisico-display').innerText = '0';
+                    document.getElementById('p-total-fisico-display').innerText = '0'; // Reset display
                 }
                 if(t === 'cliente') {
                     document.getElementById('client-history-area').style.display = 'none';
@@ -2157,27 +2115,30 @@
                 document.getElementById('grp-fisico').style.display = type === 'fiscal' ? 'none' : 'block';
                 document.getElementById('grp-fiscal').style.display = type === 'fisico' ? 'none' : 'block';
             },
+            // FUNÇÃO PARA MOSTRAR/OCULTAR INPUT DE OFERTA
             toggleOfferInput: () => {
                 const isOffer = document.getElementById('p-is-offer').checked;
                 document.getElementById('offer-price-container').style.display = isOffer ? 'block' : 'none';
             },
+            // GERA SLUG DA IMAGEM E ATUALIZA CAMPO
             updateImageSlug: () => {
                 // SÓ EXECUTA SE O CAMPO MANUAL ESTIVER VAZIO
                 if(document.getElementById('p-image-slug').value) return;
 
                 const name = document.getElementById('p-nome').value;
                 const slug = name.toString().toLowerCase()
-                                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
-                                .replace(/\s+/g, '-')           
-                                .replace(/[^\w\-]+/g, '')       
-                                .replace(/\-\-+/g, '-')         
-                                .replace(/^-+/, '')             
-                                .replace(/-+$/, '');            
+                                .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // remove acentos
+                                .replace(/\s+/g, '-')           // espaços para -
+                                .replace(/[^\w\-]+/g, '')       // remove especiais
+                                .replace(/\-\-+/g, '-')         // remove múltiplos -
+                                .replace(/^-+/, '')             // trim start -
+                                .replace(/-+$/, '');            // trim end -
                 
                 // AUTOMÁTICO = COM O SUFIXO OBRIGATÓRIO
                 const previewUrl = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
                 UI.updatePreviewCommon(previewUrl);
             },
+            // NOVA FUNÇÃO: ATUALIZA A FOTO ENQUANTO DIGITAS MANUALMENTE O SLUG
             updatePreviewManual: () => {
                 const slug = document.getElementById('p-image-slug').value;
                 if(!slug) {
@@ -2188,6 +2149,7 @@
                 const previewUrl = `../site/img/produtos/${slug}-cesta-basica-cuiaba-varzea-grande.webp`;
                 UI.updatePreviewCommon(previewUrl);
             },
+            // FUNÇÃO COMUM DE PREVIEW COM DEBUG
             updatePreviewCommon: (url) => {
                 const imgEl = document.getElementById('p-img-preview');
                 const iconEl = document.getElementById('p-img-icon');
@@ -2212,10 +2174,12 @@
                  const debugEl = document.getElementById('debug-path');
                  debugEl.style.background = "rgba(239, 68, 68, 0.9)"; // Red if not found
             },
+            // COPIAR SLUG PARA CLIPBOARD
             copyImageSlug: () => {
                 const copyText = document.getElementById("p-image-slug");
                 copyText.select();
-                copyText.setSelectionRange(0, 99999); 
+                copyText.setSelectionRange(0, 99999); // For mobile devices
+                // MODIFICADO: Copia apenas o nome, sem a extensão, conforme solicitado
                 navigator.clipboard.writeText(copyText.value).then(() => {
                     alert("Nome copiado: " + copyText.value);
                 });
@@ -2249,24 +2213,50 @@
                 document.getElementById('combo-area').style.display = checked ? 'block' : 'none';
                 if(checked) ComboApp.populateSelect();
             },
+            // MODIFICADO: Popula também o filtro da lista lateral e suporta SUBCATEGORIAS
             populateCategories: () => {
                 const db = DB.load();
+                
+                // Build options HTML string including Subcategories
+                let options = '<option value="">Sem Categoria</option>';
+                
+                db.categorias.forEach(c => {
+                    // Root option
+                    options += `<option value="${c.nome}">${c.nome}</option>`;
+                    // Sub options
+                    if(c.subs && c.subs.length > 0) {
+                        c.subs.forEach(s => {
+                            // Value combines both for easy searching/filtering, visual has indent
+                            options += `<option value="${c.nome} > ${s.nome}">&nbsp;&nbsp;&nbsp;↳ ${s.nome}</option>`;
+                        });
+                    }
+                });
+
+                // Popula select do formulário
                 const sel = document.getElementById('p-categoria');
                 if(sel) {
                     const current = sel.value;
-                    sel.innerHTML = '<option value="">Sem Categoria</option>' + db.categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+                    sel.innerHTML = options;
                     sel.value = current;
                 }
+                
+                // Popula filtro da lista (needs different default option)
                 const filterSel = document.getElementById('filter-cat');
                 if(filterSel) {
                     const currentFilter = filterSel.value;
-                    filterSel.innerHTML = '<option value="">Todas Categorias</option>' + db.categorias.map(c => `<option value="${c.nome}">${c.nome}</option>`).join('');
+                    // Replace first option for filter context
+                    const filterOptions = options.replace('value="">Sem Categoria', 'value="">Todas Categorias');
+                    filterSel.innerHTML = filterOptions;
                     filterSel.value = currentFilter;
                 }
             },
+            // FUNÇÃO PARA IR PARA O PEDIDO AO CLICAR NO HISTÓRICO
             goToOrder: (orderCode) => {
+                // Switch to Venda View
                 const btnVenda = document.querySelector("button[onclick*='venda']");
                 UI.switchView('venda', btnVenda);
+                
+                // Set Filter
                 const searchInput = document.getElementById('v-search-input');
                 if(searchInput) {
                     searchInput.value = orderCode;
@@ -2276,21 +2266,121 @@
         };
 
         const CategoryApp = {
-            openModal: () => document.getElementById('cat-modal').showModal(),
-            addCategory: (e) => {
+            openModal: () => {
+                CategoryApp.renderList();
+                document.getElementById('cat-modal').showModal();
+            },
+            // Add Root Category
+            addRoot: (e) => {
                 e.preventDefault();
-                const name = document.getElementById('new-cat-name').value;
-                if(name) {
-                    const db = DB.load();
-                    db.categorias.push({id: Date.now(), nome: name, subs: []});
+                const input = document.getElementById('new-cat-root-name');
+                const name = input.value.trim();
+                if(!name) return;
+                
+                const db = DB.load();
+                db.categorias.push({ id: Date.now().toString(), nome: name, subs: [] });
+                DB.saveAll(db);
+                input.value = '';
+                CategoryApp.renderList();
+                UI.populateCategories(); // Refresh dropdowns immediately
+            },
+            // Add Sub Category
+            addSub: (parentId) => {
+                const name = prompt("Nome da Subcategoria:");
+                if(!name) return;
+                
+                const db = DB.load();
+                const parent = db.categorias.find(c => c.id === parentId);
+                if(parent) {
+                    if(!parent.subs) parent.subs = [];
+                    parent.subs.push({ id: Date.now().toString(), nome: name });
                     DB.saveAll(db);
                     CategoryApp.renderList();
-                    document.getElementById('new-cat-name').value = '';
+                    UI.populateCategories();
                 }
             },
+            // Edit (Root or Sub)
+            edit: (id, parentId = null) => {
+                const db = DB.load();
+                let target;
+                
+                if(parentId) {
+                    const parent = db.categorias.find(c => c.id === parentId);
+                    if(parent && parent.subs) {
+                        target = parent.subs.find(s => s.id === id);
+                    }
+                } else {
+                    target = db.categorias.find(c => c.id === id);
+                }
+                
+                if(target) {
+                    const newName = prompt("Novo nome:", target.nome);
+                    if(newName && newName.trim()) {
+                        target.nome = newName.trim();
+                        DB.saveAll(db);
+                        CategoryApp.renderList();
+                        UI.populateCategories();
+                    }
+                }
+            },
+            // Delete (Root or Sub)
+            delete: (id, parentId = null) => {
+                if(!confirm("Tem a certeza que deseja excluir?")) return;
+                
+                const db = DB.load();
+                
+                if(parentId) {
+                    // Deleting Sub
+                    const parent = db.categorias.find(c => c.id === parentId);
+                    if(parent && parent.subs) {
+                        parent.subs = parent.subs.filter(s => s.id !== id);
+                    }
+                } else {
+                    // Deleting Root
+                    db.categorias = db.categorias.filter(c => c.id !== id);
+                }
+                
+                DB.saveAll(db);
+                CategoryApp.renderList();
+                UI.populateCategories();
+            },
             renderList: () => {
-                const list = document.getElementById('cat-list-container');
-                list.innerHTML = DB.load().categorias.map(c => `<div style="padding: 0.5rem; border: 1px solid var(--slate-200); border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: var(--slate-700); background: var(--slate-50); display: flex; justify-content: space-between;"><span>${c.nome}</span> <i class="fa-solid fa-folder" style="color: var(--slate-300);"></i></div>`).join('');
+                const db = DB.load();
+                const container = document.getElementById('cat-list-container');
+                
+                if(db.categorias.length === 0) {
+                    container.innerHTML = '<div style="color:#94a3b8; text-align:center; padding:1rem; font-size:0.8rem;">Nenhuma categoria cadastrada.</div>';
+                    return;
+                }
+
+                container.innerHTML = db.categorias.map(cat => {
+                    // Render Subs HTML
+                    const subsHtml = (cat.subs || []).map(sub => `
+                        <div style="display:flex; justify-content:space-between; align-items:center; padding: 6px 10px; border-left: 2px solid var(--slate-200); margin-left: 15px; margin-top: 4px; background: #fff; border-radius: 4px;">
+                            <span style="font-size:0.75rem; color: var(--slate-600);"><i class="fa-solid fa-turn-up fa-rotate-90" style="margin-right:6px; color:var(--slate-300);"></i> ${sub.nome}</span>
+                            <div style="display:flex; gap: 5px;">
+                                <button onclick="CategoryApp.edit('${sub.id}', '${cat.id}')" class="btn-ghost" style="padding:2px 6px; color:var(--primary); font-size:0.7rem;" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                                <button onclick="CategoryApp.delete('${sub.id}', '${cat.id}')" class="btn-ghost" style="padding:2px 6px; color:var(--danger); font-size:0.7rem;" title="Excluir"><i class="fa-solid fa-times"></i></button>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    return `
+                        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: 6px; margin-bottom: 8px; overflow:hidden;">
+                            <div style="padding: 10px; display: flex; justify-content: space-between; align-items: center; background: #f1f5f9; border-bottom: 1px solid var(--slate-200);">
+                                <span style="font-weight: 700; color: var(--slate-800); font-size: 0.85rem;">${cat.nome}</span>
+                                <div style="display:flex; gap: 5px;">
+                                    <button onclick="CategoryApp.addSub('${cat.id}')" class="btn-ghost" style="padding:4px 8px; color:var(--success); background: #dcfce7; border-radius: 4px;" title="Adicionar Subcategoria"><i class="fa-solid fa-plus"></i></button>
+                                    <button onclick="CategoryApp.edit('${cat.id}')" class="btn-ghost" style="padding:4px 8px; color:var(--primary);" title="Editar Nome"><i class="fa-solid fa-pen"></i></button>
+                                    <button onclick="CategoryApp.delete('${cat.id}')" class="btn-ghost" style="padding:4px 8px; color:var(--danger);" title="Excluir Categoria"><i class="fa-solid fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div style="padding: 4px 8px 8px 8px; background: var(--slate-50);">
+                                ${subsHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
             }
         };
 
