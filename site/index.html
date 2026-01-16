@@ -4,13 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 4.9 - Mobile Optimization & Highlighted UI
+        VERSION: 5.0 - Stability & Compact UI
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - UI: Margens laterais reduzidas no Mobile (8px)
-        - UI: Fonte de produtos reduzida
-        - UI: Botões "Adicionar" com cor sólida e bordas semiarredondadas (6px)
-        - UI: Seletor de Qtd com bordas coloridas
+        - JS: Renderização inteligente (DOM Diffing parcial) para evitar "pisca" nas fotos
+        - UI: Lista de Categorias Desktop com Scroll e Compacta
+        - UI: Lista de Categorias Mobile em Grid (2 colunas)
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -547,9 +546,54 @@
         }
         .btn-finish:hover { background: #15803d; transform: translateY(-1px); }
 
-        /* Compact Desktop Sidebar Override - MAINTAINING ONLY THIS VERSION */
+        /* Compact Desktop Sidebar Override */
         @media(min-width: 1024px) {
-           /* ... previously empty or duplicate ... */
+            .desktop-cat-nav { 
+                display: block !important; 
+                background: white; 
+                padding: 16px; /* Compact padding */
+                border-radius: 16px; 
+                border: 1px solid var(--border);
+                max-height: calc(100vh - 120px); /* SCROLLABLE AREA */
+                overflow-y: auto; /* ENABLE SCROLL */
+                /* Custom Scrollbar for Webkit */
+                scrollbar-width: thin;
+                scrollbar-color: #cbd5e1 #f1f5f9;
+            }
+            .desktop-cat-nav::-webkit-scrollbar { width: 6px; }
+            .desktop-cat-nav::-webkit-scrollbar-track { background: #f1f5f9; }
+            .desktop-cat-nav::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 10px; }
+
+            .desktop-cat-link { 
+                display: block; 
+                padding: 8px 0; /* Compact padding */
+                color: var(--text-muted); 
+                transition: 0.2s; 
+                cursor: pointer; 
+                border-bottom: 1px solid #f8fafc; 
+                font-weight: 500; 
+                font-size: 0.9rem; /* Smaller font */
+            }
+            .desktop-cat-link:last-child { border-bottom: none; }
+            .desktop-cat-link:hover { color: var(--primary); padding-left: 5px; }
+        }
+        .desktop-cat-nav { display: none; }
+
+        /* Mobile Compact Category List */
+        #mobile-cat-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding-bottom: 20px;
+        }
+        #mobile-cat-list .cat-link {
+            border: 1px solid #f1f5f9;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--secondary);
+            background: #f8fafc;
         }
 
         /* NEW: DESKTOP FAQ BUTTON */
@@ -730,13 +774,7 @@
             .btn-faq-sidebar:hover { border-color: var(--secondary); background: #f8fafc; }
 
             .floating-actions { display: none; }
-            
-            .desktop-cat-nav { display: block !important; background: white; padding: 24px; border-radius: 16px; border: 1px solid var(--border); }
-            .desktop-cat-link { display: block; padding: 12px 0; color: var(--text-muted); transition: 0.2s; cursor: pointer; border-bottom: 1px solid #f8fafc; font-weight: 500; }
-            .desktop-cat-link:last-child { border-bottom: none; }
-            .desktop-cat-link:hover { color: var(--primary); padding-left: 5px; }
         }
-        .desktop-cat-nav { display: none; }
     </style>
 </head>
 <body>
@@ -1316,7 +1354,7 @@
                     
                     document.getElementById('product-search').addEventListener('input', (e) => {
                         this.searchTerm = e.target.value.toLowerCase();
-                        this.renderCustomizerLists();
+                        this.renderCustomizerLists(true); // Force re-render on search
                     });
                 } catch (e) {
                     console.error("Erro ao carregar dados:", e);
@@ -1448,7 +1486,7 @@
                 document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('customizer-view').classList.remove('hidden');
                 window.scrollTo(0,0);
-                this.renderCustomizerLists();
+                this.renderCustomizerLists(true); // First render
             },
 
             showHome() {
@@ -1460,14 +1498,17 @@
                 this.currentBasket = null;
             },
 
-            renderCustomizerLists() {
-                const basketContainer = document.getElementById('basket-items-container');
-                const othersContainer = document.getElementById('other-items-container');
-                const catListDesktop = document.getElementById('desktop-cat-list');
-                const catListMobile = document.getElementById('mobile-cat-list');
-                const badge = document.getElementById('changes-badge');
+            // MAIN RENDERING LOGIC - NOW SMART SPLIT
+            renderCustomizerLists(fullRender = false) {
+                this.renderBasketSummary(); // Always refresh top "Included" list
+                if (fullRender) {
+                    this.renderCatalog(); // Only refresh big list if needed
+                }
+                this.updateUIStatus(); // Update counters and totals
+            },
 
-                // 1. Itens Inclusos
+            renderBasketSummary() {
+                const basketContainer = document.getElementById('basket-items-container');
                 let basketItems = Object.keys(this.cart).map(id => this.data.find(x => x.id === id)).filter(p => p);
                 
                 if (basketItems.length === 0) basketContainer.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:20px; color:#999;">Cesta vazia</div>';
@@ -1476,8 +1517,14 @@
                         return this.renderProductCard(p, true);
                     }).join('');
                 }
+            },
 
-                // 2. Extras (Filtrados)
+            renderCatalog() {
+                const othersContainer = document.getElementById('other-items-container');
+                const catListDesktop = document.getElementById('desktop-cat-list');
+                const catListMobile = document.getElementById('mobile-cat-list');
+
+                // 2. Extras (Filtered)
                 let extras = this.data.filter(p => p.categoria !== 'CESTA BÁSICA' && (!this.searchTerm || p.nome.toLowerCase().includes(this.searchTerm)));
                 
                 let groups = {};
@@ -1494,7 +1541,6 @@
                 if(extras.length === 0) html = '<div style="text-align:center; padding:40px;">Nenhum produto encontrado.</div>';
                 else {
                     cats.forEach(c => {
-                        // Define Theme Color based on Category Name
                         let themeKey = Object.keys(CATEGORY_THEMES).find(k => c.toUpperCase().includes(k)) || 'DEFAULT';
                         let theme = CATEGORY_THEMES[themeKey];
 
@@ -1514,30 +1560,28 @@
                     });
                 }
                 othersContainer.innerHTML = html;
-
-                const removals = this.countRemovals();
-                badge.innerText = `Excluídos: ${removals}/${this.currentLimit}`;
-                badge.style.display = 'flex';
-                if(removals >= this.currentLimit) badge.classList.add('limit-reached');
-                else badge.classList.remove('limit-reached');
-
-                this.updateTotal();
                 
                 // Smart Check with Observer
                 setTimeout(() => this.setupMediaObserver(), 500);
             },
 
+            // HELPER: Generate just the button HTML
+            getButtonHtml(id, qty, productName) {
+                if (!qty || qty === 0) {
+                    return `<button class="btn-add-sm" onclick="App.changeQty('${id}', 1)" aria-label="Adicionar ${productName}">Adicionar</button>`;
+                } else {
+                    return `<div class="qty-control">
+                            <button class="qty-btn" onclick="App.changeQty('${id}', -1)" aria-label="Remover 1 ${productName}">-</button>
+                            <span class="qty-val">${qty}</span>
+                            <button class="qty-btn" onclick="App.changeQty('${id}', 1)" aria-label="Adicionar 1 ${productName}">+</button>
+                        </div>`;
+                }
+            },
+
             // Helper to render product card with Offer Logic
             renderProductCard(p, isIncluded) {
                 let qty = this.cart[p.id] || 0;
-                
-                let btn = qty === 0 
-                    ? `<button class="btn-add-sm" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar ${p.nome}">Adicionar</button>` 
-                    : `<div class="qty-control">
-                            <button class="qty-btn" onclick="App.changeQty('${p.id}', -1)" aria-label="Remover 1 ${p.nome}">-</button>
-                            <span class="qty-val">${qty}</span>
-                            <button class="qty-btn" onclick="App.changeQty('${p.id}', 1)" aria-label="Adicionar 1 ${p.nome}">+</button>
-                        </div>`;
+                let btnHtml = this.getButtonHtml(p.id, qty, p.nome);
                 
                 let priceHTML = '';
                 if (p.isOffer && p.offerPrice > 0) {
@@ -1553,9 +1597,14 @@
 
                 let offerTag = (p.isOffer && p.offerPrice > 0) ? `<div class="pc-offer-tag">OFERTA</div>` : '';
 
-                // NEW STRICT VERTICAL LAYOUT
+                // Add unique ID for button area: action-area-{id}
+                // Note: The ID might be duplicated if item is in both Included and Extras list.
+                // We will handle this in update logic.
+                
+                let uniqueContext = isIncluded ? 'inc' : 'ext'; 
+
                 return `
-                    <article class="product-card">
+                    <article class="product-card" data-pid="${p.id}">
                         <div class="pc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
                             ${offerTag}
                             <img src="${p.imagem}" alt="${p.nome}" class="pc-img img-fade-in" loading="lazy" decoding="async" width="200" height="200" onload="this.classList.add('visible')">
@@ -1569,7 +1618,7 @@
                         
                         ${isIncluded ? `<div class="pc-meta">Incluso</div>` : priceHTML}
                         
-                        <div class="pc-actions">${btn}</div>
+                        <div class="pc-actions" id="btn-area-${p.id}-${uniqueContext}">${btnHtml}</div>
                     </article>`;
             },
 
@@ -1670,10 +1719,38 @@
                     }
                 }
 
+                // Update State
                 if(!this.cart[id]) this.cart[id] = 0;
                 this.cart[id] += delta;
                 if(this.cart[id] <= 0) delete this.cart[id];
-                this.renderCustomizerLists();
+
+                // === SMART UI UPDATE START ===
+                // 1. Re-render the "Included" list completely (it's small and items move around)
+                this.renderBasketSummary();
+
+                // 2. Update the "Extras" list items IN PLACE (no re-render = no flicker)
+                const extrasBtn = document.getElementById(`btn-area-${id}-ext`);
+                if (extrasBtn) {
+                    extrasBtn.innerHTML = this.getButtonHtml(id, this.cart[id] || 0, product.nome);
+                }
+
+                // 3. Update Totals
+                this.updateUIStatus();
+                // === SMART UI UPDATE END ===
+            },
+
+            updateUIStatus() {
+                const badge = document.getElementById('changes-badge');
+                const removals = this.countRemovals();
+                
+                if (badge) {
+                    badge.innerText = `Excluídos: ${removals}/${this.currentLimit}`;
+                    badge.style.display = 'flex';
+                    if(removals >= this.currentLimit) badge.classList.add('limit-reached');
+                    else badge.classList.remove('limit-reached');
+                }
+
+                this.updateTotal();
             },
 
             updateTotal() {
