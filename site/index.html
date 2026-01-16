@@ -4,12 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 4.8 - Vertical Layout & Clean UI
+        VERSION: 4.9 - Mobile Optimization & Highlighted UI
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - UI: Cards Verticalizados (Mobile & Desktop)
-        - UI: Foto Grande, Textos Pequenos, Botão Largo
-        - UI: Remoção de Boxes/Fundos Coloridos (Clean White)
+        - UI: Margens laterais reduzidas no Mobile (8px)
+        - UI: Fonte de produtos reduzida
+        - UI: Botões "Adicionar" com cor sólida e bordas semiarredondadas (6px)
+        - UI: Seletor de Qtd com bordas coloridas
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -157,7 +158,9 @@
             text-rendering: optimizeLegibility;
         }
         
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 16px; width: 100%; }
+        /* MOBILE PADDING REDUCED: 8px */
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 8px; width: 100%; }
+        
         .hidden { display: none !important; }
         .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
         
@@ -466,9 +469,9 @@
         }
         .indicator-icon.visible { opacity: 1; }
 
-        /* Semantic H3 for Product Name - SMALL */
+        /* Semantic H3 for Product Name - SMALLER FONT */
         .pc-name { 
-            font-size: 0.85rem; /* SMALL */
+            font-size: 0.8rem; /* SMALLER (Reduced from 0.85rem) */
             font-weight: 500; 
             line-height: 1.35; 
             color: var(--secondary); 
@@ -483,20 +486,28 @@
         
         .pc-actions { width: 100%; margin-top: auto; }
         
-        /* BUTTON WIDE */
+        /* BUTTON WIDE & HIGHLIGHTED */
         .btn-add-sm {
             height: 36px; 
             width: 100%; /* WIDE */
-            padding: 0 16px; border-radius: 50px; border: 1px solid var(--border);
-            font-size: 0.8rem; font-weight: 600; text-transform: uppercase;
-            background: white; color: var(--secondary); cursor: pointer;
+            padding: 0 16px; 
+            border-radius: 6px; /* LESS ROUNDED (6px) */
+            border: none;
+            font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+            background: var(--primary); /* HIGHLIGHTED SOLID COLOR */
+            color: white; /* WHITE TEXT */
+            cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
         }
-        .btn-add-sm:hover { border-color: var(--secondary); background: #f8fafc; }
+        .btn-add-sm:hover { background: var(--primary-dark); }
         
+        /* QTY CONTROL HIGHLIGHTED */
         .qty-control { 
             display: flex; align-items: center; justify-content: space-between;
-            background: white; border: 1px solid var(--border); border-radius: 50px; 
+            background: white; 
+            border: 1px solid var(--primary); /* COLORED BORDER */
+            border-radius: 6px; /* LESS ROUNDED (6px) */
             height: 36px; width: 100%; /* WIDE */
         }
         .qty-btn { width: 32px; height: 100%; font-size: 1.2rem; color: var(--secondary); display:flex; align-items:center; justify-content:center; }
@@ -504,6 +515,8 @@
 
         /* DESKTOP TWEAKS */
         @media(min-width: 1024px) {
+            .container { padding: 0 40px; } /* Reset padding for desktop */
+            
             .product-card { 
                 /* Mantem vertical */
                 padding: 16px 16px; 
