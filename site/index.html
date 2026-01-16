@@ -1421,8 +1421,7 @@
                             ...p, 
                             id: String(p.id), 
                             valor: normalPrice,
-                            validade: p.Validade || p.validade, // Map validity field
-                            categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
+                        validade: (p.date || p.Validade || p.validade) ? (p.date || p.Validade || p.validade).split('-').reverse().join('/') : null,                            categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
                             imagem: imgPath,
                             items: p.items || [], 
                             isOffer: isOffer,
