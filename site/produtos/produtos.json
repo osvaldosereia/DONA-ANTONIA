@@ -472,14 +472,22 @@
     "fornecedor": "",
     "caracteristicas": "",
     "custo": 3.99,
-    "valor": 6,
+    "valor": 5.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 294
+      }
+    ],
     "estoque": 294,
     "estoqueFiscal": 600,
     "peso": 2,
-    "limit": 6,
+    "limit": 2,
     "imagem": "../site/img/produtos/desinfetante-remmus-2l-amazon-verde-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "DESINF REMMUS 2L AMAZON (UN)"
     ],
@@ -496,7 +504,7 @@
     "refId": "NFe51250509477652002806551000000870281120717234-2",
     "fator": "6",
     "unidade": "UN",
-    "Limit": 6,
+    "Limit": 2,
     "Oferta": "Não",
     "Valor_Oferta": 0
   },
@@ -877,6 +885,72 @@
     "fator": "1",
     "unidade": "UN",
     "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997372171002",
+    "codigo": "P049",
+    "nome": "MOLHO TOMATE FUGINI 300gr",
+    "ean": "7897517206086",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ATACADÃO",
+    "caracteristicas": "",
+    "custo": 1.2227,
+    "valor": 2.2,
+    "estoque": 360,
+    "estoqueFiscal": 7776,
+    "peso": 0.3,
+    "limit": 12,
+    "imagem": "../site/img/produtos/molho-tomate-fugini-300gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "MOLHO TOMATE FUGINI 300gr",
+      "MOLHO TOM.TRAD.FUGINI SC.36X300GR 36SC X 300GR",
+      "MOLHO TOM FUGINI 300G CX36 (AGRUPADO)",
+      "MOLHO TOM.TRAD.FUGINI SC.GR 36SC X 300GR (UN)"
+    ],
+    "variacoesEan": [
+      "7897517206086"
+    ],
+    "ncm": "21032010",
+    "cest": "1703400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "refId": "UNIFICADO-1767997363324",
+    "fator": "1",
+    "unidade": "UN",
+    "batches": [
+      {
+        "date": "",
+        "qty": 360
+      }
+    ],
+    "jsonData": {
+      "id_referencia": "NFe51260103483492000101550020012126641214162198-6",
+      "Numero_Nota": "1212664",
+      "Quantidade_Nota": 10,
+      "cProd_Sugestao": "120964-UN",
+      "cEAN": "7897517206086",
+      "xProd": "MOLHO TOM.TRAD.FUGINI SC.GR 36SC X 300GR (UN)",
+      "NCM": "21032010",
+      "CEST": "1703400",
+      "CFOP_SAIDA": "5405",
+      "CSOSN_SAIDA": "500",
+      "Unidade_Venda": "UN",
+      "Fator_Conversao_Entrada": 36,
+      "Quantidade_Total_Unidades": 360,
+      "Custo_Unitario": 1.2227,
+      "Custo_Real_Caixa": 44.017,
+      "Valor_Desconto_Total": 0,
+      "_TIPO": "VAREJO (SAIDA)",
+      "_OBS": "Desconto de R$ 0 abatido do custo"
+    },
+    "nota": "1212664",
+    "Limit": 12,
     "Oferta": "Não",
     "Valor_Oferta": 0
   },
@@ -1453,10 +1527,16 @@
     "nome": "PAPEL HIGIÊNICO SOBERANO - 4 ROLOS",
     "ean": "7898901374107",
     "categoria": "HIGIENE",
-    "fornecedor": "",
+    "fornecedor": "TREVO PAPEIS",
     "caracteristicas": "",
     "custo": 3.3,
-    "valor": 4.8,
+    "valor": 4.6,
+    "batches": [
+      {
+        "date": "",
+        "qty": 60
+      }
+    ],
     "estoque": 60,
     "estoqueFiscal": 0,
     "peso": 0.2,
@@ -1757,7 +1837,7 @@
     "codigo": "P084",
     "nome": "CHA MATE RICO 250GR",
     "ean": "7896476901605",
-    "categoria": "",
+    "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 4.135,
@@ -2604,6 +2684,186 @@
     "fator": "12",
     "unidade": "UN",
     "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526197648153",
+    "codigo": "P100",
+    "nome": "MILHARINA QUAKER 500GR",
+    "ean": "7894321632032",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.9833,
+    "valor": 5.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 15
+      }
+    ],
+    "estoque": 15,
+    "estoqueFiscal": 15,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/milharina-quaker-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHARINA QUAKER GR 15PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7894321632032"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-9",
+    "fator": "15",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526310168656",
+    "codigo": "P101",
+    "nome": "MILHO PIPOCA AMAFIL PREMIUM 500g",
+    "ean": "7896035950013",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.825,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/milho-pipoca-amafil-premium-500g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHO PIPOCA AMAFIL PREMIUM GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896035950013"
+    ],
+    "ncm": "10059010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-3",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526538800754",
+    "codigo": "P102",
+    "nome": "MOLHO PIMENTA GOTA 150ML",
+    "ean": "7898286190316",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.2021,
+    "valor": 3.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/molho-pimenta-gota-150ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MOLHO PIMENTA GOTA ML 24UN X 150ML (UN)"
+    ],
+    "variacoesEan": [
+      "7898286190316"
+    ],
+    "ncm": "21039091",
+    "cest": "1703500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-5",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768527172742038",
+    "codigo": "P103",
+    "nome": "PALITO DENTAL PARANA 100UN",
+    "ean": "17896080900008",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.48,
+    "valor": 1.2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 25
+      }
+    ],
+    "estoque": 25,
+    "estoqueFiscal": 25,
+    "peso": 0.1,
+    "limit": 3,
+    "imagem": "../site/img/produtos/palito-dental-parana-100un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PALITO DENTAL PARANA UN 25CT X 100UN (UN)"
+    ],
+    "variacoesEan": [
+      "17896080900008"
+    ],
+    "ncm": "44219900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-44",
+    "fator": "25",
+    "unidade": "UN",
+    "Limit": 3,
     "Oferta": "Não",
     "Valor_Oferta": 0
   }
