@@ -4,13 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 5.8 - Product Characteristics Feature
+        VERSION: 5.9 - Stability Fix (JSON Parsing & Formatting)
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - FEAT: Campo "caracteristicas" lido do JSON.
-        - UI: Botão "Características" (Azul/Info) condicional no card.
-        - UI: Modal retrátil de características (Bottom Sheet no Mobile, Modal Central no Desktop).
-        - FIX: Mantido mapeamento de validade e outras funções.
+        - FIX: Sanitização robusta para 'caracteristicas' (tratamento de quebras de linha).
+        - FEAT: Formatação automática de data (AAAA-MM-DD -> DD/MM/AAAA).
+        - FEAT: Leitura do campo 'date' para validade.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -1139,6 +1138,54 @@
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <div class="container customizer-grid">
+            <div class="products-col">
+                <!-- ITENS INCLUSOS -->
+                <section class="basket-group" aria-labelledby="items-included-title">
+                    
+                    <!-- HEADER PASTEL -->
+                    <div class="section-banner" style="background-color: #f1f5f9; color: #475569;">
+                        <h3>
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                            Itens Inclusos
+                        </h3>
+                        <p style="color:#64748b;">Já vêm na cesta</p>
+                    </div>
+                    
+                    <!-- CAIXA COM FUNDO CLARO -->
+                    <div class="included-products-box" style="background-color: #ffffff; border-color: #e2e8f0;">
+                        <div id="basket-items-container" class="basket-grid"></div>
+                    </div>
+                </section>
+
+                <!-- BANNER SEPARADOR -->
+                <div class="extras-separator-banner">
+                    <h3>Adicionar Extras</h3>
+                    <p>Toque nos produtos abaixo para adicionar mais itens.</p>
+                </div>
+
+                <!-- EXTRAS (CATEGORIAS) -->
+                <section aria-labelledby="items-extra-title">
+                    <div id="other-items-container"></div>
+                </section>
+            </div>
+
+            <!-- SIDEBAR (Desktop) -->
+            <aside class="sidebar-col">
+                <!-- (Resumo de Pedido Removido na Desktop) -->
+                <div class="order-summary-card">
+                    <div class="ff-info">
+                        <span class="ff-label">Valor Total</span>
+                        <span class="ff-value" id="ff-total-val">R$ 0,00</span>
+                    </div>
+                    <button class="btn-finish" onclick="App.openCheckout()">
+                        <span>Encomendar no Whatsapp</span>
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </button>
+                </div>
 
                 <!-- 2. Nav Categorias Desktop -->
                 <nav class="desktop-cat-nav" aria-label="Navegação rápida de categorias">
@@ -1420,7 +1467,10 @@
                             ...p, 
                             id: String(p.id), 
                             valor: normalPrice,
-                            validade: p.Validade || p.validade, // Map validity field
+                            validade: (() => {
+                                const v = p.date || p.Validade || p.validade;
+                                return v ? v.split('-').reverse().join('/') : null;
+                            })(),
                             categoria: (p.categoria || 'OUTROS').toUpperCase().trim(),
                             imagem: imgPath,
                             items: p.items || [], 
@@ -1721,7 +1771,13 @@
                 }
                 
                 if (p.caracteristicas) {
-                    const safeDesc = p.caracteristicas.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                    // ROBUST SANITIZATION: Escape quotes AND newlines to prevent JS breakage
+                    const safeDesc = p.caracteristicas
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, "\\'")
+                        .replace(/\n/g, '\\n') // Handle line breaks
+                        .replace(/\r/g, '');   // Remove carriage returns
+
                     featuresBtnHTML = `<button class="btn-features" onclick="App.openFeatures('${safeDesc}', '${p.nome.replace(/"/g, '&quot;')}')">
                         <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> 
                         Características
