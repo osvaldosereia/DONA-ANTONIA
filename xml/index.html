@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Leitor XML de NFe com Lista Expandida e Função de Unificação.">
-    <title>NFe Parser Pro | v6.15 Limite Expandido</title>
+    <title>NFe Parser Pro | v6.16 Smart Detect</title>
 
     <style>
         /* * SISTEMAS - CSS CORE 
@@ -159,10 +159,16 @@
         }
         
         input.ean-input { 
-            width: 120px; 
+            width: 110px; 
             font-family: monospace; 
             letter-spacing: -0.5px;
             text-align: center;
+        }
+
+        input.qty-input {
+            width: 70px;
+            text-align: right;
+            font-weight: 600;
         }
 
         input.desc-input {
@@ -175,6 +181,12 @@
             background: #f3e8ff; 
             color: #7e22ce;
             border-color: #d8b4fe;
+        }
+        
+        input.qty-edited {
+            background: #fff7ed;
+            color: #c2410c;
+            border-color: #fdba74;
         }
 
         input[type="file"]::file-selector-button {
@@ -491,11 +503,11 @@
         <!-- Header -->
         <header>
             <div>
-                <h1>NFe Parser Pro <span>Exportação Fiscal</span></h1>
-                <p>Detecta Fardos, permite Edição e <b>deduz Descontos</b> do custo unitário.</p>
+                <h1>NFe Parser Pro <span>Smart Detect</span></h1>
+                <p>Detecta Fatores (Ex: CX/0012), permite Edição Completa e <b>deduz Descontos</b>.</p>
             </div>
             <div class="flex flex-col items-end gap-1">
-                <span class="badge">v6.15 Limite Expandido</span>
+                <span class="badge">v6.16 Smart Update</span>
                 <span class="badge badge-purple">Memória Ativa</span>
             </div>
         </header>
@@ -504,7 +516,7 @@
         <section>
             <label for="fileInput">1. Importar Arquivos XML (Compra)</label>
             <input type="file" id="fileInput" multiple accept=".xml, text/xml">
-            <p style="margin-top: 0.5rem;">🧠 Dica: Edite <b>Descrição</b> e <b>EAN</b> livremente antes de exportar!</p>
+            <p style="margin-top: 0.5rem;">🧠 Dica: O sistema agora prioriza padrões como <b>CX/0012</b> ou <b>UN/0001</b> no final do nome.</p>
         </section>
 
         <!-- Filtros e Ações -->
@@ -568,7 +580,7 @@
             <div style="background: var(--surface); padding: var(--spacing-md); border: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; border-bottom: none;" class="results-header">
                 <div>
                     <h3>3. Conferência de Produtos</h3>
-                    <p>Edite os campos abaixo conforme necessário.</p>
+                    <p>Agora você pode editar <b>Qtd</b> e <b>Fator</b>. O valor total atualiza automaticamente.</p>
                 </div>
 
                 <div class="table-controls">
@@ -600,7 +612,7 @@
                             <th>EAN (Editável)</th>
                             <th>NCM</th>
                             <th>CST</th>
-                            <th class="text-right">Qtd</th>
+                            <th class="text-right">Qtd (Nota)</th>
                             <th class="text-right text-success" title="Valor do Desconto Rateado">Desc.</th>
                             <th class="text-right" title="Valor Líquido por Caixa (Entrada - Desconto)">V. Liq (Cx)</th>
                             <th class="text-right">V. Total</th>
@@ -648,13 +660,13 @@
 
     <script>
         /**
-         * SISTEMAS - Core Logic v6.15 Unified (Limit 5000)
+         * SISTEMAS - Core Logic v6.16 Smart Detect (Limit 5000)
          */
         var app = {
             data: [], 
             factorsDB: {}, 
             selectedIds: new Set(),
-            storageKey: 'nfe_sys_data_sync_v65', 
+            storageKey: 'nfe_sys_data_sync_v66', // Bumped version to clear old cache if needed
             factorsStorageKey: 'nfe_sys_factors_db_v1', 
 
             init() {
@@ -793,19 +805,35 @@
                 sourceItem.userFactor = val;
 
                 // Sync por EAN (se válido)
-                let syncCount = 0;
                 const hasValidEan = sourceItem.cEAN && sourceItem.cEAN !== 'SEM GTIN' && sourceItem.cEAN.trim() !== '';
 
                 if (hasValidEan) {
                     this.data.forEach(item => {
                         if (item.id !== id && item.cEAN === sourceItem.cEAN) {
                             item.userFactor = val;
-                            syncCount++;
                         }
                     });
                 }
 
                 this.saveToStorage();
+                // Não chama render() aqui para não perder o foco, mas o dado está salvo.
+            },
+
+            updateQty(id, newValue) {
+                const sourceItem = this.data.find(i => i.id === id);
+                if (!sourceItem) return;
+
+                let val = parseFloat(newValue);
+                if (isNaN(val) || val < 0) return; // Evita valores negativos ou inválidos
+
+                sourceItem.qCom = val;
+                
+                // Recalcula o Valor Total da linha baseado no unitário original
+                // vProd (Total) = qCom * vUnCom
+                sourceItem.vProd = parseFloat((val * sourceItem.vUnCom).toFixed(2));
+
+                this.saveToStorage();
+                this.render(); // Precisa renderizar para atualizar totais e colunas dependentes
             },
 
             updateEAN(id, newEan) {
@@ -814,7 +842,6 @@
                 const cleanEan = newEan.trim().toUpperCase();
                 sourceItem.cEAN = cleanEan;
                 this.saveToStorage();
-                console.log(`EAN Editado: ${cleanEan}`);
             },
 
             updateDescription(id, newDesc) {
@@ -822,7 +849,6 @@
                 if (!sourceItem) return;
                 sourceItem.xProd = newDesc; // Salva a descrição editada
                 this.saveToStorage();
-                console.log(`Descrição Editada: ${newDesc}`);
             },
 
             showToast(message) {
@@ -842,7 +868,11 @@
             },
             toggleSelectAll(checkbox) {
                 const filtered = this.getFilteredData();
-                checkbox.checked ? filtered.forEach(i => this.selectedIds.add(i.id)) : filtered.forEach(i => this.selectedIds.delete(i.id));
+                if (checkbox.checked) {
+                    filtered.forEach(i => this.selectedIds.add(i.id));
+                } else {
+                    filtered.forEach(i => this.selectedIds.delete(i.id));
+                }
                 this.render();
             },
             updateSelectionUI() {
@@ -850,9 +880,6 @@
                 if (count > 0) {
                     this.dom.selectionActions.classList.remove('hidden');
                     this.dom.selectionActions.classList.add('flex');
-                    const btn = this.dom.selectionActions.querySelector('button');
-                    // Atualiza apenas se for o botão principal, para não quebrar a UI
-                    // (Lógica simplificada, mantendo os botões visíveis)
                 } else {
                     this.dom.selectionActions.classList.add('hidden');
                     this.dom.selectionActions.classList.remove('flex');
@@ -867,13 +894,26 @@
 
             detectConversionFactor(description) {
                 if (!description) return 1;
-                const desc = description.toUpperCase();
+                const desc = description.toUpperCase().trim();
+
+                // ESTRATÉGIA 1: Padrão Específico de Suffix (CX/0012, PT/0024, UN/0001)
+                // Procura por barra seguida de zeros opcionais e digitos no final da string ou palavra isolada
+                const regexSuffix = /\/(?:0*)(\d+)(?:\s|$)/;
+                const matchSuffix = desc.match(regexSuffix);
+                if (matchSuffix && matchSuffix[1]) {
+                     const val = parseInt(matchSuffix[1]);
+                     if (val > 0) return val;
+                }
+
+                // ESTRATÉGIA 2: Multiplicador explícito (12x1)
                 const regexMultiplier = /(\d+)\s*[xX]\s*\d+/; 
                 const matchX = desc.match(regexMultiplier);
                 if (matchX && matchX[1]) {
                     const val = parseInt(matchX[1]);
                     return val > 0 ? val : 1;
                 }
+
+                // ESTRATÉGIA 3: Prefixos comuns (CX 12, FARDO 6)
                 const regexPack = /(?:CX|FD|FARDO|PCT)\W+(\d+)/;
                 const matchPack = desc.match(regexPack);
                 if (matchPack && matchPack[1]) {
@@ -903,7 +943,7 @@
                 // 1. Coletar Dados Únicos
                 const descriptions = new Set();
                 const eans = new Set();
-                let totalQty = 0;
+                let totalQtyUnits = 0; // Quantidade Total em UNIDADES soltas
                 let maxUnitCost = 0;
                 let referenceItem = selectedItems[0]; // Item base inicial
                 let highestValFound = -1;
@@ -912,10 +952,11 @@
                     // Fator e Custos
                     const detected = this.detectConversionFactor(item.xProd);
                     const factor = item.userFactor ? item.userFactor : detected;
+                    
                     const discount = item.vDesc || 0;
                     const netTotal = item.vProd - discount;
-                    const netCostBox = netTotal / item.qCom;
-                    const unitCost = netCostBox / factor;
+                    const netCostBox = netTotal / item.qCom; // Custo real da caixa
+                    const unitCost = netCostBox / factor; // Custo unitário real
 
                     // Logica do Maior Valor
                     if (unitCost > highestValFound) {
@@ -931,8 +972,8 @@
                         eans.add(item.cEAN.trim());
                     }
 
-                    // Quantidade Total em Unidades
-                    totalQty += (item.qCom * factor);
+                    // Soma total de unidades (Qtd Nota * Fator)
+                    totalQtyUnits += (item.qCom * factor);
                 });
 
                 // 2. Montar Strings Concatenadas
@@ -956,7 +997,7 @@
                     CSOSN_SAIDA: fiscal.csosnOut,
                     Unidade_Venda: 'UN',
                     Fator_Conversao_Entrada: 1, 
-                    Quantidade_Total_Unidades: parseFloat(totalQty.toFixed(3)),
+                    Quantidade_Total_Unidades: parseFloat(totalQtyUnits.toFixed(3)),
                     Custo_Unitario: parseFloat(maxUnitCost.toFixed(4)),
                     Custo_Real_Caixa: parseFloat(maxUnitCost.toFixed(4)), 
                     Valor_Desconto_Total: 0,
@@ -1163,7 +1204,7 @@
                             dataEmissao: dhEmi.split('T')[0],
                             emitente,
                             cProd: getTag(prod, 'cProd'),
-                            cEAN: cEAN, // Garantido ter valor string
+                            cEAN: cEAN, 
                             xProd: getTag(prod, 'xProd'),
                             NCM: getTag(prod, 'NCM'),
                             CEST: getTag(prod, 'CEST'),
@@ -1202,7 +1243,6 @@
                 if (sortMode === 'date') {
                     filtered.sort((a,b) => b.dataEmissao.localeCompare(a.dataEmissao));
                 } else {
-                    // Ordenação Alfabética
                     filtered.sort((a,b) => a.xProd.localeCompare(b.xProd));
                 }
 
@@ -1229,7 +1269,7 @@
                     return;
                 }
 
-                const limit = 5000; // INCREASED LIMIT TO 5000 AS REQUESTED
+                const limit = 5000; 
                 const fragment = document.createDocumentFragment();
 
                 filtered.slice(0, limit).forEach(item => {
@@ -1246,8 +1286,9 @@
                     
                     const discount = item.vDesc || 0;
                     const netTotal = item.vProd - discount;
-                    const netUnitCostBox = netTotal / item.qCom;
+                    const netUnitCostBox = netTotal / item.qCom; // Custo real da caixa
 
+                    // Styles for Factor Input
                     const factorClass = item.isLearned ? 'table-input factor-input factor-learned' : 'table-input factor-input';
                     const titleFactor = item.isLearned ? 'Carregado da memória por EAN' : `Qtd detectada: ${detected}`;
 
@@ -1261,11 +1302,23 @@
                                title="${titleFactor}">
                     `;
 
+                    // Style for Qty Input (New)
+                    // If vProd was manually recalculated, maybe show a color?
+                    // For now simple input.
+                    const qtyInputHtml = `
+                        <input type="number"
+                               class="table-input qty-input"
+                               value="${item.qCom}"
+                               step="0.0001"
+                               onchange="app.updateQty('${item.id}', this.value)"
+                               onclick="this.select()"
+                        >
+                    `;
+
                     const descHtml = discount > 0 
                         ? `<span class="text-success font-bold">-${discount.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</span>` 
                         : '<span style="color:#cbd5e1">-</span>';
 
-                    // EAN Render Logic (Editável)
                     const eanVal = (item.cEAN === 'SEM GTIN' || !item.cEAN) ? '' : item.cEAN;
                     const eanPlaceholder = (item.cEAN === 'SEM GTIN') ? 'SEM GTIN' : 'EAN';
                     
@@ -1279,7 +1332,6 @@
                         >
                     `;
 
-                    // Descrição Render Logic (Editável)
                     const descInputHtml = `
                         <input type="text"
                                class="table-input desc-input"
@@ -1299,7 +1351,7 @@
                         <td>${eanInputHtml}</td>
                         <td>${item.NCM}</td>
                         <td><span class="smart-tag ${tagClass}">${tagLabel}</span></td>
-                        <td class="text-right">${item.qCom}</td>
+                        <td class="text-right">${qtyInputHtml}</td>
                         <td class="text-right">${descHtml}</td>
                         <td class="text-right font-bold" style="color:var(--primary)">${netUnitCostBox.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
                         <td class="text-right">${item.vProd.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
