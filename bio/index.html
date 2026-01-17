@@ -7,11 +7,9 @@
     <meta name="description" content="Editor Híbrido: Fotos e Vídeos com tratamento profissional mobile.">
     <meta name="theme-color" content="#2563eb">
     
-    <!-- ENGINE EXTERNA DE ALTA QUALIDADE (Lanczos3 para Fotos) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pica/9.0.1/pica.min.js"></script>
     
     <style>
-        /* --- CSS CLASSLESS & MINIMALIST --- */
         :root {
             --bg: #f8fafc;
             --surface: #ffffff;
@@ -39,15 +37,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            overscroll-behavior: none; /* Previne reload ao puxar */
         }
 
-        /* Tabs / Mode Switcher */
         .mode-switch {
             display: flex;
             background: #e2e8f0;
             padding: 4px;
             border-radius: 10px;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             width: 100%;
             max-width: 400px;
         }
@@ -62,14 +60,12 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .mode-btn:hover { color: var(--text-main); }
         .mode-btn.active {
             background: var(--surface);
             color: var(--brand);
             box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
         }
 
-        /* Layout Main */
         main { 
             width: 100%; 
             max-width: 600px; 
@@ -80,7 +76,7 @@
         @media (min-width: 800px) {
             main {
                 max-width: 960px;
-                grid-template-columns: 350px 1fr;
+                grid-template-columns: 380px 1fr;
                 align-items: start;
             }
             .preview-section { position: sticky; top: 1rem; }
@@ -94,7 +90,34 @@
             border: 1px solid var(--border);
         }
 
-        /* Canvas Area */
+        /* --- FORMAT BUTTONS --- */
+        .format-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .btn-fmt {
+            flex: 1;
+            height: 32px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .btn-fmt.active {
+            background: #eff6ff;
+            border-color: var(--brand);
+            color: var(--brand);
+        }
+
+        /* --- VIEWPORT --- */
         .viewport {
             width: 100%;
             background: #e5e5e5 radial-gradient(#cbd5e1 1px, transparent 1px);
@@ -105,11 +128,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             transition: all 0.3s ease;
             border: 2px solid transparent;
+            touch-action: none; /* Vital para pinch zoom funcionar bem */
         }
-        
         .viewport.drag-over { border-color: var(--brand); background-color: #eff6ff; }
 
         canvas { 
@@ -122,34 +145,40 @@
         }
         canvas:active { cursor: grabbing; }
 
-        video#sourceVideo { display: none; }
-        
-        .empty-msg {
-            text-align: center; color: var(--text-muted); display: flex;
-            flex-direction: column; align-items: center; gap: 0.5rem;
-            font-size: 0.9rem; pointer-events: none;
+        /* --- ZOOM BAR --- */
+        .zoom-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+        }
+        .zoom-icon { color: var(--text-muted); }
+        .zoom-val { 
+            font-size: 0.75rem; 
+            font-variant-numeric: tabular-nums; 
+            color: var(--text-main); 
+            font-weight: bold;
+            min-width: 36px;
+            text-align: right;
         }
 
-        /* Controls */
-        fieldset { border: 0; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
-        label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); }
-        
         input[type="range"] {
-            width: 100%; height: 24px; background: transparent; -webkit-appearance: none; cursor: pointer;
+            width: 100%; height: 24px; background: transparent; -webkit-appearance: none; cursor: pointer; flex: 1;
         }
         input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 6px; background: var(--border); border-radius: 4px; transition: background 0.2s;
+            width: 100%; height: 6px; background: #cbd5e1; border-radius: 4px;
         }
-        input[type="range"]:hover::-webkit-slider-runnable-track { background: #cbd5e1; }
         input[type="range"]::-webkit-slider-thumb {
-            height: 24px; width: 24px; border-radius: 50%; background: var(--brand); 
-            -webkit-appearance: none; margin-top: -9px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
-            transition: transform 0.1s, background 0.2s;
+            height: 20px; width: 20px; border-radius: 50%; background: var(--brand); 
+            -webkit-appearance: none; margin-top: -7px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
         }
-        input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.1); background: var(--brand-dark); }
 
-        /* Buttons */
-        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
+        /* --- ACTIONS --- */
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
         
         .btn {
             display: flex; align-items: center; justify-content: center; gap: 0.5rem;
@@ -157,48 +186,34 @@
             border-radius: 8px; border: none; cursor: pointer; width: 100%;
             text-decoration: none; transition: all 0.2s;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn:disabled { opacity: 0.7; cursor: wait; background: #94a3b8; }
-
         .btn-upload { background: var(--bg); color: var(--text-main); border: 1px solid var(--border); }
-        .btn-upload:hover { background: #e2e8f0; border-color: #cbd5e1; }
-        
         .btn-camera { background: var(--text-main); color: white; }
-        .btn-camera:hover { background: #1e293b; }
-
-        .btn-magic { background: #8b5cf6; color: white; border: 1px solid #7c3aed; }
-        .btn-magic:hover { background: #7c3aed; }
-        .btn-magic.processing { opacity: 0.7; cursor: wait; }
-
         .btn-save { background: var(--action); color: white; margin-top: 1rem; font-size: 1.1rem; }
-        .btn-save:hover { background: var(--action-dark); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
-
         .btn-record { background: var(--danger); color: white; margin-top: 1rem; font-size: 1.1rem; }
-        .btn-record:hover { background: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+        .btn-magic { background: #8b5cf6; color: white; margin-top: 1rem; }
+        .btn-magic.processing { opacity: 0.7; cursor: wait; }
         
-        .btn-sm { height: 36px; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); transition: all 0.2s; }
-        .btn-sm:hover { background: #e2e8f0; }
-        .btn-sm.active { background: var(--brand); color: white; border-color: var(--brand); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; filter: grayscale(1); }
 
+        .btn-mini {
+            height: 28px; padding: 0 8px; font-size: 0.7rem; 
+            background: #fff; border: 1px solid var(--border); border-radius: 4px;
+            color: var(--text-muted); cursor: pointer;
+        }
+        .btn-mini:hover { background: #f1f5f9; color: var(--brand); border-color: var(--brand); }
+
+        /* --- CONTROLS --- */
+        fieldset { border: 0; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1.5rem; }
+        label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); }
+        
         .input-text, .input-select {
             width: 100%; padding: 0.75rem; border: 1px solid var(--border);
             background: var(--surface); color: var(--text-main);
-            border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s;
-            appearance: none;
+            border-radius: 8px; font-size: 1rem; outline: none; appearance: none;
         }
-        .input-text:focus, .input-select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .input-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-
+        
         .hidden { display: none !important; }
         .file-input { display: none; }
-        .val-badge { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-variant-numeric: tabular-nums; font-size: 0.8em; color: var(--text-muted); }
-        
         .rec-indicator {
             position: absolute; top: 10px; right: 10px;
             background: rgba(239, 68, 68, 0.9); color: white;
@@ -207,7 +222,12 @@
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
+        
+        .empty-msg {
+            text-align: center; color: var(--text-muted); display: flex;
+            flex-direction: column; align-items: center; gap: 0.5rem;
+            font-size: 0.9rem; pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -218,7 +238,22 @@
     </div>
 
     <main>
+        <!-- CARD PREVIEW (ESQUERDA NO DESKTOP, TOPO NO MOBILE) -->
         <div class="card preview-section">
+            
+            <!-- 1. SELETOR DE FORMATO (NO TOPO) -->
+            <div class="format-selector">
+                <button class="btn-fmt active" id="fmtSquare" onclick="setFormat('square')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                    Quadrado
+                </button>
+                <button class="btn-fmt" id="fmtVertical" onclick="setFormat('vertical')">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg>
+                    Vertical
+                </button>
+            </div>
+
+            <!-- 2. VIEWPORT -->
             <div class="viewport" id="dropZone" style="aspect-ratio: 1;">
                 <div id="emptyState" class="empty-msg">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--border); margin-bottom: 0.5rem;">
@@ -232,108 +267,76 @@
                 <div id="recBadge" class="rec-indicator hidden">REC</div>
             </div>
 
+            <!-- 3. ZOOM SLIDER (LOGO ABAIXO DA IMAGEM) -->
+            <div class="zoom-bar">
+                <svg class="zoom-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                
+                <!-- Zoom Foto -->
+                <input type="range" id="scaleRange" min="50" max="250" value="85" class="zoom-input">
+                
+                <!-- Zoom Video (Alternado via JS) -->
+                <input type="range" id="vScaleRange" min="50" max="250" value="100" class="zoom-input hidden">
+                
+                <span id="zoomValDisplay" class="zoom-val">85%</span>
+                
+                <!-- Reset Btn -->
+                <button id="btnFit" class="btn-mini" title="Resetar Zoom">Fit</button>
+            </div>
+
+            <!-- 4. BOTÕES DE AÇÃO -->
             <div class="actions-grid">
                 <label class="btn btn-upload">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
                     Arquivo
                     <input type="file" id="fileInput" class="file-input" accept="image/*">
                 </label>
                 
                 <label class="btn btn-camera">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                     Câmera
                     <input type="file" id="cameraInput" class="file-input" accept="image/*" capture="environment">
                 </label>
             </div>
         </div>
 
+        <!-- CARD CONTROLS (DIREITA NO DESKTOP, BAIXO NO MOBILE) -->
         <div class="card" id="controlsCard">
-            <!-- SHARED TOP CONTROLS -->
-            <div id="sharedControls">
-                <!-- Format Selector -->
-                <div style="margin-bottom: 1.5rem;">
-                    <label style="margin-bottom: 0.5rem;">Formato de Saída</label>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-sm active" id="fmtSquare" onclick="setFormat('square')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
-                            Quadrado (300x300)
-                        </button>
-                        <button class="btn btn-sm" id="fmtVertical" onclick="setFormat('vertical')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg>
-                            Vertical (300x400)
-                        </button>
-                    </div>
+            
+            <fieldset>
+                <label>Ajustes de Imagem</label>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Brilho</span>
+                    <input type="range" id="brightRange" min="-50" max="50" value="0">
                 </div>
-
-                <!-- Adjustments (Common for Photo & Video) -->
-                <fieldset>
-                    <label>Tratamento de Imagem</label>
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Brilho</span>
-                        <input type="range" id="brightRange" min="-50" max="50" value="0">
-                    </div>
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Contraste</span>
-                        <input type="range" id="contrastRange" min="-50" max="50" value="0">
-                    </div>
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Saturação</span>
-                        <input type="range" id="satRange" min="-50" max="50" value="0">
-                    </div>
-                </fieldset>
-
-                <fieldset style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 1px solid #bbf7d0;">
-                    <label style="color: #166534;">Nitidez Pro (3x) <span class="val-badge" id="sharpVal">0</span></label>
-                    <input type="range" id="sharpRange" min="0" max="30" value="0" step="1">
-                    <p style="font-size: 0.75rem; color: #166534; margin-top: 0.25rem;">
-                        <span id="sharpMsg">Recomendado: Nível 10-15</span>
-                    </p>
-                </fieldset>
-            </div>
-
-            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
-
-            <!-- PHOTO SPECIFIC CONTROLS -->
-            <div id="imageControls">
-                <!-- Scale Controls (Photo) -->
-                <fieldset>
-                    <label>Zoom/Posição (Foto) <span class="val-badge" id="scaleVal">85%</span></label>
-                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
-                        <button class="btn btn-sm active" id="btnFit">Fit</button>
-                        <button class="btn btn-sm" id="btnMax">Full</button>
-                        <button class="btn btn-sm" id="btnCenter">Centro</button>
-                    </div>
-                    <input type="range" id="scaleRange" min="50" max="200" value="85">
-                </fieldset>
-
-                <!-- Magic Wand -->
-                <div style="margin-bottom: 1.5rem;">
-                     <button id="btnMagic" class="btn btn-magic">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 9.5l-2.5-2.5"/><path d="M21 11l-9 9-5-5 9-9z"/><path d="M3 3l6 6"/><path d="M15 4l-4 4"/><path d="M4 15l4-4"/><path d="M9 19l2 2"/></svg>
-                        🪄 Remover Fundo (Mágica)
-                    </button>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Contraste</span>
+                    <input type="range" id="contrastRange" min="-50" max="50" value="0">
                 </div>
+                <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
+                    <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Saturação</span>
+                    <input type="range" id="satRange" min="-50" max="50" value="0">
+                </div>
+            </fieldset>
+
+            <fieldset style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 1px solid #bbf7d0;">
+                <label style="color: #166534;">Nitidez Pro (3x) <span class="val-badge" id="sharpVal">0</span></label>
+                <input type="range" id="sharpRange" min="0" max="30" value="0" step="1">
+            </fieldset>
+
+            <!-- PHOTO EXTRAS -->
+            <div id="photoExtras">
+                <button id="btnMagic" class="btn btn-magic">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 9.5l-2.5-2.5"/><path d="M21 11l-9 9-5-5 9-9z"/><path d="M3 3l6 6"/><path d="M15 4l-4 4"/><path d="M4 15l4-4"/><path d="M9 19l2 2"/></svg>
+                    🪄 Remover Fundo
+                </button>
 
                 <button id="saveBtn" class="btn btn-save" disabled>
                     Baixar WebP Otimizado (30KB)
                 </button>
             </div>
 
-            <!-- VIDEO SPECIFIC CONTROLS -->
-            <div id="videoControls" class="hidden">
-                <!-- Scale Controls (Video) -->
-                <fieldset>
-                    <label>Zoom do Vídeo <span class="val-badge" id="vScaleVal">100%</span></label>
-                    <input type="range" id="vScaleRange" min="50" max="200" value="100">
-                </fieldset>
-
-                <div style="background: #eff6ff; padding: 0.75rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1rem;">
-                    <p style="font-size: 0.85rem; color: #1e40af; text-align: center;">
-                        <strong>Modo Vídeo Ativo</strong><br>
-                        Filtros e Nitidez serão aplicados na gravação.
-                    </p>
-                </div>
-
+            <!-- VIDEO EXTRAS -->
+            <div id="videoExtras" class="hidden">
                 <button id="recordBtn" class="btn btn-record" disabled>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
                     Gravar e Baixar (MP4)
@@ -341,7 +344,7 @@
                 <div id="videoProgress" style="width: 0%; height: 4px; background: var(--action); margin-top: 10px; transition: width 0.2s; border-radius: 2px;"></div>
             </div>
 
-            <!-- SEO Filename -->
+            <!-- SEO -->
             <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
                 <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nome do Arquivo (SEO)</label>
                 <input type="text" id="nameInput" class="input-text" placeholder="ex: arroz-prato-fino" value="produto" style="margin-bottom: 0.5rem;">
@@ -363,20 +366,20 @@
     <script>
         const state = {
             mode: 'photo',
-            format: 'square', // 'square' | 'vertical'
+            format: 'square',
             img: null, imgNoBg: null, useNoBg: false,
             video: null,
             ctx: null, width: 300, height: 300,
             scale: 0.85, vScale: 1.0, x: 0, y: 0,
             recorder: null, chunks: [], isRecording: false,
-            // Filters
-            brightness: 0, contrast: 0, saturation: 0, sharpness: 0
+            brightness: 0, contrast: 0, saturation: 0, sharpness: 0,
+            // Pinch Vars
+            isPinching: false, pinchStartDist: 0, pinchStartScale: 1
         };
 
         const els = {
             canvas: document.getElementById('canvas'),
             viewport: document.getElementById('dropZone'),
-            dropZone: document.getElementById('dropZone'),
             videoEl: document.getElementById('sourceVideo'),
             empty: document.getElementById('emptyState'),
             recBadge: document.getElementById('recBadge'),
@@ -387,21 +390,23 @@
             progressBar: document.getElementById('videoProgress'),
             mPhoto: document.getElementById('modePhoto'),
             mVideo: document.getElementById('modeVideo'),
-            cPhoto: document.getElementById('imageControls'),
-            cVideo: document.getElementById('videoControls'),
-            // Shared Controls
+            photoExtras: document.getElementById('photoExtras'),
+            videoExtras: document.getElementById('videoExtras'),
+            // Sliders
             bright: document.getElementById('brightRange'),
             contrast: document.getElementById('contrastRange'),
             sat: document.getElementById('satRange'),
             sharp: document.getElementById('sharpRange'),
-            // Photo Controls
+            // Zoom Area
             scale: document.getElementById('scaleRange'),
+            vScale: document.getElementById('vScaleRange'),
+            zoomVal: document.getElementById('zoomValDisplay'),
+            btnFit: document.getElementById('btnFit'),
+            // Btns
             btnMagic: document.getElementById('btnMagic'),
             btnSave: document.getElementById('saveBtn'),
-            // Video Controls
-            vScale: document.getElementById('vScaleRange'),
             btnRec: document.getElementById('recordBtn'),
-            // Format Btns
+            // Format
             fmtSquare: document.getElementById('fmtSquare'),
             fmtVertical: document.getElementById('fmtVertical')
         };
@@ -410,44 +415,112 @@
             updateCanvasDimensions();
             els.ctx = els.canvas.getContext('2d', { willReadFrequently: true });
             
-            // Mode Toggles
             els.mPhoto.onclick = () => setMode('photo');
             els.mVideo.onclick = () => setMode('video');
             
-            // Inputs
             els.fileInput.addEventListener('change', handleFile);
             els.camInput.addEventListener('change', handleFile);
             setupDragDrop();
 
-            // Shared Sliders
+            // Zoom Listeners
+            els.scale.oninput = (e) => updateZoom(e.target.value / 100);
+            els.vScale.oninput = (e) => updateZoom(e.target.value / 100);
+            els.btnFit.onclick = () => updateZoom(0.85); // Reset to default
+
+            // Filter Listeners
             els.bright.oninput = (e) => { state.brightness = parseInt(e.target.value); requestRender(); };
             els.contrast.oninput = (e) => { state.contrast = parseInt(e.target.value); requestRender(); };
             els.sat.oninput = (e) => { state.saturation = parseInt(e.target.value); requestRender(); };
             els.sharp.oninput = (e) => { state.sharpness = parseInt(e.target.value); document.getElementById('sharpVal').innerText = e.target.value; requestRender(); };
 
-            // Specific Sliders
-            els.scale.oninput = (e) => { state.scale = e.target.value / 100; document.getElementById('scaleVal').innerText = e.target.value + '%'; requestRender(); };
-            els.vScale.oninput = (e) => { state.vScale = e.target.value / 100; document.getElementById('vScaleVal').innerText = e.target.value + '%'; if(state.mode==='video') drawVideoFrame(); };
-
             // Buttons
             els.btnSave.onclick = savePhotoHighQuality; 
             els.btnRec.onclick = processVideo;
             els.btnMagic.onclick = toggleMagicBackground;
-            document.getElementById('btnFit').onclick = () => { els.scale.value=85; state.scale=0.85; requestRender(); updateActivePreset('btnFit'); };
-            document.getElementById('btnMax').onclick = () => { els.scale.value=100; state.scale=1.0; requestRender(); updateActivePreset('btnMax'); };
-            document.getElementById('btnCenter').onclick = () => { state.x=0; state.y=0; requestRender(); updateActivePreset('btnCenter'); };
 
-            // Gestures
+            // Touch Gestures (Pan & Pinch)
             els.canvas.addEventListener('mousedown', startPan);
-            els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]), {passive: false});
+            els.canvas.addEventListener('touchstart', handleTouchStart, {passive: false});
             window.addEventListener('mousemove', movePan);
-            window.addEventListener('touchmove', (e) => movePan(e.touches[0]), {passive: false});
+            window.addEventListener('touchmove', handleTouchMove, {passive: false});
             window.addEventListener('mouseup', endPan);
             window.addEventListener('touchend', endPan);
-            els.canvas.addEventListener('mouseleave', endPan);
             document.addEventListener('paste', handlePaste);
             
             window.setFormat = setFormat; 
+        }
+
+        function updateZoom(val) {
+            val = Math.max(0.5, Math.min(3.0, val)); // Clamp 50% to 300%
+            const displayVal = Math.round(val * 100);
+            
+            if (state.mode === 'photo') {
+                state.scale = val;
+                els.scale.value = displayVal;
+            } else {
+                state.vScale = val;
+                els.vScale.value = displayVal;
+            }
+            els.zoomVal.innerText = displayVal + '%';
+            
+            if(state.mode === 'video') drawVideoFrame(); else requestRender();
+        }
+
+        // --- GESTURES (PINCH & PAN) ---
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                // Pinch Start
+                e.preventDefault();
+                state.isPinching = true;
+                state.pinchStartDist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                state.pinchStartScale = (state.mode === 'photo') ? state.scale : state.vScale;
+            } else {
+                // Pan Start
+                startPan(e.touches[0]);
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (state.isPinching && e.touches.length === 2) {
+                e.preventDefault();
+                const dist = Math.hypot(
+                    e.touches[0].pageX - e.touches[1].pageX,
+                    e.touches[0].pageY - e.touches[1].pageY
+                );
+                
+                if (state.pinchStartDist > 0) {
+                    const delta = dist / state.pinchStartDist;
+                    updateZoom(state.pinchStartScale * delta);
+                }
+            } else if (!state.isPinching && e.touches.length === 1) {
+                movePan(e.touches[0], e);
+            }
+        }
+
+        function startPan(e) {
+            if((state.mode==='photo' && !state.img) || (state.mode==='video' && !state.video)) return;
+            state.isPanning = true; 
+            state.panStartX = (e.clientX || e.pageX) - state.x; 
+            state.panStartY = (e.clientY || e.pageY) - state.y; 
+            els.canvas.style.cursor = 'grabbing';
+        }
+
+        function movePan(e, originalEvent) {
+            if(!state.isPanning) return;
+            if(originalEvent && originalEvent.cancelable) originalEvent.preventDefault();
+            
+            state.x = (e.clientX || e.pageX) - state.panStartX; 
+            state.y = (e.clientY || e.pageY) - state.panStartY;
+            requestRender();
+        }
+
+        function endPan() { 
+            state.isPanning = false; 
+            state.isPinching = false;
+            els.canvas.style.cursor = 'grab'; 
         }
 
         // --- FORMAT & LAYOUT ---
@@ -478,23 +551,30 @@
             
             if(mode === 'photo') {
                 els.mPhoto.classList.add('active'); els.mVideo.classList.remove('active');
-                els.cPhoto.classList.remove('hidden'); els.cVideo.classList.add('hidden');
-                document.getElementById('sharpMsg').innerText = "Nível 10-15 recomendado";
+                els.photoExtras.classList.remove('hidden'); els.videoExtras.classList.add('hidden');
+                
+                // Toggle Zoom Slider
+                els.scale.classList.remove('hidden'); els.vScale.classList.add('hidden');
+                els.zoomVal.innerText = Math.round(state.scale * 100) + '%';
+                
                 els.fileInput.accept = "image/*"; els.camInput.accept = "image/*"; 
             } else {
                 els.mVideo.classList.add('active'); els.mPhoto.classList.remove('active');
-                els.cVideo.classList.remove('hidden'); els.cPhoto.classList.add('hidden');
-                document.getElementById('sharpMsg').innerText = "⚠️ Uso em vídeo pode travar celulares antigos";
+                els.videoExtras.classList.remove('hidden'); els.photoExtras.classList.add('hidden');
+                
+                // Toggle Zoom Slider
+                els.vScale.classList.remove('hidden'); els.scale.classList.add('hidden');
+                els.zoomVal.innerText = Math.round(state.vScale * 100) + '%';
+                
                 els.fileInput.accept = "video/*"; els.camInput.accept = "video/*"; 
             }
             els.camInput.setAttribute('capture', 'environment');
             els.empty.classList.remove('hidden'); els.canvas.classList.add('hidden');
             
-            // Re-render if content exists
             requestRender(); 
         }
 
-        // --- INPUT HANDLING ---
+        // --- CORE LOGIC (Load, Render, Save) ---
         function handleFile(e) {
             const file = e.target.files[0]; if(!file) return;
             if(file.type.startsWith('video/')) { if(state.mode !== 'video') setMode('video'); loadVideo(file); } 
@@ -506,20 +586,17 @@
             }
         }
         function setupDragDrop() {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => els.dropZone.addEventListener(ev, e => {e.preventDefault(); e.stopPropagation();}));
-            ['dragenter', 'dragover'].forEach(ev => els.dropZone.addEventListener(ev, () => els.dropZone.classList.add('drag-over')));
-            ['dragleave', 'drop'].forEach(ev => els.dropZone.addEventListener(ev, () => els.dropZone.classList.remove('drag-over')));
-            els.dropZone.addEventListener('drop', e => { if(e.dataTransfer.files.length) handleFile({target: {files: e.dataTransfer.files}}); });
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => els.viewport.addEventListener(ev, e => {e.preventDefault(); e.stopPropagation();}));
+            els.viewport.addEventListener('drop', e => { if(e.dataTransfer.files.length) handleFile({target: {files: e.dataTransfer.files}}); });
         }
 
-        // --- LOADERS ---
         function loadImage(file) {
             const url = URL.createObjectURL(file);
             const img = new Image();
             img.onload = () => {
                 state.img = img; state.imgNoBg = null; state.useNoBg = false;
                 state.x = 0; state.y = 0;
-                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
+                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo';
                 els.empty.classList.add('hidden'); els.canvas.classList.remove('hidden');
                 els.btnSave.disabled = false; requestRender(); URL.revokeObjectURL(url);
             };
@@ -537,7 +614,6 @@
             els.videoEl.loop = true; els.videoEl.muted = true; els.videoEl.play(); loopVideoPreview();
         }
 
-        // --- RENDER PIPELINE ---
         function requestRender() {
             if(state.mode === 'photo') requestAnimationFrame(renderPhoto);
             else if (state.mode === 'video') requestAnimationFrame(drawVideoFrame);
@@ -574,7 +650,6 @@
         function drawVideoFrame() {
             if(!state.video) return;
             const ctx = els.ctx; const w = state.width; const h = state.height;
-            
             ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
             const vw = state.video.videoWidth; const vh = state.video.videoHeight;
             const aspect = vw / vh;
@@ -582,16 +657,12 @@
             if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
             const dx = (w - dw)/2 + state.x; const dy = (h - dh)/2 + state.y;
             
-            // Apply Video Filters
             ctx.filter = getFilterString();
             ctx.drawImage(state.video, dx, dy, dw, dh);
             ctx.filter = 'none';
-
-            // Apply Sharpen (Heavy on CPU, but requested)
             if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness); 
         }
 
-        // --- SHARPEN KERNEL ---
         function applySharpen(ctx, w, h, level) {
             const strength = (level / 10.0);
             if (strength <= 0.01) return;
@@ -602,8 +673,6 @@
             const wCenter = 1 + (4 * strength);
             const wNeg = -strength;
             dst.set(data);
-            
-            // Convolution
             for (let y = 1; y < h - 1; y++) {
                 const rowOffset = y * w; const prevRow = (y - 1) * w; const nextRow = (y + 1) * w;
                 for (let x = 1; x < w - 1; x++) {
@@ -622,12 +691,11 @@
             ctx.putImageData(output, 0, 0);
         }
 
-        // --- BACKGROUND REMOVAL (Flood Fill) ---
         function toggleMagicBackground() {
             if (!state.img) return;
             if (state.useNoBg) {
                 state.useNoBg = false;
-                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
+                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo';
                 requestRender();
             } else {
                 if (state.imgNoBg) {
@@ -678,11 +746,10 @@
             }
         }
 
-        // --- ACTIONS ---
         async function savePhotoHighQuality() {
             if (!state.img) return;
             const originalText = els.btnSave.innerText;
-            els.btnSave.disabled = true; els.btnSave.innerHTML = "Gerando Super-Sampling...";
+            els.btnSave.disabled = true; els.btnSave.innerHTML = "Gerando...";
 
             try {
                 const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
@@ -708,7 +775,7 @@
 
                 if (state.sharpness > 0) applySharpen(finalCanvas.getContext('2d'), state.width, state.height, state.sharpness);
 
-                els.btnSave.innerHTML = "Otimizando 30KB...";
+                els.btnSave.innerHTML = "Otimizando...";
                 const MAX_BYTES = 30720; 
                 let minQ = 0.50, maxQ = 1.00, bestBlob = null;
                 for(let i=0; i<6; i++) {
@@ -719,47 +786,29 @@
                 if (!bestBlob) bestBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', 0.50));
                 download(URL.createObjectURL(bestBlob), '.webp');
 
-            } catch (err) { console.error(err); alert("Erro ao processar imagem HQ."); }
+            } catch (err) { console.error(err); alert("Erro ao salvar."); }
             els.btnSave.disabled = false; els.btnSave.innerHTML = originalText;
         }
 
         async function processVideo() {
             if(!state.video) return;
             state.isRecording = true; els.videoEl.pause(); els.videoEl.currentTime = 0; els.videoEl.loop = false;
-            els.recBadge.classList.remove('hidden'); els.btnRec.disabled = true; els.btnRec.innerText = "Processando...";
+            els.btnRec.disabled = true; els.btnRec.innerText = "Processando...";
+            els.recBadge.classList.remove('hidden');
 
             const stream = els.canvas.captureStream(30);
-            
-            // Priority: MP4 (H.264) -> WebM (VP9) -> WebM (Default)
-            const types = [
-                "video/mp4", 
-                "video/mp4;codecs=avc1", 
-                "video/mp4;codecs=h264", 
-                "video/webm;codecs=h264", 
-                "video/webm;codecs=vp9", 
-                "video/webm"
-            ];
-            
+            const types = ["video/mp4", "video/mp4;codecs=avc1", "video/mp4;codecs=h264", "video/webm;codecs=h264", "video/webm;codecs=vp9", "video/webm"];
             let mimeType = types.find(t => MediaRecorder.isTypeSupported(t)) || 'video/webm';
             
-            const recorder = new MediaRecorder(stream, { 
-                mimeType: mimeType, 
-                videoBitsPerSecond: 1500000 
-            });
-
+            const recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: 1500000 });
             const chunks = [];
             recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
             recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: mimeType });
                 const ext = mimeType.includes('mp4') ? '.mp4' : '.webm';
-                
-                if(ext === '.webm') {
-                    console.warn("Navegador não suporta MP4 nativo. Salvando como WebM.");
-                }
-
                 download(URL.createObjectURL(blob), ext);
                 state.isRecording = false; els.recBadge.classList.add('hidden');
-                els.btnRec.innerText = "Gravar e Baixar"; els.btnRec.disabled = false;
+                els.btnRec.innerText = "Gravar e Baixar (MP4)"; els.btnRec.disabled = false;
                 els.videoEl.loop = true; els.videoEl.play(); loopVideoPreview();
             };
             recorder.start();
@@ -774,31 +823,15 @@
                     requestAnimationFrame(recordLoop);
                 }
                 recordLoop();
-            } catch(e) { alert("Erro ao processar vídeo."); state.isRecording = false; els.recBadge.classList.add('hidden'); }
+            } catch(e) { alert("Erro."); state.isRecording = false; els.recBadge.classList.add('hidden'); }
         }
 
-        // --- UTILS ---
-        function updateActivePreset(id) {
-            ['btnFit', 'btnMax', 'btnCenter'].forEach(b => document.getElementById(b).classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
         function download(url, ext) {
             const clean = (els.nameInput.value || 'produto').toLowerCase().replace(/[^a-z0-9]/g, '-');
             const suffix = els.suffixSelect.value;
             const link = document.createElement('a');
             link.download = clean + suffix + ext; link.href = url; link.click();
         }
-        let isPanning = false, panStartX = 0, panStartY = 0;
-        function startPan(e) {
-            if((state.mode==='photo' && !state.img) || (state.mode==='video' && !state.video)) return;
-            isPanning = true; panStartX = (e.clientX || e.pageX) - state.x; panStartY = (e.clientY || e.pageY) - state.y; els.canvas.style.cursor = 'grabbing';
-        }
-        function movePan(e) {
-            if(!isPanning) return; if(e.cancelable) e.preventDefault();
-            state.x = (e.clientX || e.pageX) - panStartX; state.y = (e.clientY || e.pageY) - panStartY;
-            requestRender();
-        }
-        function endPan() { isPanning = false; els.canvas.style.cursor = 'grab'; }
 
         init();
     </script>
