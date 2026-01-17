@@ -4,10 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 8.2 - FAQ Restoration
+        VERSION: 8.4 - Mobile Checkout & FAQ UI Polish
         CHANGELOG:
-        - RESTORE: Lista completa de 6 perguntas frequentes no modal de dúvidas.
-        - UI: Mantido o layout Clean v8.1 com todas as funcionalidades.
+        - FEAT: Barra de Checkout Flutuante no Mobile (Total + Botão Encomendar).
+        - UI: Design do FAQ modernizado (Cards, Chevron animado, Tipografia limpa).
+        - UX: Botão de Dúvidas no Desktop agora abre o Modal de FAQ.
+        - FIX: Ajuste de padding no mobile para o conteúdo não ficar atrás das barras.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -35,8 +37,10 @@
             --border-color: #e2e8f0;
             --header-height: 60px;
             --app-bar-height: 60px;
+            --checkout-bar-height: 80px; /* Altura da barra de checkout mobile */
             --radius-lg: 16px;
             --shadow-float: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -73,7 +77,7 @@
             display: flex; align-items: center; gap: 6px;
         }
 
-        /* --- 3. MOBILE APP BAR --- */
+        /* --- 3. MOBILE APP BAR (HOME NAV) --- */
         .mobile-app-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--app-bar-height);
             background: #ffffff; border-top: 1px solid var(--border-color);
@@ -89,7 +93,28 @@
         .app-bar-btn svg { width: 24px; height: 24px; stroke-width: 2px; }
         .app-bar-btn.highlight { color: #b45309; } 
 
-        /* --- 4. HERO --- */
+        /* --- 4. MOBILE CHECKOUT BAR (CUSTOMIZER ONLY) --- */
+        .mobile-checkout-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--checkout-bar-height);
+            background: #ffffff; border-top: 1px solid var(--border-color);
+            z-index: 1150; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; box-shadow: 0 -4px 25px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        @media (min-width: 1024px) { .mobile-checkout-bar { display: none !important; } }
+
+        .mcb-total { display: flex; flex-direction: column; line-height: 1.2; }
+        .mcb-label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; }
+        .mcb-value { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+        
+        .mcb-btn {
+            background: #16a34a; color: white; border-radius: 50px; 
+            padding: 12px 24px; font-weight: 700; font-size: 1rem;
+            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
+        }
+
+        /* --- 5. HERO --- */
         #home-view { padding-top: var(--header-height); }
         .hero { background: #ffffff; padding: 40px 0 60px; text-align: center; border-bottom: 1px solid #f1f5f9; position: relative; overflow: hidden; }
         .hero-title { font-size: 2rem; font-weight: 800; color: var(--secondary); margin-bottom: 16px; line-height: 1.1; letter-spacing: -0.5px; }
@@ -107,7 +132,7 @@
         
         @media (min-width: 768px) { .hero { padding: 80px 0; } .hero-title { font-size: 3.5rem; } }
 
-        /* --- 5. HOME GRID --- */
+        /* --- 6. HOME GRID --- */
         .home-grid-container { padding: 40px 16px 80px; }
         .baskets-grid { display: grid; grid-template-columns: 1fr; gap: 24px; max-width: 1280px; margin: 0 auto; }
         @media (min-width: 600px) { .baskets-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -128,8 +153,10 @@
         .btn-outline { border: 1px solid var(--border-color); background: white; color: var(--secondary); font-weight: 600; padding: 10px; border-radius: 50px; width: 100%; }
         .btn-fill { background: var(--secondary); color: white; border: none; font-weight: 600; padding: 12px; border-radius: 50px; width: 100%; }
 
-        /* --- 6. CUSTOMIZER --- */
-        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; }
+        /* --- 7. CUSTOMIZER --- */
+        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 100px; /* Space for checkout bar */ }
+        @media(min-width: 1024px) { #customizer-view { padding-bottom: 0; } }
+
         .cust-header-bar { 
             background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border-color);
             position: sticky; top: var(--header-height); z-index: 900; backdrop-filter: blur(10px);
@@ -157,12 +184,16 @@
         .section-header { background: #fff; padding: 16px 20px; border-radius: 12px 12px 0 0; border: 1px solid var(--border-color); border-bottom: none; margin-top: 20px; display:flex; justify-content: space-between; align-items: center; }
         .section-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; }
         .product-box { background: #fff; border: 1px solid var(--border-color); border-radius: 0 0 12px 12px; padding: 16px; }
+        
+        .extras-separator-banner { text-align: center; padding: 30px 20px 10px; margin-bottom: 10px; }
+        .extras-separator-banner h3 { font-size: 1.4rem; font-weight: 300; color: var(--secondary); margin-bottom: 5px; }
+        .extras-separator-banner p { color: var(--text-light); font-size: 0.9rem; }
 
         .grid-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
         @media (min-width: 600px) { .grid-products { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .grid-products { grid-template-columns: repeat(4, 1fr) !important; gap: 20px; } }
 
-        /* PRODUCT MINI CARD (SMART) */
+        /* PRODUCT MINI CARD */
         .mini-card {
             display: flex; flex-direction: column; align-items: center; text-align: center;
             padding: 10px; border-radius: 8px; border: 1px solid transparent;
@@ -174,7 +205,6 @@
         .mc-img-box { width: 100%; aspect-ratio: 1/1; position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; cursor: zoom-in; }
         .mc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
-        /* Media Indicators (Restore) */
         .media-indicators { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; pointer-events: none; }
         .indicator-icon { width: 20px; height: 20px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary); border: 1px solid #e2e8f0; opacity: 0; transition: opacity 0.3s; }
         .indicator-icon.visible { opacity: 1; }
@@ -189,11 +219,10 @@
         .qm-btn { width: 28px; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.1rem; }
         .qm-val { font-weight: 700; font-size: 0.9rem; }
         
-        /* Features Buttons */
         .btn-feat-row { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
         .btn-feat { font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; border: 1px solid; cursor: pointer; display: none; }
-        .btn-feat.info { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; display: inline-block; } /* Always show if text exists */
-        .btn-feat.nutri { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; } /* Only show if image exists */
+        .btn-feat.info { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; display: inline-block; }
+        .btn-feat.nutri { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
 
         /* --- SIDEBAR DESKTOP --- */
         .sidebar-desktop { display: none; }
@@ -228,6 +257,56 @@
         .mobile-cat-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; color: var(--secondary); }
         .mobile-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mobile-tag-btn { font-size: 0.8rem; background: #fff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; text-align: center; }
+
+        /* BEAUTIFUL FAQ ACCORDION */
+        details.faq-box {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-card);
+            transition: box-shadow 0.3s ease;
+        }
+        details.faq-box:hover { box-shadow: var(--shadow-float); border-color: #cbd5e1; }
+        
+        details.faq-box summary {
+            padding: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--secondary);
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1rem;
+        }
+        
+        /* Custom Animated Chevron */
+        details.faq-box summary::after {
+            content: '';
+            width: 10px; height: 10px;
+            border-right: 2px solid var(--text-light);
+            border-bottom: 2px solid var(--text-light);
+            transform: rotate(45deg);
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+        }
+        details.faq-box[open] summary::after { transform: rotate(-135deg); border-color: var(--primary); }
+        
+        /* Hide Default Marker */
+        details.faq-box summary::-webkit-details-marker { display: none; }
+        
+        .faq-text {
+            padding: 0 20px 20px 20px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            border-top: 1px solid transparent;
+            opacity: 0.9;
+        }
+        details.faq-box[open] .faq-text { border-color: #f1f5f9; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
         .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--secondary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 1300; }
         .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -304,10 +383,21 @@
                 <div id="desk-tag-list" class="sidebar-nav-grid"></div>
                 <div style="margin-top:30px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
                     <strong style="color:var(--secondary);">Dúvida?</strong>
-                    <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:10px;">Fale conosco no WhatsApp.</p>
-                    <button class="btn-outline" onclick="window.open('https://api.whatsapp.com/send?phone=5565996813588')">Ajuda</button>
+                    <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:10px;">Fale conosco no WhatsApp ou veja as perguntas frequentes.</p>
+                    <button class="btn-outline" onclick="App.openSheet('faq-sheet')">Perguntas Frequentes</button>
                 </div>
             </aside>
+        </div>
+        
+        <!-- NEW MOBILE CHECKOUT BAR -->
+        <div class="mobile-checkout-bar" id="mobile-checkout-bar">
+            <div class="mcb-total">
+                <span class="mcb-label">Total Estimado</span>
+                <span class="mcb-value" id="mcb-total-val">R$ 0,00</span>
+            </div>
+            <button class="mcb-btn" onclick="App.openCheckout()">
+                Encomendar <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
         </div>
     </div>
 
@@ -342,7 +432,21 @@
     <div id="cat-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('cat-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Categorias</h3><span class="sheet-close" onclick="App.closeSheet('cat-sheet')">✕</span></div><div id="mob-cat-grid" class="mobile-cat-grid"></div></div></div>
     <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')">✕</span></div><div id="mob-tags-grid" class="mobile-tags-grid"></div></div></div>
     <div id="offers-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('offers-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title" style="color:#b45309;">🔥 Super Ofertas</h3><span class="sheet-close" onclick="App.closeSheet('offers-sheet')">✕</span></div><div id="mob-offers-grid" class="grid-products" style="grid-template-columns: repeat(2, 1fr) !important;"></div></div></div>
-    <div id="faq-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('faq-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Dúvidas Frequentes</h3><span class="sheet-close" onclick="App.closeSheet('faq-sheet')">✕</span></div><div><details class="faq-box"><summary>Formas de Pagamento</summary><div class="faq-text">Pix, Dinheiro, Cartões e Vales.</div></details><details class="faq-box"><summary>Taxa de Entrega</summary><div class="faq-text">Grátis acima de R$ 85,00.</div></details></div></div></div>
+    
+    <!-- BEAUTIFUL FAQ SHEET -->
+    <div id="faq-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('faq-sheet')">
+        <div class="sheet-content">
+            <div class="sheet-header"><h3 class="sheet-title">Dúvidas Frequentes</h3><span class="sheet-close" onclick="App.closeSheet('faq-sheet')">✕</span></div>
+            <div style="padding-bottom:20px;">
+                <details class="faq-box"><summary>Formas de Pagamento</summary><div class="faq-text">Aceitamos Dinheiro, Pix, Cartão de Débito, Crédito (até 3x sem juros) e Vales Alimentação/Refeição (Pluxee, Alelo, Flash, etc).</div></details>
+                <details class="faq-box"><summary>Eu pago só na entrega?</summary><div class="faq-text">Sim! Para sua total segurança, o pagamento é realizado somente no momento em que você recebe o pedido na sua casa.</div></details>
+                <details class="faq-box"><summary>A entrega é grátis?</summary><div class="faq-text">Sim, o frete é totalmente Grátis para compras acima de R$ 85,00 em toda a nossa área de cobertura (Cuiabá e VG).</div></details>
+                <details class="faq-box"><summary>Posso trocar itens da cesta?</summary><div class="faq-text">Com certeza! Utilize o botão "Personalizar" para adicionar ou remover itens, ou fale diretamente com a gente no WhatsApp.</div></details>
+                <details class="faq-box"><summary>De onde vocês são?</summary><div class="faq-text">Somos de Cuiabá - MT, localizados no bairro Jardim Nossa Senhora Aparecida. Atendemos com frota própria.</div></details>
+                <details class="faq-box"><summary>Qual o prazo de entrega?</summary><div class="faq-text">Nossas entregas são rápidas e realizadas no dia seguinte ao pedido, de segunda a sábado.</div></details>
+            </div>
+        </div>
+    </div>
 
     <script>
         const CONSTANTS = {
@@ -529,6 +633,9 @@
                 document.getElementById('cust-title').innerText = basket.nome;
                 document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('customizer-view').classList.remove('hidden');
+                // Hide main app bar on mobile when entering customizer
+                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'none';
+                
                 window.scrollTo(0,0);
                 this.renderAllLists();
             },
@@ -536,6 +643,8 @@
             goHome() {
                 document.getElementById('customizer-view').classList.add('hidden');
                 document.getElementById('home-view').classList.remove('hidden');
+                // Restore main app bar on mobile
+                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'grid';
                 this.currentBasket = null;
             },
 
@@ -559,6 +668,15 @@
                 const sortedCats = Object.keys(groups).sort();
                 
                 let html = '';
+                // RE-INJECTED BANNER FOR EXTRAS
+                if(sortedCats.length > 0 && !searchTerm) {
+                    html += `
+                    <div class="extras-separator-banner">
+                        <h3>Adicionar Extras</h3>
+                        <p>Toque nos produtos abaixo para adicionar mais itens.</p>
+                    </div>`;
+                }
+
                 sortedCats.forEach(cat => {
                     const color = Object.keys(CONSTANTS.THEMES).find(k => cat.includes(k)) || 'DEFAULT';
                     html += `<div id="cat-${cat}" class="section-header" style="background:${CONSTANTS.THEMES[color]}; margin-top:30px;"><h3>${cat}</h3></div>
@@ -660,7 +778,13 @@
                     if(p) total += (p.isOffer ? p.offerPrice : p.valor) * this.cart[id];
                 }
                 const fmt = 'R$ ' + total.toFixed(2).replace('.', ',');
+                
+                // Desktop Sidebar Total
                 document.getElementById('desk-total-val').innerText = fmt;
+                // Mobile Checkout Bar Total
+                const mobTotal = document.getElementById('mcb-total-val');
+                if(mobTotal) mobTotal.innerText = fmt;
+                
                 document.getElementById('co-total').innerText = fmt;
             },
 
