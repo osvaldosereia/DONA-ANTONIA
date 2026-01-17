@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SISTEMAS | Studio 300 Pro</title>
-    <meta name="description" content="Editor 300x300 Híbrido: Lanczos3 Resampling & Smart Compression.">
+    <meta name="description" content="Editor Híbrido: Fotos e Vídeos com tratamento profissional mobile.">
     <meta name="theme-color" content="#2563eb">
     
-    <!-- ENGINE EXTERNA DE ALTA QUALIDADE (Lanczos3) -->
+    <!-- ENGINE EXTERNA DE ALTA QUALIDADE (Lanczos3 para Fotos) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pica/9.0.1/pica.min.js"></script>
     
     <style>
@@ -97,7 +97,6 @@
         /* Canvas Area */
         .viewport {
             width: 100%;
-            aspect-ratio: 1;
             background: #e5e5e5 radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 20px 20px;
             border-radius: 8px;
@@ -107,7 +106,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: 1rem;
-            transition: border-color 0.2s;
+            transition: all 0.3s ease;
             border: 2px solid transparent;
         }
         
@@ -118,8 +117,7 @@
             image-rendering: high-quality;
             max-width: 100%;
             max-height: 100%;
-            width: 100%;
-            height: 100%;
+            object-fit: contain; 
             cursor: grab;
         }
         canvas:active { cursor: grabbing; }
@@ -221,7 +219,7 @@
 
     <main>
         <div class="card preview-section">
-            <div class="viewport" id="dropZone">
+            <div class="viewport" id="dropZone" style="aspect-ratio: 1;">
                 <div id="emptyState" class="empty-msg">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--border); margin-bottom: 0.5rem;">
                         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -250,22 +248,56 @@
         </div>
 
         <div class="card" id="controlsCard">
-            <!-- IMAGE CONTROLS -->
-            <div id="imageControls">
-                
-                <!-- Magic Wand (Background Removal) -->
+            <!-- SHARED TOP CONTROLS -->
+            <div id="sharedControls">
+                <!-- Format Selector -->
                 <div style="margin-bottom: 1.5rem;">
-                     <button id="btnMagic" class="btn btn-magic">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 9.5l-2.5-2.5"/><path d="M21 11l-9 9-5-5 9-9z"/><path d="M3 3l6 6"/><path d="M15 4l-4 4"/><path d="M4 15l4-4"/><path d="M9 19l2 2"/></svg>
-                        🪄 Remover Fundo (Mágica)
-                    </button>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">
-                        Preserva rótulos brancos. Funciona em fotos de estúdio.
-                    </p>
+                    <label style="margin-bottom: 0.5rem;">Formato de Saída</label>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-sm active" id="fmtSquare" onclick="setFormat('square')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                            Quadrado (300x300)
+                        </button>
+                        <button class="btn btn-sm" id="fmtVertical" onclick="setFormat('vertical')">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg>
+                            Vertical (300x400)
+                        </button>
+                    </div>
                 </div>
 
+                <!-- Adjustments (Common for Photo & Video) -->
                 <fieldset>
-                    <label>Escala <span class="val-badge" id="scaleVal">85%</span></label>
+                    <label>Tratamento de Imagem</label>
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Brilho</span>
+                        <input type="range" id="brightRange" min="-50" max="50" value="0">
+                    </div>
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center; margin-bottom: 0.8rem;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Contraste</span>
+                        <input type="range" id="contrastRange" min="-50" max="50" value="0">
+                    </div>
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
+                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 65px;">Saturação</span>
+                        <input type="range" id="satRange" min="-50" max="50" value="0">
+                    </div>
+                </fieldset>
+
+                <fieldset style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <label style="color: #166534;">Nitidez Pro (3x) <span class="val-badge" id="sharpVal">0</span></label>
+                    <input type="range" id="sharpRange" min="0" max="30" value="0" step="1">
+                    <p style="font-size: 0.75rem; color: #166534; margin-top: 0.25rem;">
+                        <span id="sharpMsg">Recomendado: Nível 10-15</span>
+                    </p>
+                </fieldset>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
+
+            <!-- PHOTO SPECIFIC CONTROLS -->
+            <div id="imageControls">
+                <!-- Scale Controls (Photo) -->
+                <fieldset>
+                    <label>Zoom/Posição (Foto) <span class="val-badge" id="scaleVal">85%</span></label>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
                         <button class="btn btn-sm active" id="btnFit">Fit</button>
                         <button class="btn btn-sm" id="btnMax">Full</button>
@@ -274,42 +306,33 @@
                     <input type="range" id="scaleRange" min="50" max="200" value="85">
                 </fieldset>
 
-                <hr style="border: 0; border-top: 1px solid var(--border); margin: 1.5rem 0;">
-
-                <fieldset>
-                    <label>Cor / Luz</label>
-                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 1rem; align-items: center;">
-                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 60px;">Brilho</span>
-                        <input type="range" id="brightRange" min="-50" max="50" value="0">
-                        <span style="font-size: 0.8rem; color: var(--text-muted); width: 60px;">Contraste</span>
-                        <input type="range" id="contrastRange" min="-50" max="50" value="0">
-                    </div>
-                </fieldset>
-
-                <fieldset style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 1px solid #bbf7d0;">
-                    <label style="color: #166534;">Nitidez Pro (3x) <span class="val-badge" id="sharpVal">0</span></label>
-                    <input type="range" id="sharpRange" min="0" max="30" value="0" step="1">
-                    <p style="font-size: 0.75rem; color: #166534; margin-top: 0.25rem;">Nível 10-15 recomendado para WebP</p>
-                </fieldset>
+                <!-- Magic Wand -->
+                <div style="margin-bottom: 1.5rem;">
+                     <button id="btnMagic" class="btn btn-magic">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 9.5l-2.5-2.5"/><path d="M21 11l-9 9-5-5 9-9z"/><path d="M3 3l6 6"/><path d="M15 4l-4 4"/><path d="M4 15l4-4"/><path d="M9 19l2 2"/></svg>
+                        🪄 Remover Fundo (Mágica)
+                    </button>
+                </div>
 
                 <button id="saveBtn" class="btn btn-save" disabled>
                     Baixar WebP Otimizado (30KB)
                 </button>
             </div>
 
-            <!-- VIDEO CONTROLS -->
+            <!-- VIDEO SPECIFIC CONTROLS -->
             <div id="videoControls" class="hidden">
-                <div style="background: #eff6ff; padding: 1rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1.5rem;">
-                    <p style="font-size: 0.85rem; color: #1e40af; text-align: center;">
-                        <strong>Vídeo Mobile (Sem Áudio)</strong><br>
-                        Recorte 300x300px com bitrate adaptativo.
-                    </p>
-                </div>
-                
+                <!-- Scale Controls (Video) -->
                 <fieldset>
                     <label>Zoom do Vídeo <span class="val-badge" id="vScaleVal">100%</span></label>
                     <input type="range" id="vScaleRange" min="50" max="200" value="100">
                 </fieldset>
+
+                <div style="background: #eff6ff; padding: 0.75rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1rem;">
+                    <p style="font-size: 0.85rem; color: #1e40af; text-align: center;">
+                        <strong>Modo Vídeo Ativo</strong><br>
+                        Filtros e Nitidez serão aplicados na gravação.
+                    </p>
+                </div>
 
                 <button id="recordBtn" class="btn btn-record" disabled>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
@@ -318,6 +341,7 @@
                 <div id="videoProgress" style="width: 0%; height: 4px; background: var(--action); margin-top: 10px; transition: width 0.2s; border-radius: 2px;"></div>
             </div>
 
+            <!-- SEO Filename -->
             <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
                 <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nome do Arquivo (SEO)</label>
                 <input type="text" id="nameInput" class="input-text" placeholder="ex: arroz-prato-fino" value="produto" style="margin-bottom: 0.5rem;">
@@ -339,18 +363,19 @@
     <script>
         const state = {
             mode: 'photo',
-            img: null, 
-            imgNoBg: null, // Stores the background-removed version
-            useNoBg: false, // Toggle state
+            format: 'square', // 'square' | 'vertical'
+            img: null, imgNoBg: null, useNoBg: false,
             video: null,
             ctx: null, width: 300, height: 300,
             scale: 0.85, vScale: 1.0, x: 0, y: 0,
             recorder: null, chunks: [], isRecording: false,
-            brightness: 0, contrast: 0, sharpness: 0
+            // Filters
+            brightness: 0, contrast: 0, saturation: 0, sharpness: 0
         };
 
         const els = {
             canvas: document.getElementById('canvas'),
+            viewport: document.getElementById('dropZone'),
             dropZone: document.getElementById('dropZone'),
             videoEl: document.getElementById('sourceVideo'),
             empty: document.getElementById('emptyState'),
@@ -364,37 +389,55 @@
             mVideo: document.getElementById('modeVideo'),
             cPhoto: document.getElementById('imageControls'),
             cVideo: document.getElementById('videoControls'),
-            scale: document.getElementById('scaleRange'),
+            // Shared Controls
             bright: document.getElementById('brightRange'),
             contrast: document.getElementById('contrastRange'),
+            sat: document.getElementById('satRange'),
             sharp: document.getElementById('sharpRange'),
+            // Photo Controls
+            scale: document.getElementById('scaleRange'),
+            btnMagic: document.getElementById('btnMagic'),
             btnSave: document.getElementById('saveBtn'),
+            // Video Controls
             vScale: document.getElementById('vScaleRange'),
             btnRec: document.getElementById('recordBtn'),
-            btnMagic: document.getElementById('btnMagic')
+            // Format Btns
+            fmtSquare: document.getElementById('fmtSquare'),
+            fmtVertical: document.getElementById('fmtVertical')
         };
 
         function init() {
-            els.canvas.width = 300;
-            els.canvas.height = 300;
+            updateCanvasDimensions();
             els.ctx = els.canvas.getContext('2d', { willReadFrequently: true });
             
+            // Mode Toggles
             els.mPhoto.onclick = () => setMode('photo');
             els.mVideo.onclick = () => setMode('video');
+            
+            // Inputs
             els.fileInput.addEventListener('change', handleFile);
             els.camInput.addEventListener('change', handleFile);
             setupDragDrop();
 
-            els.scale.oninput = (e) => { state.scale = e.target.value / 100; document.getElementById('scaleVal').innerText = e.target.value + '%'; requestRender(); };
+            // Shared Sliders
             els.bright.oninput = (e) => { state.brightness = parseInt(e.target.value); requestRender(); };
             els.contrast.oninput = (e) => { state.contrast = parseInt(e.target.value); requestRender(); };
+            els.sat.oninput = (e) => { state.saturation = parseInt(e.target.value); requestRender(); };
             els.sharp.oninput = (e) => { state.sharpness = parseInt(e.target.value); document.getElementById('sharpVal').innerText = e.target.value; requestRender(); };
+
+            // Specific Sliders
+            els.scale.oninput = (e) => { state.scale = e.target.value / 100; document.getElementById('scaleVal').innerText = e.target.value + '%'; requestRender(); };
             els.vScale.oninput = (e) => { state.vScale = e.target.value / 100; document.getElementById('vScaleVal').innerText = e.target.value + '%'; if(state.mode==='video') drawVideoFrame(); };
 
+            // Buttons
             els.btnSave.onclick = savePhotoHighQuality; 
             els.btnRec.onclick = processVideo;
             els.btnMagic.onclick = toggleMagicBackground;
+            document.getElementById('btnFit').onclick = () => { els.scale.value=85; state.scale=0.85; requestRender(); updateActivePreset('btnFit'); };
+            document.getElementById('btnMax').onclick = () => { els.scale.value=100; state.scale=1.0; requestRender(); updateActivePreset('btnMax'); };
+            document.getElementById('btnCenter').onclick = () => { state.x=0; state.y=0; requestRender(); updateActivePreset('btnCenter'); };
 
+            // Gestures
             els.canvas.addEventListener('mousedown', startPan);
             els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]), {passive: false});
             window.addEventListener('mousemove', movePan);
@@ -402,121 +445,66 @@
             window.addEventListener('mouseup', endPan);
             window.addEventListener('touchend', endPan);
             els.canvas.addEventListener('mouseleave', endPan);
-
-            document.getElementById('btnFit').onclick = () => { els.scale.value=85; state.scale=0.85; requestRender(); updateActivePreset('btnFit'); };
-            document.getElementById('btnMax').onclick = () => { els.scale.value=100; state.scale=1.0; requestRender(); updateActivePreset('btnMax'); };
-            document.getElementById('btnCenter').onclick = () => { state.x=0; state.y=0; requestRender(); updateActivePreset('btnCenter'); };
             document.addEventListener('paste', handlePaste);
+            
+            window.setFormat = setFormat; 
         }
 
-        // --- BACKGROUND REMOVAL LOGIC (Smart Flood Fill) ---
-        function toggleMagicBackground() {
-            if (!state.img) return;
-            
-            if (state.useNoBg) {
-                // Toggle OFF
-                state.useNoBg = false;
-                els.btnMagic.style.background = '#8b5cf6';
-                els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
-                requestRender();
+        // --- FORMAT & LAYOUT ---
+        function setFormat(fmt) {
+            state.format = fmt;
+            if (fmt === 'square') {
+                els.fmtSquare.classList.add('active'); els.fmtVertical.classList.remove('active');
+                state.width = 300; state.height = 300; els.viewport.style.aspectRatio = '1 / 1';
             } else {
-                // Toggle ON
-                if (state.imgNoBg) {
-                    // Already processed
-                    state.useNoBg = true;
-                    els.btnMagic.style.background = '#059669'; // Green indicating active
-                    els.btnMagic.innerHTML = '✅ Fundo Removido';
-                    requestRender();
-                } else {
-                    // Need to process
-                    els.btnMagic.innerHTML = '⏳ Processando...';
-                    els.btnMagic.classList.add('processing');
-                    
-                    // Give UI time to update
-                    setTimeout(() => {
-                        processRemoveBackground();
-                        state.useNoBg = true;
-                        els.btnMagic.classList.remove('processing');
-                        els.btnMagic.style.background = '#059669';
-                        els.btnMagic.innerHTML = '✅ Fundo Removido';
-                        requestRender();
-                    }, 50);
-                }
+                els.fmtVertical.classList.add('active'); els.fmtSquare.classList.remove('active');
+                state.width = 300; state.height = 400; els.viewport.style.aspectRatio = '3 / 4';
             }
+            updateCanvasDimensions();
+            state.x = 0; state.y = 0;
+            requestRender();
         }
 
-        function processRemoveBackground() {
-            const tempCanvas = document.createElement('canvas');
-            tempCanvas.width = state.img.width;
-            tempCanvas.height = state.img.height;
-            const ctx = tempCanvas.getContext('2d');
-            ctx.drawImage(state.img, 0, 0);
-            
-            const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-            floodFillBackground(imgData, 20); // Tolerance 20 is good for studio white
-            
-            ctx.putImageData(imgData, 0, 0);
-            
-            const newImg = new Image();
-            newImg.src = tempCanvas.toDataURL();
-            state.imgNoBg = newImg;
+        function updateCanvasDimensions() {
+            els.canvas.width = state.width;
+            els.canvas.height = state.height;
+            if (els.ctx) { els.ctx.fillStyle = '#fff'; els.ctx.fillRect(0, 0, state.width, state.height); }
         }
 
-        function floodFillBackground(imgData, tolerance) {
-            const w = imgData.width;
-            const h = imgData.height;
-            const data = imgData.data;
-            const stack = [];
-            const visited = new Uint8Array(w * h); // 0 = no, 1 = yes
-
-            // Add corners to stack (assuming background is in corners)
-            const corners = [[0,0], [w-1, 0], [0, h-1], [w-1, h-1]];
+        // --- MODE SWITCHING ---
+        function setMode(mode) {
+            state.mode = mode;
+            els.ctx.fillStyle = '#fff'; els.ctx.fillRect(0,0,state.width, state.height);
             
-            // Get reference color from Top-Left corner
-            const sr = data[0], sg = data[1], sb = data[2];
-
-            for(let c of corners) {
-                stack.push(c[0], c[1]);
+            if(mode === 'photo') {
+                els.mPhoto.classList.add('active'); els.mVideo.classList.remove('active');
+                els.cPhoto.classList.remove('hidden'); els.cVideo.classList.add('hidden');
+                document.getElementById('sharpMsg').innerText = "Nível 10-15 recomendado";
+                els.fileInput.accept = "image/*"; els.camInput.accept = "image/*"; 
+            } else {
+                els.mVideo.classList.add('active'); els.mPhoto.classList.remove('active');
+                els.cVideo.classList.remove('hidden'); els.cPhoto.classList.add('hidden');
+                document.getElementById('sharpMsg').innerText = "⚠️ Uso em vídeo pode travar celulares antigos";
+                els.fileInput.accept = "video/*"; els.camInput.accept = "video/*"; 
             }
-
-            function match(idx) {
-                const r = data[idx], g = data[idx+1], b = data[idx+2];
-                // Euclidean distance check can be better but abs diff is faster
-                return Math.abs(r - sr) <= tolerance &&
-                       Math.abs(g - sg) <= tolerance &&
-                       Math.abs(b - sb) <= tolerance;
-            }
-
-            while (stack.length > 0) {
-                const y = stack.pop();
-                const x = stack.pop();
-                
-                const ptr = y * w + x;
-                if (visited[ptr]) continue;
-                visited[ptr] = 1;
-
-                const idx = ptr * 4;
-                
-                if (match(idx)) {
-                    // It matches background, make transparent
-                    data[idx+3] = 0; 
-
-                    // Push neighbors
-                    if (x > 0 && !visited[ptr-1]) { stack.push(x-1, y); }
-                    if (x < w-1 && !visited[ptr+1]) { stack.push(x+1, y); }
-                    if (y > 0 && !visited[ptr-w]) { stack.push(x, y-1); }
-                    if (y < h-1 && !visited[ptr+w]) { stack.push(x, y+1); }
-                }
-            }
+            els.camInput.setAttribute('capture', 'environment');
+            els.empty.classList.remove('hidden'); els.canvas.classList.add('hidden');
+            
+            // Re-render if content exists
+            requestRender(); 
         }
 
-        // --- EXISTING LOGIC ---
-
-        function updateActivePreset(id) {
-            ['btnFit', 'btnMax', 'btnCenter'].forEach(b => document.getElementById(b).classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        // --- INPUT HANDLING ---
+        function handleFile(e) {
+            const file = e.target.files[0]; if(!file) return;
+            if(file.type.startsWith('video/')) { if(state.mode !== 'video') setMode('video'); loadVideo(file); } 
+            else { if(state.mode !== 'photo') setMode('photo'); loadImage(file); }
         }
-
+        function handlePaste(e) {
+            for (let item of e.clipboardData.items) {
+                if (item.type.indexOf('image') !== -1) { loadImage(item.getAsFile()); break; }
+            }
+        }
         function setupDragDrop() {
             ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(ev => els.dropZone.addEventListener(ev, e => {e.preventDefault(); e.stopPropagation();}));
             ['dragenter', 'dragover'].forEach(ev => els.dropZone.addEventListener(ev, () => els.dropZone.classList.add('drag-over')));
@@ -524,64 +512,47 @@
             els.dropZone.addEventListener('drop', e => { if(e.dataTransfer.files.length) handleFile({target: {files: e.dataTransfer.files}}); });
         }
 
-        function handlePaste(e) {
-            for (let item of e.clipboardData.items) {
-                if (item.type.indexOf('image') !== -1) { loadImage(item.getAsFile()); break; }
-            }
-        }
-
-        function setMode(mode) {
-            state.mode = mode; state.x = 0; state.y = 0;
-            els.canvas.width = 300; els.canvas.height = 300;
-            els.ctx.fillStyle = '#fff'; els.ctx.fillRect(0,0,300,300);
-            
-            if(mode === 'photo') {
-                els.mPhoto.classList.add('active'); els.mVideo.classList.remove('active');
-                els.cPhoto.classList.remove('hidden'); els.cVideo.classList.add('hidden');
-                els.fileInput.accept = "image/*"; els.camInput.accept = "image/*"; els.camInput.setAttribute('capture', 'environment');
-            } else {
-                els.mVideo.classList.add('active'); els.mPhoto.classList.remove('active');
-                els.cVideo.classList.remove('hidden'); els.cPhoto.classList.add('hidden');
-                els.fileInput.accept = "video/*"; els.camInput.accept = "video/*"; els.camInput.setAttribute('capture', 'environment');
-            }
-            els.empty.classList.remove('hidden'); els.canvas.classList.add('hidden');
-        }
-
-        function handleFile(e) {
-            const file = e.target.files[0]; if(!file) return;
-            if(file.type.startsWith('video/')) { if(state.mode !== 'video') setMode('video'); loadVideo(file); } 
-            else { if(state.mode !== 'photo') setMode('photo'); loadImage(file); }
-        }
-
+        // --- LOADERS ---
         function loadImage(file) {
             const url = URL.createObjectURL(file);
             const img = new Image();
             img.onload = () => {
-                state.img = img; 
-                state.imgNoBg = null; // Reset processed image
-                state.useNoBg = false; // Reset toggle
+                state.img = img; state.imgNoBg = null; state.useNoBg = false;
                 state.x = 0; state.y = 0;
-                
-                // Reset UI Button
-                els.btnMagic.style.background = '#8b5cf6';
-                els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
-                
+                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
                 els.empty.classList.add('hidden'); els.canvas.classList.remove('hidden');
                 els.btnSave.disabled = false; requestRender(); URL.revokeObjectURL(url);
             };
             img.src = url;
         }
 
-        function requestRender() { requestAnimationFrame(renderPhoto); }
+        function loadVideo(file) {
+            const url = URL.createObjectURL(file);
+            els.videoEl.src = url;
+            els.videoEl.onloadedmetadata = () => {
+                state.video = els.videoEl; state.x = 0; state.y = 0;
+                els.empty.classList.add('hidden'); els.canvas.classList.remove('hidden');
+                els.btnRec.disabled = false; els.videoEl.currentTime = 0;
+            };
+            els.videoEl.loop = true; els.videoEl.muted = true; els.videoEl.play(); loopVideoPreview();
+        }
+
+        // --- RENDER PIPELINE ---
+        function requestRender() {
+            if(state.mode === 'photo') requestAnimationFrame(renderPhoto);
+            else if (state.mode === 'video') requestAnimationFrame(drawVideoFrame);
+        }
+
+        function getFilterString() {
+            return `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%) saturate(${100 + state.saturation}%)`;
+        }
 
         function renderPhoto() {
             if(!state.img) return;
-            const ctx = els.ctx; const w = 300, h = 300;
+            const ctx = els.ctx; const w = state.width; const h = state.height;
             ctx.filter = 'none'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
             
-            // Choose which image to render (Original or NoBg)
             const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
-            // Fallback to original if NoBg is not ready (async issue handling)
             if (!sourceImg.complete && state.useNoBg) return requestRender();
 
             const aspect = sourceImg.width / sourceImg.height;
@@ -589,99 +560,38 @@
             if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
             const dx = (w - dw)/2 + state.x; const dy = (h - dh)/2 + state.y;
             
-            ctx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
+            ctx.filter = getFilterString();
             ctx.drawImage(sourceImg, dx, dy, dw, dh);
             ctx.filter = 'none';
             if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness); 
         }
 
-        async function savePhotoHighQuality() {
-            if (!state.img) return;
-            const originalText = els.btnSave.innerText;
-            els.btnSave.disabled = true;
-            els.btnSave.innerHTML = "Gerando Super-Sampling...";
-
-            try {
-                // Pick source
-                const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
-
-                // 1. Super-Sampling Canvas (900x900) - 3x Resolution
-                const superSize = 900;
-                const superCanvas = document.createElement('canvas');
-                superCanvas.width = superSize;
-                superCanvas.height = superSize;
-                const sCtx = superCanvas.getContext('2d');
-
-                sCtx.fillStyle = '#ffffff';
-                sCtx.fillRect(0, 0, superSize, superSize);
-
-                const aspect = sourceImg.width / sourceImg.height;
-                let dw, dh, targetSize = superSize * state.scale;
-                if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
-                const dx = (superSize - dw)/2 + (state.x * 3);
-                const dy = (superSize - dh)/2 + (state.y * 3);
-
-                sCtx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
-                sCtx.drawImage(sourceImg, dx, dy, dw, dh);
-                sCtx.filter = 'none';
-
-                // 2. Lanczos3 Downscaling via Pica
-                const finalCanvas = document.createElement('canvas');
-                finalCanvas.width = 300;
-                finalCanvas.height = 300;
-
-                if (window.pica) {
-                    await window.pica().resize(superCanvas, finalCanvas, {
-                        unsharpAmount: 0,
-                        unsharpRadius: 0.5,
-                        unsharpThreshold: 0,
-                        quality: 3 
-                    });
-                } else {
-                    const fCtx = finalCanvas.getContext('2d');
-                    fCtx.drawImage(superCanvas, 0, 0, 300, 300);
-                }
-
-                // 3. Apply Custom Sharpen (CPU)
-                const fCtx = finalCanvas.getContext('2d');
-                if (state.sharpness > 0) {
-                    applySharpen(fCtx, 300, 300, state.sharpness);
-                }
-
-                // 4. Smart Compression (Binary Search)
-                els.btnSave.innerHTML = "Otimizando 30KB...";
-                const MAX_BYTES = 30720; 
-                
-                let minQ = 0.50;
-                let maxQ = 1.00;
-                let bestBlob = null;
-
-                for(let i=0; i<6; i++) {
-                    const midQ = (minQ + maxQ) / 2;
-                    const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', midQ));
-                    
-                    if (blob.size > MAX_BYTES) {
-                        maxQ = midQ; 
-                    } else {
-                        minQ = midQ;
-                        bestBlob = blob;
-                    }
-                }
-
-                if (!bestBlob) bestBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', 0.50));
-
-                const url = URL.createObjectURL(bestBlob);
-                download(url, '.webp');
-
-            } catch (err) {
-                console.error(err);
-                alert("Erro ao processar imagem HQ.");
-            }
-
-            els.btnSave.disabled = false;
-            els.btnSave.innerHTML = originalText;
+        function loopVideoPreview() {
+            if(state.mode !== 'video' || state.isRecording) return;
+            drawVideoFrame(); requestAnimationFrame(loopVideoPreview);
         }
 
+        function drawVideoFrame() {
+            if(!state.video) return;
+            const ctx = els.ctx; const w = state.width; const h = state.height;
+            
+            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+            const vw = state.video.videoWidth; const vh = state.video.videoHeight;
+            const aspect = vw / vh;
+            let dw, dh, targetSize = w * state.vScale;
+            if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
+            const dx = (w - dw)/2 + state.x; const dy = (h - dh)/2 + state.y;
+            
+            // Apply Video Filters
+            ctx.filter = getFilterString();
+            ctx.drawImage(state.video, dx, dy, dw, dh);
+            ctx.filter = 'none';
+
+            // Apply Sharpen (Heavy on CPU, but requested)
+            if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness); 
+        }
+
+        // --- SHARPEN KERNEL ---
         function applySharpen(ctx, w, h, level) {
             const strength = (level / 10.0);
             if (strength <= 0.01) return;
@@ -689,9 +599,11 @@
             const data = imgData.data;
             const output = ctx.createImageData(w, h);
             const dst = output.data;
-            const wNeg = -strength; 
             const wCenter = 1 + (4 * strength);
+            const wNeg = -strength;
             dst.set(data);
+            
+            // Convolution
             for (let y = 1; y < h - 1; y++) {
                 const rowOffset = y * w; const prevRow = (y - 1) * w; const nextRow = (y + 1) * w;
                 for (let x = 1; x < w - 1; x++) {
@@ -710,38 +622,110 @@
             ctx.putImageData(output, 0, 0);
         }
 
-        function loadVideo(file) {
-            const url = URL.createObjectURL(file);
-            els.videoEl.src = url;
-            els.videoEl.onloadedmetadata = () => {
-                state.video = els.videoEl; state.x = 0; state.y = 0;
-                els.empty.classList.add('hidden'); els.canvas.classList.remove('hidden');
-                els.btnRec.disabled = false; els.videoEl.currentTime = 0;
-            };
-            els.videoEl.loop = true; els.videoEl.muted = true; els.videoEl.play(); loopVideoPreview();
+        // --- BACKGROUND REMOVAL (Flood Fill) ---
+        function toggleMagicBackground() {
+            if (!state.img) return;
+            if (state.useNoBg) {
+                state.useNoBg = false;
+                els.btnMagic.style.background = '#8b5cf6'; els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
+                requestRender();
+            } else {
+                if (state.imgNoBg) {
+                    state.useNoBg = true;
+                    els.btnMagic.style.background = '#059669'; els.btnMagic.innerHTML = '✅ Fundo Removido';
+                    requestRender();
+                } else {
+                    els.btnMagic.innerHTML = '⏳ Processando...'; els.btnMagic.classList.add('processing');
+                    setTimeout(() => {
+                        processRemoveBackground(); state.useNoBg = true;
+                        els.btnMagic.classList.remove('processing'); els.btnMagic.style.background = '#059669';
+                        els.btnMagic.innerHTML = '✅ Fundo Removido'; requestRender();
+                    }, 50);
+                }
+            }
         }
 
-        function loopVideoPreview() {
-            if(state.mode !== 'video' || state.isRecording) return;
-            drawVideoFrame(); requestAnimationFrame(loopVideoPreview);
+        function processRemoveBackground() {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.img.width; tempCanvas.height = state.img.height;
+            const ctx = tempCanvas.getContext('2d'); ctx.drawImage(state.img, 0, 0);
+            const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            floodFillBackground(imgData, 20); 
+            ctx.putImageData(imgData, 0, 0);
+            const newImg = new Image(); newImg.src = tempCanvas.toDataURL();
+            state.imgNoBg = newImg;
         }
 
-        function drawVideoFrame() {
-            if(!state.video) return;
-            const ctx = els.ctx; const w = 300, h = 300;
-            ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
-            const vw = state.video.videoWidth; const vh = state.video.videoHeight;
-            const aspect = vw / vh;
-            let dw, dh, targetSize = w * state.vScale;
-            if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
-            const dx = (w - dw)/2 + state.x; const dy = (h - dh)/2 + state.y;
-            ctx.drawImage(state.video, dx, dy, dw, dh);
+        function floodFillBackground(imgData, tolerance) {
+            const w = imgData.width; const h = imgData.height; const data = imgData.data;
+            const stack = []; const visited = new Uint8Array(w * h);
+            const corners = [[0,0], [w-1, 0], [0, h-1], [w-1, h-1]];
+            const sr = data[0], sg = data[1], sb = data[2];
+            for(let c of corners) { stack.push(c[0], c[1]); }
+            function match(idx) {
+                const r = data[idx], g = data[idx+1], b = data[idx+2];
+                return Math.abs(r - sr) <= tolerance && Math.abs(g - sg) <= tolerance && Math.abs(b - sb) <= tolerance;
+            }
+            while (stack.length > 0) {
+                const y = stack.pop(); const x = stack.pop();
+                const ptr = y * w + x; if (visited[ptr]) continue; visited[ptr] = 1;
+                const idx = ptr * 4;
+                if (match(idx)) {
+                    data[idx+3] = 0; 
+                    if (x > 0 && !visited[ptr-1]) stack.push(x-1, y); if (x < w-1 && !visited[ptr+1]) stack.push(x+1, y);
+                    if (y > 0 && !visited[ptr-w]) stack.push(x, y-1); if (y < h-1 && !visited[ptr+w]) stack.push(x, y+1);
+                }
+            }
+        }
+
+        // --- ACTIONS ---
+        async function savePhotoHighQuality() {
+            if (!state.img) return;
+            const originalText = els.btnSave.innerText;
+            els.btnSave.disabled = true; els.btnSave.innerHTML = "Gerando Super-Sampling...";
+
+            try {
+                const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
+                const superW = state.width * 3; const superH = state.height * 3;
+                const superCanvas = document.createElement('canvas');
+                superCanvas.width = superW; superCanvas.height = superH;
+                const sCtx = superCanvas.getContext('2d');
+                sCtx.fillStyle = '#ffffff'; sCtx.fillRect(0, 0, superW, superH);
+
+                const aspect = sourceImg.width / sourceImg.height;
+                let dw, dh, targetSize = (state.width * 3) * state.scale;
+                if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
+                const dx = (superW - dw)/2 + (state.x * 3); const dy = (superH - dh)/2 + (state.y * 3);
+
+                sCtx.filter = getFilterString();
+                sCtx.drawImage(sourceImg, dx, dy, dw, dh);
+                sCtx.filter = 'none';
+
+                const finalCanvas = document.createElement('canvas');
+                finalCanvas.width = state.width; finalCanvas.height = state.height;
+                if (window.pica) await window.pica().resize(superCanvas, finalCanvas, { unsharpAmount: 0, quality: 3 });
+                else finalCanvas.getContext('2d').drawImage(superCanvas, 0, 0, state.width, state.height);
+
+                if (state.sharpness > 0) applySharpen(finalCanvas.getContext('2d'), state.width, state.height, state.sharpness);
+
+                els.btnSave.innerHTML = "Otimizando 30KB...";
+                const MAX_BYTES = 30720; 
+                let minQ = 0.50, maxQ = 1.00, bestBlob = null;
+                for(let i=0; i<6; i++) {
+                    const midQ = (minQ + maxQ) / 2;
+                    const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', midQ));
+                    if (blob.size > MAX_BYTES) maxQ = midQ; else { minQ = midQ; bestBlob = blob; }
+                }
+                if (!bestBlob) bestBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', 0.50));
+                download(URL.createObjectURL(bestBlob), '.webp');
+
+            } catch (err) { console.error(err); alert("Erro ao processar imagem HQ."); }
+            els.btnSave.disabled = false; els.btnSave.innerHTML = originalText;
         }
 
         async function processVideo() {
             if(!state.video) return;
-            state.isRecording = true;
-            els.videoEl.pause(); els.videoEl.currentTime = 0; els.videoEl.loop = false;
+            state.isRecording = true; els.videoEl.pause(); els.videoEl.currentTime = 0; els.videoEl.loop = false;
             els.recBadge.classList.remove('hidden'); els.btnRec.disabled = true; els.btnRec.innerText = "Processando...";
 
             const stream = els.canvas.captureStream(30);
@@ -751,7 +735,7 @@
             recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
             recorder.onstop = () => {
                 const blob = new Blob(chunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob); download(url, '.webm');
+                download(URL.createObjectURL(blob), '.webm');
                 state.isRecording = false; els.recBadge.classList.add('hidden');
                 els.btnRec.innerText = "Gravar e Baixar"; els.btnRec.disabled = false;
                 els.videoEl.loop = true; els.videoEl.play(); loopVideoPreview();
@@ -771,28 +755,28 @@
             } catch(e) { alert("Erro ao processar vídeo."); state.isRecording = false; els.recBadge.classList.add('hidden'); }
         }
 
-        let isPanning = false, panStartX = 0, panStartY = 0;
-        function startPan(e) {
-            if((state.mode==='photo' && !state.img) || (state.mode==='video' && !state.video)) return;
-            isPanning = true;
-            panStartX = (e.clientX || e.pageX) - state.x; panStartY = (e.clientY || e.pageY) - state.y;
-            els.canvas.style.cursor = 'grabbing';
+        // --- UTILS ---
+        function updateActivePreset(id) {
+            ['btnFit', 'btnMax', 'btnCenter'].forEach(b => document.getElementById(b).classList.remove('active'));
+            document.getElementById(id).classList.add('active');
         }
-        function movePan(e) {
-            if(!isPanning) return; if(e.cancelable) e.preventDefault();
-            state.x = (e.clientX || e.pageX) - panStartX; state.y = (e.clientY || e.pageY) - panStartY;
-            if(state.mode === 'photo') requestRender();
-        }
-        function endPan() { isPanning = false; els.canvas.style.cursor = 'grab'; }
-
         function download(url, ext) {
             const clean = (els.nameInput.value || 'produto').toLowerCase().replace(/[^a-z0-9]/g, '-');
             const suffix = els.suffixSelect.value;
             const link = document.createElement('a');
-            link.download = clean + suffix + ext; 
-            link.href = url; 
-            link.click();
+            link.download = clean + suffix + ext; link.href = url; link.click();
         }
+        let isPanning = false, panStartX = 0, panStartY = 0;
+        function startPan(e) {
+            if((state.mode==='photo' && !state.img) || (state.mode==='video' && !state.video)) return;
+            isPanning = true; panStartX = (e.clientX || e.pageX) - state.x; panStartY = (e.clientY || e.pageY) - state.y; els.canvas.style.cursor = 'grabbing';
+        }
+        function movePan(e) {
+            if(!isPanning) return; if(e.cancelable) e.preventDefault();
+            state.x = (e.clientX || e.pageX) - panStartX; state.y = (e.clientY || e.pageY) - panStartY;
+            requestRender();
+        }
+        function endPan() { isPanning = false; els.canvas.style.cursor = 'grab'; }
 
         init();
     </script>
