@@ -4,12 +4,14 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 5.9 - Stability Fix (JSON Parsing & Formatting)
+        VERSION: 6.0 - Tags Feature & Sidebar Overhaul
         LIGHTHOUSE TARGET: 100/100
         CHANGELOG:
-        - FIX: Sanitização robusta para 'caracteristicas' (tratamento de quebras de linha).
-        - FEAT: Formatação automática de data (AAAA-MM-DD -> DD/MM/AAAA).
-        - FEAT: Leitura do campo 'date' para validade.
+        - FEAT: Sistema de Tags (Palavras-chave) configurável via JS.
+        - UI (Mobile): Botões flutuantes de navegação movidos para a esquerda (Categoria + Tags).
+        - UI (Mobile): Novo modal de Tags em 3 colunas compactas.
+        - UI (Desktop): Sidebar não é mais fixa (scroll natural).
+        - UI (Desktop): Visual de categorias minimalista e nova seção de Tags.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -634,6 +636,7 @@
             
             /* HIDE FLOATING BUTTONS ON DESKTOP */
             .floating-actions { display: none !important; }
+            .floating-actions-left { display: none !important; }
 
             /* MODAL CHARACTERISTICS DESKTOP ADJUSTMENT */
             #char-sheet .cat-sheet-content {
@@ -675,8 +678,8 @@
         /* Compact Desktop Sidebar Override */
         @media(min-width: 1024px) {
             .sidebar-col { 
-                position: sticky; top: 100px; height: fit-content; 
-                display: flex; flex-direction: column; gap: 12px;
+                /* position: sticky; REMOVIDO PARA SCROLL NATURAL */
+                display: flex; flex-direction: column; gap: 20px;
                 align-self: start;
             }
 
@@ -718,6 +721,22 @@
                 letter-spacing: 0.5px;
             }
             .desktop-cat-link:hover { border-color: var(--border); background: #e2e8f0; color: var(--primary); }
+
+            /* NEW: DESKTOP TAGS SECTION */
+            #desktop-tags-container {
+                background: white; 
+                padding: 12px;
+                border-radius: 16px; 
+                border: 1px solid var(--border);
+            }
+            #desktop-tags-list {
+                display: flex; flex-wrap: wrap; gap: 6px;
+            }
+            .tag-chip {
+                background: #fff; border: 1px solid #e2e8f0; border-radius: 50px;
+                padding: 4px 10px; font-size: 0.75rem; color: var(--secondary); cursor: pointer; transition: all 0.2s;
+            }
+            .tag-chip:hover { border-color: var(--secondary); background: #f8fafc; }
             
             /* Remove Sidebar Buttons that might be duplicated from previous CSS blocks if any */
             .btn-faq-sidebar { display: none; } /* Hide big FAQ button in sidebar if strictly categories */
@@ -822,8 +841,12 @@
         .btn-confirm { width: 100%; height: 44px; background: #16a34a; color: white; border-radius: 6px; font-weight: 600; font-size: 1rem; }
         .btn-confirm:hover { background: #15803d; }
 
-        /* FLOATING ACTIONS */
+        /* FLOATING ACTIONS - LEFT (NEW) */
+        .floating-actions-left { position: fixed; bottom: 85px; left: 16px; z-index: 90; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+        
+        /* FLOATING ACTIONS - RIGHT */
         .floating-actions { position: fixed; bottom: 85px; right: 16px; z-index: 90; display: flex; flex-direction: column; gap: 12px; align-items: flex-end; }
+        
         .fab-btn {
             width: 48px; height: 48px;
             border-radius: 50%; background: white; 
@@ -852,6 +875,27 @@
         }
         .cat-sheet.open .cat-sheet-content { transform: translateY(0); }
         .cat-link { display: block; padding: 16px 0; border-bottom: 1px solid #f1f5f9; font-weight: 500; color: var(--text-main); font-size: 1.1rem; cursor: pointer; }
+
+        /* TAGS SHEET STYLING (MOBILE) */
+        #mobile-tags-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 Columns */
+            gap: 8px;
+            padding-bottom: 20px;
+        }
+        .tag-btn-mobile {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px 4px; /* Narrow vertical */
+            text-align: center;
+            font-size: 0.8rem; /* Smaller font */
+            color: var(--secondary);
+            background: #f8fafc;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
 
         /* GALLERY */
         .gallery-overlay {
@@ -892,15 +936,23 @@
         </div>
     </header>
 
-    <!-- FLOATING ACTIONS (MOBILE) -->
+    <!-- FLOATING ACTIONS - LEFT (MOBILE) -->
+    <div class="floating-actions-left">
+        <!-- CATEGORY BUTTON (Left) -->
+        <button id="btn-cat-fab" class="fab-btn primary" onclick="App.toggleCategorySheet()" aria-label="Abrir Menu de Categorias">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+        </button>
+        <!-- NEW: TAGS BUTTON (Left) -->
+        <button id="btn-tags-fab" class="fab-btn" style="background:white; color:var(--secondary); border:2px solid var(--border);" onclick="App.toggleTagsSheet()" aria-label="Busca rápida">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+        </button>
+    </div>
+
+    <!-- FLOATING ACTIONS - RIGHT (MOBILE) -->
     <div class="floating-actions">
         <!-- NEW FAQ BUTTON -->
         <button id="btn-faq-fab" class="fab-btn faq" onclick="App.toggleFAQSheet()" aria-label="Abrir Dúvidas">
             <span style="font-weight:700; font-size:1.4rem;">?</span>
-        </button>
-        <!-- CATEGORY BUTTON -->
-        <button id="btn-cat-fab" class="fab-btn primary" onclick="App.toggleCategorySheet()" aria-label="Abrir Menu de Categorias">
-            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>
         </button>
         <!-- SCROLL BUTTON -->
         <button id="btn-scroll-top" class="fab-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Voltar ao topo">
@@ -912,10 +964,21 @@
     <div id="cat-sheet" class="cat-sheet" onclick="if(event.target === this) App.toggleCategorySheet()">
         <aside class="cat-sheet-content">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-                <h3 style="font-weight:600; color:var(--secondary); margin:0;">Categorias de Produtos</h3>
+                <h3 style="font-weight:600; color:var(--secondary); margin:0;">Categorias</h3>
                 <button onclick="App.toggleCategorySheet()" aria-label="Fechar Categorias" style="font-size:1.5rem; padding:10px; border:none; background:none;">✕</button>
             </div>
             <nav id="mobile-cat-list"></nav>
+        </aside>
+    </div>
+
+    <!-- NEW: TAGS SHEET (MOBILE) -->
+    <div id="tags-sheet" class="cat-sheet" onclick="if(event.target === this) App.toggleTagsSheet()">
+        <aside class="cat-sheet-content">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <h3 style="font-weight:600; color:var(--secondary); margin:0;">Busca Rápida</h3>
+                <button onclick="App.toggleTagsSheet()" aria-label="Fechar Tags" style="font-size:1.5rem; padding:10px; border:none; background:none;">✕</button>
+            </div>
+            <nav id="mobile-tags-list"></nav>
         </aside>
     </div>
 
@@ -1191,6 +1254,12 @@
                 <nav class="desktop-cat-nav" aria-label="Navegação rápida de categorias">
                     <h3 style="margin-bottom:15px; font-weight:600; color:var(--secondary); font-size:1.1rem;">Navegar por Categoria</h3>
                     <div id="desktop-cat-list"></div>
+
+                    <!-- NEW: TAGS SECTION DESKTOP -->
+                    <div style="margin-top:24px; padding-top:20px; border-top:1px solid #f1f5f9;">
+                         <h3 style="margin-bottom:15px; font-weight:600; color:var(--secondary); font-size:1rem;">Busca Rápida</h3>
+                         <div id="desktop-tags-list"></div>
+                    </div>
                 </nav>
             </aside>
         </div>
@@ -1276,6 +1345,14 @@
         /**
          * DONA ANTÔNIA APP CORE
          */
+        
+        // --- 1. CONFIGURAÇÃO DE TAGS (FÁCIL EDIÇÃO) ---
+        const APP_TAGS = [
+            "Arroz", "Feijão", "Açúcar", "Café", "Óleo", 
+            "Macarrão", "Biscoito", "Leite", "Farinha", "Sabão", 
+            "Detergente", "Sardinha"
+        ];
+
         const BASKET_LIMITS = { 
             'econômica': 5, 'economica': 5, 
             'mini': 7, 
@@ -1484,6 +1561,7 @@
 
                     this.renderHome();
                     this.setupScroll();
+                    this.renderTags(); // RENDER TAGS
                     
                     document.getElementById('product-search').addEventListener('input', (e) => {
                         this.searchTerm = e.target.value.toLowerCase();
@@ -1512,10 +1590,59 @@
                 }
             },
 
+            // --- TAGS SYSTEM ---
+            renderTags() {
+                const mobileList = document.getElementById('mobile-tags-list');
+                const desktopList = document.getElementById('desktop-tags-list');
+                
+                // HTML for each tag
+                const tagsHTML = APP_TAGS.map(tag => 
+                    `<button class="tag-chip" onclick="App.searchByTag('${tag}')">${tag}</button>`
+                ).join('');
+                
+                // HTML for mobile specific style
+                const mobileTagsHTML = APP_TAGS.map(tag => 
+                    `<div class="tag-btn-mobile" onclick="App.searchByTag('${tag}')">${tag}</div>`
+                ).join('');
+
+                if(mobileList) mobileList.innerHTML = mobileTagsHTML;
+                if(desktopList) desktopList.innerHTML = tagsHTML;
+            },
+
+            searchByTag(tag) {
+                // Set search term
+                this.searchTerm = tag.toLowerCase();
+                const searchInput = document.getElementById('product-search');
+                if(searchInput) searchInput.value = tag;
+                
+                // Trigger Render
+                this.renderCustomizerLists(true);
+                
+                // Close Sheets
+                document.getElementById('tags-sheet').classList.remove('open');
+                
+                // Scroll to results
+                setTimeout(() => {
+                    const section = document.querySelector('.extras-separator-banner');
+                    if(section) {
+                        const headerOffset = 150; 
+                        const elementPosition = section.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+                        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                    }
+                }, 100);
+            },
+
+            toggleTagsSheet() {
+                document.getElementById('tags-sheet').classList.toggle('open');
+            },
+
             setupScroll() {
                 const topBtn = document.getElementById('btn-scroll-top');
                 const catBtn = document.getElementById('btn-cat-fab');
                 const faqBtn = document.getElementById('btn-faq-fab');
+                const tagsBtn = document.getElementById('btn-tags-fab');
+                
                 let lastY = 0;
                 
                 window.addEventListener('scroll', () => {
@@ -1529,11 +1656,13 @@
                         if(this.currentBasket) {
                             catBtn.classList.add('visible');
                             faqBtn.classList.add('visible');
+                            if(tagsBtn) tagsBtn.classList.add('visible'); // Show Tags FAB
                         }
                     } else {
                         topBtn.classList.remove('visible');
                         catBtn.classList.remove('visible');
                         faqBtn.classList.remove('visible');
+                        if(tagsBtn) tagsBtn.classList.remove('visible');
                     }
                 });
             },
@@ -1639,6 +1768,8 @@
                 document.getElementById('home-view').classList.remove('hidden');
                 document.getElementById('btn-cat-fab').classList.remove('visible');
                 document.getElementById('btn-faq-fab').classList.remove('visible');
+                const tagsBtn = document.getElementById('btn-tags-fab');
+                if(tagsBtn) tagsBtn.classList.remove('visible');
                 document.getElementById('credit-toast').classList.remove('visible');
                 this.currentBasket = null;
             },
