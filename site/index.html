@@ -4,9 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.2 - Critical Fix: Checkout Modal Visibility
+        VERSION: 9.4 - Modal Logic & Gallery Polish
         CHANGELOG:
-        - FIX: O modal de resumo do pedido agora fica oculto por padrão e só aparece (display: flex) quando ativado.
+        - FEAT: Novo Modal Retrátil para "Informações" (Características).
+        - UX: Lógica de exclusividade de modais (abre um, fecha os outros).
+        - UX: Tags de busca ordenadas alfabeticamente.
+        - UI: Galeria com chip "FECHAR" e layout responsivo seguro.
+        - FIX: Ajustes de scroll e visibilidade em todos os modais.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -94,7 +98,7 @@
 
         /* --- 4. MOBILE CHECKOUT BAR --- */
         .mobile-checkout-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; height: var(--checkout-bar-height);
+            position: fixed; bottom: var(--app-bar-height); left: 0; right: 0; height: var(--checkout-bar-height);
             background: #ffffff; border-top: 1px solid var(--border-color);
             z-index: 9999; display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; box-shadow: 0 -4px 25px rgba(0,0,0,0.1);
@@ -152,7 +156,7 @@
         .btn-fill { background: var(--secondary); color: white; border: none; font-weight: 600; padding: 12px; border-radius: 50px; width: 100%; }
 
         /* --- 7. CUSTOMIZER --- */
-        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 120px; }
+        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 150px; }
         @media(min-width: 1024px) { #customizer-view { padding-bottom: 0; } }
 
         .cust-header-bar { 
@@ -231,7 +235,11 @@
         .qm-val { font-weight: 700; font-size: 0.9rem; }
         
         .btn-feat-row { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .btn-feat { font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; border: 1px solid; cursor: pointer; display: none; }
+        .btn-feat { 
+            font-size: 0.65rem; padding: 3px 10px; border-radius: 50px; font-weight: 600;
+            border: 1px solid; cursor: pointer; display: none; transition: transform 0.2s;
+        }
+        .btn-feat:hover { transform: scale(1.05); }
         .btn-feat.info { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; display: inline-block; }
         .btn-feat.nutri { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
 
@@ -256,32 +264,45 @@
         @media(min-width: 1024px) { .btn-scroll-top { bottom: 40px; right: 40px; } }
         .btn-scroll-top.visible { opacity: 1; pointer-events: auto; }
 
-        /* --- GALLERY & MODALS --- */
+        /* --- GALLERY --- */
         .gallery-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; justify-content: center; padding: 20px; }
         .gallery-wrap.active { display: flex; }
-        .gallery-stage { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .gallery-img { max-width: 100%; max-height: 80vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .gallery-video { max-width: 100%; max-height: 80vh; border-radius: 8px; }
-        @media(min-width: 1024px) { .gallery-img, .gallery-video { max-width: 800px; } }
         
-        .gallery-close { position: absolute; top: 20px; right: 20px; color: white; font-size: 2rem; cursor: pointer; z-index: 2010; }
-        .gallery-thumbs { height: 80px; display: flex; justify-content: center; gap: 8px; padding: 10px; overflow-x: auto; margin-top: 10px; }
-        .g-thumb { width: 50px; height: 50px; border-radius: 4px; border: 2px solid transparent; opacity: 0.5; object-fit: cover; cursor: pointer; }
+        .gallery-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; max-height: 80vh; }
+        .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+        .gallery-video { max-width: 100%; max-height: 100%; border-radius: 8px; }
+        
+        .gallery-close-chip { 
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px 16px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
+            cursor: pointer; z-index: 2010; backdrop-filter: blur(4px);
+        }
+        .gallery-thumbs { height: 70px; display: flex; justify-content: center; gap: 8px; padding-top: 10px; overflow-x: auto; width: 100%; }
+        .g-thumb { width: 50px; height: 50px; border-radius: 4px; border: 2px solid transparent; opacity: 0.5; object-fit: cover; cursor: pointer; flex-shrink: 0; }
         .g-thumb.active { border-color: var(--primary); opacity: 1; }
 
+        /* --- SHEETS --- */
         .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1200; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
         .sheet-overlay.open { opacity: 1; pointer-events: auto; }
-        .sheet-content { background: white; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s; }
+        .sheet-content { 
+            background: white; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; 
+            max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s;
+            padding-bottom: 40px; /* Safe area for bottom bars */
+        }
         .sheet-overlay.open .sheet-content { transform: translateY(0); }
         @media (min-width: 1024px) { .sheet-content { max-width: 500px; margin: 0 auto; top: 50%; bottom: auto; transform: translateY(-50%); border-radius: 12px; } .sheet-overlay { justify-content: center; } .sheet-overlay.open .sheet-content { transform: translateY(0); } }
         
         .sheet-header { display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
         .sheet-title { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; }
+        
         .mobile-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .mobile-cat-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; color: var(--secondary); }
+        
         .mobile-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mobile-tag-btn { font-size: 0.8rem; background: #fff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; text-align: center; }
 
+        /* FAQ */
         details.faq-box { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-card); transition: box-shadow 0.3s ease; }
         details.faq-box:hover { box-shadow: var(--shadow-float); border-color: #cbd5e1; }
         details.faq-box summary { padding: 20px; cursor: pointer; font-weight: 600; color: var(--secondary); list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
@@ -292,15 +313,15 @@
         details.faq-box[open] .faq-text { border-color: #f1f5f9; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
-        /* CHECKOUT MODAL CENTERED & ELEGANT */
+        /* INFO MODAL TEXT */
+        .info-text-body { font-size: 1rem; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; }
+
+        /* CHECKOUT MODAL */
         dialog.modal-checkout {
             margin: auto; inset: 0; position: fixed;
             border: none; border-radius: 16px; width: 90%; max-width: 400px; padding: 0;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            max-height: 85vh; 
-            /* FIXED: Use flex only when open, otherwise hidden by default browser behavior */
-            display: none; 
-            flex-direction: column;
+            max-height: 85vh; display: none; flex-direction: column;
         }
         dialog.modal-checkout[open] { display: flex; }
         dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
@@ -308,15 +329,12 @@
         .co-header { padding: 16px 24px; background: #fff; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
         .co-header span { font-weight: 700; color: var(--secondary); font-size: 1.1rem; }
         .co-body { padding: 24px; overflow-y: auto; flex: 1; }
-        
         .co-list { list-style: none; margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
         .co-item { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: var(--text-main); background: #fff; }
         .co-item:last-child { border-bottom: none; }
         .co-item span:first-child { font-weight: 500; color: var(--text-main); font-size: 0.85rem; }
-        
         .co-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; border-top: 2px solid #f1f5f9; }
         .co-total-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        
         .co-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; background: #f8fafc; }
         .co-btn { width: 100%; padding: 14px; background: #16a34a; color: white; font-weight: 700; border-radius: 8px; font-size: 1rem; transition: transform 0.2s; border: none; cursor: pointer; }
         .co-btn:active { transform: scale(0.98); }
@@ -416,7 +434,7 @@
 
     <!-- GALLERY -->
     <div id="gallery" class="gallery-wrap">
-        <span class="gallery-close" onclick="Gallery.close()">✕</span>
+        <button class="gallery-close-chip" onclick="Gallery.close()">FECHAR</button>
         <div class="gallery-stage">
             <img id="gallery-img" class="gallery-img" src="">
             <video id="gallery-video" class="gallery-video hidden" controls></video>
@@ -424,7 +442,7 @@
         <div id="gallery-thumbs" class="gallery-thumbs"></div>
     </div>
 
-    <!-- CHECKOUT MODAL CENTERED & SMALL FONT -->
+    <!-- MODALS -->
     <dialog id="checkout-modal" class="modal-checkout">
         <div class="co-header"><span>Resumo do Pedido</span><button onclick="document.getElementById('checkout-modal').close()">✕</button></div>
         <div class="co-body">
@@ -440,6 +458,14 @@
         </div>
         <div class="co-footer"><button class="co-btn" onclick="App.sendWhatsApp()">Confirmar Pedido no WhatsApp</button></div>
     </dialog>
+
+    <!-- INFO SHEET (Features) -->
+    <div id="info-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('info-sheet')">
+        <div class="sheet-content">
+            <div class="sheet-header"><h3 class="sheet-title" id="info-sheet-title">Informações</h3><span class="sheet-close" onclick="App.closeSheet('info-sheet')">✕</span></div>
+            <div id="info-sheet-body" class="info-text-body"></div>
+        </div>
+    </div>
 
     <div id="cat-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('cat-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Categorias</h3><span class="sheet-close" onclick="App.closeSheet('cat-sheet')">✕</span></div><div id="mob-cat-grid" class="mobile-cat-grid"></div></div></div>
     <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')">✕</span></div><div id="mob-tags-grid" class="mobile-tags-grid"></div></div></div>
@@ -593,8 +619,11 @@
                 const cats = [...new Set(this.data.filter(p => !p.categoria.includes('CESTA')).map(p => p.categoria))].sort();
                 document.getElementById('desk-cat-list').innerHTML = cats.map(c => `<button class="sidebar-chip" onclick="App.filterCat('${c}')">${c}</button>`).join('');
                 document.getElementById('mob-cat-grid').innerHTML = cats.map(c => `<div class="mobile-cat-btn" onclick="App.filterCat('${c}')">${c}</div>`).join('');
-                document.getElementById('desk-tag-list').innerHTML = CONSTANTS.TAGS.map(t => `<button class="sidebar-chip" onclick="App.search('${t}')">${t}</button>`).join('');
-                document.getElementById('mob-tags-grid').innerHTML = CONSTANTS.TAGS.map(t => `<div class="mobile-tag-btn" onclick="App.search('${t}')">${t}</div>`).join('');
+                
+                // Sort Tags Alphabetically
+                const sortedTags = [...CONSTANTS.TAGS].sort();
+                document.getElementById('desk-tag-list').innerHTML = sortedTags.map(t => `<button class="sidebar-chip" onclick="App.search('${t}')">${t}</button>`).join('');
+                document.getElementById('mob-tags-grid').innerHTML = sortedTags.map(t => `<div class="mobile-tag-btn" onclick="App.search('${t}')">${t}</div>`).join('');
             },
 
             openCustomizer(id) {
@@ -629,7 +658,6 @@
                 document.getElementById('cust-title').innerText = basket.nome;
                 document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('customizer-view').classList.remove('hidden');
-                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'none';
                 
                 window.scrollTo(0,0);
                 this.renderAllLists();
@@ -638,7 +666,6 @@
             goHome() {
                 document.getElementById('customizer-view').classList.add('hidden');
                 document.getElementById('home-view').classList.remove('hidden');
-                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'grid';
                 this.currentBasket = null;
             },
 
@@ -689,8 +716,16 @@
                     `<span class="mc-price-old">R$${p.valor.toFixed(2)}</span><span class="mc-price-new">R$${price.toFixed(2)}</span>` : 
                     `R$ ${price.toFixed(2).replace('.', ',')}`;
                 
+                // Smart Buttons
                 let featBtns = '';
-                if(p.caracteristicas) featBtns += `<div class="btn-feat info" onclick="alert('${p.caracteristicas.replace(/'/g,"")}')">Info</div>`;
+                // Info Button now opens sheet
+                if(p.caracteristicas) {
+                    const safeText = p.caracteristicas.replace(/"/g, '&quot;').replace(/'/g, "\\'").replace(/\n/g, '<br>');
+                    const safeTitle = p.nome.replace(/"/g, '&quot;');
+                    featBtns += `<div class="btn-feat info" onclick="App.openInfo('${safeText}', '${safeTitle}')">Info</div>`;
+                }
+                
+                // Nutri Button (Visible via JS observer)
                 featBtns += `<div class="btn-feat nutri" id="nutri-${p.id}" onclick="Gallery.open('${p.imagem}','${p.nome}','${p.imagem.replace('.','A.')}')">Nutri</div>`;
 
                 return `
@@ -732,7 +767,8 @@
                 const ext = p.imagem.substring(dot);
                 const imgA = new Image();
                 imgA.onload = () => {
-                    document.getElementById(`nutri-${p.id}`).style.display = 'inline-block';
+                    const btn = document.getElementById(`nutri-${p.id}`);
+                    if(btn) btn.style.display = 'inline-block';
                     const el = document.querySelector(`#media-${p.id} .icon-cam`);
                     if(el) el.classList.add('visible');
                 };
@@ -835,14 +871,25 @@
             },
 
             openSheet(id) { 
+                // Close any open sheets first
+                document.querySelectorAll('.sheet-overlay.open').forEach(el => el.classList.remove('open'));
+                
                 if(id === 'offers-sheet') this.renderOffersInSheet();
                 document.getElementById(id).classList.add('open'); 
             },
             closeSheet(id) { document.getElementById(id).classList.remove('open'); },
+            
+            openInfo(text, title) {
+                document.getElementById('info-sheet-title').innerText = title;
+                document.getElementById('info-sheet-body').innerHTML = text;
+                this.openSheet('info-sheet');
+            },
+
             renderOffersInSheet() {
                 const grid = document.getElementById('mob-offers-grid');
                 const offers = this.data.filter(p => p.isOffer);
                 grid.innerHTML = offers.length ? offers.map(p => this.buildCard(p, false)).join('') : '<p style="grid-column:1/-1; text-align:center;">Sem ofertas.</p>';
+                setTimeout(() => this.setupMediaObservers(), 300);
             },
             
             openCheckout() {
