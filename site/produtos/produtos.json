@@ -1087,6 +1087,12 @@
     "caracteristicas": "",
     "custo": 0.55,
     "valor": 1,
+    "batches": [
+      {
+        "date": "2026-09-17",
+        "qty": 720
+      }
+    ],
     "estoque": 720,
     "estoqueFiscal": 2700,
     "peso": 0.018,
@@ -1094,6 +1100,8 @@
     "imagem": "../site/img/produtos/suco-po-frisco-18g-laranja-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "REFR PO FRISCO 18G LARANJA PT18",
       "PO P/REFRESCO FRISCO 18G LARANJA (AGRUPADO)"
@@ -1114,7 +1122,8 @@
     "unidade": "UN",
     "Limit": 23,
     "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Valor_Oferta": 0,
+    "validade": "2026-09-17"
   },
   {
     "id": "1767997799333580",
@@ -1123,12 +1132,12 @@
     "ean": "17896045112033",
     "categoria": "ALIMENTOS",
     "fornecedor": "FORT",
-    "caracteristicas": "",
+    "caracteristicas": "🍇 Refresco em Pó Frisco Sabor Uva 18g. Faz 1 Litro.\n\n✨ Destaques: Nova fórmula com baixo teor de açúcares. Fonte de Vitamina C, suprindo 100% da recomendação diária.\n\n📊 Nutrição (porção 3,6g): Apenas 12 kcal, 2,4g de carboidratos (2,3g açúcares) e 43mg de sódio.\n\n📝 Composição: Contém polpa de fruta desidratada (0,03% após diluição), aromatizantes e edulcorantes. Não contém glúten. Contém fenilalanina.",
     "custo": 0.55,
     "valor": 1,
     "batches": [
       {
-        "date": "",
+        "date": "2026-07-31",
         "qty": 720
       }
     ],
@@ -1161,7 +1170,8 @@
     "unidade": "UN",
     "Limit": 24,
     "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Valor_Oferta": 0,
+    "validade": "2026-07-31"
   },
   {
     "id": "1767998027146858",
