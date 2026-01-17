@@ -178,11 +178,20 @@
         .btn-sm:hover { background: #e2e8f0; }
         .btn-sm.active { background: var(--brand); color: white; border-color: var(--brand); }
 
-        .input-text {
+        .input-text, .input-select {
             width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+            background: var(--surface); color: var(--text-main);
             border-radius: 8px; font-size: 1rem; outline: none; transition: border-color 0.2s;
+            appearance: none;
         }
-        .input-text:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-text:focus, .input-select:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .input-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
 
         .hidden { display: none !important; }
         .file-input { display: none; }
@@ -295,7 +304,16 @@
 
             <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px dashed var(--border);">
                 <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">Nome do Arquivo (SEO)</label>
-                <input type="text" id="nameInput" class="input-text" placeholder="ex: arroz-prato-fino" value="produto">
+                <input type="text" id="nameInput" class="input-text" placeholder="ex: arroz-prato-fino" value="produto" style="margin-bottom: 0.5rem;">
+                
+                <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; margin-top: 0.5rem;">Variação SEO</label>
+                <select id="suffixSelect" class="input-select">
+                    <option value="-cesta-basica-cuiaba-varzea-grande">1 - Padrão (...varzea-grande)</option>
+                    <option value="-cesta-basica-cuiaba-varzea-grandeA">2 - Variação A (...grandeA)</option>
+                    <option value="-cesta-basica-cuiaba-varzea-grandeB">3 - Variação B (...grandeB)</option>
+                    <option value="-cesta-basica-cuiaba-varzea-grandeC">4 - Variação C (...grandeC)</option>
+                    <option value="-cesta-basica-cuiaba-varzea-grandeD">5 - Variação D (...grandeD)</option>
+                </select>
             </div>
         </div>
     </main>
@@ -321,6 +339,7 @@
             fileInput: document.getElementById('fileInput'),
             camInput: document.getElementById('cameraInput'),
             nameInput: document.getElementById('nameInput'),
+            suffixSelect: document.getElementById('suffixSelect'),
             progressBar: document.getElementById('videoProgress'),
             mPhoto: document.getElementById('modePhoto'),
             mVideo: document.getElementById('modeVideo'),
@@ -352,7 +371,7 @@
             els.sharp.oninput = (e) => { state.sharpness = parseInt(e.target.value); document.getElementById('sharpVal').innerText = e.target.value; requestRender(); };
             els.vScale.oninput = (e) => { state.vScale = e.target.value / 100; document.getElementById('vScaleVal').innerText = e.target.value + '%'; if(state.mode==='video') drawVideoFrame(); };
 
-            els.btnSave.onclick = savePhotoHighQuality; // NOVA FUNÇÃO HQ
+            els.btnSave.onclick = savePhotoHighQuality; 
             els.btnRec.onclick = processVideo;
 
             els.canvas.addEventListener('mousedown', startPan);
@@ -437,8 +456,6 @@
             ctx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
             ctx.drawImage(state.img, dx, dy, dw, dh);
             ctx.filter = 'none';
-            // Sharpen no preview é simplificado ou removido para performance em mobile fraco, 
-            // mas podemos manter se necessário. Vou manter para feedback visual.
             if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness); 
         }
 
@@ -451,7 +468,6 @@
 
             try {
                 // 1. Super-Sampling Canvas (900x900) - 3x Resolution
-                // Renderizamos tudo 3x maior antes de reduzir com Lanczos
                 const superSize = 900;
                 const superCanvas = document.createElement('canvas');
                 superCanvas.width = superSize;
@@ -477,51 +493,44 @@
                 finalCanvas.width = 300;
                 finalCanvas.height = 300;
 
-                // Se o Pica falhar (rede offline), fallback nativo
                 if (window.pica) {
                     await window.pica().resize(superCanvas, finalCanvas, {
-                        unsharpAmount: 0, // Usaremos nosso sharpen customizado depois
+                        unsharpAmount: 0,
                         unsharpRadius: 0.5,
                         unsharpThreshold: 0,
                         quality: 3 // Lanczos3 (Highest)
                     });
                 } else {
-                    // Fallback
-                    console.warn("Pica not loaded, using native canvas");
                     const fCtx = finalCanvas.getContext('2d');
                     fCtx.drawImage(superCanvas, 0, 0, 300, 300);
                 }
 
-                // 3. Apply Custom Sharpen (CPU) on the 300x300 result
-                // Aplicamos DEPOIS do resize para garantir que a nitidez seja "pixel perfect" no output final
+                // 3. Apply Custom Sharpen (CPU)
                 const fCtx = finalCanvas.getContext('2d');
                 if (state.sharpness > 0) {
                     applySharpen(fCtx, 300, 300, state.sharpness);
                 }
 
                 // 4. Smart Compression (Binary Search)
-                // Objetivo: Máxima qualidade que caiba em 30KB
                 els.btnSave.innerHTML = "Otimizando 30KB...";
                 const MAX_BYTES = 30720; // 30KB
                 
-                let minQ = 0.50; // Qualidade mínima aceitável
+                let minQ = 0.50;
                 let maxQ = 1.00;
                 let bestBlob = null;
 
-                // 6 iterações de busca binária são suficientes para precisão de ~1%
                 for(let i=0; i<6; i++) {
                     const midQ = (minQ + maxQ) / 2;
                     const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', midQ));
                     
                     if (blob.size > MAX_BYTES) {
-                        maxQ = midQ; // Muito grande, diminui qualidade
+                        maxQ = midQ; 
                     } else {
-                        minQ = midQ; // Cabe! Tenta qualidade maior
-                        bestBlob = blob; // Salva esse candidato válido
+                        minQ = midQ;
+                        bestBlob = blob;
                     }
                 }
 
-                // Se nem a mínima qualidade couber (muito raro em 300x300), força a mínima
                 if (!bestBlob) bestBlob = await new Promise(r => finalCanvas.toBlob(r, 'image/webp', 0.50));
 
                 const url = URL.createObjectURL(bestBlob);
@@ -641,8 +650,11 @@
 
         function download(url, ext) {
             const clean = (els.nameInput.value || 'produto').toLowerCase().replace(/[^a-z0-9]/g, '-');
+            const suffix = els.suffixSelect.value;
             const link = document.createElement('a');
-            link.download = clean + '-cesta-basica-cuiaba-varzea-grande' + ext; link.href = url; link.click();
+            link.download = clean + suffix + ext; 
+            link.href = url; 
+            link.click();
         }
 
         init();
