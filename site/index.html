@@ -4,12 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 8.6 - Layout Stabilization & Sticky Fixes
+        VERSION: 9.0 - Business Logic Restoration & UI Polish
         CHANGELOG:
-        - FIX: "overflow-x: hidden" global para impedir rolagem lateral.
-        - FIX: Cards (.mini-card) com altura 100% e min-width:0 para evitar quebra do grid.
-        - FIX: Barras inferiores (Checkout/Nav) com z-index 9999 e travadas na viewport.
-        - UI: Placeholder de imagem mais robusto com fundo cinza suave.
+        - FEAT: Restaurada lógica de limites de remoção por tipo de cesta.
+        - FEAT: Restaurado cálculo de crédito com Toast informativo.
+        - UI: Modal de Checkout centralizado, elegante e com tipografia ajustada.
+        - UI: Botão "Scroll to Top" reintegrado para Mobile e Desktop.
+        - UI: Indicador de "Alterações permitidas" adicionado ao cabeçalho.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -39,17 +40,13 @@
             --app-bar-height: 60px;
             --checkout-bar-height: 80px; 
             --radius-lg: 16px;
-            --shadow-float: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-float: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
             --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        html, body {
-            width: 100%;
-            overflow-x: hidden; /* Impede a tela de "quebrar" para o lado */
-            position: relative;
-        }
+        html, body { width: 100%; overflow-x: hidden; position: relative; scroll-behavior: smooth; }
 
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -83,12 +80,11 @@
             display: flex; align-items: center; gap: 6px;
         }
 
-        /* --- 3. MOBILE APP BAR (HOME NAV) --- */
+        /* --- 3. MOBILE APP BAR --- */
         .mobile-app-bar {
             position: fixed; bottom: 0; left: 0; right: 0; height: var(--app-bar-height);
             background: #ffffff; border-top: 1px solid var(--border-color);
-            z-index: 9999; /* Z-Index Máximo */
-            display: grid; grid-template-columns: repeat(4, 1fr);
+            z-index: 9999; display: grid; grid-template-columns: repeat(4, 1fr);
             box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
         }
         @media (min-width: 1024px) { .mobile-app-bar { display: none !important; } }
@@ -100,12 +96,11 @@
         .app-bar-btn svg { width: 24px; height: 24px; stroke-width: 2px; }
         .app-bar-btn.highlight { color: #b45309; } 
 
-        /* --- 4. MOBILE CHECKOUT BAR (CUSTOMIZER ONLY) --- */
+        /* --- 4. MOBILE CHECKOUT BAR --- */
         .mobile-checkout-bar {
             position: fixed; bottom: 0; left: 0; right: 0; height: var(--checkout-bar-height);
             background: #ffffff; border-top: 1px solid var(--border-color);
-            z-index: 9999; /* Z-Index Máximo */
-            display: flex; align-items: center; justify-content: space-between;
+            z-index: 9999; display: flex; align-items: center; justify-content: space-between;
             padding: 0 20px; box-shadow: 0 -4px 25px rgba(0,0,0,0.1);
             animation: slideUp 0.3s ease-out;
         }
@@ -151,7 +146,6 @@
             overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
         }
         .home-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-float); border-color: #cbd5e1; }
-        
         .hc-image-wrap { width: 100%; aspect-ratio: 1/1; position: relative; background: #fff; display: flex; align-items: center; justify-content: center; padding: 20px; border-bottom: 1px solid #f8fafc; }
         .hc-image { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         .hc-content { padding: 20px; flex: 1; display: flex; flex-direction: column; text-align: center; }
@@ -162,7 +156,7 @@
         .btn-fill { background: var(--secondary); color: white; border: none; font-weight: 600; padding: 12px; border-radius: 50px; width: 100%; }
 
         /* --- 7. CUSTOMIZER --- */
-        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 120px; /* Space for checkout bar */ }
+        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 120px; }
         @media(min-width: 1024px) { #customizer-view { padding-bottom: 0; } }
 
         .cust-header-bar { 
@@ -172,8 +166,17 @@
         }
         .ch-container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
         .ch-back-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+        
+        .ch-info { display: flex; flex-direction: column; }
         .ch-info h2 { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; line-height: 1.2; }
-        .ch-info span { font-size: 0.85rem; color: var(--text-light); }
+        
+        .limit-badge {
+            font-size: 0.75rem; color: #b45309; background: #fffbeb; 
+            border: 1px solid #fde68a; padding: 2px 8px; border-radius: 4px;
+            margin-top: 2px; display: inline-block; width: fit-content;
+        }
+        .limit-badge.error { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
+
         .ch-search-box { flex: 1; max-width: 500px; position: relative; }
         .ch-input { width: 100%; height: 42px; border-radius: 50px; border: 1px solid var(--border-color); padding: 0 40px 0 20px; font-size: 0.95rem; background: #f1f5f9; }
         .ch-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none; }
@@ -197,51 +200,25 @@
         .extras-separator-banner h3 { font-size: 1.4rem; font-weight: 300; color: var(--secondary); margin-bottom: 5px; }
         .extras-separator-banner p { color: var(--text-light); font-size: 0.9rem; }
 
-        .grid-products { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 16px; 
-            align-items: stretch; /* Garante que os cards estiquem para ter a mesma altura */
-        }
+        .grid-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; align-items: stretch; }
         @media (min-width: 600px) { .grid-products { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .grid-products { grid-template-columns: repeat(4, 1fr) !important; gap: 20px; } }
 
-        /* PRODUCT MINI CARD (FIXED) */
+        /* PRODUCT MINI CARD */
         .mini-card {
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            text-align: center;
-            padding: 10px; 
-            border-radius: 8px; 
-            border: 1px solid transparent;
-            transition: background 0.2s; 
-            position: relative;
-            height: 100%; /* Força altura total do grid */
-            min-width: 0; /* Evita estouro em Flex/Grid */
-            justify-content: space-between; /* Distribui conteúdo */
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            padding: 10px; border-radius: 8px; border: 1px solid transparent;
+            transition: background 0.2s; position: relative; height: 100%; min-width: 0; justify-content: space-between;
         }
         .mini-card:hover { background: #fff; border-color: var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .tag-offer { position: absolute; top: 0; left: 0; background: #16a34a; color: white; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; z-index: 2; }
         
         .mc-img-box { 
-            width: 100%; 
-            aspect-ratio: 1/1; 
-            position: relative; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin-bottom: 8px; 
-            cursor: zoom-in; 
-            background-color: #f8fafc; /* Fundo para imagens faltantes */
-            border-radius: 8px;
+            width: 100%; aspect-ratio: 1/1; position: relative; display: flex; 
+            align-items: center; justify-content: center; margin-bottom: 8px; 
+            cursor: zoom-in; background-color: #f8fafc; border-radius: 8px;
         }
-        .mc-img { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: contain; /* Garante que a imagem não estoure */
-            mix-blend-mode: multiply; 
-        }
+        .mc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
         .media-indicators { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; pointer-events: none; }
         .indicator-icon { width: 20px; height: 20px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary); border: 1px solid #e2e8f0; opacity: 0; transition: opacity 0.3s; }
@@ -272,6 +249,17 @@
             .sidebar-chip:hover { border-color: var(--secondary); background: #e2e8f0; }
         }
 
+        /* --- SCROLL TO TOP BTN --- */
+        .btn-scroll-top {
+            position: fixed; bottom: 85px; right: 20px; width: 45px; height: 45px;
+            background: white; border: 1px solid var(--border-color); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 990;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s; color: var(--secondary);
+        }
+        @media(min-width: 1024px) { .btn-scroll-top { bottom: 40px; right: 40px; } }
+        .btn-scroll-top.visible { opacity: 1; pointer-events: auto; }
+
         /* --- GALLERY & MODALS --- */
         .gallery-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1500; display: none; flex-direction: column; justify-content: center; }
         .gallery-wrap.active { display: flex; }
@@ -296,67 +284,45 @@
         .mobile-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
         .mobile-tag-btn { font-size: 0.8rem; background: #fff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; text-align: center; }
 
-        /* BEAUTIFUL FAQ ACCORDION */
-        details.faq-box {
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            margin-bottom: 16px;
-            overflow: hidden;
-            box-shadow: var(--shadow-card);
-            transition: box-shadow 0.3s ease;
-        }
+        details.faq-box { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-card); transition: box-shadow 0.3s ease; }
         details.faq-box:hover { box-shadow: var(--shadow-float); border-color: #cbd5e1; }
-        
-        details.faq-box summary {
-            padding: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: var(--secondary);
-            list-style: none;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1rem;
-        }
-        
-        /* Custom Animated Chevron */
-        details.faq-box summary::after {
-            content: '';
-            width: 10px; height: 10px;
-            border-right: 2px solid var(--text-light);
-            border-bottom: 2px solid var(--text-light);
-            transform: rotate(45deg);
-            transition: transform 0.2s ease;
-            margin-left: 10px;
-        }
+        details.faq-box summary { padding: 20px; cursor: pointer; font-weight: 600; color: var(--secondary); list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
+        details.faq-box summary::after { content: ''; width: 10px; height: 10px; border-right: 2px solid var(--text-light); border-bottom: 2px solid var(--text-light); transform: rotate(45deg); transition: transform 0.2s ease; margin-left: 10px; }
         details.faq-box[open] summary::after { transform: rotate(-135deg); border-color: var(--primary); }
-        
-        /* Hide Default Marker */
         details.faq-box summary::-webkit-details-marker { display: none; }
-        
-        .faq-text {
-            padding: 0 20px 20px 20px;
-            color: var(--text-main);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            border-top: 1px solid transparent;
-            opacity: 0.9;
-        }
+        .faq-text { padding: 0 20px 20px 20px; color: var(--text-main); font-size: 0.95rem; line-height: 1.6; border-top: 1px solid transparent; opacity: 0.9; }
         details.faq-box[open] .faq-text { border-color: #f1f5f9; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
-        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--secondary); color: white; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 1300; }
+        /* CHECKOUT MODAL CENTERED & ELEGANT */
+        dialog.modal-checkout {
+            border: none; border-radius: 16px; width: 90%; max-width: 420px; padding: 0;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            margin: 0; max-height: 85vh; display: flex; flex-direction: column;
+        }
+        dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+        
+        .co-header { padding: 16px 24px; background: #fff; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .co-header span { font-weight: 700; color: var(--secondary); font-size: 1.1rem; }
+        .co-body { padding: 24px; overflow-y: auto; flex: 1; }
+        
+        .co-list { list-style: none; margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
+        .co-item { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: var(--text-main); background: #fff; }
+        .co-item:last-child { border-bottom: none; }
+        .co-item span:first-child { font-weight: 600; color: var(--secondary); }
+        
+        .co-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .co-total-val { font-size: 1.4rem; font-weight: 700; color: var(--primary); }
+        
+        .co-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; background: #f8fafc; }
+        .co-btn { width: 100%; padding: 12px; background: #16a34a; color: white; font-weight: 700; border-radius: 8px; font-size: 1rem; transition: transform 0.2s; }
+        .co-btn:active { transform: scale(0.98); }
+
+        .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--secondary); color: white; padding: 12px 24px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1300; box-shadow: 0 10px 30px rgba(0,0,0,0.2); white-space: nowrap; }
         .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        dialog.modal-checkout { border: none; border-radius: 12px; width: 95%; max-width: 450px; padding: 0; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        dialog::backdrop { background: rgba(0,0,0,0.6); }
-        .co-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
-        .co-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
-        .co-footer { padding: 15px 20px; border-top: 1px solid #e2e8f0; }
-        .co-btn { width: 100%; padding: 14px; background: #16a34a; color: white; font-weight: 700; border-radius: 8px; font-size: 1rem; }
     </style>
 </head>
 <body>
@@ -379,6 +345,10 @@
         <a onclick="App.openSheet('faq-sheet')" class="app-bar-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Dúvidas</a>
     </nav>
 
+    <button id="btn-scroll-top" class="btn-scroll-top" onclick="window.scrollTo(0,0)">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
+
     <!-- HOME -->
     <main id="home-view">
         <section class="hero">
@@ -400,7 +370,10 @@
         <div class="cust-header-bar">
             <div class="container ch-container">
                 <button class="ch-back-btn" onclick="App.goHome()">❮</button>
-                <div class="ch-info"><h2 id="cust-title">Minha Cesta</h2><span id="cust-subtitle">Personalize os itens</span></div>
+                <div class="ch-info">
+                    <h2 id="cust-title">Minha Cesta</h2>
+                    <span id="changes-badge" class="limit-badge">Alterações: 0/0</span>
+                </div>
                 <div class="ch-search-box"><input type="text" id="main-search" class="ch-input" placeholder="Buscar produto..."><span class="ch-icon">🔍</span></div>
                 <div class="ch-desktop-cart">
                     <div class="desk-price"><small>Total Estimado</small><strong id="desk-total-val">R$ 0,00</strong></div>
@@ -427,15 +400,10 @@
             </aside>
         </div>
         
-        <!-- NEW MOBILE CHECKOUT BAR -->
+        <!-- MOBILE CHECKOUT BAR -->
         <div class="mobile-checkout-bar" id="mobile-checkout-bar">
-            <div class="mcb-total">
-                <span class="mcb-label">Total Estimado</span>
-                <span class="mcb-value" id="mcb-total-val">R$ 0,00</span>
-            </div>
-            <button class="mcb-btn" onclick="App.openCheckout()">
-                Encomendar <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
+            <div class="mcb-total"><span class="mcb-label">Total Estimado</span><span class="mcb-value" id="mcb-total-val">R$ 0,00</span></div>
+            <button class="mcb-btn" onclick="App.openCheckout()">Encomendar <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
         </div>
     </div>
 
@@ -451,27 +419,27 @@
         <div id="gallery-thumbs" class="gallery-thumbs"></div>
     </div>
 
-    <!-- MODALS -->
+    <!-- CHECKOUT MODAL CENTERED & SMALL FONT -->
     <dialog id="checkout-modal" class="modal-checkout">
         <div class="co-header"><span>Resumo do Pedido</span><button onclick="document.getElementById('checkout-modal').close()">✕</button></div>
         <div class="co-body">
-            <ul id="checkout-items" style="list-style:none; margin-bottom:20px;"></ul>
-            <div style="display:flex; justify-content:space-between; font-weight:700; font-size:1.2rem; border-top:1px solid #eee; padding-top:15px;"><span>Total</span><span id="co-total">R$ 0,00</span></div>
-            <div style="margin-top:20px;">
-                <label style="display:block; font-weight:600; margin-bottom:10px;">Forma de Pagamento:</label>
-                <select id="payment-method" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px;">
-                    <option value="Pix">Pix</option><option value="Dinheiro">Dinheiro</option><option value="Cartão de Crédito">Cartão de Crédito</option>
+            <ul id="checkout-items" class="co-list"></ul>
+            <div class="co-total-row"><span>Total</span><span id="co-total" class="co-total-val">R$ 0,00</span></div>
+            <div>
+                <label style="display:block; font-weight:600; margin-bottom:10px; font-size:0.9rem;">Forma de Pagamento:</label>
+                <select id="payment-method" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:0.9rem;">
+                    <option value="Pix">Pix (Instantâneo)</option><option value="Dinheiro">Dinheiro</option><option value="Cartão de Crédito">Cartão de Crédito</option>
+                    <option value="Cartão de Débito">Cartão de Débito</option><option value="Vale Alimentação">Vale Alimentação</option>
                 </select>
             </div>
         </div>
-        <div class="co-footer"><button class="co-btn" onclick="App.sendWhatsApp()">Confirmar Pedido</button></div>
+        <div class="co-footer"><button class="co-btn" onclick="App.sendWhatsApp()">Confirmar Pedido no WhatsApp</button></div>
     </dialog>
 
     <div id="cat-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('cat-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Categorias</h3><span class="sheet-close" onclick="App.closeSheet('cat-sheet')">✕</span></div><div id="mob-cat-grid" class="mobile-cat-grid"></div></div></div>
     <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')">✕</span></div><div id="mob-tags-grid" class="mobile-tags-grid"></div></div></div>
     <div id="offers-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('offers-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title" style="color:#b45309;">🔥 Super Ofertas</h3><span class="sheet-close" onclick="App.closeSheet('offers-sheet')">✕</span></div><div id="mob-offers-grid" class="grid-products" style="grid-template-columns: repeat(2, 1fr) !important;"></div></div></div>
     
-    <!-- BEAUTIFUL FAQ SHEET -->
     <div id="faq-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('faq-sheet')">
         <div class="sheet-content">
             <div class="sheet-header"><h3 class="sheet-title">Dúvidas Frequentes</h3><span class="sheet-close" onclick="App.closeSheet('faq-sheet')">✕</span></div>
@@ -490,7 +458,8 @@
         const CONSTANTS = {
             TAGS: ["Arroz", "Feijão", "Açúcar", "Café", "Óleo", "Macarrão", "Leite", "Sabão", "Detergente", "Sardinha"],
             THEMES: { 'DEFAULT': '#f1f5f9', 'ALIMENTOS': '#ffedd5', 'LIMPEZA': '#dbeafe', 'HIGIENE': '#dcfce7', 'BEBIDAS': '#fae8ff', 'CARNES': '#fee2e2' },
-            PHONE: "5565996813588"
+            PHONE: "5565996813588",
+            LIMITS: { 'econômica': 5, 'economica': 5, 'mini': 7, 'pequena': 9, 'média': 11, 'media': 11, 'grande': 13 }
         };
 
         const Gallery = {
@@ -499,61 +468,39 @@
                 const img = document.getElementById('gallery-img');
                 const vid = document.getElementById('gallery-video');
                 const thumbs = document.getElementById('gallery-thumbs');
-                
                 thumbs.innerHTML = '';
                 img.src = startWith || mainSrc;
                 img.alt = productName;
                 img.classList.remove('hidden');
                 vid.classList.add('hidden');
                 vid.pause();
-                
                 this.addThumb(mainSrc, 'img', !startWith);
                 this.checkSuffixes(mainSrc, startWith);
                 this.checkVideo(mainSrc);
-                
                 el.classList.add('active');
             },
-            
             swap(src, type, el) {
                 document.querySelectorAll('.g-thumb').forEach(t => t.classList.remove('active'));
                 el.classList.add('active');
                 const img = document.getElementById('gallery-img');
                 const vid = document.getElementById('gallery-video');
-                
-                if(type === 'video') {
-                    img.classList.add('hidden');
-                    vid.src = src;
-                    vid.classList.remove('hidden');
-                    vid.play();
-                } else {
-                    vid.pause();
-                    vid.classList.add('hidden');
-                    img.src = src;
-                    img.classList.remove('hidden');
-                }
+                if(type === 'video') { img.classList.add('hidden'); vid.src = src; vid.classList.remove('hidden'); vid.play(); } 
+                else { vid.pause(); vid.classList.add('hidden'); img.src = src; img.classList.remove('hidden'); }
             },
-
             addThumb(src, type, isActive) {
                 const t = document.createElement('img');
                 t.className = `g-thumb ${isActive?'active':''}`;
-                if(type === 'video') {
-                    t.src = 'img/video-placeholder.png'; // Fallback or icon
-                    t.onerror = () => t.src = 'https://placehold.co/50x50?text=VID';
-                } else {
-                    t.src = src;
-                }
+                t.src = type === 'video' ? 'img/video-placeholder.png' : src;
+                t.onerror = () => t.src = 'https://placehold.co/50x50?text=VID';
                 t.onclick = () => this.swap(src, type, t);
-                t.onerror = () => t.src = 'https://placehold.co/50x50?text=X';
                 document.getElementById('gallery-thumbs').appendChild(t);
             },
-
             checkSuffixes(baseSrc, startWith) {
                 const suffixes = ['A', 'B', 'C'];
                 const dot = baseSrc.lastIndexOf('.');
                 if(dot === -1) return;
                 const root = baseSrc.substring(0, dot);
                 const ext = baseSrc.substring(dot);
-                
                 suffixes.forEach(s => {
                     const url = root + s + ext;
                     const i = new Image();
@@ -561,7 +508,6 @@
                     i.src = url;
                 });
             },
-
             checkVideo(baseSrc) {
                 const dot = baseSrc.lastIndexOf('.');
                 if(dot === -1) return;
@@ -570,21 +516,16 @@
                 v.onloadedmetadata = () => this.addThumb(vidUrl, 'video', false);
                 v.src = vidUrl;
             },
-
-            close() { 
-                document.getElementById('gallery').classList.remove('active'); 
-                document.getElementById('gallery-video').pause();
-            }
+            close() { document.getElementById('gallery').classList.remove('active'); document.getElementById('gallery-video').pause(); }
         };
 
         const App = {
-            data: [], cart: {}, currentBasket: null,
+            data: [], cart: {}, currentBasket: null, originalCart: {}, currentLimit: 99,
 
             async init() {
                 try {
                     const res = await fetch('produtos/produtos.json?v=' + Date.now());
                     const raw = await res.json();
-                    
                     this.data = raw.map(p => ({
                         ...p,
                         id: String(p.id),
@@ -599,11 +540,10 @@
                         validade: p.Validade || p.validade || "",
                         caracteristicas: p.Caracteristicas || p.caracteristicas || ""
                     }));
-
                     this.renderHome();
                     this.renderSidebar();
                     this.setupSearch();
-
+                    window.addEventListener('scroll', this.handleScroll);
                 } catch (e) {
                     console.error("Erro Fatal:", e);
                     document.getElementById('home-list').innerHTML = `<p style="text-align:center;">Erro ao carregar.</p>`;
@@ -615,12 +555,16 @@
                 return path.includes('/') ? `img/produtos/${path.split('/').pop()}` : `img/produtos/${path}`;
             },
 
+            handleScroll() {
+                const btn = document.getElementById('btn-scroll-top');
+                if (window.scrollY > 300) btn.classList.add('visible');
+                else btn.classList.remove('visible');
+            },
+
             renderHome() {
                 const list = document.getElementById('home-list');
                 const baskets = this.data.filter(p => p.categoria.includes('CESTA') && (p.categoria.includes('BÁSICA') || p.categoria.includes('BASICA')));
-                
                 if(baskets.length === 0) { list.innerHTML = '<p>Nenhuma cesta.</p>'; return; }
-
                 list.innerHTML = baskets.map(p => {
                     const price = (p.isOffer && p.offerPrice > 0) ? p.offerPrice : p.valor;
                     return `
@@ -654,6 +598,7 @@
                 this.currentBasket = basket;
                 this.cart = {};
                 
+                // Load items
                 if(basket.items && Array.isArray(basket.items)) {
                     basket.items.forEach(item => {
                         let match = this.data.find(p => p.id === String(item.id));
@@ -661,7 +606,14 @@
                         if(match) this.cart[match.id] = (this.cart[match.id] || 0) + (parseInt(item.qtd || 1));
                     });
                 }
+                
+                // Limits Logic
+                this.originalCart = { ...this.cart };
+                const nameKey = basket.nome.toLowerCase().replace('cesta', '').trim();
+                let limitKey = Object.keys(CONSTANTS.LIMITS).find(k => nameKey.includes(k));
+                this.currentLimit = limitKey ? CONSTANTS.LIMITS[limitKey] : 99;
 
+                // Base Fee Calculation (Price - Items)
                 let itemsSum = 0;
                 for(let pid in this.cart) {
                     let p = this.data.find(x => x.id === pid);
@@ -672,7 +624,7 @@
                 document.getElementById('cust-title').innerText = basket.nome;
                 document.getElementById('home-view').classList.add('hidden');
                 document.getElementById('customizer-view').classList.remove('hidden');
-                // Remove hiding logic for app bar
+                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'none';
                 
                 window.scrollTo(0,0);
                 this.renderAllLists();
@@ -681,7 +633,7 @@
             goHome() {
                 document.getElementById('customizer-view').classList.add('hidden');
                 document.getElementById('home-view').classList.remove('hidden');
-                // Remove restore logic for app bar as it's never hidden now
+                if(window.innerWidth < 1024) document.querySelector('.mobile-app-bar').style.display = 'grid';
                 this.currentBasket = null;
             },
 
@@ -705,13 +657,8 @@
                 const sortedCats = Object.keys(groups).sort();
                 
                 let html = '';
-                // RE-INJECTED BANNER FOR EXTRAS
                 if(sortedCats.length > 0 && !searchTerm) {
-                    html += `
-                    <div class="extras-separator-banner">
-                        <h3>Adicionar Extras</h3>
-                        <p>Toque nos produtos abaixo para adicionar mais itens.</p>
-                    </div>`;
+                    html += `<div class="extras-separator-banner"><h3>Adicionar Extras</h3><p>Toque nos produtos abaixo para adicionar mais itens.</p></div>`;
                 }
 
                 sortedCats.forEach(cat => {
@@ -721,7 +668,7 @@
                 });
                 extContainer.innerHTML = html || '<p style="text-align:center; padding:40px;">Nenhum produto encontrado.</p>';
                 
-                setTimeout(() => this.setupMediaObservers(), 500); // Trigger Smart Gallery Checks
+                setTimeout(() => this.setupMediaObservers(), 500);
                 this.updateTotal();
             },
 
@@ -739,7 +686,6 @@
                 
                 let featBtns = '';
                 if(p.caracteristicas) featBtns += `<div class="btn-feat info" onclick="alert('${p.caracteristicas.replace(/'/g,"")}')">Info</div>`;
-                // Nutri button will be made visible by JS observer if image A exists
                 featBtns += `<div class="btn-feat nutri" id="nutri-${p.id}" onclick="Gallery.open('${p.imagem}','${p.nome}','${p.imagem.replace('.','A.')}')">Nutri</div>`;
 
                 return `
@@ -760,7 +706,6 @@
             },
 
             setupMediaObservers() {
-                // Smart Gallery: Checks for extra images (A/B) and Videos without blocking UI
                 const cards = document.querySelectorAll('.mini-card');
                 const observer = new IntersectionObserver((entries, obs) => {
                     entries.forEach(e => {
@@ -780,8 +725,6 @@
                 if(dot === -1) return;
                 const root = p.imagem.substring(0, dot);
                 const ext = p.imagem.substring(dot);
-                
-                // Check Nutri Image (A)
                 const imgA = new Image();
                 imgA.onload = () => {
                     document.getElementById(`nutri-${p.id}`).style.display = 'inline-block';
@@ -789,8 +732,6 @@
                     if(el) el.classList.add('visible');
                 };
                 imgA.src = root + 'A' + ext;
-
-                // Check Video (.mp4)
                 const vid = document.createElement('video');
                 vid.onloadedmetadata = () => {
                     const el = document.querySelector(`#media-${p.id} .icon-vid`);
@@ -799,30 +740,71 @@
                 vid.src = root + '.mp4';
             },
 
+            countRemovals() {
+                let removals = 0;
+                for(let id in this.originalCart) {
+                    if (this.originalCart[id] > 0 && (!this.cart[id] || this.cart[id] === 0)) {
+                        removals++;
+                    }
+                }
+                return removals;
+            },
+
             modQty(id, delta) {
-                if(!this.cart[id]) this.cart[id] = 0;
                 const p = this.data.find(x => x.id === id);
-                if(delta > 0 && p.limit > 0 && (this.cart[id] + delta > p.limit)) return alert(`Limite de ${p.limit} unidades.`);
-                this.cart[id] += delta;
+                if(!this.cart[id]) this.cart[id] = 0;
+                const newQty = this.cart[id] + delta;
+
+                // Check Limits
+                if(delta > 0 && p.limit > 0 && newQty > p.limit) return alert(`Limite de ${p.limit} unidades.`);
+                
+                // Check Removal Limits
+                if (this.originalCart[id] && delta < 0 && newQty === 0) {
+                    if (this.countRemovals() >= this.currentLimit) {
+                        return alert(`Limite de ${this.currentLimit} trocas/exclusões atingido para esta cesta.`);
+                    }
+                }
+
+                this.cart[id] = newQty;
                 if(this.cart[id] <= 0) delete this.cart[id];
                 this.renderAllLists(document.getElementById('main-search').value);
             },
 
             updateTotal() {
-                let total = this.baseFee;
+                let itemsSum = 0;
                 for(let id in this.cart) {
                     const p = this.data.find(x => x.id === id);
-                    if(p) total += (p.isOffer ? p.offerPrice : p.valor) * this.cart[id];
+                    if(p) itemsSum += (p.isOffer ? p.offerPrice : p.valor) * this.cart[id];
                 }
-                const fmt = 'R$ ' + total.toFixed(2).replace('.', ',');
                 
-                // Desktop Sidebar Total
+                const calculatedTotal = itemsSum + this.baseFee;
+                let finalTotal = Math.max(calculatedTotal, this.currentBasket.valor);
+                let credit = 0;
+                
+                if (calculatedTotal < this.currentBasket.valor) {
+                    credit = this.currentBasket.valor - calculatedTotal;
+                }
+
+                // Update UI Counters
+                const removals = this.countRemovals();
+                const badge = document.getElementById('changes-badge');
+                badge.innerText = `Alterações: ${removals}/${this.currentLimit}`;
+                badge.className = removals >= this.currentLimit ? 'limit-badge error' : 'limit-badge';
+
+                const fmt = 'R$ ' + finalTotal.toFixed(2).replace('.', ',');
                 document.getElementById('desk-total-val').innerText = fmt;
-                // Mobile Checkout Bar Total
                 const mobTotal = document.getElementById('mcb-total-val');
                 if(mobTotal) mobTotal.innerText = fmt;
-                
                 document.getElementById('co-total').innerText = fmt;
+
+                // Credit Toast
+                const toast = document.getElementById('toast');
+                if (credit > 0) {
+                    document.getElementById('toast-msg').innerText = `Você tem R$ ${credit.toFixed(2).replace('.', ',')} de crédito`;
+                    toast.classList.add('visible');
+                } else {
+                    toast.classList.remove('visible');
+                }
             },
 
             setupSearch() { document.getElementById('main-search').addEventListener('input', (e) => this.renderAllLists(e.target.value)); },
@@ -862,7 +844,7 @@
                 if(Object.keys(this.cart).length === 0) return alert("Cesta vazia.");
                 document.getElementById('checkout-items').innerHTML = Object.keys(this.cart).map(id => {
                     const p = this.data.find(x => x.id === id);
-                    return `<li style="display:flex; justify-content:space-between; border-bottom:1px solid #eee; padding:8px 0;"><span>${this.cart[id]}x ${p.nome}</span></li>`;
+                    return `<li class="co-item"><span>${this.cart[id]}x ${p.nome}</span> <span>R$ ${(this.cart[id] * (p.isOffer?p.offerPrice:p.valor)).toFixed(2).replace('.',',')}</span></li>`;
                 }).join('');
                 document.getElementById('checkout-modal').showModal();
             },
