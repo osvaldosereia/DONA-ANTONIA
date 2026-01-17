@@ -1935,7 +1935,7 @@
     "ean": "7896476901605",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
-    "caracteristicas": "",
+    "caracteristicas": "🌿 Chá Mate Rico\n\nInformações do produto: \n\n📦 Peso líquido: 250g 🍵 \n\nVersatilidade: Pode ser consumido quente, gelado ou espumante \n\n🍃 Composição: Folhas e talos de Erva-mate (Ilex paraguariensis) tostada \n\n✅ Qualidade: Produto de indústria brasileira com tradição no sabor \n\n🚫 Alergênicos: Não contém glúten e é zero sódio \n\n⚡ Benefício: Naturalmente estimulante devido à cafeína da erva",
     "custo": 4.135,
     "valor": 5.49,
     "batches": [
@@ -2115,19 +2115,19 @@
     "ean": "7897517206284",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
-    "caracteristicas": "",
+    "caracteristicas": "🍅 Fugini Extrato de Tomate Concentrado\n\nInformações principais: 📦 Embalagem: 300g (stand-up pouch) 🌱 Ingredientes: Apenas tomates (sem pele e semente) 🚫 Alergênicos: Não contém glúten 📊 Nutricional (porção 30g): 19 kcal | 3,9g carboidratos | 0,9g fibras ⚠️ Diferencial: Sem adição de sal, açúcar ou conservantes ❄️ Conservação: Após aberto, manter na geladeira e consumir em até 5 dias",
     "custo": 2.0031,
     "valor": 2.89,
     "batches": [
       {
-        "date": "",
+        "date": "2026-12-01",
         "qty": 36
       }
     ],
     "estoque": 36,
     "estoqueFiscal": 36,
     "peso": 0.3,
-    "limit": 3,
+    "limit": 6,
     "imagem": "../site/img/produtos/extrato-tomate-fugini-300gr-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
@@ -2149,9 +2149,10 @@
     "refId": "NFe51260103483492000101550020012126641214162198-7",
     "fator": "36",
     "unidade": "UN",
-    "Limit": 3,
+    "Limit": 6,
     "Oferta": "Não",
-    "Valor_Oferta": 0
+    "Valor_Oferta": 0,
+    "validade": "2026-12-01"
   },
   {
     "id": "1768479572785493",
@@ -2475,7 +2476,7 @@
     "ean": "7896327516125",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
-    "caracteristicas": "",
+    "caracteristicas": "🍇 Gelatina Apti Sabor Uva\n\nInformações do produto: 📦 Peso líquido: 20g ✨ Diferencial: Fonte de Vitamina C e baixo valor energético 📊 Nutricional (porção 5g): 16 kcal | 2,5g açúcares | 79mg sódio | 15mg Vitamina C 👥 Rendimento: 4 porções por embalagem 🚫 Gorduras: Não contém gorduras totais ou trans ⚠️ Contém: Açúcares adicionados e aromatizante sintético",
     "custo": 1.1,
     "valor": 1.75,
     "batches": [
@@ -5121,7 +5122,7 @@
     "ean": "7896327514541",
     "categoria": "ALIMENTOS",
     "fornecedor": "ASSAI",
-    "caracteristicas": "",
+    "caracteristicas": "🍜 Macarrão Instantâneo Apti Lámen sabor Carne. Embalagem de 70g (66g de massa + 4g de tempero).\n\n⏱️ Pronto em 3 minutos!\n\n📊 Informação Nutricional (pacote): 262 kcal, 38g de carboidratos, 4,6g de proteínas e 11g de gorduras totais.\n\n⚠️ Atenção: Alto teor de sódio (1326mg ou 66% do VD). Contém glúten, derivados de trigo e soja. Pode conter leite, ovos e cevada.",
     "custo": 1.15,
     "valor": 1.69,
     "batches": [
