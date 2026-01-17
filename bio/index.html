@@ -115,7 +115,7 @@
 
         canvas { 
             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            image-rendering: high-quality; /* Preview ainda usa nativo para velocidade */
+            image-rendering: high-quality;
             max-width: 100%;
             max-height: 100%;
             width: 100%;
@@ -167,6 +167,10 @@
         
         .btn-camera { background: var(--text-main); color: white; }
         .btn-camera:hover { background: #1e293b; }
+
+        .btn-magic { background: #8b5cf6; color: white; border: 1px solid #7c3aed; }
+        .btn-magic:hover { background: #7c3aed; }
+        .btn-magic.processing { opacity: 0.7; cursor: wait; }
 
         .btn-save { background: var(--action); color: white; margin-top: 1rem; font-size: 1.1rem; }
         .btn-save:hover { background: var(--action-dark); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
@@ -248,6 +252,18 @@
         <div class="card" id="controlsCard">
             <!-- IMAGE CONTROLS -->
             <div id="imageControls">
+                
+                <!-- Magic Wand (Background Removal) -->
+                <div style="margin-bottom: 1.5rem;">
+                     <button id="btnMagic" class="btn btn-magic">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19.5 9.5l-2.5-2.5"/><path d="M21 11l-9 9-5-5 9-9z"/><path d="M3 3l6 6"/><path d="M15 4l-4 4"/><path d="M4 15l4-4"/><path d="M9 19l2 2"/></svg>
+                        🪄 Remover Fundo (Mágica)
+                    </button>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">
+                        Preserva rótulos brancos. Funciona em fotos de estúdio.
+                    </p>
+                </div>
+
                 <fieldset>
                     <label>Escala <span class="val-badge" id="scaleVal">85%</span></label>
                     <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
@@ -323,7 +339,10 @@
     <script>
         const state = {
             mode: 'photo',
-            img: null, video: null,
+            img: null, 
+            imgNoBg: null, // Stores the background-removed version
+            useNoBg: false, // Toggle state
+            video: null,
             ctx: null, width: 300, height: 300,
             scale: 0.85, vScale: 1.0, x: 0, y: 0,
             recorder: null, chunks: [], isRecording: false,
@@ -351,7 +370,8 @@
             sharp: document.getElementById('sharpRange'),
             btnSave: document.getElementById('saveBtn'),
             vScale: document.getElementById('vScaleRange'),
-            btnRec: document.getElementById('recordBtn')
+            btnRec: document.getElementById('recordBtn'),
+            btnMagic: document.getElementById('btnMagic')
         };
 
         function init() {
@@ -373,6 +393,7 @@
 
             els.btnSave.onclick = savePhotoHighQuality; 
             els.btnRec.onclick = processVideo;
+            els.btnMagic.onclick = toggleMagicBackground;
 
             els.canvas.addEventListener('mousedown', startPan);
             els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]), {passive: false});
@@ -387,6 +408,109 @@
             document.getElementById('btnCenter').onclick = () => { state.x=0; state.y=0; requestRender(); updateActivePreset('btnCenter'); };
             document.addEventListener('paste', handlePaste);
         }
+
+        // --- BACKGROUND REMOVAL LOGIC (Smart Flood Fill) ---
+        function toggleMagicBackground() {
+            if (!state.img) return;
+            
+            if (state.useNoBg) {
+                // Toggle OFF
+                state.useNoBg = false;
+                els.btnMagic.style.background = '#8b5cf6';
+                els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
+                requestRender();
+            } else {
+                // Toggle ON
+                if (state.imgNoBg) {
+                    // Already processed
+                    state.useNoBg = true;
+                    els.btnMagic.style.background = '#059669'; // Green indicating active
+                    els.btnMagic.innerHTML = '✅ Fundo Removido';
+                    requestRender();
+                } else {
+                    // Need to process
+                    els.btnMagic.innerHTML = '⏳ Processando...';
+                    els.btnMagic.classList.add('processing');
+                    
+                    // Give UI time to update
+                    setTimeout(() => {
+                        processRemoveBackground();
+                        state.useNoBg = true;
+                        els.btnMagic.classList.remove('processing');
+                        els.btnMagic.style.background = '#059669';
+                        els.btnMagic.innerHTML = '✅ Fundo Removido';
+                        requestRender();
+                    }, 50);
+                }
+            }
+        }
+
+        function processRemoveBackground() {
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = state.img.width;
+            tempCanvas.height = state.img.height;
+            const ctx = tempCanvas.getContext('2d');
+            ctx.drawImage(state.img, 0, 0);
+            
+            const imgData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            floodFillBackground(imgData, 20); // Tolerance 20 is good for studio white
+            
+            ctx.putImageData(imgData, 0, 0);
+            
+            const newImg = new Image();
+            newImg.src = tempCanvas.toDataURL();
+            state.imgNoBg = newImg;
+        }
+
+        function floodFillBackground(imgData, tolerance) {
+            const w = imgData.width;
+            const h = imgData.height;
+            const data = imgData.data;
+            const stack = [];
+            const visited = new Uint8Array(w * h); // 0 = no, 1 = yes
+
+            // Add corners to stack (assuming background is in corners)
+            const corners = [[0,0], [w-1, 0], [0, h-1], [w-1, h-1]];
+            
+            // Get reference color from Top-Left corner
+            const sr = data[0], sg = data[1], sb = data[2];
+
+            for(let c of corners) {
+                stack.push(c[0], c[1]);
+            }
+
+            function match(idx) {
+                const r = data[idx], g = data[idx+1], b = data[idx+2];
+                // Euclidean distance check can be better but abs diff is faster
+                return Math.abs(r - sr) <= tolerance &&
+                       Math.abs(g - sg) <= tolerance &&
+                       Math.abs(b - sb) <= tolerance;
+            }
+
+            while (stack.length > 0) {
+                const y = stack.pop();
+                const x = stack.pop();
+                
+                const ptr = y * w + x;
+                if (visited[ptr]) continue;
+                visited[ptr] = 1;
+
+                const idx = ptr * 4;
+                
+                if (match(idx)) {
+                    // It matches background, make transparent
+                    data[idx+3] = 0; 
+
+                    // Push neighbors
+                    if (x > 0 && !visited[ptr-1]) { stack.push(x-1, y); }
+                    if (x < w-1 && !visited[ptr+1]) { stack.push(x+1, y); }
+                    if (y > 0 && !visited[ptr-w]) { stack.push(x, y-1); }
+                    if (y < h-1 && !visited[ptr+w]) { stack.push(x, y+1); }
+                }
+            }
+        }
+
+        // --- EXISTING LOGIC ---
 
         function updateActivePreset(id) {
             ['btnFit', 'btnMax', 'btnCenter'].forEach(b => document.getElementById(b).classList.remove('active'));
@@ -433,7 +557,15 @@
             const url = URL.createObjectURL(file);
             const img = new Image();
             img.onload = () => {
-                state.img = img; state.x = 0; state.y = 0;
+                state.img = img; 
+                state.imgNoBg = null; // Reset processed image
+                state.useNoBg = false; // Reset toggle
+                state.x = 0; state.y = 0;
+                
+                // Reset UI Button
+                els.btnMagic.style.background = '#8b5cf6';
+                els.btnMagic.innerHTML = '🪄 Remover Fundo (Mágica)';
+                
                 els.empty.classList.add('hidden'); els.canvas.classList.remove('hidden');
                 els.btnSave.disabled = false; requestRender(); URL.revokeObjectURL(url);
             };
@@ -442,24 +574,27 @@
 
         function requestRender() { requestAnimationFrame(renderPhoto); }
 
-        // Renderização Rápida para Preview (Nativo)
         function renderPhoto() {
             if(!state.img) return;
             const ctx = els.ctx; const w = 300, h = 300;
             ctx.filter = 'none'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);
             
-            const aspect = state.img.width / state.img.height;
+            // Choose which image to render (Original or NoBg)
+            const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
+            // Fallback to original if NoBg is not ready (async issue handling)
+            if (!sourceImg.complete && state.useNoBg) return requestRender();
+
+            const aspect = sourceImg.width / sourceImg.height;
             let dw, dh, targetSize = w * state.scale;
             if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
             const dx = (w - dw)/2 + state.x; const dy = (h - dh)/2 + state.y;
             
             ctx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
-            ctx.drawImage(state.img, dx, dy, dw, dh);
+            ctx.drawImage(sourceImg, dx, dy, dw, dh);
             ctx.filter = 'none';
             if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness); 
         }
 
-        // --- SISTEMAS ENGINE HQ (SAVE) ---
         async function savePhotoHighQuality() {
             if (!state.img) return;
             const originalText = els.btnSave.innerText;
@@ -467,6 +602,9 @@
             els.btnSave.innerHTML = "Gerando Super-Sampling...";
 
             try {
+                // Pick source
+                const sourceImg = (state.useNoBg && state.imgNoBg) ? state.imgNoBg : state.img;
+
                 // 1. Super-Sampling Canvas (900x900) - 3x Resolution
                 const superSize = 900;
                 const superCanvas = document.createElement('canvas');
@@ -477,15 +615,14 @@
                 sCtx.fillStyle = '#ffffff';
                 sCtx.fillRect(0, 0, superSize, superSize);
 
-                // Math x3
-                const aspect = state.img.width / state.img.height;
+                const aspect = sourceImg.width / sourceImg.height;
                 let dw, dh, targetSize = superSize * state.scale;
                 if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } else { dh = targetSize; dw = targetSize * aspect; }
                 const dx = (superSize - dw)/2 + (state.x * 3);
                 const dy = (superSize - dh)/2 + (state.y * 3);
 
                 sCtx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
-                sCtx.drawImage(state.img, dx, dy, dw, dh);
+                sCtx.drawImage(sourceImg, dx, dy, dw, dh);
                 sCtx.filter = 'none';
 
                 // 2. Lanczos3 Downscaling via Pica
@@ -498,7 +635,7 @@
                         unsharpAmount: 0,
                         unsharpRadius: 0.5,
                         unsharpThreshold: 0,
-                        quality: 3 // Lanczos3 (Highest)
+                        quality: 3 
                     });
                 } else {
                     const fCtx = finalCanvas.getContext('2d');
@@ -513,7 +650,7 @@
 
                 // 4. Smart Compression (Binary Search)
                 els.btnSave.innerHTML = "Otimizando 30KB...";
-                const MAX_BYTES = 30720; // 30KB
+                const MAX_BYTES = 30720; 
                 
                 let minQ = 0.50;
                 let maxQ = 1.00;
