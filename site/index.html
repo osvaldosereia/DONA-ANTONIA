@@ -4,11 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.17 - Validity Date Display
+        VERSION: 9.18 - Rich Text Features & Date Format
         CHANGELOG:
-        - FEAT: Exibição da Data de Validade nos cards (se != '00').
-        - UI: Estilo .pc-validity adicionado para formatar a data (verde, discreto).
-        - FIX: Mantida toda a lógica de checkout, galeria e navegação.
+        - FEAT: Suporte a Markdown (Negrito **texto** e Listas - item) no modal Info.
+        - FEAT: Formatação de data de validade para "DD | MM | AAAA".
+        - REFACTOR: App.openInfo agora busca dados pelo ID para processamento seguro de texto.
+        - UI: Estilos CSS para listas dentro do modal de informações.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -422,7 +423,13 @@
         @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
 
         /* INFO MODAL TEXT */
-        .info-text-body { font-size: 1rem; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; }
+        .info-text-body { 
+            font-size: 1rem; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; 
+        }
+        /* CSS for Lists in Info Modal */
+        .info-text-body ul { list-style: disc; padding-left: 24px; margin-bottom: 10px; }
+        .info-text-body li { margin-bottom: 6px; }
+        .info-text-body strong, .info-text-body b { font-weight: 700; color: var(--secondary); }
 
         /* CHECKOUT MODAL */
         dialog.modal-checkout {
@@ -913,20 +920,19 @@
                 
                 // Smart Buttons
                 let featBtns = '';
-                // Info Button now opens sheet
+                // Info Button now opens sheet passing ID
                 if(p.caracteristicas) {
-                    const safeText = p.caracteristicas.replace(/"/g, '&quot;').replace(/'/g, "\\'").replace(/\n/g, '<br>');
-                    const safeTitle = p.nome.replace(/"/g, '&quot;');
-                    featBtns += `<div class="btn-feat info" onclick="App.openInfo('${safeText}', '${safeTitle}')">Info</div>`;
+                    featBtns += `<div class="btn-feat info" onclick="App.openInfo('${p.id}')">Info</div>`;
                 }
                 
                 featBtns += `<div class="btn-feat nutri" id="nutri-${p.id}" onclick="Gallery.open('${p.imagem}','${p.nome}','${p.imagem.replace('.','A.')}')">Nutri</div>`;
                 featBtns += `<div class="btn-feat video" id="vid-btn-${p.id}">Vídeo</div>`;
 
-                // NEW: Validity Date
+                // Validity Date (BR Format)
                 let valHtml = '';
                 if(p.validade && p.validade !== '00') {
-                    valHtml = `<div class="pc-validity">Val: ${p.validade}</div>`;
+                    const formattedDate = App.formatDateBr(p.validade);
+                    valHtml = `<div class="pc-validity">Val: ${formattedDate}</div>`;
                 }
 
                 return `
@@ -941,6 +947,20 @@
                     <div class="mc-price">${priceHtml}</div>
                     ${btnHtml}
                 </div>`;
+            },
+
+            formatDateBr(dateStr) {
+                 if (!dateStr) return '';
+                 // Check if YYYY-MM-DD
+                 if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                     const [y, m, d] = dateStr.split('-');
+                     return `${d} | ${m} | ${y}`;
+                 }
+                 // If DD/MM/YYYY
+                 if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+                     return dateStr.replace(/\//g, ' | ');
+                 }
+                 return dateStr;
             },
 
             setupMediaObservers() {
@@ -1097,8 +1117,40 @@
             },
             closeSheet(id) { document.getElementById(id).classList.remove('open'); },
             
-            openInfo(text, title) {
-                document.getElementById('info-sheet-title').innerText = title;
+            openInfo(pid) {
+                const p = this.data.find(x => x.id === pid);
+                if(!p) return;
+                
+                let text = p.caracteristicas || "Sem informações adicionais.";
+                // Markdown Processing
+                // Bold: **text** -> <strong>text</strong>
+                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                // List: - Item -> <li>Item</li> (Simple wrapper)
+                // We'll wrap lines starting with - in <li> and wrap whole block in <ul> if needed.
+                // Simple approach: Replace newline + hyphen with list item bullet
+                if(text.includes('- ')) {
+                    // split by newline
+                    let lines = text.split('\n');
+                    let newText = '';
+                    let inList = false;
+                    
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        if(trimmed.startsWith('- ')) {
+                            if(!inList) { newText += '<ul>'; inList = true; }
+                            newText += `<li>${trimmed.substring(2)}</li>`;
+                        } else {
+                            if(inList) { newText += '</ul>'; inList = false; }
+                            newText += line + '<br>';
+                        }
+                    });
+                    if(inList) newText += '</ul>';
+                    text = newText;
+                } else {
+                    text = text.replace(/\n/g, '<br>');
+                }
+
+                document.getElementById('info-sheet-title').innerText = p.nome;
                 document.getElementById('info-sheet-body').innerHTML = text;
                 this.openSheet('info-sheet');
             },
