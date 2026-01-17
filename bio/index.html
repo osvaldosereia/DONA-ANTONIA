@@ -2,31 +2,34 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMAS | Product Studio 300 HQ</title>
-    <meta name="description" content="Ferramenta para imagens 300x300. Alta qualidade (Max 30KB). Mobile-first, suporta Ctrl+V.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SISTEMAS | Studio 300 Hybrid</title>
+    <meta name="description" content="Editor 300x300 Híbrido: Foto Ultra-Sharp e Vídeo Compacto.">
+    <meta name="theme-color" content="#2563eb">
     
     <style>
+        /* --- CSS CLASSLESS & MINIMALIST --- */
         :root {
             --bg: #f8fafc;
             --surface: #ffffff;
-            --text: #0f172a;
-            --text-light: #64748b;
-            --primary: #2563eb;
-            --primary-dark: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --brand: #2563eb;
+            --brand-dark: #1e40af;
+            --action: #10b981; 
+            --danger: #ef4444;
             --border: #e2e8f0;
             --radius: 12px;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --touch-target: 48px;
         }
 
-        /* Reset & Base */
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
             padding: 1rem;
             min-height: 100vh;
             display: flex;
@@ -34,482 +37,600 @@
             align-items: center;
         }
 
-        header, main, footer { width: 100%; max-width: 800px; }
-        
-        header { margin-bottom: 2rem; text-align: center; }
-        h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.05em; margin-bottom: 0.5rem; }
-        p { color: var(--text-light); font-size: 0.9rem; }
-
-        /* Layout Grid */
-        main {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: 1fr;
+        /* Tabs / Mode Switcher */
+        .mode-switch {
+            display: flex;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+        }
+        .mode-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mode-btn.active {
+            background: var(--surface);
+            color: var(--brand);
+            box-shadow: 0 2px 4px rgb(0 0 0 / 0.05);
         }
 
-        @media (min-width: 768px) {
-            main { grid-template-columns: 1fr 320px; align-items: start; }
-            .preview-area { position: sticky; top: 2rem; }
-        }
+        /* Layout */
+        main { width: 100%; max-width: 600px; display: grid; gap: 1.5rem; }
 
-        /* Components */
         .card {
             background: var(--surface);
-            padding: 1.5rem;
+            padding: 1rem;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid var(--border);
         }
 
-        /* Canvas / Preview */
-        .preview-container {
+        /* Canvas Area */
+        .viewport {
             width: 100%;
             aspect-ratio: 1;
-            background: #e5e5e5;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background: #e5e5e5 radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 20px 20px;
             border-radius: 8px;
-            overflow: hidden;
             position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            margin-bottom: 1rem;
         }
 
-        canvas {
+        canvas { 
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            image-rendering: high-quality;
             max-width: 100%;
             max-height: 100%;
-            object-fit: contain;
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
         }
 
-        .empty-state {
+        /* Hidden video element for processing */
+        video#sourceVideo { display: none; }
+        
+        /* Empty State */
+        .empty-msg {
             text-align: center;
-            color: var(--text-light);
+            color: var(--text-muted);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
-            padding: 1rem;
+            gap: 0.5rem;
+            font-size: 0.9rem;
         }
 
         /* Controls */
-        fieldset {
-            border: none;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        legend { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-light); }
-
-        label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
+        fieldset { border: 0; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+        label { display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem; }
+        
         input[type="range"] {
-            width: 100%;
-            margin-top: 0.5rem;
-            height: 6px;
-            background: var(--border);
-            border-radius: 4px;
-            appearance: none;
+            width: 100%; height: 24px; background: transparent; -webkit-appearance: none; cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%; height: 6px; background: var(--border); border-radius: 4px;
         }
         input[type="range"]::-webkit-slider-thumb {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--primary);
-            border-radius: 50%;
-            cursor: pointer;
+            height: 24px; width: 24px; border-radius: 50%; background: var(--brand); 
+            -webkit-appearance: none; margin-top: -9px; box-shadow: 0 2px 4px rgb(0 0 0 / 0.2);
         }
 
         /* Buttons */
-        .btn-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+        .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.5rem; }
         
-        button, .file-upload {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            color: var(--text);
-            transition: all 0.2s;
-            text-decoration: none;
-            width: 100%;
+        .btn {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            height: var(--touch-target); font-weight: 700; font-size: 0.95rem;
+            border-radius: 8px; border: none; cursor: pointer; width: 100%;
+            text-decoration: none; transition: transform 0.1s;
         }
+        .btn:active { transform: scale(0.97); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        button:active { transform: scale(0.98); }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
-        }
-        .btn-primary:hover { background: var(--primary-dark); }
-
-        input[type="file"] { display: none; }
+        .btn-upload { background: var(--bg); color: var(--text-main); border: 1px solid var(--border); }
+        .btn-camera { background: var(--text-main); color: white; }
+        .btn-save { background: var(--action); color: white; margin-top: 1rem; font-size: 1.1rem; }
+        .btn-record { background: var(--danger); color: white; margin-top: 1rem; font-size: 1.1rem; }
         
-        input[type="text"] {
-            outline: none;
-            color: var(--text);
-            background: var(--surface);
-            transition: border-color 0.2s;
+        .btn-sm { height: 36px; font-size: 0.8rem; background: var(--bg); border: 1px solid var(--border); }
+        .btn-sm.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+        .input-text {
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 1rem; outline: none;
         }
-        input[type="text"]:focus {
-            border-color: var(--primary) !important;
-        }
+        .input-text:focus { border-color: var(--brand); }
 
         .hidden { display: none !important; }
-        .text-sm { font-size: 0.8rem; }
+        .file-input { display: none; }
+        .val-badge { background: var(--bg); padding: 2px 6px; border-radius: 4px; font-variant-numeric: tabular-nums; }
         
+        /* Video Recording Indicator */
+        .rec-indicator {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(239, 68, 68, 0.9); color: white;
+            padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;
+            display: flex; align-items: center; gap: 6px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>SISTEMAS Studio 300</h1>
-        <p>Alta Qualidade (Max 30KB). Arraste ou Cole (Ctrl+V).</p>
-    </header>
+    <div class="mode-switch">
+        <button class="mode-btn active" id="modePhoto">FOTO 300px</button>
+        <button class="mode-btn" id="modeVideo">VÍDEO 300px</button>
+    </div>
 
     <main>
-        <section class="preview-area">
-            <div class="card">
-                <div class="preview-container" id="dropZone">
-                    <div id="emptyState" class="empty-state">
-                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--text-light);"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                        <span>Arraste, <strong>Cole (Ctrl+V)</strong> ou clique</span>
-                    </div>
-                    <canvas id="canvas" class="hidden"></canvas>
+        <!-- Card Viewport -->
+        <div class="card">
+            <div class="viewport" id="dropZone">
+                <div id="emptyState" class="empty-msg">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    <span>Carregar Arquivo</span>
                 </div>
-                <div style="margin-top: 1rem;">
-                    <label class="file-upload btn-primary">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                        Carregar Imagem
-                        <input type="file" id="uploadInput" accept="image/*">
-                    </label>
-                </div>
+                <canvas id="canvas" class="hidden"></canvas>
+                <div id="recBadge" class="rec-indicator hidden">REC</div>
             </div>
-        </section>
 
-        <section class="controls-area">
-            <div class="card">
+            <div class="actions-grid">
+                <label class="btn btn-upload">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    Galeria
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </label>
                 
+                <label class="btn btn-camera">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    Câmera
+                    <input type="file" id="cameraInput" class="file-input" accept="image/*" capture="environment">
+                </label>
+            </div>
+        </div>
+
+        <!-- Painel de Controle -->
+        <div class="card" id="controlsCard">
+            
+            <!-- CONTROLES DE IMAGEM -->
+            <div id="imageControls">
                 <fieldset>
-                    <legend>1. Geometria (Smart Crop)</legend>
-                    <label>
-                        Escala do Produto
-                        <span id="scaleVal">85%</span>
-                    </label>
+                    <label>Escala <span class="val-badge" id="scaleVal">85%</span></label>
+                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <button class="btn btn-sm active" id="btnFit">Fit</button>
+                        <button class="btn btn-sm" id="btnMax">Full</button>
+                        <button class="btn btn-sm" id="btnCenter">Centro</button>
+                    </div>
                     <input type="range" id="scaleRange" min="50" max="200" value="85">
-                    
-                    <div class="btn-group" style="margin-top: 0.5rem; grid-template-columns: 1fr 1fr 1fr;">
-                         <button id="btnFit" type="button" title="Padrão (85%)">Fit</button>
-                         <button id="btnMax" type="button" title="Maximizar (100%)">Max</button>
-                         <button id="btnCenter" type="button" title="Centralizar Absoluto">Centro</button>
-                    </div>
                 </fieldset>
+
+                <hr style="border: 0; border-top: 1px solid var(--border); margin: 1rem 0;">
 
                 <fieldset>
-                    <legend>2. Tratamento (Enhance)</legend>
-                    
-                    <label>
-                        <input type="checkbox" id="checkRemoveBg">
-                        <span>Remover Fundo (Luma Key)</span>
-                    </label>
-
-                    <label>
-                        Brilho
-                        <span id="brightnessVal">0</span>
-                    </label>
-                    <input type="range" id="brightnessRange" min="-50" max="50" value="0">
-
-                    <label>
-                        Contraste
-                        <span id="contrastVal">0</span>
-                    </label>
+                    <label>Brilho / Contraste</label>
+                    <input type="range" id="brightRange" min="-50" max="50" value="0" style="margin-bottom: 10px;">
                     <input type="range" id="contrastRange" min="-50" max="50" value="0">
-
-                    <label>
-                        Nitidez (Sharpen)
-                        <span id="sharpVal">0</span>
-                    </label>
-                    <input type="range" id="sharpRange" min="0" max="10" value="0">
                 </fieldset>
 
-                <div style="margin-top: 1rem; margin-bottom: 1rem;">
-                    <label style="display:block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 500;">Nome do Produto</label>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        <input type="text" id="fileNameInput" placeholder="ex: arroz-tio-joao" value="produto" 
-                               style="flex: 1; padding: 0.75rem; border: 1px solid var(--border); border-radius: 8px; font-size: 1rem;">
-                        <p class="text-sm" style="color: var(--text-light); word-break: break-all;">
-                            Final: <span id="fileNamePreview" style="font-family: monospace; color: var(--primary); font-weight: 600;">produto-cesta.webp</span>
-                        </p>
-                    </div>
-                </div>
+                <fieldset style="background: #f0fdf4; padding: 1rem; border-radius: 8px; border: 1px solid #bbf7d0;">
+                    <label style="color: #166534;">Ultra Nitidez (3x) <span class="val-badge" id="sharpVal">0</span></label>
+                    <input type="range" id="sharpRange" min="0" max="30" value="0" step="1">
+                </fieldset>
 
-                <button id="downloadBtn" class="btn-primary" disabled style="background: #10b981; border-color: #10b981;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Baixar WebP (Max 30kb)
+                <button id="saveBtn" class="btn btn-save" disabled>
+                    Baixar WebP
                 </button>
             </div>
-        </section>
+
+            <!-- CONTROLES DE VIDEO -->
+            <div id="videoControls" class="hidden">
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; text-align: center;">
+                    O vídeo será cortado para 300x300 e comprimido para uso mobile.
+                    <br>O áudio será removido para máxima leveza.
+                </p>
+                
+                <fieldset>
+                    <label>Ajuste de Enquadramento <span class="val-badge" id="vScaleVal">100%</span></label>
+                    <input type="range" id="vScaleRange" min="50" max="200" value="100">
+                </fieldset>
+
+                <button id="recordBtn" class="btn btn-record" disabled>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                    Processar e Baixar (MP4/WebM)
+                </button>
+                <div id="videoProgress" style="width: 0%; height: 4px; background: var(--action); margin-top: 10px; transition: width 0.2s;"></div>
+            </div>
+
+            <!-- Input Nome -->
+            <div style="margin-top: 1.5rem;">
+                <label style="font-size: 0.8rem; color: var(--text-muted);">Nome do Arquivo</label>
+                <input type="text" id="nameInput" class="input-text" placeholder="nome-produto" value="produto">
+            </div>
+        </div>
     </main>
+
+    <!-- Hidden Video Source -->
+    <video id="sourceVideo" muted playsinline crossorigin="anonymous"></video>
 
     <script>
         /**
-         * SISTEMAS CORE - Image Processing Logic
-         * Config: 300x300px, 30KB Limit, No Shadows.
+         * SISTEMAS ENGINE HYBRID
+         * Mode: Photo (WebP) | Video (WebM/MP4)
          */
         
-        const els = {
-            input: document.getElementById('uploadInput'),
-            canvas: document.getElementById('canvas'),
-            empty: document.getElementById('emptyState'),
-            drop: document.getElementById('dropZone'),
-            download: document.getElementById('downloadBtn'),
-            fileNameInput: document.getElementById('fileNameInput'),
-            fileNamePreview: document.getElementById('fileNamePreview'),
-            scale: document.getElementById('scaleRange'),
-            scaleVal: document.getElementById('scaleVal'),
-            brightness: document.getElementById('brightnessRange'),
-            brightVal: document.getElementById('brightnessVal'),
-            contrast: document.getElementById('contrastRange'),
-            contrastVal: document.getElementById('contrastVal'),
-            sharp: document.getElementById('sharpRange'),
-            sharpVal: document.getElementById('sharpVal'),
-            removeBg: document.getElementById('checkRemoveBg'),
-            btnFit: document.getElementById('btnFit'),
-            btnMax: document.getElementById('btnMax'),
-            btnCenter: document.getElementById('btnCenter')
-        };
-
-        // Estado da Aplicação
         const state = {
-            originalImage: null,
-            ctx: els.canvas.getContext('2d', { willReadFrequently: true }),
+            mode: 'photo', // 'photo' | 'video'
+            img: null,
+            video: null,
+            ctx: null,
             width: 300,
             height: 300,
-            scale: 0.85,
-            offsetX: 0,
-            offsetY: 0,
-            isDragging: false,
-            startPanX: 0,
-            startPanY: 0,
-            brightness: 0,
-            contrast: 0,
-            sharpness: 0,
-            removeBg: false
+            // Transforms
+            scale: 0.85, vScale: 1.0,
+            x: 0, y: 0,
+            // Video Rec
+            recorder: null,
+            chunks: [],
+            isRecording: false,
+            // Photo Params
+            brightness: 0, contrast: 0, sharpness: 0
         };
 
-        const SEO_SUFFIX = '-cesta-basica-cuiaba-varzea-grande';
+        const els = {
+            canvas: document.getElementById('canvas'),
+            ctx: null, // set in init
+            videoEl: document.getElementById('sourceVideo'),
+            empty: document.getElementById('emptyState'),
+            recBadge: document.getElementById('recBadge'),
+            fileInput: document.getElementById('fileInput'),
+            camInput: document.getElementById('cameraInput'),
+            nameInput: document.getElementById('nameInput'),
+            progressBar: document.getElementById('videoProgress'),
+            // Mode Btns
+            mPhoto: document.getElementById('modePhoto'),
+            mVideo: document.getElementById('modeVideo'),
+            // Containers
+            cPhoto: document.getElementById('imageControls'),
+            cVideo: document.getElementById('videoControls'),
+            // Photo Controls
+            scale: document.getElementById('scaleRange'),
+            bright: document.getElementById('brightRange'),
+            contrast: document.getElementById('contrastRange'),
+            sharp: document.getElementById('sharpRange'),
+            btnSave: document.getElementById('saveBtn'),
+            // Video Controls
+            vScale: document.getElementById('vScaleRange'),
+            btnRec: document.getElementById('recordBtn')
+        };
 
         function init() {
-            setupListeners();
-        }
-
-        function setupListeners() {
-            // Upload Tradicional
-            els.input.addEventListener('change', handleFile);
+            els.ctx = els.canvas.getContext('2d', { willReadFrequently: true });
             
-            // Drag & Drop
-            els.drop.addEventListener('dragover', (e) => { e.preventDefault(); els.drop.style.borderColor = varCss('--primary'); });
-            els.drop.addEventListener('dragleave', (e) => { e.preventDefault(); els.drop.style.borderColor = varCss('--border'); });
-            els.drop.addEventListener('drop', (e) => {
-                e.preventDefault();
-                if(e.dataTransfer.files.length) handleFile({ target: { files: e.dataTransfer.files } });
-            });
+            // Mode Switching
+            els.mPhoto.onclick = () => setMode('photo');
+            els.mVideo.onclick = () => setMode('video');
 
-            // Colar (Paste)
-            document.addEventListener('paste', (e) => {
-                const items = e.clipboardData.items;
-                for (let i = 0; i < items.length; i++) {
-                    if (items[i].type.indexOf('image') !== -1) {
-                        const blob = items[i].getAsFile();
-                        handleFile({ target: { files: [blob] } });
-                        break;
-                    }
-                }
-            });
+            // Inputs
+            els.fileInput.addEventListener('change', handleFile);
+            els.camInput.addEventListener('change', handleFile);
 
-            // Controles
-            els.scale.addEventListener('input', (e) => updateState('scale', e.target.value / 100));
-            els.brightness.addEventListener('input', (e) => updateState('brightness', parseInt(e.target.value)));
-            els.contrast.addEventListener('input', (e) => updateState('contrast', parseInt(e.target.value)));
-            els.sharp.addEventListener('input', (e) => updateState('sharpness', parseInt(e.target.value)));
-            els.removeBg.addEventListener('change', (e) => updateState('removeBg', e.target.checked));
-            
-            els.fileNameInput.addEventListener('input', updateFileNamePreview);
+            // Photo Sliders
+            els.scale.oninput = (e) => { state.scale = e.target.value / 100; document.getElementById('scaleVal').innerText = e.target.value + '%'; requestRender(); };
+            els.bright.oninput = (e) => { state.brightness = parseInt(e.target.value); requestRender(); };
+            els.contrast.oninput = (e) => { state.contrast = parseInt(e.target.value); requestRender(); };
+            els.sharp.oninput = (e) => { state.sharpness = parseInt(e.target.value); document.getElementById('sharpVal').innerText = e.target.value; requestRender(); };
 
-            // Botões de Posição
-            els.btnCenter.addEventListener('click', () => { state.offsetX = 0; state.offsetY = 0; render(); });
-            els.btnFit.addEventListener('click', () => { state.scale = 0.85; els.scale.value = 85; els.scaleVal.innerText = '85%'; render(); });
-            els.btnMax.addEventListener('click', () => { 
-                state.scale = 1.0; 
-                els.scale.value = 100; 
-                els.scaleVal.innerText = '100%'; 
-                render(); 
-            });
+            // Video Sliders
+            els.vScale.oninput = (e) => { state.vScale = e.target.value / 100; document.getElementById('vScaleVal').innerText = e.target.value + '%'; if(state.mode==='video') drawVideoFrame(); };
 
-            els.download.addEventListener('click', downloadImage);
+            // Actions
+            els.btnSave.onclick = savePhoto;
+            els.btnRec.onclick = processVideo;
 
-            // Pan
+            // Pan Support
             els.canvas.addEventListener('mousedown', startPan);
-            window.addEventListener('mouseup', () => state.isDragging = false);
-            window.addEventListener('mousemove', doPan);
-            els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]));
-            els.canvas.addEventListener('touchmove', (e) => { e.preventDefault(); doPan(e.touches[0]); });
+            els.canvas.addEventListener('touchstart', (e) => startPan(e.touches[0]), {passive: false});
+            window.addEventListener('mousemove', movePan);
+            window.addEventListener('touchmove', (e) => movePan(e.touches[0]), {passive: false});
+            window.addEventListener('mouseup', endPan);
+            window.addEventListener('touchend', endPan);
+
+            // Preset Buttons
+            document.getElementById('btnFit').onclick = () => { els.scale.value=85; state.scale=0.85; requestRender(); };
+            document.getElementById('btnMax').onclick = () => { els.scale.value=100; state.scale=1.0; requestRender(); };
+            document.getElementById('btnCenter').onclick = () => { state.x=0; state.y=0; requestRender(); };
         }
 
-        function varCss(name) {
-            return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        }
-
-        function updateFileNamePreview() {
-            const userText = els.fileNameInput.value.trim() || 'produto';
-            const cleanName = userText.replace(/\s+/g, '-').toLowerCase();
-            els.fileNamePreview.innerText = `${cleanName}${SEO_SUFFIX}.webp`;
+        function setMode(mode) {
+            state.mode = mode;
+            state.x = 0; state.y = 0;
+            
+            // UI Toggle
+            if(mode === 'photo') {
+                els.mPhoto.classList.add('active'); els.mVideo.classList.remove('active');
+                els.cPhoto.classList.remove('hidden'); els.cVideo.classList.add('hidden');
+                els.fileInput.accept = "image/*"; els.camInput.accept = "image/*";
+                els.camInput.removeAttribute('capture'); // Allow gallery or cam selection menu
+            } else {
+                els.mVideo.classList.add('active'); els.mPhoto.classList.remove('active');
+                els.cVideo.classList.remove('hidden'); els.cPhoto.classList.add('hidden');
+                els.fileInput.accept = "video/*"; els.camInput.accept = "video/*";
+            }
+            
+            // Reset Canvas
+            els.ctx.fillStyle = '#fff';
+            els.ctx.fillRect(0,0,300,300);
+            els.empty.classList.remove('hidden');
+            els.canvas.classList.add('hidden');
         }
 
         function handleFile(e) {
             const file = e.target.files[0];
-            if (!file) return;
+            if(!file) return;
 
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.onload = () => {
-                    state.originalImage = img;
-                    state.offsetX = 0;
-                    state.offsetY = 0;
-                    els.empty.classList.add('hidden');
-                    els.canvas.classList.remove('hidden');
-                    els.download.disabled = false;
-                    render();
-                };
-                img.src = event.target.result;
+            // Auto-switch mode based on file type
+            if(file.type.startsWith('video/')) {
+                if(state.mode !== 'video') setMode('video');
+                loadVideo(file);
+            } else {
+                if(state.mode !== 'photo') setMode('photo');
+                loadImage(file);
+            }
+        }
+
+        // --- PHOTO LOGIC ---
+
+        function loadImage(file) {
+            const url = URL.createObjectURL(file);
+            const img = new Image();
+            img.onload = () => {
+                state.img = img;
+                state.x = 0; state.y = 0;
+                els.empty.classList.add('hidden');
+                els.canvas.classList.remove('hidden');
+                els.btnSave.disabled = false;
+                requestRender();
+                URL.revokeObjectURL(url);
             };
-            reader.readAsDataURL(file);
+            img.src = url;
         }
 
-        function updateState(key, value) {
-            state[key] = value;
-            if(key === 'scale') els.scaleVal.innerText = Math.round(value * 100) + '%';
-            if(key === 'brightness') els.brightVal.innerText = value;
-            if(key === 'contrast') els.contrastVal.innerText = value;
-            if(key === 'sharpness') els.sharpVal.innerText = value;
-            render();
+        function requestRender() {
+            requestAnimationFrame(renderPhoto);
         }
 
-        function startPan(e) {
-            if(!state.originalImage) return;
-            state.isDragging = true;
-            state.startPanX = e.clientX - state.offsetX;
-            state.startPanY = e.clientY - state.offsetY;
-        }
-
-        function doPan(e) {
-            if(!state.isDragging) return;
-            state.offsetX = e.clientX - state.startPanX;
-            state.offsetY = e.clientY - state.startPanY;
-            render();
-        }
-
-        function render() {
-            if (!state.originalImage) return;
-
-            const ctx = state.ctx;
-            els.canvas.width = state.width;
-            els.canvas.height = state.height;
-
-            // Fundo Branco
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, state.width, state.height);
-
-            const img = state.originalImage;
-            const aspect = img.width / img.height;
-            
-            // Lógica Contain
-            const targetSize = state.width * state.scale;
-            let drawWidth, drawHeight;
-
-            if (aspect > 1) {
-                drawWidth = targetSize;
-                drawHeight = targetSize / aspect;
-            } else {
-                drawHeight = targetSize;
-                drawWidth = targetSize * aspect;
-            }
-
-            const x = (state.width - drawWidth) / 2 + state.offsetX;
-            const y = (state.height - drawHeight) / 2 + state.offsetY;
-
-            // Filtros CSS
-            const brightCSS = 100 + state.brightness;
-            const contrastCSS = 100 + state.contrast; 
-            ctx.filter = `brightness(${brightCSS}%) contrast(${contrastCSS}%)`;
-
-            // Desenhar Imagem
-            if (state.removeBg) {
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = img.width;
-                tempCanvas.height = img.height;
-                const tempCtx = tempCanvas.getContext('2d');
-                tempCtx.drawImage(img, 0, 0);
-                
-                const imgData = tempCtx.getImageData(0, 0, img.width, img.height);
-                const data = imgData.data;
-                const threshold = 230;
-
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i];
-                    const g = data[i+1];
-                    const b = data[i+2];
-                    if (r > threshold && g > threshold && b > threshold) {
-                        data[i+3] = 0; 
-                    }
-                }
-                tempCtx.putImageData(imgData, 0, 0);
-                ctx.drawImage(tempCanvas, x, y, drawWidth, drawHeight);
-            } else {
-                ctx.drawImage(img, x, y, drawWidth, drawHeight);
-            }
+        function renderPhoto() {
+            if(!state.img) return;
+            const ctx = els.ctx;
+            const w = 300, h = 300;
 
             ctx.filter = 'none';
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(0, 0, w, h);
+
+            const aspect = state.img.width / state.img.height;
+            let dw, dh;
+            const targetSize = w * state.scale;
+
+            if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } 
+            else { dh = targetSize; dw = targetSize * aspect; }
+
+            const dx = (w - dw)/2 + state.x;
+            const dy = (h - dh)/2 + state.y;
+
+            ctx.filter = `brightness(${100 + state.brightness}%) contrast(${100 + state.contrast}%)`;
+            ctx.drawImage(state.img, dx, dy, dw, dh);
+            ctx.filter = 'none';
+
+            if (state.sharpness > 0) applySharpen(ctx, w, h, state.sharpness);
         }
 
-        function downloadImage() {
-            // Meta: WebP < 30kb (Aprox 30720 bytes)
-            // Base64 overhead ~33% -> 30720 * 1.33 = ~40857 chars
-            const MAX_CHARS = 40000; 
+        function applySharpen(ctx, w, h, level) {
+            const strength = (level / 10.0);
+            if (strength <= 0.01) return;
 
-            // Começamos com qualidade quase máxima
-            let quality = 0.95;
-            let dataUrl = els.canvas.toDataURL('image/webp', quality);
-            
-            // Só reduzimos se realmente passar de 30KB
-            while (dataUrl.length > MAX_CHARS && quality > 0.1) {
-                quality -= 0.1;
-                dataUrl = els.canvas.toDataURL('image/webp', quality);
+            const imgData = ctx.getImageData(0, 0, w, h);
+            const data = imgData.data;
+            const output = ctx.createImageData(w, h);
+            const dst = output.data;
+            const wNeg = -strength; 
+            const wCenter = 1 + (4 * strength);
+
+            dst.set(data);
+
+            for (let y = 1; y < h - 1; y++) {
+                const rowOffset = y * w;
+                const prevRow = (y - 1) * w;
+                const nextRow = (y + 1) * w;
+
+                for (let x = 1; x < w - 1; x++) {
+                    const i = (rowOffset + x) * 4;
+                    const iUp = (prevRow + x) * 4, iDown = (nextRow + x) * 4;
+                    const iLeft = i - 4, iRight = i + 4;
+
+                    for (let c = 0; c < 3; c++) {
+                        const val = data[i + c];
+                        const neighbors = data[iUp + c] + data[iDown + c] + data[iLeft + c] + data[iRight + c];
+                        let res = (val * wCenter) + (neighbors * wNeg);
+                        if (res < 0) res = 0; else if (res > 255) res = 255;
+                        dst[i + c] = res;
+                    }
+                }
             }
+            ctx.putImageData(output, 0, 0);
+        }
 
-            const userText = els.fileNameInput.value.trim() || '';
-            const cleanName = userText.replace(/\s+/g, '-').toLowerCase();
+        function savePhoto() {
+            let quality = 0.92;
+            let data = els.canvas.toDataURL('image/webp', quality);
+            while(data.length > 41000 && quality > 0.5) {
+                quality -= 0.1;
+                data = els.canvas.toDataURL('image/webp', quality);
+            }
+            download(data, '.webp');
+        }
+
+        // --- VIDEO LOGIC ---
+
+        function loadVideo(file) {
+            const url = URL.createObjectURL(file);
+            els.videoEl.src = url;
+            els.videoEl.onloadedmetadata = () => {
+                state.video = els.videoEl;
+                state.x = 0; state.y = 0;
+                els.empty.classList.add('hidden');
+                els.canvas.classList.remove('hidden');
+                els.btnRec.disabled = false;
+                
+                // Show first frame
+                els.videoEl.currentTime = 0;
+            };
+            // Loop for preview
+            els.videoEl.loop = true;
+            els.videoEl.muted = true;
+            els.videoEl.play();
+            loopVideoPreview();
+        }
+
+        function loopVideoPreview() {
+            if(state.mode !== 'video' || state.isRecording) return;
+            drawVideoFrame();
+            requestAnimationFrame(loopVideoPreview);
+        }
+
+        function drawVideoFrame() {
+            if(!state.video) return;
+            const ctx = els.ctx;
+            const w = 300, h = 300;
             
+            ctx.fillStyle = '#000'; // Video backgrounds usually black
+            ctx.fillRect(0, 0, w, h);
+
+            const vw = state.video.videoWidth;
+            const vh = state.video.videoHeight;
+            const aspect = vw / vh;
+
+            // Contain logic tailored for video
+            let dw, dh;
+            const targetSize = w * state.vScale; // Use specific video scale
+
+            if (aspect > 1) { dw = targetSize; dh = targetSize / aspect; } 
+            else { dh = targetSize; dw = targetSize * aspect; }
+
+            const dx = (w - dw)/2 + state.x;
+            const dy = (h - dh)/2 + state.y;
+
+            ctx.drawImage(state.video, dx, dy, dw, dh);
+        }
+
+        async function processVideo() {
+            if(!state.video) return;
+            
+            // Setup Recording
+            state.isRecording = true;
+            els.videoEl.pause();
+            els.videoEl.currentTime = 0;
+            els.videoEl.loop = false; // Run once for recording
+            els.recBadge.classList.remove('hidden');
+            els.btnRec.disabled = true;
+            els.btnRec.innerText = "Processando...";
+
+            const stream = els.canvas.captureStream(30); // 30 FPS
+            const mimeType = MediaRecorder.isTypeSupported('video/webm;codecs=vp9') 
+                             ? 'video/webm;codecs=vp9' 
+                             : 'video/webm'; // Fallback
+            
+            const options = {
+                mimeType: mimeType,
+                videoBitsPerSecond: 1000000 // 1 Mbps target (mobile friendly)
+            };
+
+            const recorder = new MediaRecorder(stream, options);
+            const chunks = [];
+
+            recorder.ondataavailable = e => { if(e.data.size > 0) chunks.push(e.data); };
+            
+            recorder.onstop = () => {
+                const blob = new Blob(chunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                download(url, '.webm');
+                
+                // Reset UI
+                state.isRecording = false;
+                els.recBadge.classList.add('hidden');
+                els.btnRec.innerText = "Processar e Baixar";
+                els.btnRec.disabled = false;
+                els.videoEl.loop = true;
+                els.videoEl.play();
+                loopVideoPreview();
+            };
+
+            recorder.start();
+            
+            // Play and Draw Loop
+            try {
+                await els.videoEl.play();
+                
+                function recordLoop() {
+                    if(!state.isRecording) return;
+                    if(els.videoEl.ended) {
+                        recorder.stop();
+                        return;
+                    }
+                    drawVideoFrame();
+                    
+                    // Update Progress
+                    const pct = (els.videoEl.currentTime / els.videoEl.duration) * 100;
+                    els.progressBar.style.width = pct + '%';
+                    
+                    requestAnimationFrame(recordLoop);
+                }
+                recordLoop();
+            } catch(e) {
+                alert("Erro ao processar vídeo. Tente um arquivo menor.");
+                state.isRecording = false;
+                els.recBadge.classList.add('hidden');
+            }
+        }
+
+        // --- COMMON UTILS ---
+
+        let isPanning = false, panStartX = 0, panStartY = 0;
+
+        function startPan(e) {
+            if((state.mode==='photo' && !state.img) || (state.mode==='video' && !state.video)) return;
+            isPanning = true;
+            panStartX = (e.clientX || e.pageX) - state.x;
+            panStartY = (e.clientY || e.pageY) - state.y;
+        }
+        function movePan(e) {
+            if(!isPanning) return;
+            if(e.cancelable) e.preventDefault();
+            state.x = (e.clientX || e.pageX) - panStartX;
+            state.y = (e.clientY || e.pageY) - panStartY;
+            if(state.mode === 'photo') requestRender();
+            // Video updates automatically in loop
+        }
+        function endPan() { isPanning = false; }
+
+        function download(url, ext) {
+            const clean = (els.nameInput.value || 'produto').toLowerCase().replace(/[^a-z0-9]/g, '-');
             const link = document.createElement('a');
-            link.download = `${cleanName}${SEO_SUFFIX}.webp`;
-            link.href = dataUrl;
+            link.download = clean + '-cesta-basica-cuiaba' + ext;
+            link.href = url;
             link.click();
         }
 
