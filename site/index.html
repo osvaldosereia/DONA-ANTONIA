@@ -4,11 +4,11 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.5 - Search Scroll & Mobile Layout Fixes
+        VERSION: 9.6 - Mobile Search Input & Sticky Sidebar
         CHANGELOG:
-        - UX: Ao focar na busca, a tela rola para o topo para exibir resultados.
-        - UI (Mobile): Toasts agora aparecem ACIMA da barra de checkout (bottom: 150px).
-        - UI (Mobile): Sheets (Modais) têm padding inferior extra para não esconder conteúdo atrás das barras.
+        - FEAT (Mobile): Campo de texto adicionado dentro do modal "Busca Rápida".
+        - UI (Desktop): Barra lateral com 'position: sticky' reforçado para acompanhar a rolagem.
+        - UI: Ajustes finos de espaçamento e z-index.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -157,7 +157,6 @@
         .btn-fill { background: var(--secondary); color: white; border: none; font-weight: 600; padding: 12px; border-radius: 50px; width: 100%; }
 
         /* --- 7. CUSTOMIZER --- */
-        /* FIX: Increased padding-bottom to 150px to fit both bars on mobile */
         #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 150px; }
         @media(min-width: 1024px) { #customizer-view { padding-bottom: 0; } }
 
@@ -248,7 +247,18 @@
         /* --- SIDEBAR DESKTOP --- */
         .sidebar-desktop { display: none; }
         @media (min-width: 1024px) {
-            .sidebar-desktop { display: block; position: sticky; top: 130px; background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; max-height: calc(100vh - 150px); overflow-y: auto; }
+            .sidebar-desktop { 
+                display: block; 
+                position: sticky; 
+                top: 130px; /* Offset do topo */
+                background: white; 
+                border: 1px solid var(--border-color); 
+                border-radius: 12px; 
+                padding: 16px; 
+                max-height: calc(100vh - 150px); /* Altura máxima */
+                overflow-y: auto; /* Scroll interno se necessário */
+                align-self: start; /* Impede que estique e quebre o sticky no grid */
+            }
             .sidebar-title { font-size: 0.9rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; margin-bottom: 12px; }
             .sidebar-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; }
             .sidebar-chip { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.7rem; font-weight: 600; color: var(--secondary); text-align: center; padding: 8px 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -488,7 +498,20 @@
     </div>
 
     <div id="cat-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('cat-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Categorias</h3><span class="sheet-close" onclick="App.closeSheet('cat-sheet')">✕</span></div><div id="mob-cat-grid" class="mobile-cat-grid"></div></div></div>
-    <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')">✕</span></div><div id="mob-tags-grid" class="mobile-tags-grid"></div></div></div>
+    
+    <!-- TAGS SHEET (WITH SEARCH) -->
+    <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')">
+        <div class="sheet-content">
+            <div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')">✕</span></div>
+            <!-- SEARCH INPUT MOBILE -->
+            <div class="ch-search-box" style="margin-bottom: 20px;">
+                <input type="text" class="ch-input" placeholder="Digite o que procura..." onchange="App.search(this.value)">
+                <span class="ch-icon">🔍</span>
+            </div>
+            <div id="mob-tags-grid" class="mobile-tags-grid"></div>
+        </div>
+    </div>
+
     <div id="offers-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('offers-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title" style="color:#b45309;">🔥 Super Ofertas</h3><span class="sheet-close" onclick="App.closeSheet('offers-sheet')">✕</span></div><div id="mob-offers-grid" class="grid-products" style="grid-template-columns: repeat(2, 1fr) !important;"></div></div></div>
     
     <div id="faq-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('faq-sheet')">
