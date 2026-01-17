@@ -1,995 +1,5108 @@
-<!DOCTYPE html>
-<html lang="pt-BR" dir="ltr">
-<head>
-    <!-- 
-        ================================================================
-        ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.9 - Sticky Restoration & Desktop Layout Fix
-        CHANGELOG:
-        - FIX CRÍTICO: Removido 'overflow-x: hidden' global que quebrava o 'position: sticky'.
-        - UX (Desktop): Header principal rola e some (relative).
-        - UX (Desktop): Barra de resumo fixa no topo (sticky top:0) ao rolar.
-        - UX (Desktop): Sidebar direita fixa (sticky) logo abaixo da barra de resumo.
-        ================================================================
-    -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    
-    <title>Cestas Básicas em Cuiabá e Várzea Grande | Dona Antônia</title>
-    <meta name="description" content="Compre Cesta Básica em Cuiabá e Várzea Grande com entrega grátis*. Personalize sua cesta com Arroz Tio Alvino. Pagamento na entrega.">
-    <meta name="theme-color" content="#ffffff">
-    
-    <!-- Fonts & Icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="produtos/produtos.json" as="fetch" crossorigin="anonymous">
-
-    <style>
-        /* --- 1. RESET & VARIABLES --- */
-        :root { 
-            --primary: #dc2626; 
-            --primary-dark: #b91c1c; 
-            --secondary: #1e293b; 
-            --text-main: #334155; 
-            --text-light: #475569; 
-            --bg-body: #ffffff;
-            --border-color: #e2e8f0;
-            --header-height: 60px;
-            --app-bar-height: 60px;
-            --checkout-bar-height: 80px; 
-            --radius-lg: 16px;
-            --shadow-float: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        
-        /* FIX: Removed overflow-x: hidden from html/body to restore sticky behavior */
-        html { scroll-behavior: smooth; }
-
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-            background-color: var(--bg-body); color: var(--text-main); line-height: 1.5; 
-            padding-bottom: var(--app-bar-height); -webkit-font-smoothing: antialiased; 
-            width: 100%;
-        }
-
-        @media (min-width: 1024px) { body { padding-bottom: 0; } }
-        
-        .container { max-width: 1320px; margin: 0 auto; padding: 0 16px; width: 100%; }
-        img { display: block; max-width: 100%; height: auto; }
-        button { cursor: pointer; border: none; font-family: inherit; background: none; }
-        .hidden { display: none !important; }
-        
-        .visually-hidden {
-            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
-        }
-
-        /* --- 2. HEADER --- */
-        header { 
-            position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); 
-            background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border-color); z-index: 1000; 
-            display: flex; align-items: center; backdrop-filter: blur(8px); transition: transform 0.3s ease;
-        }
-        
-        /* DESKTOP: Header relative to scroll with page */
-        @media (min-width: 1024px) {
-            header { position: relative; } 
-            body.header-hidden header { transform: none; } 
-        }
-        
-        body.header-hidden header { transform: translateY(-100%); }
-
-        .header-inner { display: flex; justify-content: space-between; align-items: center; height: 100%; }
-        
-        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: var(--secondary); text-decoration: none; }
-        .logo-circle { width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #b91c1c; font-weight: 800; font-size: 0.9rem; }
-        
-        .location-pill { 
-            font-size: 0.8rem; font-weight: 600; color: var(--secondary); background: #f8fafc; 
-            padding: 6px 14px; border-radius: 50px; border: 1px solid var(--border-color);
-            display: flex; align-items: center; gap: 6px;
-        }
-
-        /* --- 3. MOBILE APP BAR --- */
-        .mobile-app-bar {
-            position: fixed; bottom: 0; left: 0; right: 0; height: var(--app-bar-height);
-            background: #ffffff; border-top: 1px solid var(--border-color);
-            z-index: 9999; display: grid; grid-template-columns: repeat(4, 1fr);
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.03);
-        }
-        @media (min-width: 1024px) { .mobile-app-bar { display: none !important; } }
-
-        .app-bar-btn {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; color: var(--text-light); text-decoration: none; font-size: 0.7rem; 
-            font-weight: 500; height: 100%; border: none; background: transparent; padding: 0;
-        }
-        .app-bar-btn svg { width: 24px; height: 24px; stroke-width: 2px; }
-        .app-bar-btn.highlight { color: #b45309; } 
-
-        /* --- 4. MOBILE CHECKOUT BAR --- */
-        .mobile-checkout-bar {
-            position: fixed; 
-            bottom: var(--app-bar-height); 
-            left: 0; right: 0; height: var(--checkout-bar-height);
-            background: #ffffff; border-top: 1px solid var(--border-color);
-            z-index: 9998; 
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; box-shadow: 0 -4px 25px rgba(0,0,0,0.1);
-            animation: slideUp 0.3s ease-out;
-        }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        @media (min-width: 1024px) { .mobile-checkout-bar { display: none !important; } }
-
-        .mcb-total { display: flex; flex-direction: column; line-height: 1.2; }
-        .mcb-label { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; }
-        .mcb-value { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-        
-        .mcb-btn {
-            background: #16a34a; color: white; border-radius: 50px; 
-            padding: 12px 24px; font-weight: 700; font-size: 1rem;
-            display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.25);
-        }
-
-        /* --- 5. HERO --- */
-        #home-view { padding-top: var(--header-height); }
-        @media (min-width: 1024px) { #home-view { padding-top: 0; } }
-        
-        .hero { background: #ffffff; padding: 40px 0 60px; text-align: center; border-bottom: 1px solid #f1f5f9; position: relative; overflow: hidden; }
-        .hero-title { font-size: 2rem; font-weight: 800; color: var(--secondary); margin-bottom: 16px; line-height: 1.1; letter-spacing: -0.5px; }
-        .hero-title span { color: var(--primary); }
-        .hero-text { color: var(--text-light); font-size: 1.1rem; max-width: 500px; margin: 0 auto 30px; font-weight: 400; }
-        
-        .btn-cta-primary {
-            background: var(--primary); color: white; font-weight: 700; padding: 14px 36px; 
-            border-radius: 50px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
-            display: inline-flex; align-items: center; gap: 8px; transition: transform 0.2s;
-        }
-        .btn-cta-primary:hover { transform: scale(1.03); background: var(--primary-dark); }
-        .trust-badges { display: flex; justify-content: center; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
-        .badge-item { display: flex; align-items: center; gap: 6px; background: #fff; padding: 8px 16px; border: 1px solid var(--border-color); border-radius: 50px; font-size: 0.85rem; font-weight: 600; color: var(--secondary); }
-        
-        @media (min-width: 768px) { .hero { padding: 80px 0; } .hero-title { font-size: 3.5rem; } }
-
-        /* --- 6. HOME GRID --- */
-        .home-grid-container { padding: 40px 16px 80px; }
-        .baskets-grid { display: grid; grid-template-columns: 1fr; gap: 24px; max-width: 1280px; margin: 0 auto; }
-        @media (min-width: 600px) { .baskets-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .baskets-grid { grid-template-columns: repeat(4, 1fr); gap: 30px; } }
-
-        .home-card { 
-            background: white; border-radius: var(--radius-lg); border: 1px solid var(--border-color);
-            overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .home-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-float); border-color: #cbd5e1; }
-        .hc-image-wrap { width: 100%; aspect-ratio: 1/1; position: relative; background: #fff; display: flex; align-items: center; justify-content: center; padding: 20px; border-bottom: 1px solid #f8fafc; }
-        .hc-image { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
-        .hc-content { padding: 20px; flex: 1; display: flex; flex-direction: column; text-align: center; }
-        .hc-title { font-size: 1.35rem; font-weight: 700; color: var(--secondary); margin-bottom: 8px; line-height: 1.2; }
-        .hc-price { font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; }
-        .hc-actions { margin-top: auto; display: grid; gap: 10px; }
-        .btn-outline { border: 1px solid var(--border-color); background: white; color: var(--secondary); font-weight: 600; padding: 10px; border-radius: 50px; width: 100%; }
-        .btn-fill { background: var(--secondary); color: white; border: none; font-weight: 600; padding: 12px; border-radius: 50px; width: 100%; }
-
-        /* --- 7. CUSTOMIZER --- */
-        #customizer-view { padding-top: var(--header-height); background: #f8fafc; min-height: 100vh; padding-bottom: 150px; }
-        @media(min-width: 1024px) { 
-            #customizer-view { padding-bottom: 0; padding-top: 0; } 
-        }
-
-        .cust-header-bar { 
-            background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border-color);
-            position: sticky; top: var(--header-height); z-index: 900; backdrop-filter: blur(10px);
-            padding: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        /* DESKTOP STICKY BAR FIX: top:0 ensures it sticks to viewport top */
-        @media(min-width: 1024px) {
-            .cust-header-bar { top: 0; z-index: 1050; } 
-        }
-
-        .ch-container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-        .ch-back-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--border-color); background: white; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-        
-        .ch-info { display: flex; flex-direction: column; }
-        .ch-info h2 { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; line-height: 1.2; }
-        
-        .limit-badge {
-            font-size: 0.75rem; color: #b45309; background: #fffbeb; 
-            border: 1px solid #fde68a; padding: 2px 8px; border-radius: 4px;
-            margin-top: 2px; display: inline-block; width: fit-content;
-        }
-        .limit-badge.error { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
-
-        .ch-search-box { flex: 1; max-width: 500px; position: relative; }
-        .ch-input { width: 100%; height: 42px; border-radius: 50px; border: 1px solid var(--border-color); padding: 0 40px 0 20px; font-size: 0.95rem; background: #f1f5f9; }
-        .ch-icon { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-light); pointer-events: none; }
-        .ch-desktop-cart { display: none; }
-
-        .app-grid { display: block; margin-top: 24px; padding-bottom: 40px; }
-        @media (min-width: 1024px) {
-            .app-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
-            .ch-desktop-cart { display: flex; align-items: center; gap: 16px; }
-            .desk-price { text-align: right; line-height: 1.2; }
-            .desk-price strong { font-size: 1.2rem; color: var(--primary); }
-            .btn-desk-checkout { background: #16a34a; color: white; padding: 0 24px; height: 42px; border-radius: 6px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        }
-
-        .products-section { width: 100%; }
-        .section-header { background: #fff; padding: 16px 20px; border-radius: 12px 12px 0 0; border: 1px solid var(--border-color); border-bottom: none; margin-top: 20px; display:flex; justify-content: space-between; align-items: center; }
-        .section-header h3 { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; }
-        .product-box { background: #fff; border: 1px solid var(--border-color); border-radius: 0 0 12px 12px; padding: 16px; }
-        
-        .extras-separator-banner { text-align: center; padding: 30px 20px 10px; margin-bottom: 10px; }
-        .extras-separator-banner h3 { font-size: 1.4rem; font-weight: 300; color: var(--secondary); margin-bottom: 5px; }
-        .extras-separator-banner p { color: var(--text-light); font-size: 0.9rem; }
-
-        .grid-products { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; align-items: stretch; }
-        @media (min-width: 600px) { .grid-products { grid-template-columns: repeat(3, 1fr); } }
-        @media (min-width: 1024px) { .grid-products { grid-template-columns: repeat(4, 1fr) !important; gap: 20px; } }
-
-        /* PRODUCT MINI CARD */
-        .mini-card {
-            display: flex; flex-direction: column; align-items: center; text-align: center;
-            padding: 10px; border-radius: 8px; border: 1px solid transparent;
-            transition: background 0.2s; position: relative; height: 100%; min-width: 0; justify-content: space-between;
-        }
-        .mini-card:hover { background: #fff; border-color: var(--border-color); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        .tag-offer { position: absolute; top: 0; left: 0; background: #16a34a; color: white; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; z-index: 2; }
-        
-        .mc-img-box { 
-            width: 100%; aspect-ratio: 1/1; position: relative; display: flex; 
-            align-items: center; justify-content: center; margin-bottom: 8px; 
-            cursor: zoom-in; background-color: #f8fafc; border-radius: 8px;
-        }
-        .mc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
-        
-        .media-indicators { position: absolute; bottom: 4px; right: 4px; display: flex; gap: 4px; pointer-events: none; }
-        .indicator-icon { width: 20px; height: 20px; background: rgba(255,255,255,0.9); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--secondary); border: 1px solid #e2e8f0; opacity: 0; transition: opacity 0.3s; }
-        .indicator-icon.visible { opacity: 1; }
-
-        .mc-title { font-size: 0.85rem; font-weight: 500; color: var(--secondary); margin-bottom: 4px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 2.6em; width: 100%; line-height: 1.3; }
-        .mc-price { font-size: 0.95rem; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
-        .mc-price-old { font-size: 0.8rem; text-decoration: line-through; color: #94a3b8; margin-right: 6px; }
-        .mc-price-new { color: var(--primary); }
-
-        .btn-add-mini { width: 100%; height: 32px; background: var(--primary); color: white; border-radius: 6px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; box-shadow: 0 2px 5px rgba(220, 38, 38, 0.2); margin-top: auto; }
-        .qty-mini { width: 100%; height: 32px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--primary); border-radius: 6px; background: white; margin-top: auto; }
-        .qm-btn { width: 28px; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--secondary); font-size: 1.1rem; }
-        .qm-val { font-weight: 700; font-size: 0.9rem; }
-        
-        .btn-feat-row { display: flex; gap: 4px; justify-content: center; flex-wrap: wrap; margin-bottom: 8px; }
-        .btn-feat { 
-            font-size: 0.65rem; padding: 3px 10px; border-radius: 50px; font-weight: 600;
-            border: 1px solid; cursor: pointer; display: none; transition: transform 0.2s;
-        }
-        .btn-feat:hover { transform: scale(1.05); }
-        .btn-feat.info { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; display: inline-block; }
-        .btn-feat.nutri { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
-
-        /* --- SIDEBAR DESKTOP --- */
-        .sidebar-desktop { display: none; }
-        @media (min-width: 1024px) {
-            .sidebar-desktop { 
-                display: block; 
-                position: sticky; 
-                top: 80px; /* Sticks nicely below customizer bar (approx 70-80px tall) */
-                background: white; 
-                border: 1px solid var(--border-color); 
-                border-radius: 12px; 
-                padding: 16px; 
-                max-height: calc(100vh - 100px); 
-                overflow-y: auto; 
-                align-self: start; 
-            }
-            .sidebar-title { font-size: 0.9rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; margin-bottom: 12px; }
-            .sidebar-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; }
-            .sidebar-chip { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.7rem; font-weight: 600; color: var(--secondary); text-align: center; padding: 8px 4px; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            .sidebar-chip:hover { border-color: var(--secondary); background: #e2e8f0; }
-        }
-
-        /* --- SCROLL TO TOP BTN --- */
-        .btn-scroll-top {
-            position: fixed; bottom: 85px; right: 20px; width: 45px; height: 45px;
-            background: white; border: 1px solid var(--border-color); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 1050;
-            opacity: 0; pointer-events: none; transition: opacity 0.3s; color: var(--secondary);
-        }
-        @media(min-width: 1024px) { .btn-scroll-top { bottom: 40px; right: 40px; } }
-        .btn-scroll-top.visible { opacity: 1; pointer-events: auto; }
-
-        /* --- GALLERY --- */
-        .gallery-wrap { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 2000; display: none; flex-direction: column; justify-content: center; padding: 20px; }
-        .gallery-wrap.active { display: flex; }
-        
-        .gallery-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; width: 100%; max-height: 80vh; }
-        .gallery-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .gallery-video { max-width: 100%; max-height: 100%; border-radius: 8px; }
-        
-        .gallery-close-chip { 
-            position: absolute; top: 20px; right: 20px;
-            background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px 16px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
-            cursor: pointer; z-index: 2010; backdrop-filter: blur(4px);
-        }
-        .gallery-thumbs { height: 70px; display: flex; justify-content: center; gap: 8px; padding-top: 10px; overflow-x: auto; width: 100%; }
-        .g-thumb { width: 50px; height: 50px; border-radius: 4px; border: 2px solid transparent; opacity: 0.5; object-fit: cover; cursor: pointer; flex-shrink: 0; }
-        .g-thumb.active { border-color: var(--primary); opacity: 1; }
-
-        /* --- SHEETS --- */
-        .sheet-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1200; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
-        .sheet-overlay.open { opacity: 1; pointer-events: auto; }
-        
-        .sheet-content { 
-            background: white; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; 
-            max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s;
-            /* FIX: Extra padding to avoid content being hidden by checkout bar */
-            padding-bottom: 160px; 
-        }
-        .sheet-overlay.open .sheet-content { transform: translateY(0); }
-        
-        @media (min-width: 1024px) { 
-            .sheet-content { 
-                max-width: 500px; margin: 0 auto; top: 50%; bottom: auto; 
-                transform: translateY(-50%); border-radius: 12px; padding-bottom: 20px; 
-            } 
-            .sheet-overlay { justify-content: center; } 
-            .sheet-overlay.open .sheet-content { transform: translateY(0); } 
-        }
-        
-        .sheet-header { display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
-        .sheet-title { font-size: 1.1rem; font-weight: 700; color: var(--secondary); margin: 0; }
-        
-        .mobile-cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .mobile-cat-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; text-align: center; font-weight: 600; color: var(--secondary); }
-        
-        .mobile-tags-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-        .mobile-tag-btn { font-size: 0.8rem; background: #fff; border: 1px solid #e2e8f0; padding: 8px; border-radius: 6px; text-align: center; }
-
-        /* FAQ */
-        details.faq-box { background: #fff; border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-card); transition: box-shadow 0.3s ease; }
-        details.faq-box:hover { box-shadow: var(--shadow-float); border-color: #cbd5e1; }
-        details.faq-box summary { padding: 20px; cursor: pointer; font-weight: 600; color: var(--secondary); list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 1rem; }
-        details.faq-box summary::after { content: ''; width: 10px; height: 10px; border-right: 2px solid var(--text-light); border-bottom: 2px solid var(--text-light); transform: rotate(45deg); transition: transform 0.2s ease; margin-left: 10px; }
-        details.faq-box[open] summary::after { transform: rotate(-135deg); border-color: var(--primary); }
-        details.faq-box summary::-webkit-details-marker { display: none; }
-        .faq-text { padding: 0 20px 20px 20px; color: var(--text-main); font-size: 0.95rem; line-height: 1.6; border-top: 1px solid transparent; opacity: 0.9; }
-        details.faq-box[open] .faq-text { border-color: #f1f5f9; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(-5px); } to { opacity:1; transform:translateY(0); } }
-
-        /* INFO MODAL TEXT */
-        .info-text-body { font-size: 1rem; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; }
-
-        /* CHECKOUT MODAL */
-        dialog.modal-checkout {
-            margin: auto; inset: 0; position: fixed;
-            border: none; border-radius: 16px; width: 90%; max-width: 400px; padding: 0;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            max-height: 85vh; display: none; flex-direction: column;
-        }
-        dialog.modal-checkout[open] { display: flex; }
-        dialog::backdrop { background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
-        
-        .co-header { padding: 16px 24px; background: #fff; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
-        .co-header span { font-weight: 700; color: var(--secondary); font-size: 1.1rem; }
-        .co-body { padding: 24px; overflow-y: auto; flex: 1; }
-        .co-list { list-style: none; margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; }
-        .co-item { display: flex; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #f1f5f9; font-size: 0.85rem; color: var(--text-main); background: #fff; }
-        .co-item:last-child { border-bottom: none; }
-        .co-item span:first-child { font-weight: 500; color: var(--text-main); font-size: 0.85rem; }
-        .co-total-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px; border-top: 2px solid #f1f5f9; }
-        .co-total-val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-        .co-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; background: #f8fafc; }
-        .co-btn { width: 100%; padding: 14px; background: #16a34a; color: white; font-weight: 700; border-radius: 8px; font-size: 1rem; transition: transform 0.2s; border: none; cursor: pointer; }
-        .co-btn:active { transform: scale(0.98); }
-
-        /* TOAST POSITIONING FIX */
-        .toast { 
-            position: fixed; bottom: 150px; /* Above Checkout Bar */
-            left: 50%; transform: translateX(-50%) translateY(20px); 
-            background: var(--secondary); color: white; padding: 12px 24px; 
-            border-radius: 50px; font-size: 0.9rem; font-weight: 600; 
-            opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-            z-index: 2500; box-shadow: 0 10px 30px rgba(0,0,0,0.2); white-space: nowrap; 
-        }
-        .toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-        
-        @media(min-width: 1024px) { .toast { bottom: 40px; } }
-
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
-</head>
-<body>
-    <header>
-        <div class="container header-inner">
-            <a href="#" class="logo" onclick="location.reload()" aria-label="Voltar para a página inicial">
-                <div class="logo-circle" aria-hidden="true">DA</div> <span>Dona Antônia</span>
-            </a>
-            <div class="location-pill">
-                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                Cuiabá & VG
-            </div>
-        </div>
-    </header>
-
-    <nav class="mobile-app-bar">
-        <button onclick="App.openSheet('cat-sheet')" class="app-bar-btn" aria-label="Abrir Categorias"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>Categorias</button>
-        <button onclick="App.openSheet('tags-sheet')" class="app-bar-btn" aria-label="Abrir Busca"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>Busca</button>
-        <button onclick="App.openSheet('offers-sheet')" class="app-bar-btn highlight" aria-label="Ver Ofertas"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg><strong>Ofertas</strong></button>
-        <button onclick="App.openSheet('faq-sheet')" class="app-bar-btn" aria-label="Ver Dúvidas"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Dúvidas</button>
-    </nav>
-
-    <button id="btn-scroll-top" class="btn-scroll-top" onclick="window.scrollTo(0,0)" aria-label="Voltar ao topo">
-        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-    </button>
-
-    <!-- HOME -->
-    <main id="home-view">
-        <section class="hero">
-            <div class="container">
-                <div class="trust-badges"><div class="badge-item">🔒 Pagamento na Entrega</div><div class="badge-item">🚀 Entrega em 24h</div></div>
-                <h1 class="hero-title">A Melhor Cesta Básica <br> na Porta da <span>Sua Casa</span></h1>
-                <p class="hero-text">Personalize com marcas líderes e receba sem filas.</p>
-                <button class="btn-cta-primary" onclick="document.getElementById('baskets-anchor').scrollIntoView({behavior:'smooth'})">Escolher Minha Cesta</button>
-            </div>
-        </section>
-        <section class="home-grid-container" id="baskets-anchor">
-            <h2 class="visually-hidden">Nossas Cestas</h2>
-            <div id="home-list" class="baskets-grid"><div class="loader"></div></div>
-        </section>
-        <footer style="text-align:center; padding: 40px 20px; color: var(--text-light); font-size:0.9rem;"><p>&copy; 2024 Dona Antônia Alimentos</p></footer>
-    </main>
-
-    <!-- CUSTOMIZER -->
-    <div id="customizer-view" class="hidden">
-        <div class="cust-header-bar">
-            <div class="container ch-container">
-                <button class="ch-back-btn" onclick="App.goHome()" aria-label="Voltar">❮</button>
-                <div class="ch-info">
-                    <h2 id="cust-title">Minha Cesta</h2>
-                    <span id="changes-badge" class="limit-badge">Alterações: 0/0</span>
-                </div>
-                <div class="ch-search-box"><input type="text" id="main-search" class="ch-input" placeholder="Buscar produto..."><span class="ch-icon">🔍</span></div>
-                <div class="ch-desktop-cart">
-                    <div class="desk-price"><small>Total Estimado</small><strong id="desk-total-val">R$ 0,00</strong></div>
-                    <button class="btn-desk-checkout" onclick="App.openCheckout()">WhatsApp <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
-                </div>
-            </div>
-        </div>
-        <div class="container app-grid">
-            <div class="products-section">
-                <div class="section-header" style="border-top: 4px solid var(--secondary);"><h3>📦 Itens Inclusos</h3></div>
-                <div class="product-box"><div id="included-list" class="grid-products"></div></div>
-                <div id="extras-container"></div>
-            </div>
-            <aside class="sidebar-desktop">
-                <div class="sidebar-title">Categorias</div>
-                <div id="desk-cat-list" class="sidebar-nav-grid"></div>
-                <div class="sidebar-title" style="margin-top:20px;">Busca Rápida</div>
-                <div id="desk-tag-list" class="sidebar-nav-grid"></div>
-                <div style="margin-top:30px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
-                    <strong style="color:var(--secondary);">Dúvida?</strong>
-                    <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:10px;">Fale conosco no WhatsApp ou veja as perguntas frequentes.</p>
-                    <button class="btn-outline" onclick="App.openSheet('faq-sheet')">Perguntas Frequentes</button>
-                </div>
-            </aside>
-        </div>
-        
-        <!-- MOBILE CHECKOUT BAR -->
-        <div class="mobile-checkout-bar" id="mobile-checkout-bar">
-            <div class="mcb-total"><span class="mcb-label">Total Estimado</span><span class="mcb-value" id="mcb-total-val">R$ 0,00</span></div>
-            <button class="mcb-btn" onclick="App.openCheckout()">Encomendar <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
-        </div>
-    </div>
-
-    <div id="toast" class="toast"><svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span id="toast-msg">Crédito atualizado</span></div>
-
-    <!-- GALLERY -->
-    <div id="gallery" class="gallery-wrap">
-        <button class="gallery-close-chip" onclick="Gallery.close()" aria-label="Fechar Galeria">FECHAR</button>
-        <div class="gallery-stage">
-            <img id="gallery-img" class="gallery-img" src="">
-            <video id="gallery-video" class="gallery-video hidden" controls></video>
-        </div>
-        <div id="gallery-thumbs" class="gallery-thumbs"></div>
-    </div>
-
-    <!-- MODALS -->
-    <dialog id="checkout-modal" class="modal-checkout">
-        <div class="co-header"><span>Resumo do Pedido</span><button onclick="document.getElementById('checkout-modal').close()" aria-label="Fechar">✕</button></div>
-        <div class="co-body">
-            <ul id="checkout-items" class="co-list"></ul>
-            <div class="co-total-row"><span>Total</span><span id="co-total" class="co-total-val">R$ 0,00</span></div>
-            <div>
-                <label style="display:block; font-weight:600; margin-bottom:10px; font-size:0.9rem;">Forma de Pagamento:</label>
-                <select id="payment-method" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:6px; font-size:0.9rem;">
-                    <option value="Pix">Pix (Instantâneo)</option><option value="Dinheiro">Dinheiro</option><option value="Cartão de Crédito">Cartão de Crédito</option>
-                    <option value="Cartão de Débito">Cartão de Débito</option><option value="Vale Alimentação">Vale Alimentação</option>
-                </select>
-            </div>
-        </div>
-        <div class="co-footer"><button class="co-btn" onclick="App.sendWhatsApp()">Confirmar Pedido no WhatsApp</button></div>
-    </dialog>
-
-    <!-- INFO SHEET (Features) -->
-    <div id="info-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('info-sheet')">
-        <div class="sheet-content">
-            <div class="sheet-header"><h3 class="sheet-title" id="info-sheet-title">Informações</h3><span class="sheet-close" onclick="App.closeSheet('info-sheet')" aria-label="Fechar">✕</span></div>
-            <div id="info-sheet-body" class="info-text-body"></div>
-        </div>
-    </div>
-
-    <div id="cat-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('cat-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title">Categorias</h3><span class="sheet-close" onclick="App.closeSheet('cat-sheet')" aria-label="Fechar">✕</span></div><div id="mob-cat-grid" class="mobile-cat-grid"></div></div></div>
-    
-    <!-- TAGS SHEET (WITH SEARCH) -->
-    <div id="tags-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('tags-sheet')">
-        <div class="sheet-content">
-            <div class="sheet-header"><h3 class="sheet-title">Busca Rápida</h3><span class="sheet-close" onclick="App.closeSheet('tags-sheet')" aria-label="Fechar">✕</span></div>
-            <!-- SEARCH INPUT MOBILE -->
-            <div class="ch-search-box" style="margin-bottom: 20px;">
-                <input type="text" class="ch-input" placeholder="Digite o que procura..." onchange="App.search(this.value)">
-                <span class="ch-icon">🔍</span>
-            </div>
-            <div id="mob-tags-grid" class="mobile-tags-grid"></div>
-        </div>
-    </div>
-
-    <div id="offers-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('offers-sheet')"><div class="sheet-content"><div class="sheet-header"><h3 class="sheet-title" style="color:#b45309;">🔥 Super Ofertas</h3><span class="sheet-close" onclick="App.closeSheet('offers-sheet')" aria-label="Fechar">✕</span></div><div id="mob-offers-grid" class="grid-products" style="grid-template-columns: repeat(2, 1fr) !important;"></div></div></div>
-    
-    <div id="faq-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('faq-sheet')">
-        <div class="sheet-content">
-            <div class="sheet-header"><h3 class="sheet-title">Dúvidas Frequentes</h3><span class="sheet-close" onclick="App.closeSheet('faq-sheet')" aria-label="Fechar">✕</span></div>
-            <div style="padding-bottom:20px;">
-                <details class="faq-box"><summary>Formas de Pagamento</summary><div class="faq-text">Aceitamos Dinheiro, Pix, Cartão de Débito, Crédito (até 3x sem juros) e Vales Alimentação/Refeição (Pluxee, Alelo, Flash, etc).</div></details>
-                <details class="faq-box"><summary>Eu pago só na entrega?</summary><div class="faq-text">Sim! Para sua total segurança, o pagamento é realizado somente no momento em que você recebe o pedido na sua casa.</div></details>
-                <details class="faq-box"><summary>A entrega é grátis?</summary><div class="faq-text">Sim, o frete é totalmente Grátis para compras acima de R$ 85,00 em toda a nossa área de cobertura (Cuiabá e VG).</div></details>
-                <details class="faq-box"><summary>Posso trocar itens da cesta?</summary><div class="faq-text">Com certeza! Utilize o botão "Personalizar" para adicionar ou remover itens, ou fale diretamente com a gente no WhatsApp.</div></details>
-                <details class="faq-box"><summary>De onde vocês são?</summary><div class="faq-text">Somos de Cuiabá - MT, localizados no bairro Jardim Nossa Senhora Aparecida. Atendemos com frota própria.</div></details>
-                <details class="faq-box"><summary>Qual o prazo de entrega?</summary><div class="faq-text">Nossas entregas são rápidas e realizadas no dia seguinte ao pedido, de segunda a sábado.</div></details>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const CONSTANTS = {
-            TAGS: ["Arroz", "Feijão", "Açúcar", "Café", "Óleo", "Macarrão", "Leite", "Sabão", "Detergente", "Sardinha"],
-            THEMES: { 'DEFAULT': '#f1f5f9', 'ALIMENTOS': '#ffedd5', 'LIMPEZA': '#dbeafe', 'HIGIENE': '#dcfce7', 'BEBIDAS': '#fae8ff', 'CARNES': '#fee2e2' },
-            PHONE: "5565996813588",
-            LIMITS: { 'econômica': 5, 'economica': 5, 'mini': 7, 'pequena': 9, 'média': 11, 'media': 11, 'grande': 13 }
-        };
-
-        const Gallery = {
-            open(mainSrc, productName, startWith=null) {
-                const el = document.getElementById('gallery');
-                const img = document.getElementById('gallery-img');
-                const vid = document.getElementById('gallery-video');
-                const thumbs = document.getElementById('gallery-thumbs');
-                thumbs.innerHTML = '';
-                img.src = startWith || mainSrc;
-                img.alt = productName;
-                img.classList.remove('hidden');
-                vid.classList.add('hidden');
-                vid.pause();
-                this.addThumb(mainSrc, 'img', !startWith);
-                this.checkSuffixes(mainSrc, startWith);
-                this.checkVideo(mainSrc);
-                el.classList.add('active');
-            },
-            swap(src, type, el) {
-                document.querySelectorAll('.g-thumb').forEach(t => t.classList.remove('active'));
-                el.classList.add('active');
-                const img = document.getElementById('gallery-img');
-                const vid = document.getElementById('gallery-video');
-                if(type === 'video') { img.classList.add('hidden'); vid.src = src; vid.classList.remove('hidden'); vid.play(); } 
-                else { vid.pause(); vid.classList.add('hidden'); img.src = src; img.classList.remove('hidden'); }
-            },
-            addThumb(src, type, isActive) {
-                const t = document.createElement('img');
-                t.className = `g-thumb ${isActive?'active':''}`;
-                t.src = type === 'video' ? 'img/video-placeholder.png' : src;
-                t.onerror = () => t.src = 'https://placehold.co/50x50?text=VID';
-                t.onclick = () => this.swap(src, type, t);
-                document.getElementById('gallery-thumbs').appendChild(t);
-            },
-            checkSuffixes(baseSrc, startWith) {
-                const suffixes = ['A', 'B', 'C'];
-                const dot = baseSrc.lastIndexOf('.');
-                if(dot === -1) return;
-                const root = baseSrc.substring(0, dot);
-                const ext = baseSrc.substring(dot);
-                suffixes.forEach(s => {
-                    const url = root + s + ext;
-                    const i = new Image();
-                    i.onload = () => this.addThumb(url, 'img', url === startWith);
-                    i.src = url;
-                });
-            },
-            checkVideo(baseSrc) {
-                const dot = baseSrc.lastIndexOf('.');
-                if(dot === -1) return;
-                const vidUrl = baseSrc.substring(0, dot) + '.mp4';
-                const v = document.createElement('video');
-                v.onloadedmetadata = () => this.addThumb(vidUrl, 'video', false);
-                v.src = vidUrl;
-            },
-            close() { document.getElementById('gallery').classList.remove('active'); document.getElementById('gallery-video').pause(); }
-        };
-
-        const App = {
-            data: [], cart: {}, currentBasket: null, originalCart: {}, currentLimit: 99,
-
-            async init() {
-                try {
-                    const res = await fetch('produtos/produtos.json?v=' + Date.now());
-                    const raw = await res.json();
-                    this.data = raw.map(p => ({
-                        ...p,
-                        id: String(p.id),
-                        nome: p.nome.trim(),
-                        valor: parseFloat(p.valor || 0),
-                        offerPrice: parseFloat(p.Valor_Oferta || 0),
-                        isOffer: (p.Oferta && p.Oferta.toLowerCase() === 'sim'),
-                        categoria: (p.categoria || 'OUTROS').trim().toUpperCase(),
-                        imagem: this.fixImgPath(p.imagem),
-                        limit: parseInt(p.Limit || p.limit || 0),
-                        estoque: parseInt(p.estoque || 0),
-                        validade: p.Validade || p.validade || "",
-                        caracteristicas: p.Caracteristicas || p.caracteristicas || ""
-                    }));
-                    this.renderHome();
-                    this.renderSidebar();
-                    this.setupSearch();
-                    window.addEventListener('scroll', this.handleScroll);
-                } catch (e) {
-                    console.error("Erro Fatal:", e);
-                    document.getElementById('home-list').innerHTML = `<p style="text-align:center;">Erro ao carregar.</p>`;
-                }
-            },
-
-            fixImgPath(path) {
-                if (!path) return 'img/placeholder.jpg';
-                return path.includes('/') ? `img/produtos/${path.split('/').pop()}` : `img/produtos/${path}`;
-            },
-
-            handleScroll() {
-                const btn = document.getElementById('btn-scroll-top');
-                if (window.scrollY > 300) btn.classList.add('visible');
-                else btn.classList.remove('visible');
-            },
-
-            renderHome() {
-                const list = document.getElementById('home-list');
-                const baskets = this.data.filter(p => p.categoria.includes('CESTA') && (p.categoria.includes('BÁSICA') || p.categoria.includes('BASICA')));
-                if(baskets.length === 0) { list.innerHTML = '<p>Nenhuma cesta.</p>'; return; }
-                list.innerHTML = baskets.map(p => {
-                    const price = (p.isOffer && p.offerPrice > 0) ? p.offerPrice : p.valor;
-                    return `
-                    <article class="home-card">
-                        <div class="hc-image-wrap" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                            <img src="${p.imagem}" class="hc-image" loading="lazy" alt="${p.nome}" onerror="this.onerror=null;this.src='https://placehold.co/500?text=Imagem+Indisponível';">
-                        </div>
-                        <div class="hc-content">
-                            <h3 class="hc-title">${p.nome}</h3>
-                            <div class="hc-price">R$ ${price.toFixed(2).replace('.', ',')}</div>
-                            <div class="hc-actions">
-                                <button class="btn-fill" onclick="App.openCustomizer('${p.id}')">Personalizar Cesta</button>
-                                <button class="btn-outline" onclick="App.directLink('${p.nome}')">Pedir Direto</button>
-                            </div>
-                        </div>
-                    </article>`;
-                }).join('');
-            },
-
-            renderSidebar() {
-                const cats = [...new Set(this.data.filter(p => !p.categoria.includes('CESTA')).map(p => p.categoria))].sort();
-                document.getElementById('desk-cat-list').innerHTML = cats.map(c => `<button class="sidebar-chip" onclick="App.filterCat('${c}')">${c}</button>`).join('');
-                document.getElementById('mob-cat-grid').innerHTML = cats.map(c => `<div class="mobile-cat-btn" onclick="App.filterCat('${c}')">${c}</div>`).join('');
-                
-                // Sort Tags Alphabetically
-                const sortedTags = [...CONSTANTS.TAGS].sort();
-                document.getElementById('desk-tag-list').innerHTML = sortedTags.map(t => `<button class="sidebar-chip" onclick="App.search('${t}')">${t}</button>`).join('');
-                document.getElementById('mob-tags-grid').innerHTML = sortedTags.map(t => `<div class="mobile-tag-btn" onclick="App.search('${t}')">${t}</div>`).join('');
-            },
-
-            openCustomizer(id) {
-                const basket = this.data.find(p => p.id === id);
-                if(!basket) return;
-                this.currentBasket = basket;
-                this.cart = {};
-                
-                // Load items
-                if(basket.items && Array.isArray(basket.items)) {
-                    basket.items.forEach(item => {
-                        let match = this.data.find(p => p.id === String(item.id));
-                        if(!match && item.nome) match = this.data.find(p => !p.categoria.includes('CESTA') && p.nome.toLowerCase().includes(item.nome.toLowerCase()));
-                        if(match) this.cart[match.id] = (this.cart[match.id] || 0) + (parseInt(item.qtd || 1));
-                    });
-                }
-                
-                // Limits Logic
-                this.originalCart = { ...this.cart };
-                const nameKey = basket.nome.toLowerCase().replace('cesta', '').trim();
-                let limitKey = Object.keys(CONSTANTS.LIMITS).find(k => nameKey.includes(k));
-                this.currentLimit = limitKey ? CONSTANTS.LIMITS[limitKey] : 99;
-
-                // Base Fee Calculation (Price - Items)
-                let itemsSum = 0;
-                for(let pid in this.cart) {
-                    let p = this.data.find(x => x.id === pid);
-                    if(p) itemsSum += (p.isOffer ? p.offerPrice : p.valor) * this.cart[pid];
-                }
-                this.baseFee = Math.max(0, basket.valor - itemsSum);
-
-                document.getElementById('cust-title').innerText = basket.nome;
-                document.getElementById('home-view').classList.add('hidden');
-                document.getElementById('customizer-view').classList.remove('hidden');
-                
-                window.scrollTo(0,0);
-                this.renderAllLists();
-            },
-
-            goHome() {
-                document.getElementById('customizer-view').classList.add('hidden');
-                document.getElementById('home-view').classList.remove('hidden');
-                this.currentBasket = null;
-            },
-
-            renderAllLists(searchTerm = "") {
-                if(!this.currentBasket) return;
-                const incContainer = document.getElementById('included-list');
-                const incIds = Object.keys(this.cart);
-                
-                incContainer.innerHTML = incIds.length === 0 ? '<p style="padding:10px; color:#999;">Cesta vazia.</p>' : 
-                    incIds.map(id => { const p = this.data.find(x => x.id === id); return p ? this.buildCard(p, true) : ''; }).join('');
-
-                const extContainer = document.getElementById('extras-container');
-                let extras = this.data.filter(p => !p.categoria.includes('CESTA'));
-                if(searchTerm) {
-                    const lower = searchTerm.toLowerCase();
-                    extras = extras.filter(p => p.nome.toLowerCase().includes(lower) || p.categoria.toLowerCase().includes(lower));
-                }
-
-                const groups = {};
-                extras.forEach(p => { if(!groups[p.categoria]) groups[p.categoria] = []; groups[p.categoria].push(p); });
-                const sortedCats = Object.keys(groups).sort();
-                
-                let html = '';
-                if(sortedCats.length > 0 && !searchTerm) {
-                    html += `<div class="extras-separator-banner"><h3>Adicionar Extras</h3><p>Toque nos produtos abaixo para adicionar mais itens.</p></div>`;
-                }
-
-                sortedCats.forEach(cat => {
-                    const color = Object.keys(CONSTANTS.THEMES).find(k => cat.includes(k)) || 'DEFAULT';
-                    html += `<div id="cat-${cat}" class="section-header" style="background:${CONSTANTS.THEMES[color]}; margin-top:30px;"><h3>${cat}</h3></div>
-                    <div class="product-box"><div class="grid-products">${groups[cat].map(p => this.buildCard(p, false)).join('')}</div></div>`;
-                });
-                extContainer.innerHTML = html || '<p style="text-align:center; padding:40px;">Nenhum produto encontrado.</p>';
-                
-                setTimeout(() => this.setupMediaObservers(), 500);
-                this.updateTotal();
-            },
-
-            buildCard(p, isIncluded) {
-                const qty = this.cart[p.id] || 0;
-                const price = p.isOffer && p.offerPrice > 0 ? p.offerPrice : p.valor;
-                
-                let btnHtml = qty === 0 ? 
-                    `<button class="btn-add-mini" onclick="App.modQty('${p.id}', 1)">Adicionar</button>` : 
-                    `<div class="qty-mini"><button class="qm-btn" onclick="App.modQty('${p.id}', -1)">-</button><span class="qm-val">${qty}</span><button class="qm-btn" onclick="App.modQty('${p.id}', 1)">+</button></div>`;
-
-                let priceHtml = (p.isOffer && p.offerPrice > 0) ? 
-                    `<span class="mc-price-old">R$${p.valor.toFixed(2)}</span><span class="mc-price-new">R$${price.toFixed(2)}</span>` : 
-                    `R$ ${price.toFixed(2).replace('.', ',')}`;
-                
-                // Smart Buttons
-                let featBtns = '';
-                // Info Button now opens sheet
-                if(p.caracteristicas) {
-                    const safeText = p.caracteristicas.replace(/"/g, '&quot;').replace(/'/g, "\\'").replace(/\n/g, '<br>');
-                    const safeTitle = p.nome.replace(/"/g, '&quot;');
-                    featBtns += `<div class="btn-feat info" onclick="App.openInfo('${safeText}', '${safeTitle}')">Info</div>`;
-                }
-                
-                // Nutri Button (Visible via JS observer)
-                featBtns += `<div class="btn-feat nutri" id="nutri-${p.id}" onclick="Gallery.open('${p.imagem}','${p.nome}','${p.imagem.replace('.','A.')}')">Nutri</div>`;
-
-                return `
-                <div class="mini-card" id="card-${p.id}">
-                    ${(p.isOffer && p.offerPrice > 0) ? '<span class="tag-offer">OFERTA</span>' : ''}
-                    <div class="mc-img-box" onclick="Gallery.open('${p.imagem}', '${p.nome}')">
-                        <img src="${p.imagem}" class="mc-img" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/300?text=No+Image';">
-                        <div class="media-indicators" id="media-${p.id}">
-                            <div class="indicator-icon icon-cam">📷</div>
-                            <div class="indicator-icon icon-vid">🎥</div>
-                        </div>
-                    </div>
-                    <div class="mc-title">${p.nome}</div>
-                    <div class="btn-feat-row">${featBtns}</div>
-                    <div class="mc-price">${priceHtml}</div>
-                    ${btnHtml}
-                </div>`;
-            },
-
-            setupMediaObservers() {
-                const cards = document.querySelectorAll('.mini-card');
-                const observer = new IntersectionObserver((entries, obs) => {
-                    entries.forEach(e => {
-                        if(e.isIntersecting) {
-                            const pid = e.target.id.replace('card-','');
-                            const p = this.data.find(x => x.id === pid);
-                            if(p) this.checkMedia(p);
-                            obs.unobserve(e.target);
-                        }
-                    });
-                }, {rootMargin: "100px"});
-                cards.forEach(c => observer.observe(c));
-            },
-
-            checkMedia(p) {
-                const dot = p.imagem.lastIndexOf('.');
-                if(dot === -1) return;
-                const root = p.imagem.substring(0, dot);
-                const ext = p.imagem.substring(dot);
-                const imgA = new Image();
-                imgA.onload = () => {
-                    const btn = document.getElementById(`nutri-${p.id}`);
-                    if(btn) btn.style.display = 'inline-block';
-                    const el = document.querySelector(`#media-${p.id} .icon-cam`);
-                    if(el) el.classList.add('visible');
-                };
-                imgA.src = root + 'A' + ext;
-                const vid = document.createElement('video');
-                vid.onloadedmetadata = () => {
-                    const el = document.querySelector(`#media-${p.id} .icon-vid`);
-                    if(el) el.classList.add('visible');
-                };
-                vid.src = root + '.mp4';
-            },
-
-            countRemovals() {
-                let removals = 0;
-                for(let id in this.originalCart) {
-                    if (this.originalCart[id] > 0 && (!this.cart[id] || this.cart[id] === 0)) {
-                        removals++;
-                    }
-                }
-                return removals;
-            },
-
-            modQty(id, delta) {
-                const p = this.data.find(x => x.id === id);
-                if(!this.cart[id]) this.cart[id] = 0;
-                const newQty = this.cart[id] + delta;
-
-                // Check Limits
-                if(delta > 0 && p.limit > 0 && newQty > p.limit) return alert(`Limite de ${p.limit} unidades.`);
-                
-                // Check Removal Limits
-                if (this.originalCart[id] && delta < 0 && newQty === 0) {
-                    if (this.countRemovals() >= this.currentLimit) {
-                        return alert(`Limite de ${this.currentLimit} trocas/exclusões atingido para esta cesta.`);
-                    }
-                }
-
-                this.cart[id] = newQty;
-                if(this.cart[id] <= 0) delete this.cart[id];
-                this.renderAllLists(document.getElementById('main-search').value);
-            },
-
-            updateTotal() {
-                let itemsSum = 0;
-                for(let id in this.cart) {
-                    const p = this.data.find(x => x.id === id);
-                    if(p) itemsSum += (p.isOffer ? p.offerPrice : p.valor) * this.cart[id];
-                }
-                
-                const calculatedTotal = itemsSum + this.baseFee;
-                let finalTotal = Math.max(calculatedTotal, this.currentBasket.valor);
-                let credit = 0;
-                
-                if (calculatedTotal < this.currentBasket.valor) {
-                    credit = this.currentBasket.valor - calculatedTotal;
-                }
-
-                // Update UI Counters
-                const removals = this.countRemovals();
-                const badge = document.getElementById('changes-badge');
-                badge.innerText = `Alterações: ${removals}/${this.currentLimit}`;
-                badge.className = removals >= this.currentLimit ? 'limit-badge error' : 'limit-badge';
-
-                const fmt = 'R$ ' + finalTotal.toFixed(2).replace('.', ',');
-                document.getElementById('desk-total-val').innerText = fmt;
-                const mobTotal = document.getElementById('mcb-total-val');
-                if(mobTotal) mobTotal.innerText = fmt;
-                document.getElementById('co-total').innerText = fmt;
-
-                // Credit Toast
-                const toast = document.getElementById('toast');
-                if (credit > 0) {
-                    document.getElementById('toast-msg').innerText = `Você tem R$ ${credit.toFixed(2).replace('.', ',')} de crédito`;
-                    toast.classList.add('visible');
-                } else {
-                    toast.classList.remove('visible');
-                }
-            },
-
-            setupSearch() { 
-                const input = document.getElementById('main-search');
-                input.addEventListener('input', (e) => this.renderAllLists(e.target.value)); 
-                input.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-            },
-
-            search(term) {
-                this.closeSheet('tags-sheet');
-                if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
-                document.getElementById('main-search').value = term;
-                this.renderAllLists(term);
-                const el = document.getElementById('extras-container');
-                if(el) el.scrollIntoView({behavior:'smooth'});
-            },
-
-            filterCat(cat) {
-                this.closeSheet('cat-sheet');
-                if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
-                document.getElementById('main-search').value = "";
-                this.renderAllLists("");
-                setTimeout(() => {
-                    const el = document.getElementById(`cat-${cat}`);
-                    if(el) { window.scrollTo({top: el.offsetTop - 140, behavior:'smooth'}); }
-                }, 100);
-            },
-
-            openSheet(id) { 
-                // Close any open sheets first
-                document.querySelectorAll('.sheet-overlay.open').forEach(el => el.classList.remove('open'));
-                
-                if(id === 'offers-sheet') this.renderOffersInSheet();
-                document.getElementById(id).classList.add('open'); 
-            },
-            closeSheet(id) { document.getElementById(id).classList.remove('open'); },
-            
-            openInfo(text, title) {
-                document.getElementById('info-sheet-title').innerText = title;
-                document.getElementById('info-sheet-body').innerHTML = text;
-                this.openSheet('info-sheet');
-            },
-
-            renderOffersInSheet() {
-                const grid = document.getElementById('mob-offers-grid');
-                const offers = this.data.filter(p => p.isOffer);
-                grid.innerHTML = offers.length ? offers.map(p => this.buildCard(p, false)).join('') : '<p style="grid-column:1/-1; text-align:center;">Sem ofertas.</p>';
-                setTimeout(() => this.setupMediaObservers(), 300);
-            },
-            
-            openCheckout() {
-                if(Object.keys(this.cart).length === 0) return alert("Cesta vazia.");
-                document.getElementById('checkout-items').innerHTML = Object.keys(this.cart).map(id => {
-                    const p = this.data.find(x => x.id === id);
-                    return `<li class="co-item"><span>${this.cart[id]}x ${p.nome}</span></li>`;
-                }).join('');
-                document.getElementById('checkout-modal').showModal();
-            },
-
-            sendWhatsApp() {
-                const method = document.getElementById('payment-method').value;
-                const total = document.getElementById('co-total').innerText;
-                let msg = `*NOVO PEDIDO: ${this.currentBasket.nome}*\n------------------\n`;
-                for(let id in this.cart) {
-                    const p = this.data.find(x => x.id === id);
-                    if(p) msg += `${this.cart[id]}x ${p.nome}\n`;
-                }
-                msg += `------------------\n*TOTAL: ${total}*\n*Pagamento:* ${method}`;
-                window.open(`https://api.whatsapp.com/send?phone=${CONSTANTS.PHONE}&text=${encodeURIComponent(msg)}`, '_blank');
-            },
-
-            directLink(name) { window.open(`https://api.whatsapp.com/send?phone=${CONSTANTS.PHONE}&text=${encodeURIComponent('Quero pedir ' + name)}`, '_blank'); }
-        };
-
-        document.addEventListener('DOMContentLoaded', () => App.init());
-    </script>
-</body>
-</html>
+[
+  {
+    "id": "1767965406326887",
+    "codigo": "P001",
+    "nome": "AMACIANTE YPE ACONCHEGO 2L - Azul Claro",
+    "ean": "7896098902400",
+    "categoria": "LIMPEZA",
+    "fornecedor": "FORT E ASSAI",
+    "caracteristicas": "",
+    "custo": 7.49,
+    "valor": 10.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 648
+      }
+    ],
+    "estoque": 648,
+    "estoqueFiscal": 3012,
+    "peso": 2,
+    "limit": 2,
+    "imagem": "../site/img/produtos/amaciante-ype-aconchego-2l-azul-claro-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": true,
+    "offerPrice": 8.99,
+    "variacoesNome": [
+      "AMAC YPE ACONCH 2L CX6",
+      "AMAC YPE 2L ACONCHEGO",
+      "AMAC.YPE ACONCHEGO.6X2LTS AZ"
+    ],
+    "variacoesEan": [
+      "7896098902400",
+      "27896098902404"
+    ],
+    "ncm": "38099190",
+    "cest": "1100800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767963744444",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Sim",
+    "Valor_Oferta": 8.99
+  },
+  {
+    "id": "1767965736886738",
+    "codigo": "P004",
+    "nome": "AÇÚCAR CRISTAL DOCE DIA 2KG",
+    "ean": "7896984700028",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "",
+    "custo": 4.59,
+    "valor": 5.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 310
+      }
+    ],
+    "estoque": 310,
+    "estoqueFiscal": 9530,
+    "peso": 2,
+    "limit": 5,
+    "imagem": "../site/img/produtos/acucar-cristal-doce-dia-2kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ACUCAR DOCE DIA 2KG (UN)"
+    ],
+    "variacoesEan": [
+      "7896984700028"
+    ],
+    "ncm": "17011400",
+    "cest": "1710100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "89186",
+    "refId": "NFe51250709477652002806551000000891861120119200-1",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767965806748192",
+    "codigo": "P005",
+    "nome": "ÁGUA SANITÁRIA QBOA - 1 LITRO",
+    "ean": "7896083800018",
+    "categoria": "LIMPEZA",
+    "fornecedor": "FORT",
+    "caracteristicas": "A Água Sanitária Qboa 1L é sinônimo de proteção total para seu lar. Com cloro ativo, elimina 99,99% dos germes e bactérias, sendo ideal para desinfetar superfícies, higienizar alimentos e alvejar roupas com segurança. Garanta limpeza profunda e qualidade comprovada para a saúde da sua família!",
+    "custo": 3.79,
+    "valor": 4.99,
+    "estoque": 1296,
+    "estoqueFiscal": 4500,
+    "peso": 1,
+    "limit": 6,
+    "imagem": "../site/img/produtos/agua-sanitaria-qboa-1-litro-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "AGUA SANIT QBOA 1L CX12",
+      "AGUA SANITARIA Q BOA 1L"
+    ],
+    "variacoesEan": [
+      "7896083800018",
+      "17896083800015"
+    ],
+    "ncm": "28289011",
+    "cest": "1100100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767965793622",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767965879278742",
+    "codigo": "P006",
+    "nome": "AMACIANTE YPE INTENSO 2L - Azul Escuro",
+    "ean": "7896098903032",
+    "categoria": "LIMPEZA",
+    "fornecedor": "ASSAI E FORT",
+    "caracteristicas": "O Amaciante Ypê Intenso 2L garante maciez superior e um perfume envolvente que dura muito mais tempo. Sua fórmula protege as fibras do tecido e facilita o passar, oferecendo alto rendimento e o cuidado ideal para toda a família. Tenha roupas incrivelmente cheirosas e com toque suave todos os dias!",
+    "custo": 7.49,
+    "valor": 10.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 450
+      }
+    ],
+    "estoque": 450,
+    "estoqueFiscal": 2454,
+    "peso": 2,
+    "limit": 6,
+    "imagem": "../site/img/produtos/amaciante-ype-intenso-2l-azul-escuro-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "AMAC ROUPAS YPE 2L CX6 INTENSO",
+      "AMAC ROUPAS YPE L2 P1 8L CX6"
+    ],
+    "variacoesEan": [
+      "7896098903032",
+      "7896098902486"
+    ],
+    "ncm": "38099190",
+    "cest": "1100800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767965873909",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767966045566494",
+    "codigo": "P008",
+    "nome": "ARROZ KOBLENZ 5KG",
+    "ean": "17896038342034",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI OU FORT",
+    "caracteristicas": "",
+    "custo": 16.9,
+    "valor": 18.9,
+    "estoque": 150,
+    "estoqueFiscal": 6588,
+    "peso": 5,
+    "limit": 5,
+    "imagem": "../site/img/produtos/arroz-koblenz-5kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ARROZ KOBLENZ BCO T1 5KG",
+      "ARROZ KOBLENZ 5KG FD6 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "17896038342034",
+      "7896038342037"
+    ],
+    "ncm": "10063021",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767966039581",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767967449487660",
+    "codigo": "P009",
+    "nome": "ARROZ TIO BONINI 5KG ",
+    "ean": "7897738400089",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 11.9,
+    "valor": 15.9,
+    "estoque": 432,
+    "estoqueFiscal": 7602,
+    "peso": 5,
+    "limit": 5,
+    "imagem": "../site/img/produtos/arroz-tio-bonini-5kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "ARROZ TIO BONINI 5KG (UN)"
+    ],
+    "variacoesEan": [
+      "7897738400089"
+    ],
+    "ncm": "10063021",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "89013",
+    "refId": "NFe51250709477652002806551000000890131120902132-1",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767967907734419",
+    "codigo": "P013",
+    "nome": "BISCOITO WAFER MY BIT 80G - CHOCOLATE",
+    "ean": "7896408445160",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.69,
+    "valor": 2.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 200
+      }
+    ],
+    "estoque": 200,
+    "estoqueFiscal": 2360,
+    "peso": 0.2,
+    "limit": 36,
+    "imagem": "../site/img/produtos/biscoito-wafer-my-bit-80g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "BISC WAF MYBIT 80G CHOC (UN)"
+    ],
+    "variacoesEan": [
+      "7896408445160"
+    ],
+    "ncm": "19053200",
+    "cest": "1705700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "89018",
+    "refId": "NFe51250709477652002806551000000890181120924272-1",
+    "fator": "40",
+    "unidade": "UN",
+    "Limit": 36,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767968978223239",
+    "codigo": "P016",
+    "nome": "CAFÉ CABOCLO VACUO PURO 500G TRAD",
+    "ean": "7896089010916",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 24,
+    "valor": 28.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 507
+      }
+    ],
+    "estoque": 507,
+    "estoqueFiscal": 1915,
+    "peso": 0.5,
+    "limit": 6,
+    "imagem": "../site/img/produtos/cafe-caboclo-vacuo-puro-500g-trad-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CAFE CABOCLO VACUO PURO 500G TRAD",
+      "CAFE CABOCLO 500G VACUO CX20",
+      "CAFE CABOCLO 500G TRAD CX20",
+      "CAFE CABOCLO 500G TRAD (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896089010916",
+      "17896089010913"
+    ],
+    "ncm": "09012100",
+    "cest": "1709600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767968965128",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767970066063971",
+    "codigo": "P017",
+    "nome": "CAFÉ CABOCLO VACUO 250G - TRADICIONAL",
+    "ean": "17896089012467",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 12.9,
+    "valor": 15.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 296
+      }
+    ],
+    "estoque": 296,
+    "estoqueFiscal": 940,
+    "peso": 0.25,
+    "limit": 6,
+    "imagem": "../site/img/produtos/cafe-caboclo-vacuo-250g-tradicional-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CAFE CABOCLO VACUO 250G (UN)"
+    ],
+    "variacoesEan": [
+      "17896089012467"
+    ],
+    "ncm": "09012100",
+    "cest": "1709600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "255280",
+    "refId": "NFe51250806057223029153553000002552801459317338-1",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767970248887875",
+    "codigo": "P018",
+    "nome": "CAFÉ CABOCLO VACUO 500G - EXTRA FORTE",
+    "ean": "7896089016215",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 25,
+    "valor": 29,
+    "batches": [
+      {
+        "date": "",
+        "qty": 100
+      }
+    ],
+    "estoque": 100,
+    "estoqueFiscal": 800,
+    "peso": 0,
+    "limit": 6,
+    "imagem": "../site/img/produtos/cafe-caboclo-vacuo-500g-extra-forte-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CAFE CABOCLO VACUO 500G EXTRA FORTE (UN)"
+    ],
+    "variacoesEan": [
+      "7896089016215"
+    ],
+    "ncm": "09012100",
+    "cest": "1709600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "235351",
+    "refId": "NFe51250206057223029153553000002353511410802318-1",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767994950374116",
+    "codigo": "P022",
+    "nome": "LAVA ROUPA PÓ OMO 800G - LAVAGEM PERFEITA",
+    "ean": "37891150064318",
+    "categoria": "LIMPEZA",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 11.9,
+    "valor": 14.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 747
+      }
+    ],
+    "estoque": 747,
+    "estoqueFiscal": 5740,
+    "peso": 0.8,
+    "limit": 6,
+    "imagem": "../site/img/produtos/lava-roupa-po-omo-800g-lavagem-perfeita-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LAVA ROUPA PO OMO 800G LAV PERFEITA",
+      "DET.PO OMO LAVAGEM P.SANITIZANTE 20X800 20CX X 800GR",
+      "DET.PO OMO LAVAGEM PERFEITA 20X800GR 20CX X 800GR",
+      "LAVA ROUPAS EM PO OMO LAVAGEM PERFEITA 20X800GR (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "37891150064318",
+      "7891150072138",
+      "7891150064317"
+    ],
+    "ncm": "34025000",
+    "cest": "1100400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767994919180",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767995008683820",
+    "codigo": "P023",
+    "nome": "DESINFETANTE REMMUS 2L - AMAZON (VERDE)",
+    "ean": "7898964012046",
+    "categoria": "LIMPEZA",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 3.99,
+    "valor": 5.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 294
+      }
+    ],
+    "estoque": 294,
+    "estoqueFiscal": 600,
+    "peso": 2,
+    "limit": 2,
+    "imagem": "../site/img/produtos/desinfetante-remmus-2l-amazon-verde-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "DESINF REMMUS 2L AMAZON (UN)"
+    ],
+    "variacoesEan": [
+      "7898964012046"
+    ],
+    "ncm": "38089429",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "87028",
+    "refId": "NFe51250509477652002806551000000870281120717234-2",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767995058021476",
+    "codigo": "P024",
+    "nome": "ESPONJA AÇO ASSOLAN ",
+    "ean": "7896090100101",
+    "categoria": "LIMPEZA",
+    "fornecedor": "RIO VERMELHO",
+    "caracteristicas": "",
+    "custo": 1.1897,
+    "valor": 2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 400
+      }
+    ],
+    "estoque": 400,
+    "estoqueFiscal": 3400,
+    "peso": 0.1,
+    "limit": 6,
+    "imagem": "../site/img/produtos/esponja-aco-assolan-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ESPONJA ACO ASSOLAN 8X1 PT/0020",
+      "ESPONJA ACO ASSOLAN 45G 10% DE DESCONTO PT/0020 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896090100101",
+      "7896090100118"
+    ],
+    "ncm": "73231000",
+    "cest": "1101100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767995049421",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767995341587629",
+    "codigo": "P026",
+    "nome": "TRIGO VITORIOSA 1KG ",
+    "ean": "7896348904222",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "",
+    "custo": 2.99,
+    "valor": 3.69,
+    "estoque": 1020,
+    "estoqueFiscal": 3950,
+    "peso": 1,
+    "limit": 20,
+    "imagem": "../site/img/produtos/trigo-vitoriosa-1kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "FAR TRIGO VITORIOSA 1KG (UN)"
+    ],
+    "variacoesEan": [
+      "7896348904222"
+    ],
+    "ncm": "11010010",
+    "cest": "1704411",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "84050",
+    "refId": "NFe51250209477652002806551000000840501120856265-1",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 20,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767995536751991",
+    "codigo": "P029",
+    "nome": "FEIJÃO DACASA 1KG",
+    "ean": "7897923022195",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI E FORT",
+    "caracteristicas": "",
+    "custo": 4.29,
+    "valor": 5.29,
+    "batches": [
+      {
+        "date": "",
+        "qty": 500
+      }
+    ],
+    "estoque": 500,
+    "estoqueFiscal": 2000,
+    "peso": 1,
+    "limit": 6,
+    "imagem": "../site/img/produtos/feijao-dacasa-1kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FEIJAO CARIOCA DACASA TP (UN)"
+    ],
+    "variacoesEan": [
+      "7897923022195"
+    ],
+    "ncm": "07133399",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "90925",
+    "refId": "NFe51250909477652002806551000000909251120844558-1",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767996115267315",
+    "codigo": "P033",
+    "nome": "LAVA LOUÇA YPE 500ml - NEUTRO (amarelo)",
+    "ean": "7896098900253",
+    "categoria": "LIMPEZA",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.99,
+    "valor": 2.75,
+    "estoque": 576,
+    "estoqueFiscal": 3936,
+    "peso": 0.5,
+    "limit": 24,
+    "imagem": "../site/img/produtos/lava-louca-ype-500ml-neutro-amarelo-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "LAV LOUC YPE 500ML CX24 NEUTRO (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896098900253"
+    ],
+    "ncm": "34025000",
+    "cest": "1100500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767996107436",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 24,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767996301404728",
+    "codigo": "P035",
+    "nome": "ESPAGUETE BADOTTI 400G",
+    "ean": "78963489042842",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT E ASSAI",
+    "caracteristicas": "",
+    "custo": 1.89,
+    "valor": 3.29,
+    "estoque": 810,
+    "estoqueFiscal": 1000,
+    "peso": 0.4,
+    "limit": 6,
+    "imagem": "../site/img/produtos/espaguete-badotti-400g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "MAC BADOTTI SEMOLA 400G ESPAGUETE (UN)"
+    ],
+    "variacoesEan": [
+      "78963489042842"
+    ],
+    "ncm": "19021900",
+    "cest": "1704904",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "256620",
+    "refId": "NFe51250906057223029153553000002566201462652470-1",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767996433420002",
+    "codigo": "P036",
+    "nome": "MACARRÃO INSTANTÂNEO APTI 70G - GALINHA ",
+    "ean": "17896327514555",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 1.15,
+    "valor": 1.79,
+    "estoque": 300,
+    "estoqueFiscal": 1250,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/macarrao-instantaneo-apti-70g-galinha-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "MAC INST APTI 70G GALINHA (UN)"
+    ],
+    "variacoesEan": [
+      "17896327514555"
+    ],
+    "ncm": "19023000",
+    "cest": "1704701",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "252374",
+    "refId": "NFe51250706057223029153553000002523741451918015-1",
+    "fator": "50",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767996447308612",
+    "codigo": "P037",
+    "nome": "MACARRÃO INSTANTÂNEO APTI 70G - GALINHA CAIPIRA",
+    "ean": "17896327514562",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.1,
+    "valor": 1.79,
+    "estoque": 1250,
+    "estoqueFiscal": 1250,
+    "peso": 0.1,
+    "limit": 12,
+    "imagem": "../site/img/produtos/macarrao-instantaneo-apti-70g-galinha-caipira-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "MAC INST APTI 70G GALINHA CAIPIRA (UN)"
+    ],
+    "variacoesEan": [
+      "17896327514562"
+    ],
+    "ncm": "19023000",
+    "cest": "1704701",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "252375",
+    "refId": "NFe51250706057223029153553000002523751451920254-1",
+    "fator": "50",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997067942921",
+    "codigo": "P043",
+    "nome": "MILHO VERDE PREDILECTA 170G - LATA ",
+    "ean": "7896292340503",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "",
+    "custo": 2.59,
+    "valor": 3.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 168
+      }
+    ],
+    "estoque": 168,
+    "estoqueFiscal": 2880,
+    "peso": 0.17,
+    "limit": 8,
+    "imagem": "../site/img/produtos/milho-verde-predilecta-170g-lata-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHO VD PREDILECTA 170G (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896292340503"
+    ],
+    "ncm": "20058000",
+    "cest": "1709200",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767997060620",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 8,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997103533871",
+    "codigo": "P044",
+    "nome": "MILHO VERDE FUGINI SACHE 170GR",
+    "ean": "17897517209541",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "RIO VERMELHO",
+    "caracteristicas": "",
+    "custo": 2.1084,
+    "valor": 3.19,
+    "batches": [
+      {
+        "date": "",
+        "qty": 480
+      }
+    ],
+    "estoque": 480,
+    "estoqueFiscal": 3060,
+    "peso": 0.17,
+    "limit": 6,
+    "imagem": "../site/img/produtos/milho-verde-fugini-sache-170gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHO VERDE FUGINI SH 170GR /0036 (UN)"
+    ],
+    "variacoesEan": [
+      "17897517209541"
+    ],
+    "ncm": "20058000",
+    "cest": "1709200",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "425519",
+    "refId": "NFe51250210912900000592550010004255191931882927-1",
+    "fator": "36",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997266741315",
+    "codigo": "P045",
+    "nome": "MISTURA PRA BOLO APTI 400G - CHOCOLATE",
+    "ean": "17896327511981",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "",
+    "custo": 3.59,
+    "valor": 4.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 180
+      }
+    ],
+    "estoque": 180,
+    "estoqueFiscal": 1740,
+    "peso": 0.4,
+    "limit": 6,
+    "imagem": "../site/img/produtos/mistura-pra-bolo-apti-400g-chocolate-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MIST BOLO APTI 400G CHOCOLATE",
+      "MIST BOLO APTI 400G CX12 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "17896327511981",
+      "7896327511984"
+    ],
+    "ncm": "19012090",
+    "cest": "1704600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767997258492",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997372171002",
+    "codigo": "P049",
+    "nome": "MOLHO TOMATE FUGINI 300gr",
+    "ean": "7897517206086",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ATACADÃO",
+    "caracteristicas": "",
+    "custo": 1.2227,
+    "valor": 1.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 360
+      }
+    ],
+    "estoque": 360,
+    "estoqueFiscal": 7776,
+    "peso": 0.3,
+    "limit": 12,
+    "imagem": "../site/img/produtos/molho-tomate-fugini-300gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MOLHO TOMATE FUGINI 300gr",
+      "MOLHO TOM.TRAD.FUGINI SC.36X300GR 36SC X 300GR",
+      "MOLHO TOM FUGINI 300G CX36 (AGRUPADO)",
+      "MOLHO TOM.TRAD.FUGINI SC.GR 36SC X 300GR (UN)"
+    ],
+    "variacoesEan": [
+      "7897517206086"
+    ],
+    "ncm": "21032010",
+    "cest": "1703400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "UNIFICADO-1767997363324",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997510556640",
+    "codigo": "P052",
+    "nome": "OLEO SOJA LIZA 900ML",
+    "ean": "7896036090244",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "TIO ALVINO",
+    "caracteristicas": "",
+    "custo": 6,
+    "valor": 6.9,
+    "estoque": 1392,
+    "estoqueFiscal": 12444,
+    "peso": 0.9,
+    "limit": 12,
+    "imagem": "../site/img/produtos/oleo-soja-liza-900ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "OLEO SOJA LIZA 900ML",
+      "OLEO SOJA LIZA PET 900ML (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896036090244",
+      "27896036090248"
+    ],
+    "ncm": "15079011",
+    "cest": "1706500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767997502620",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997577829946",
+    "codigo": "P053",
+    "nome": "OVO BRANCO 12un",
+    "ean": "7896982100059",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 5.556,
+    "valor": 9,
+    "estoque": 120,
+    "estoqueFiscal": 150,
+    "peso": 0.5,
+    "limit": 6,
+    "imagem": "../site/img/produtos/ovo-branco-12un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "OVO MANTIQUEIRA 30UN BCO (UN)"
+    ],
+    "variacoesEan": [
+      "7896982100059"
+    ],
+    "ncm": "04072100",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "90927",
+    "refId": "NFe51250909477652002806551000000909271120900568-1",
+    "fator": "30",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997715324620",
+    "codigo": "P055",
+    "nome": "SUCO PÓ FRISCO 18G - LARANJA",
+    "ean": "7896045112081",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "",
+    "custo": 0.55,
+    "valor": 1,
+    "batches": [
+      {
+        "date": "2026-09-17",
+        "qty": 720
+      }
+    ],
+    "estoque": 720,
+    "estoqueFiscal": 2700,
+    "peso": 0.018,
+    "limit": 23,
+    "imagem": "../site/img/produtos/suco-po-frisco-18g-laranja-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "REFR PO FRISCO 18G LARANJA PT18",
+      "PO P/REFRESCO FRISCO 18G LARANJA (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896045112081",
+      "17896045112019"
+    ],
+    "ncm": "21069010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767997692116",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 23,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-09-17"
+  },
+  {
+    "id": "1767997799333580",
+    "codigo": "P057",
+    "nome": "SUCO PÓ FRISCO 18G - UVA",
+    "ean": "17896045112033",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "FORT",
+    "caracteristicas": "🍇 Refresco em Pó Frisco Sabor Uva 18g. Faz 1 Litro.\n\n✨ Destaques: Nova fórmula com baixo teor de açúcares. Fonte de Vitamina C, suprindo 100% da recomendação diária.\n\n📊 Nutrição (porção 3,6g): Apenas 12 kcal, 2,4g de carboidratos (2,3g açúcares) e 43mg de sódio.\n\n📝 Composição: Contém polpa de fruta desidratada (0,03% após diluição), aromatizantes e edulcorantes. Não contém glúten. Contém fenilalanina.",
+    "custo": 0.55,
+    "valor": 1,
+    "batches": [
+      {
+        "date": "2026-07-31",
+        "qty": 720
+      }
+    ],
+    "estoque": 720,
+    "estoqueFiscal": 4500,
+    "peso": 0.018,
+    "limit": 24,
+    "imagem": "../site/img/produtos/suco-po-frisco-18g-uva-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PO P/REFRESCO FRISCO 18G UVA",
+      "REFRESCO FRISCO UVA 18G PT18 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "17896045112033",
+      "7896045112104"
+    ],
+    "ncm": "21069010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767997781675",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 24,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-07-31"
+  },
+  {
+    "id": "1767998027146858",
+    "codigo": "P059",
+    "nome": "SABÃO BARRA YPE 900g",
+    "ean": "7896098905906",
+    "categoria": "LIMPEZA",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 9,
+    "valor": 13.9,
+    "estoque": 260,
+    "estoqueFiscal": 2000,
+    "peso": 0.9,
+    "limit": 6,
+    "imagem": "../site/img/produtos/sabao-barra-ype-900g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SAB BARRA YPE 5X160G NEU",
+      "SAB BARRA YPE 5X180G NEU CX20",
+      "SAB BARRA YPE 5X160G NEU CX24 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7896098905906"
+    ],
+    "ncm": "34011900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767998020819",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768010583043608",
+    "codigo": "P064",
+    "nome": "SABONETE PALMOLIVE 85g - FRESCOR PURIFICANTE (Carvão)",
+    "ean": "7509546659084",
+    "categoria": "HIGIENE",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.55,
+    "valor": 2.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 207
+      }
+    ],
+    "estoque": 207,
+    "estoqueFiscal": 568,
+    "peso": 0.086,
+    "limit": 12,
+    "imagem": "../site/img/produtos/sabonete-palmolive-85g-frescor-purificante-carvao-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SABONETE PALM NATURALS G PURIF CARVAO LV+PG- (UN)"
+    ],
+    "variacoesEan": [
+      "7509546659084",
+      "7509546659107"
+    ],
+    "ncm": "34011190",
+    "cest": "2003400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "262342",
+    "refId": "NFe51251106057223029153553000002623421477267918-2",
+    "fator": "8",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768011018049449",
+    "codigo": "P068",
+    "nome": "SAL REF CRISTAL OURO 1KG",
+    "ean": "37898280080171",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.59,
+    "valor": 2.4,
+    "estoque": 800,
+    "estoqueFiscal": 3000,
+    "peso": 0,
+    "limit": 6,
+    "imagem": "../site/img/produtos/sal-ref-cristal-ouro-1kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SAL REF CRISTAL OURO 1KG (UN)"
+    ],
+    "variacoesEan": [
+      "37898280080171"
+    ],
+    "ncm": "25010020",
+    "cest": "0030096",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "250209",
+    "refId": "NFe51250706057223029153553000002502091446537405-1",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768011165515284",
+    "codigo": "P071",
+    "nome": "TEMPERO TIO JONAS 300G ALHO E SAL",
+    "ean": "7898349130150",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 2.09,
+    "valor": 3.29,
+    "batches": [
+      {
+        "date": "",
+        "qty": 304
+      }
+    ],
+    "estoque": 304,
+    "estoqueFiscal": 984,
+    "peso": 0.3,
+    "limit": 6,
+    "imagem": "../site/img/produtos/tempero-tio-jonas-300g-alho-e-sal-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "TEMPERO TIO JONAS 300G ALHO E SAL (UN)"
+    ],
+    "variacoesEan": [
+      "7898349130150",
+      "7898053940564"
+    ],
+    "ncm": "21039029",
+    "cest": "0030096",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "253657",
+    "refId": "NFe51250806057223029153553000002536571455183323-1",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768011179042540",
+    "codigo": "P072",
+    "nome": "TEMPERO TIO JONAS 300G - COMPLETO COM PIMENTA",
+    "ean": "7898349130044",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.99,
+    "valor": 3.29,
+    "batches": [
+      {
+        "date": "",
+        "qty": 206
+      }
+    ],
+    "estoque": 206,
+    "estoqueFiscal": 1200,
+    "peso": 0.3,
+    "limit": 7,
+    "imagem": "../site/img/produtos/tempero-tio-jonas-300g-completo-com-pimenta-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "21039029",
+    "cest": "0030096",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "235482",
+    "refId": "NFe51250206057223029153553000002354821411088378-1",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 7,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768088776290036",
+    "codigo": "P073",
+    "nome": "ARROZ TIO ALVINO 5KG",
+    "ean": "",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "TIO ALVINO",
+    "caracteristicas": "",
+    "custo": 12,
+    "valor": 14.9,
+    "estoque": 132,
+    "estoqueFiscal": 1968,
+    "peso": 5,
+    "limit": 5,
+    "imagem": "../site/img/produtos/arroz-tio-alvino-5kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [
+      "ARROZ DUBOM FT 6X5",
+      "ARROZ TIO ALVINO T1 6X5",
+      "ARROZ TIO ALVINO 5KG FD6 (AGRUPADO)"
+    ],
+    "variacoesEan": [
+      "7898125370015"
+    ],
+    "ncm": "10063021",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "VARIAS",
+    "refId": "UNIFICADO-1767967491766",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768168952018329",
+    "codigo": "P074",
+    "nome": "CESTA ECONÔMICA",
+    "ean": "",
+    "categoria": "CESTA BÁSICA",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 60,
+    "valor": 85,
+    "estoque": 100,
+    "estoqueFiscal": 0,
+    "peso": 0,
+    "limit": 12,
+    "imagem": "../site/img/produtos/cesta-economica-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [
+      {
+        "id": "1767965736886738",
+        "codigo": "P004",
+        "nome": "ACUCAR DOCE DIA 2KG (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1768088776290036",
+        "codigo": "P073",
+        "nome": "ARROZ TIO ALVINO FT 6X5",
+        "qty": 1
+      },
+      {
+        "id": "1767967765190617",
+        "codigo": "P011",
+        "nome": "BISC MYBIT 110G - CHOCOLATE",
+        "qty": 1
+      },
+      {
+        "id": "1767995341587629",
+        "codigo": "P026",
+        "nome": "FAR TRIGO VITORIOSA 1KG (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767995536751991",
+        "codigo": "P029",
+        "nome": "FEIJAO CARIOCA DACASA TP (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767996301404728",
+        "codigo": "P035",
+        "nome": "MAC BADOTTI SEMOLA 400G ESPAGUETE (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767996433420002",
+        "codigo": "P036",
+        "nome": "MAC INST APTI 70G GALINHA (UN)",
+        "qty": 1
+      },
+      {
+        "id": "1767997067942921",
+        "codigo": "P043",
+        "nome": "MILHO VD PREDILECTA 170G (AGRUPADO)",
+        "qty": 1
+      },
+      {
+        "id": "1767997372171002",
+        "codigo": "P049",
+        "nome": "MOLHO TOM.TRAD.FUGINI SC.36X300GR 36SC X 300GR",
+        "qty": 1
+      },
+      {
+        "id": "1768169552725639",
+        "codigo": "P076",
+        "nome": "SUCO PÓ FRISCO 85G - LARANJA",
+        "qty": 1
+      },
+      {
+        "id": "1767997510556640",
+        "codigo": "P052",
+        "nome": "OLEO SOJA LIZA 900ML",
+        "qty": 1
+      },
+      {
+        "id": "1767970066063971",
+        "codigo": "P017",
+        "nome": "CAFE CABOCLO VACUO 250G - TRADICIONAL",
+        "qty": 1
+      },
+      {
+        "id": "1768011018049449",
+        "codigo": "P068",
+        "nome": "SAL REF CRISTAL OURO 1KG",
+        "qty": 1
+      }
+    ],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": "",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768169294366535",
+    "codigo": "P075",
+    "nome": "FARINHA DE MANDIOCA DONA DÊ DE 1KG",
+    "ean": "",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 5,
+    "valor": 6.9,
+    "estoque": 30,
+    "estoqueFiscal": 0,
+    "peso": 1,
+    "limit": 6,
+    "imagem": "../site/img/produtos/farinha-de-mandioca-dona-de-de-1kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": "",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768237040781926",
+    "codigo": "P076",
+    "nome": "SABONETE PALMOLIVE 85G - NUTRIÇÃO INTENSIVA (Karité)",
+    "ean": "7891024034781",
+    "categoria": "HIGIENE",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 1.75,
+    "valor": 2.5,
+    "estoque": 458,
+    "estoqueFiscal": 0,
+    "peso": 0.085,
+    "limit": 12,
+    "imagem": "../site/img/produtos/sabonete-palmolive-85g-nutricao-intensiva-karite-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "89019",
+    "refId": "NFe51250709477652002806551000000890191120926400-1",
+    "fator": "8",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768237475942162",
+    "codigo": "P077",
+    "nome": "PAPEL HIGIÊNICO SOBERANO - 4 ROLOS",
+    "ean": "7898901374107",
+    "categoria": "HIGIENE",
+    "fornecedor": "TREVO PAPEIS",
+    "caracteristicas": "",
+    "custo": 3.3,
+    "valor": 4.59,
+    "batches": [
+      {
+        "date": "",
+        "qty": 60
+      }
+    ],
+    "estoque": 60,
+    "estoqueFiscal": 0,
+    "peso": 0.2,
+    "limit": 6,
+    "imagem": "../site/img/produtos/papel-higienico-soberano-4-rolos-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "89019",
+    "refId": "NFe51250709477652002806551000000890191120926400-1",
+    "fator": "8",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768439341523776",
+    "codigo": "P078",
+    "nome": "FERMENTO APTI BIOLÓGICO 10GR",
+    "ean": "17896327512230",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "O Fermento Biológico Seco Instantâneo Apti (10g) é indicado para pães e massas diversas. Seus ingredientes são *Saccharomyces cerevisiae* e emulsificante monoestearato de sorbitana. \n\nDeve ser misturado diretamente à farinha. NÃO CONTÉM GLÚTEN.\n\nConserve o produto em local seco, fresco e longe do calor. ALÉRGICOS: Recomendamos verificar sempre o rótulo para possíveis alterações. \n\nA eficácia da fermentação depende da validade e do armazenamento correto do sachê.",
+    "custo": 0.9083,
+    "valor": 1.69,
+    "batches": [
+      {
+        "date": "2027-05-12",
+        "qty": 48
+      }
+    ],
+    "estoque": 48,
+    "estoqueFiscal": 48,
+    "peso": 0.01,
+    "limit": 6,
+    "imagem": "../site/img/produtos/fermento-apti-biologico-10gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FERMENTO APTI INST.GR 48EV X 10GR (UN)"
+    ],
+    "variacoesEan": [
+      "17896327512230"
+    ],
+    "ncm": "21021090",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-12",
+    "fator": "48",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2027-05-12"
+  },
+  {
+    "id": "1768439939365616",
+    "codigo": "P079",
+    "nome": "FERMENTO APTI QUÍMICO PÓ 100G",
+    "ean": "7896327512967",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "O Fermento Químico Apti (100g) é indicado para o preparo de bolos, tortas e biscoitos, garantindo massas leves e crescimento uniforme. \n\nSua fórmula balanceada oferece praticidade e resultados consistentes na cozinha.\n\nATENÇÃO: Este produto não contém glúten. O rótulo exibe o triângulo amarelo com \"T\", alertando para a presença de amido de milho transgênico. Conserve em local seco e fresco.",
+    "custo": 2.4917,
+    "valor": 3.89,
+    "batches": [
+      {
+        "date": "2026-11-30",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.1,
+    "limit": 3,
+    "imagem": "../site/img/produtos/fermento-apti-quimico-po-100g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FERMENTO APTI QUIMICO PO GR 06PT X 100G (UN)"
+    ],
+    "variacoesEan": [
+      "7896327512967"
+    ],
+    "ncm": "21023000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-13",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-30"
+  },
+  {
+    "id": "1768440505068518",
+    "codigo": "P080",
+    "nome": "BALAO IDEATEX LISO N7 SORTIDO PCT 50UN",
+    "ean": "7896491404457",
+    "categoria": "FESTA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 5.5,
+    "valor": 9.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/balao-ideatex-liso-n7-sortido-pct-50un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "BALAO IDEATEX LISO N.7 SORTIDO UN 10PC X 50UN (UN)"
+    ],
+    "variacoesEan": [
+      "7896491404457"
+    ],
+    "ncm": "95030099",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-45",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768441434026241",
+    "codigo": "P081",
+    "nome": "CALDO APTI GALINHA 19GR",
+    "ean": "7896327511410",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.45,
+    "valor": 1.2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.019,
+    "limit": 0,
+    "imagem": "../site/img/produtos/caldo-apti-galinha-19gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CALDO APTI GALINHA GR 24CT X 19GR (UN)"
+    ],
+    "variacoesEan": [
+      "SEM GTIN"
+    ],
+    "ncm": "21041011",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-4",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768442360076744",
+    "codigo": "P082",
+    "nome": "ACHOCOLATADO APTI 200GR",
+    "ean": "17896327501050",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "⚠️ AVISOS: ALTO EM AÇÚCAR ADICIONADO. Contém ingrediente transgênico (símbolo T). Contém Glúten. Alérgicos: contém derivados de soja; pode conter leite, trigo, cevada e aveia.\n\n📋 COMPOSIÇÃO: Açúcar, cacau em pó, maltodextrina, sal, complexo vitamínico, emulsificante lecitina de soja e aromatizante idêntico ao natural. Ideal para misturar no leite quente ou frio.",
+    "custo": 2.4745,
+    "valor": 3.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/achocolatado-apti-200gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ACHOCOLATADO APTI SC. GR 20UN X 200GR (UN)"
+    ],
+    "variacoesEan": [
+      "17896327501050"
+    ],
+    "ncm": "22029900",
+    "cest": "1711200",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-1",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768443491106689",
+    "codigo": "P083",
+    "nome": "AMIDO DE MILHO SINHA 200GR",
+    "ean": "7892300000100",
+    "categoria": "",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.9917,
+    "valor": 4.69,
+    "batches": [
+      {
+        "date": "2027-10-23",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/amido-de-milho-sinha-200gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "AMIDO MIL.SINHA GR 12UN X 200GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300000100"
+    ],
+    "ncm": "11081200",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-2",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2027-10-23"
+  },
+  {
+    "id": "1768444247092296",
+    "codigo": "P084",
+    "nome": "CHA MATE RICO 250GR",
+    "ean": "7896476901605",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 4.135,
+    "valor": 5.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.25,
+    "limit": 3,
+    "imagem": "../site/img/produtos/cha-mate-rico-250gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CHA MATE RICO GR 10PC X 250GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896476901605"
+    ],
+    "ncm": "09030090",
+    "cest": "1709800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-17",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768444950308514",
+    "codigo": "P085",
+    "nome": "COADOR PANO 11CM COM MADEIRA",
+    "ean": "7898026440176",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.7,
+    "valor": 6.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.25,
+    "limit": 3,
+    "imagem": "../site/img/produtos/coador-pano-11cm-com-madeira-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "COADOR PANO CAIP.FAZENDA.C/MAD.11CM  12UN X 01AR (UN)"
+    ],
+    "variacoesEan": [
+      "7898026440176"
+    ],
+    "ncm": "63079090",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-29",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768444950308995",
+    "codigo": "P085",
+    "nome": "COADOR PANO 9CM COM MADEIRA",
+    "ean": "7898026440510",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.4,
+    "valor": 5.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.3,
+    "limit": 3,
+    "imagem": "../site/img/produtos/coador-pano-9cm-com-madeira-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "COADOR PANO CAIPIRA TRAD.C/MAD.9CM  12UN X 01AR (UN)"
+    ],
+    "variacoesEan": [
+      "7898026440510"
+    ],
+    "ncm": "63079090",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-28",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768479148130004",
+    "codigo": "P086",
+    "nome": "COCO RALADO ADELCOCO ADOCADO 100GR",
+    "ean": "7896552905282",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.775,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.1,
+    "limit": 3,
+    "imagem": "../site/img/produtos/coco-ralado-adelcoco-adocado-100gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "COCO RAL.ADELCOCO ADOCADO GR 24PC X 100GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896552905282"
+    ],
+    "ncm": "08011100",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-15",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768479320465671",
+    "codigo": "P087",
+    "nome": "EXTRATO TOMATE FUGINI 300GR",
+    "ean": "7897517206284",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.0031,
+    "valor": 2.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 36
+      }
+    ],
+    "estoque": 36,
+    "estoqueFiscal": 36,
+    "peso": 0.3,
+    "limit": 3,
+    "imagem": "../site/img/produtos/extrato-tomate-fugini-300gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "EXTRATO T.FUGINI SC.G 36SC X 300GR (UN)"
+    ],
+    "variacoesEan": [
+      "7897517206284"
+    ],
+    "ncm": "20029000",
+    "cest": "1704000",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-7",
+    "fator": "36",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768479572785493",
+    "codigo": "P088",
+    "nome": "FARINHA MILHO SINHA BIJU 500GR",
+    "ean": "7892300006690",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.79,
+    "valor": 4.39,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0,
+    "limit": 3,
+    "imagem": "../site/img/produtos/farinha-milho-sinha-biju-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FARINHA MILHO SINHA BIJU GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300006690"
+    ],
+    "ncm": "11022000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-8",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480378600279",
+    "codigo": "P089",
+    "nome": "FARINHA MILHO SINHA CUSCUZ 500GR",
+    "ean": "07892300000698",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.9637,
+    "valor": 3.19,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
+    "estoque": 30,
+    "estoqueFiscal": 30,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/farinha-milho-sinha-cuscuz-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FARINHA MILHO SINHA CUSCUZ GR 30PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "07892300000698"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-43",
+    "fator": "30",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480680184176",
+    "codigo": "P090",
+    "nome": "FILTRO CAFE 102 BRIGITTA 30 FILTROS",
+    "ean": "7891021002110",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.545,
+    "valor": 4.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 2,
+    "imagem": "../site/img/produtos/filtro-cafe-102-brigitta-30-filtros-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FILTRO CAFE 102 BRIGITTA FL 06CT X 30FL (UN)"
+    ],
+    "variacoesEan": [
+      "7891021002110"
+    ],
+    "ncm": "48232099",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-26",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480680184580",
+    "codigo": "P090",
+    "nome": "FILTRO CAFE 103 BRIGITTA 30 FILTROS",
+    "ean": "7891021002134",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.8,
+    "valor": 5.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 2,
+    "imagem": "../site/img/produtos/filtro-cafe-103-brigitta-30-filtros-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FILTRO CAFE 103 BRIGITTA FL 06CT X 30FL (UN)"
+    ],
+    "variacoesEan": [
+      "7891021002134"
+    ],
+    "ncm": "48232099",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-27",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768480940583291",
+    "codigo": "P091",
+    "nome": "FLOCOS MILHO SINHA FLOCÃO 500GR",
+    "ean": "7892300000933",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.97,
+    "valor": 2.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 2,
+    "imagem": "../site/img/produtos/flocos-milho-sinha-flocao-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FLOCOS MILHO SINHA FLOCAO GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300000933"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-11",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768481606882714",
+    "codigo": "P092",
+    "nome": "FOSFORO PARANA 10UN",
+    "ean": "7896080902043",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.88,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.8,
+    "limit": 2,
+    "imagem": "../site/img/produtos/fosforo-parana-10un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FOSFORO PARANA  20PC X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7896080902043"
+    ],
+    "ncm": "36050000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-30",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768481776769378",
+    "codigo": "P093",
+    "nome": "FUBA MIMOSO SINHA 500GR",
+    "ean": "7892300026629",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.49,
+    "valor": 2.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
+    "estoque": 30,
+    "estoqueFiscal": 30,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/fuba-mimoso-sinha-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "FUBA MILHO SINHA GR 30PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7892300026629"
+    ],
+    "ncm": "11022000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-10",
+    "fator": "30",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768487229787530",
+    "codigo": "P094",
+    "nome": "GELATINA APTI UVA 20GR",
+    "ean": "7896327516125",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.1,
+    "valor": 1.75,
+    "batches": [
+      {
+        "date": "2026-10-17",
+        "qty": 18
+      }
+    ],
+    "estoque": 18,
+    "estoqueFiscal": 18,
+    "peso": 0.02,
+    "limit": 3,
+    "imagem": "../site/img/produtos/gelatina-apti-uva-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "GELATINA APTI UVA GR 18UN X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896327516125"
+    ],
+    "ncm": "21069029",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-16",
+    "fator": "18",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-10-17"
+  },
+  {
+    "id": "1768487547404420",
+    "codigo": "P095",
+    "nome": "LAMPADA LED FOXLUX 12W BIVOLT",
+    "ean": "7898586132139",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.9,
+    "valor": 4.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 1,
+    "peso": 0.02,
+    "limit": 5,
+    "imagem": "../site/img/produtos/lampada-led-foxlux-12w-bivolt-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LAMPADA LED FOXLUX 12W BIVOLT UN 1X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7898586132139"
+    ],
+    "ncm": "85395200",
+    "cest": "0900100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-39",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768487547405666",
+    "codigo": "P095",
+    "nome": "LAMPADA LED FOXLUX 9W BIVOLT",
+    "ean": "7898586133563",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.74,
+    "valor": 4.2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 1,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/lampada-led-foxlux-9w-bivolt-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LAMPADA LED FOXLUX 9W BIVOLT UN 1X 10UN (UN)"
+    ],
+    "variacoesEan": [
+      "7898586133563"
+    ],
+    "ncm": "85395200",
+    "cest": "0900100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-40",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768488297293275",
+    "codigo": "P096",
+    "nome": "LEITE COCO ADELCOCO 200ML",
+    "ean": "7898648027304",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.1671,
+    "valor": 4.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/leite-coco-adelcoco-200ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LEITE COCO ADELCOCO ML 24UN X 200ML (UN)"
+    ],
+    "variacoesEan": [
+      "7898648027304"
+    ],
+    "ncm": "20098990",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-14",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768488413084052",
+    "codigo": "P097",
+    "nome": "LENÇO UMEDECIDO PIQUITUCHO 60UN",
+    "ean": "7898936110558",
+    "categoria": "HIGIENE",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 6.0283,
+    "valor": 9.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 3,
+    "imagem": "../site/img/produtos/lenco-umedecido-piquitucho-60un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LENCO UMED.PIQUITUCHO HIDRAT. UN 06PC X 60UN (UN)"
+    ],
+    "variacoesEan": [
+      "7898936110558"
+    ],
+    "ncm": "34011190",
+    "cest": "2003400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-18",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768491226902595",
+    "codigo": "P098",
+    "nome": "LIMPA ALUMINIO POLYLAR MAÇA 500ML",
+    "ean": "7897534810990",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.6292,
+    "valor": 3.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.5,
+    "limit": 2,
+    "imagem": "../site/img/produtos/limpa-aluminio-polylar-maca-500ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LIMP.ALUMINIO POLYLAR MACA ML 24FS X 500ML (UN)"
+    ],
+    "variacoesEan": [
+      "7897534810990"
+    ],
+    "ncm": "34029039",
+    "cest": "1100700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-19",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768491384894222",
+    "codigo": "P099",
+    "nome": "VEJA MULTIUSO 500ML",
+    "ean": "7891035800214",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.6075,
+    "valor": 4.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.5,
+    "limit": 2,
+    "imagem": "../site/img/produtos/veja-multiuso-500ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LIMP.VEJA M.USO LV500PG450 ML 12FS X 500ML (UN)"
+    ],
+    "variacoesEan": [
+      "7891035800214"
+    ],
+    "ncm": "34025000",
+    "cest": "1100700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-20",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526197648153",
+    "codigo": "P100",
+    "nome": "MILHARINA QUAKER 500GR",
+    "ean": "7894321632032",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.9833,
+    "valor": 5.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 15
+      }
+    ],
+    "estoque": 15,
+    "estoqueFiscal": 15,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/milharina-quaker-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHARINA QUAKER GR 15PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7894321632032"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-9",
+    "fator": "15",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526310168656",
+    "codigo": "P101",
+    "nome": "MILHO PIPOCA AMAFIL PREMIUM 500g",
+    "ean": "7896035950013",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.825,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/milho-pipoca-amafil-premium-500g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MILHO PIPOCA AMAFIL PREMIUM GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896035950013"
+    ],
+    "ncm": "10059010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-3",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768526538800754",
+    "codigo": "P102",
+    "nome": "MOLHO PIMENTA GOTA 150ML",
+    "ean": "7898286190316",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.2021,
+    "valor": 3.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/molho-pimenta-gota-150ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MOLHO PIMENTA GOTA ML 24UN X 150ML (UN)"
+    ],
+    "variacoesEan": [
+      "7898286190316"
+    ],
+    "ncm": "21039091",
+    "cest": "1703500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-5",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768527172742038",
+    "codigo": "P103",
+    "nome": "PALITO DENTAL PARANA 100UN",
+    "ean": "17896080900008",
+    "categoria": "COZINHA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.48,
+    "valor": 1.2,
+    "batches": [
+      {
+        "date": "",
+        "qty": 25
+      }
+    ],
+    "estoque": 25,
+    "estoqueFiscal": 25,
+    "peso": 0.1,
+    "limit": 3,
+    "imagem": "../site/img/produtos/palito-dental-parana-100un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PALITO DENTAL PARANA UN 25CT X 100UN (UN)"
+    ],
+    "variacoesEan": [
+      "17896080900008"
+    ],
+    "ncm": "44219900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-44",
+    "fator": "25",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768527537505948",
+    "codigo": "P104",
+    "nome": "PEDRA SANITÁRIA SUAVELAR 25GR",
+    "ean": "7896366206223",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "⚠️ Avisos: CUIDADO! Irritante para pele, olhos e mucosas. CONSERVE FORA DO ALCANCE DAS CRIANÇAS E ANIMAIS DOMÉSTICOS. Leia as instruções do rótulo antes de usar.\n\n📋 **Composição:** Paradiclorobenzeno, ativo bacteriostático (0,4% de Cloreto de Benzalcônio), corante e essência.\n\nUso: Fixe o gancho na borda do vaso sanitário onde o fluxo de água atinja a pedra.",
+    "custo": 1.0833,
+    "valor": 1.75,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.1,
+    "limit": 12,
+    "imagem": "../site/img/produtos/pedra-sanitaria-suavelar-25gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PEDRA SAN.SV.LAR SORTIDO GR 12UN X 25GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896366206223"
+    ],
+    "ncm": "38089999",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-23",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 12,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768528515555044",
+    "codigo": "P105",
+    "nome": "PILHA ELGIN ALCALINA AA 02UN ",
+    "ean": "7897013534188",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.99,
+    "valor": 4.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/pilha-elgin-alcalina-aa-02un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PILHA ELGIN ALCALINA AA 02UN 01CT X 02UN (UN)"
+    ],
+    "variacoesEan": [
+      "7897013534188"
+    ],
+    "ncm": "85061019",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-42",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768529784721994",
+    "codigo": "P106",
+    "nome": "PILHA ELGIN ALCALINA AAA 02UN",
+    "ean": "7897013534201",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.99,
+    "valor": 4.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/pilha-elgin-alcalina-aaa-02un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PILHA ELGIN ALCALINA AAA 02UN 01CT X 02UN (UN)"
+    ],
+    "variacoesEan": [
+      "7897013534201"
+    ],
+    "ncm": "85061019",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-41",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768529905403608",
+    "codigo": "P107",
+    "nome": "PRENDEDOR DE ROUPA AGUIA BRANCA MADEIRA 12UN",
+    "ean": "17898198252529",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.287,
+    "valor": 1.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 50
+      }
+    ],
+    "estoque": 50,
+    "estoqueFiscal": 50,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/prendedor-de-roupa-aguia-branca-madeira-12un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PREND.ROUPA AGUIA BRANCA MAD. 50PC X 12UN (UN)"
+    ],
+    "variacoesEan": [
+      "17898198252529"
+    ],
+    "ncm": "44219900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-31",
+    "fator": "50",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768530313828871",
+    "codigo": "P108",
+    "nome": "RODO GUIRADO PLASTICO 40CM COM CABO EVA",
+    "ean": "7897388600051",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 7.0833,
+    "valor": 10.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/rodo-guirado-plastico-40cm-com-cabo-eva-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "RODO GUIRADO PLASTICO 40CM C/CABO EVA 12UN X 1 (UN)"
+    ],
+    "variacoesEan": [
+      "7897388600051"
+    ],
+    "ncm": "96039000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-24",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768530313829061",
+    "codigo": "P108",
+    "nome": "SACO PANO BRANCO 40X70",
+    "ean": "7898923102108",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 4.3,
+    "valor": 4.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.2,
+    "limit": 2,
+    "imagem": "../site/img/produtos/saco-pano-branco-40x70-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SACO PANO PRATIC BCO ALVEJADO  UND 01 UND (UN)"
+    ],
+    "variacoesEan": [
+      "7898923102108"
+    ],
+    "ncm": "63071000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-21",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768530313831002",
+    "codigo": "P108",
+    "nome": "SACO PANO CRU 40X70",
+    "ean": "7898923102016",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 3.15,
+    "valor": 3.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.2,
+    "limit": 2,
+    "imagem": "../site/img/produtos/saco-pano-cru-40x70-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SACO PANO PRATIC CRU  01UND 01 UND (UN)"
+    ],
+    "variacoesEan": [
+      "7898923102016"
+    ],
+    "ncm": "63071000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-22",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768530313832076",
+    "codigo": "P108",
+    "nome": "VASSOURA GUIRADO GENIAL COM CABO",
+    "ean": "7897388602079",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 6.3583,
+    "valor": 9.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/vassoura-guirado-genial-com-cabo-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "VASSOURA GUIRADO GENIAL C/CABO 12UN X 1 (UN)"
+    ],
+    "variacoesEan": [
+      "7897388602079"
+    ],
+    "ncm": "96039000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-25",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768616543436221",
+    "codigo": "P109",
+    "nome": "LINHA MAGNA COSTURA AMARELA",
+    "ean": "7891020271203",
+    "categoria": "COSTURA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.99,
+    "valor": 1.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.01,
+    "limit": 2,
+    "imagem": "../site/img/produtos/linha-magna-costura-amarela-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LINHA MAGNA P.COST.AMARELO  10UN X 01 (UN)"
+    ],
+    "variacoesEan": [
+      "7891020271203"
+    ],
+    "ncm": "55081000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-33",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768616543439838",
+    "codigo": "P109",
+    "nome": "LINHA MAGNA COSTURA AZUL MARINHO",
+    "ean": "7891020271845",
+    "categoria": "COSTURA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.99,
+    "valor": 1.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.01,
+    "limit": 2,
+    "imagem": "../site/img/produtos/linha-magna-costura-azul-marinho-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LINHA MAGNA P.COST.AZ.MAR. 10UN X 01 (UN)"
+    ],
+    "variacoesEan": [
+      "7891020271845"
+    ],
+    "ncm": "55081000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-35",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768616543439814",
+    "codigo": "P109",
+    "nome": "LINHA MAGNA COSTURA CINZA",
+    "ean": "07891020272316",
+    "categoria": "COSTURA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.99,
+    "valor": 1.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
+    "estoque": 30,
+    "estoqueFiscal": 30,
+    "peso": 0.01,
+    "limit": 2,
+    "imagem": "../site/img/produtos/linha-magna-costura-cinza-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LINHA MAGNA COSTURA CINZA",
+      "LINHA MAGNA P.COST.CINZA  10UN X 01 (UN)",
+      "LINHA MAGNA P.COST.BCA  10UN X 01 (UN)",
+      "LINHA MAGNA P.COST.PTA  10UN X 01 (UN)"
+    ],
+    "variacoesEan": [
+      "07891020272316",
+      "SEM GTIN"
+    ],
+    "ncm": "55081000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-34",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768616543440357",
+    "codigo": "P109",
+    "nome": "LINHA MAGNA COSTURA VERDE",
+    "ean": "7891020271937",
+    "categoria": "COSTURA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.99,
+    "valor": 1.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.1,
+    "limit": 2,
+    "imagem": "../site/img/produtos/linha-magna-costura-verde-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LINHA MAGNA P.COST.VERDE  10UN X 01 (UN)"
+    ],
+    "variacoesEan": [
+      "7891020271937"
+    ],
+    "ncm": "55081000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-37",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768616543441469",
+    "codigo": "P109",
+    "nome": "LIXA ENOX UNHA 6UN ",
+    "ean": "7897517903626",
+    "categoria": "HIGIENE",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.9833,
+    "valor": 3.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.05,
+    "limit": 1,
+    "imagem": "../site/img/produtos/lixa-enox-unha-6un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LIXA ENOX P.UNHA POP  06PC X 01UN (UN)"
+    ],
+    "variacoesEan": [
+      "7897517903626"
+    ],
+    "ncm": "68052000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1212664",
+    "refId": "NFe51260103483492000101550020012126641214162198-38",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 1,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090011576",
+    "codigo": "P110",
+    "nome": "ABS. INTIMUS COM ABAS COM 8UN",
+    "ean": "7896007540631",
+    "categoria": "HIGIENE",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 4.7508,
+    "valor": 7.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/abs-intimus-com-abas-com-8un-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ABS.INTIMUS NOR.GEL.SC C/ABAS UN 12PC X 08UN (UN)"
+    ],
+    "variacoesEan": [
+      "7896007540631"
+    ],
+    "ncm": "96190000",
+    "cest": "2004800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-24",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090012275",
+    "codigo": "P110",
+    "nome": "ALGODAO TOPZ ROLO GR 10PC X 25GR (UN)",
+    "variacoesNome": [
+      "ALGODAO TOPZ ROLO GR 10PC X 25GR (UN)"
+    ],
+    "ean": "27891800668210",
+    "variacoesEan": [
+      "27891800668210"
+    ],
+    "custo": 2.276,
+    "valor": 0,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "tipo": "normal",
+    "nota": "1213070",
+    "ncm": "56012110",
+    "cest": "2006500",
+    "cfop": "5405",
+    "csosn": "500",
+    "unidade": "UN",
+    "fator": 10,
+    "refId": "NFe51260103483492000101550020012130701203106223-35",
+    "jsonData": {
+      "id_referencia": "NFe51260103483492000101550020012130701203106223-35",
+      "Numero_Nota": "1213070",
+      "Quantidade_Nota": 1,
+      "cProd_Sugestao": "4222-UN",
+      "cEAN": "27891800668210",
+      "xProd": "ALGODAO TOPZ ROLO GR 10PC X 25GR (UN)",
+      "NCM": "56012110",
+      "CEST": "2006500",
+      "CFOP_SAIDA": "5405",
+      "CSOSN_SAIDA": "500",
+      "Unidade_Venda": "UN",
+      "Fator_Conversao_Entrada": 10,
+      "Quantidade_Total_Unidades": 10,
+      "Custo_Unitario": 2.276,
+      "Custo_Real_Caixa": 22.76,
+      "Valor_Desconto_Total": 0,
+      "_TIPO": "VAREJO (SAIDA)",
+      "_OBS": "Desconto de R$ 0 abatido do custo"
+    },
+    "caracteristicas": "",
+    "imagem": "../site/img/produtos/algodao-topz-rolo-gr-10pc-x-25gr-un-cesta-basica-cuiaba-varzea-grande.webp",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090013026",
+    "codigo": "P110",
+    "nome": "AZEITE ANDORINHA EXTRA VIRGEM 250ML",
+    "ean": "5601216120053",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 14.6533,
+    "valor": 18.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.25,
+    "limit": 3,
+    "imagem": "../site/img/produtos/azeite-andorinha-extra-virgem-250ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "AZEITE ANDORINHA E.VIRGEM ML 12GF X 250ML (UN)"
+    ],
+    "variacoesEan": [
+      "5601216120053"
+    ],
+    "ncm": "15092000",
+    "cest": "1706700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-13",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090014315",
+    "codigo": "P110",
+    "nome": "BISCOITO RANCHEIRO ROSQ. COCO 500G",
+    "ean": "7896253402141",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 4.882,
+    "valor": 6.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 0,
+    "imagem": "../site/img/produtos/biscoito-rancheiro-rosq-coco-500g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "BISC.RANCHEIRO ROSQ.COCO ZL GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896253402141"
+    ],
+    "ncm": "19053100",
+    "cest": "",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-21",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090014191",
+    "codigo": "P110",
+    "nome": "CANETA BIC AZUL",
+    "ean": "070330129627",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 0.6766,
+    "valor": 1.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 50
+      }
+    ],
+    "estoque": 50,
+    "estoqueFiscal": 50,
+    "peso": 0.005,
+    "limit": 10,
+    "imagem": "../site/img/produtos/caneta-bic-azul-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CANETA BIC ESF.CRISTAL 1.0 AZ  50UN X 01CT (UN)"
+    ],
+    "variacoesEan": [
+      "070330129627"
+    ],
+    "ncm": "96081000",
+    "cest": "1902700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-32",
+    "fator": "50",
+    "unidade": "UN",
+    "Limit": 10,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090015320",
+    "codigo": "P110",
+    "nome": "CANJICA BRANCA AMAFIL 500GR",
+    "ean": "7896035980089",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.9,
+    "valor": 4.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.5,
+    "limit": 6,
+    "imagem": "../site/img/produtos/canjica-branca-amafil-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CANJICA BRANCA AMAFIL GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896035980089"
+    ],
+    "ncm": "11041900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-4",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090016871",
+    "codigo": "P110",
+    "nome": "COLA THREE BOND INSTANTÂNEA 2GR",
+    "ean": "17896020470424",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.39,
+    "valor": 2.29,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/cola-three-bond-instantanea-2gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "COLA S.THREE BOND ADESIVO INST. GR 24UN X 2GR (UN)"
+    ],
+    "variacoesEan": [
+      "17896020470424"
+    ],
+    "ncm": "35061010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-31",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090016230",
+    "codigo": "P110",
+    "nome": "AÇAFRÃO DIODORO 20GR",
+    "ean": "7898568540341",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.46,
+    "valor": 2.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/acafrao-diodoro-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.ACAFRAO DIODORO GR 10PC X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540341"
+    ],
+    "ncm": "09102000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-9",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090017521",
+    "codigo": "P110",
+    "nome": "BICARBONATO DIODORO 20GR",
+    "ean": "7898568540198",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.46,
+    "valor": 2.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/bicarbonato-diodoro-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.BICARBONATO DIODORO GR 10PC X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540198"
+    ],
+    "ncm": "28363000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-6",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090018629",
+    "codigo": "P110",
+    "nome": "COLORAU DIODORO 20GR",
+    "ean": "7898568540204",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.56,
+    "valor": 2.89,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.02,
+    "limit": 2,
+    "imagem": "../site/img/produtos/colorau-diodoro-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.COLORAU DIODORO GR 10PC X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540204"
+    ],
+    "ncm": "21039021",
+    "cest": "1703500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-5",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090018145",
+    "codigo": "P110",
+    "nome": "LOURO FOLHA DIODORO 5GR",
+    "ean": "7898568540259",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.46,
+    "valor": 2.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.005,
+    "limit": 2,
+    "imagem": "../site/img/produtos/louro-folha-diodoro-5gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.LOURO FOLHA DIODORO GR 10PC X 5GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540259"
+    ],
+    "ncm": "09109900",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-7",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090019250",
+    "codigo": "P110",
+    "nome": "OREGANO DIODORO 5GR",
+    "ean": "7898568540273",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.46,
+    "valor": 2.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.005,
+    "limit": 2,
+    "imagem": "../site/img/produtos/oregano-diodoro-5gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.OREGANO DIODORO GR 10PC X 5GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540273"
+    ],
+    "ncm": "12119010",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-10",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090019245",
+    "codigo": "P110",
+    "nome": "PIMENTA CALABRESA DIODORO 10GR",
+    "ean": "7898568540358",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.46,
+    "valor": 2.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.01,
+    "limit": 2,
+    "imagem": "../site/img/produtos/pimenta-calabresa-diodoro-10gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.PIMENTA CALABRESA DIODORO GR 10PC X 10GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540358"
+    ],
+    "ncm": "09041200",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-8",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090020498",
+    "codigo": "P110",
+    "nome": "PIMENTA REINO PÓ DIODORO 20GR",
+    "ean": "7898568540228",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.955,
+    "valor": 3.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.01,
+    "limit": 2,
+    "imagem": "../site/img/produtos/pimenta-reino-po-diodoro-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.PIMENTA R.PO DIODORO GR 10PC X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540228"
+    ],
+    "ncm": "09041200",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-12",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090020883",
+    "codigo": "P110",
+    "nome": "TEMPERO BAIANO DIODORO 20GR",
+    "ean": "7898568540334",
+    "categoria": "TEMPEROS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 1.935,
+    "valor": 3.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 10,
+    "peso": 0.02,
+    "limit": 2,
+    "imagem": "../site/img/produtos/tempero-baiano-diodoro-20gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CONDIM.TEMPERO BAIANO DIODORO GR 10PC X 20GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898568540334"
+    ],
+    "ncm": "21039021",
+    "cest": "1703500",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-11",
+    "fator": "10",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090021836",
+    "codigo": "P110",
+    "nome": "CREME LEITE LEITBOM 200GR",
+    "ean": "7898215155041",
+    "categoria": "",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 2.1281,
+    "valor": 2.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 27
+      }
+    ],
+    "estoque": 27,
+    "estoqueFiscal": 27,
+    "peso": 0.2,
+    "limit": 3,
+    "imagem": "../site/img/produtos/creme-leite-leitbom-200gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CREME LEITE LEITBOM GR 27UN X 200GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898215155041"
+    ],
+    "ncm": "04015021",
+    "cest": "1701902",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-19",
+    "fator": "27",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090022369",
+    "codigo": "P110",
+    "nome": "CREME LEITE PIRACANJUBA 200GR",
+    "ean": "7898215151784",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.4196,
+    "valor": 3.29,
+    "batches": [
+      {
+        "date": "2026-08-05",
+        "qty": 27
+      }
+    ],
+    "estoque": 27,
+    "estoqueFiscal": 27,
+    "peso": 0.2,
+    "limit": 5,
+    "imagem": "../site/img/produtos/creme-leite-piracanjuba-200gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CREME LEITE PIRACANJUBA GR 27UN X 200GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898215151784"
+    ],
+    "ncm": "04015021",
+    "cest": "1701902",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-18",
+    "fator": "27",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-08-05"
+  },
+  {
+    "id": "1768617090023505",
+    "codigo": "P110",
+    "nome": "CURATIVOS SALVELOX TRAD. UN 12PC X 10UN (UN)",
+    "variacoesNome": [
+      "CURATIVOS SALVELOX TRAD. UN 12PC X 10UN (UN)"
+    ],
+    "ean": "7896004816678",
+    "variacoesEan": [
+      "7896004816678"
+    ],
+    "custo": 2.3542,
+    "valor": 0,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "tipo": "normal",
+    "nota": "1213070",
+    "ncm": "30051020",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "unidade": "UN",
+    "fator": 12,
+    "refId": "NFe51260103483492000101550020012130701203106223-25",
+    "jsonData": {
+      "id_referencia": "NFe51260103483492000101550020012130701203106223-25",
+      "Numero_Nota": "1213070",
+      "Quantidade_Nota": 1,
+      "cProd_Sugestao": "123901-UN",
+      "cEAN": "7896004816678",
+      "xProd": "CURATIVOS SALVELOX TRAD. UN 12PC X 10UN (UN)",
+      "NCM": "30051020",
+      "CEST": "",
+      "CFOP_SAIDA": "5102",
+      "CSOSN_SAIDA": "102",
+      "Unidade_Venda": "UN",
+      "Fator_Conversao_Entrada": 12,
+      "Quantidade_Total_Unidades": 12,
+      "Custo_Unitario": 2.3542,
+      "Custo_Real_Caixa": 28.25,
+      "Valor_Desconto_Total": 0,
+      "_TIPO": "VAREJO (SAIDA)",
+      "_OBS": "Desconto de R$ 0 abatido do custo"
+    },
+    "caracteristicas": "",
+    "imagem": "../site/img/produtos/curativos-salvelox-trad-un-12pc-x-10un-un-cesta-basica-cuiaba-varzea-grande.webp",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090024082",
+    "codigo": "P110",
+    "nome": "SABÃO PO TIXAN PRIMAVERA 800G",
+    "ean": "7896098909805",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 8.5455,
+    "valor": 10.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 20
+      }
+    ],
+    "estoque": 20,
+    "estoqueFiscal": 20,
+    "peso": 0.8,
+    "limit": 3,
+    "imagem": "../site/img/produtos/sabao-po-tixan-primavera-800g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "DET.PO TIXAN PRIMAVERA E.PL G AZ 20PC X 800G (UN)"
+    ],
+    "variacoesEan": [
+      "7896098909805"
+    ],
+    "ncm": "34025000",
+    "cest": "1100400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-27",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090025399",
+    "codigo": "P110",
+    "nome": "SABÃO PO TIXAN PRIMAVERA 800G",
+    "ean": "7896098909744",
+    "categoria": "",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 9.1633,
+    "valor": 11.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.8,
+    "limit": 3,
+    "imagem": "../site/img/produtos/sabao-po-tixan-primavera-800g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "DET.PO TIXAN PRIMAVERA GR AZ 24X 800GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896098909744"
+    ],
+    "ncm": "34025000",
+    "cest": "1100400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-26",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090026658",
+    "codigo": "P110",
+    "nome": "ERVA TERERE DUMATO LIMAO ROSA 500GR",
+    "ean": "0040141566652",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 11.5,
+    "valor": 16.9,
+    "batches": [
+      {
+        "date": "2026-11-27",
+        "qty": 2
+      }
+    ],
+    "estoque": 2,
+    "estoqueFiscal": 2,
+    "peso": 0.3,
+    "limit": 1,
+    "imagem": "../site/img/produtos/erva-terere-dumato-limao-rosa-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ERVA TERERE DUMATO LIMAO ROSA 500GR 01UN X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "0040141566652"
+    ],
+    "ncm": "09030090",
+    "cest": "1709800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-22",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 1,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-27"
+  },
+  {
+    "id": "1768617090027804",
+    "codigo": "P110",
+    "nome": "ERVA TERERE DUMATO MENTA LIMAO 500GR",
+    "ean": "0630941119815",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 11.5,
+    "valor": 16.9,
+    "batches": [
+      {
+        "date": "2026-11-27",
+        "qty": 2
+      }
+    ],
+    "estoque": 2,
+    "estoqueFiscal": 2,
+    "peso": 0.4,
+    "limit": 1,
+    "imagem": "../site/img/produtos/erva-terere-dumato-menta-limao-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "ERVA TERERE DUMATO MENTA LIMAO 500GR 01UN X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "0630941119815"
+    ],
+    "ncm": "09030090",
+    "cest": "1709800",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-23",
+    "fator": "1",
+    "unidade": "UN",
+    "Limit": 1,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-27"
+  },
+  {
+    "id": "1768617090027141",
+    "codigo": "P110",
+    "nome": "EXTRATO TOMATE OLE COPO 190GR",
+    "ean": "7891032015505",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.455,
+    "valor": 3.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.3,
+    "limit": 2,
+    "imagem": "../site/img/produtos/extrato-tomate-ole-copo-190gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "EXTRATO T.OLE CP.GR 12CP X 190GR (UN)"
+    ],
+    "variacoesEan": [
+      "7891032015505"
+    ],
+    "ncm": "20029000",
+    "cest": "1704000",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-15",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090028606",
+    "codigo": "P110",
+    "nome": "GOIABADA VAL 300GR",
+    "ean": "7898045700336",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.6861,
+    "valor": 3.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 36
+      }
+    ],
+    "estoque": 36,
+    "estoqueFiscal": 36,
+    "peso": 0.3,
+    "limit": 0,
+    "imagem": "../site/img/produtos/goiabada-val-300gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "GOIABADA VAL TABLETE GR 36UN X 300GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898045700336"
+    ],
+    "ncm": "20079910",
+    "cest": "1709400",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-20",
+    "fator": "36",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090028875",
+    "codigo": "P110",
+    "nome": "INSETICIDA SBP MULTI AEROSOL 285ML",
+    "ean": "7891035002663",
+    "categoria": "CASA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 10.5,
+    "valor": 15.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 6
+      }
+    ],
+    "estoque": 6,
+    "estoqueFiscal": 6,
+    "peso": 0.3,
+    "limit": 1,
+    "imagem": "../site/img/produtos/inseticida-sbp-multi-aerosol-285ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "INSET.SBP MULT AER ML 06TB X 285ML (UN)"
+    ],
+    "variacoesEan": [
+      "7891035002663"
+    ],
+    "ncm": "38089119",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-28",
+    "fator": "6",
+    "unidade": "UN",
+    "Limit": 1,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090029223",
+    "codigo": "P110",
+    "nome": "LEITE CONDENSADO PIRACANJUBA 395GR",
+    "ean": "7898215152002",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 5.413,
+    "valor": 6.99,
+    "batches": [
+      {
+        "date": "2026-12-29",
+        "qty": 27
+      }
+    ],
+    "estoque": 27,
+    "estoqueFiscal": 27,
+    "peso": 0.4,
+    "limit": 5,
+    "imagem": "../site/img/produtos/leite-condensado-piracanjuba-395gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LEITE COND.PIRACANJUBA TP GR 27UN X 395GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898215152002"
+    ],
+    "ncm": "04029900",
+    "cest": "1702000",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-16",
+    "fator": "27",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-12-29"
+  },
+  {
+    "id": "1768617090030648",
+    "codigo": "P110",
+    "nome": "LEITE CONDENSADO TRIANGULO 395GR",
+    "ean": "7896434921133",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 4.6115,
+    "valor": 5.99,
+    "batches": [
+      {
+        "date": "2026-11-03",
+        "qty": 27
+      }
+    ],
+    "estoque": 27,
+    "estoqueFiscal": 27,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/leite-condensado-triangulo-395gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LEITE COND.TRIANGULO TP.GR 27TP X 395GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896434921133"
+    ],
+    "ncm": "04029900",
+    "cest": "1702000",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-17",
+    "fator": "27",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-03"
+  },
+  {
+    "id": "1768617090030190",
+    "codigo": "P110",
+    "nome": "LEITE PO MERILU 400GR",
+    "ean": "7898239260745",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 6.39,
+    "valor": 8.99,
+    "batches": [
+      {
+        "date": "2026-11-30",
+        "qty": 25
+      }
+    ],
+    "estoque": 25,
+    "estoqueFiscal": 25,
+    "peso": 0.4,
+    "limit": 3,
+    "imagem": "../site/img/produtos/leite-po-merilu-400gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "LEITE PO MERILU MODIF.GR 25PC X 400GR (UN)"
+    ],
+    "variacoesEan": [
+      "7898239260745"
+    ],
+    "ncm": "04049000",
+    "cest": "1706100",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-1",
+    "fator": "25",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-30"
+  },
+  {
+    "id": "1768617090031506",
+    "codigo": "P110",
+    "nome": "MACARRÃO PENNE OVOS PAULISTA 500GR",
+    "ean": "7896763621223",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "ALÉRGICOS: CONTÉM OVOS E DERIVADOS DE TRIGO. PODE CONTER SOJA, CENTEIO, CEVADA E AVEIA. CONTÉM GLÚTEN.\n\nO Macarrão Penne com Ovos Massas Paulista (500g) é produzido com farinha de trigo enriquecida com ferro e ácido fólico, ovos e corantes naturais (cúrcuma e urucum).\nMassa curta com formato de tubo, ideal para reter molhos mais encorpados. Porção de 80g fornece 272 kcal.",
+    "custo": 2.697,
+    "valor": 3.99,
+    "batches": [
+      {
+        "date": "2026-11-12",
+        "qty": 60
+      }
+    ],
+    "estoque": 60,
+    "estoqueFiscal": 60,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/macarrao-penne-ovos-paulista-500gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MACAR.PAULISTA PENNE OVOS GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896763621223"
+    ],
+    "ncm": "19021100",
+    "cest": "1704901",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-34",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-11-12"
+  },
+  {
+    "id": "1768617090031147",
+    "codigo": "P110",
+    "nome": "MACARRÃO QDELICIA PARAFUSO OVOS 500G",
+    "ean": "7896763621742",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "ALÉRGICOS: CONTÉM OVOS E DERIVADOS DE TRIGO. PODE CONTER SOJA, CENTEIO, CEVADA E AVEIA. CONTÉM GLÚTEN.\n\nO Macarrão Penne com Ovos Massas Paulista (500g) é produzido com farinha de trigo enriquecida com ferro e ácido fólico, ovos e corantes naturais (cúrcuma e urucum).\nMassa curta com formato de tubo, ideal para reter molhos mais encorpados. Porção de 80g fornece 272 kcal.",
+    "custo": 2.3807,
+    "valor": 3.79,
+    "batches": [
+      {
+        "date": "2026-12-09",
+        "qty": 60
+      }
+    ],
+    "estoque": 60,
+    "estoqueFiscal": 60,
+    "peso": 0.5,
+    "limit": 3,
+    "imagem": "../site/img/produtos/macarrao-qdelicia-parafuso-ovos-500g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MACAR.QDELICIA.PARAF.OVOS GR 20PC X 500GR (UN)"
+    ],
+    "variacoesEan": [
+      "7896763621742"
+    ],
+    "ncm": "19021100",
+    "cest": "1704906",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-33",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-12-09"
+  },
+  {
+    "id": "1768617090032476",
+    "codigo": "P110",
+    "nome": "MOLHO SHOYU CASTELO 150ML",
+    "ean": "7896048280039",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.6542,
+    "valor": 0,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.1,
+    "limit": 3,
+    "imagem": "../site/img/produtos/molho-shoyu-castelo-150ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MOLHO SHOYU CASTELO ML 24VD X 150ML (UN)"
+    ],
+    "variacoesEan": [
+      "7896048280039"
+    ],
+    "ncm": "21031090",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-14",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090032953",
+    "codigo": "P110",
+    "nome": "PA LIXO COM CABO CURTO ",
+    "ean": "7897388600266",
+    "categoria": "LIMPEZA",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 2.45,
+    "valor": 4.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 12,
+    "peso": 0.2,
+    "limit": 2,
+    "imagem": "../site/img/produtos/pa-lixo-com-cabo-curto-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "PA LIXO GUIRADO C/CABO CURTO PLAST  12UN X 01 (UN)"
+    ],
+    "variacoesEan": [
+      "7897388600266"
+    ],
+    "ncm": "39249000",
+    "cest": "",
+    "cfop": "5102",
+    "csosn": "102",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-29",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090033953",
+    "codigo": "P110",
+    "nome": "SELETA LEGUMES OLE 170G",
+    "ean": "7891032012504",
+    "categoria": "",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 2.8321,
+    "valor": 3.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0.3,
+    "limit": 5,
+    "imagem": "../site/img/produtos/seleta-legumes-ole-170g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "SELETA LEGUMES OLE GR 24LT X 170G (UN)"
+    ],
+    "variacoesEan": [
+      "7891032012504"
+    ],
+    "ncm": "20059900",
+    "cest": "1709200",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-3",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 5,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768617090033128",
+    "codigo": "P110",
+    "nome": "TODDY EM PO TRADICIONAL 200GR ",
+    "ean": "7894321711171",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "CASA DOMINGOS",
+    "caracteristicas": "",
+    "custo": 6.4562,
+    "valor": 8.49,
+    "batches": [
+      {
+        "date": "2026-12-01",
+        "qty": 24
+      }
+    ],
+    "estoque": 24,
+    "estoqueFiscal": 24,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/toddy-em-po-tradicional-200gr-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "TODDY EM PO TRADICIONAL GR 24UN X 200GR (UN)"
+    ],
+    "variacoesEan": [
+      "7894321711171"
+    ],
+    "ncm": "18069000",
+    "cest": "1700600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "1213070",
+    "refId": "NFe51260103483492000101550020012130701203106223-2",
+    "fator": "24",
+    "unidade": "UN",
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-12-01"
+  }
+]
