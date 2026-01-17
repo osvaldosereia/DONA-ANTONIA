@@ -4,12 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.18 - Rich Text Features & Date Format
+        VERSION: 9.19 - Unified Info Button & Dynamic Media Loading
         CHANGELOG:
-        - FEAT: Suporte a Markdown (Negrito **texto** e Listas - item) no modal Info.
-        - FEAT: Formatação de data de validade para "DD | MM | AAAA".
-        - REFACTOR: App.openInfo agora busca dados pelo ID para processamento seguro de texto.
-        - UI: Estilos CSS para listas dentro do modal de informações.
+        - UI: Card de produto simplificado: Apenas 1 botão "Informações".
+        - FEAT: Modal de Informações agora carrega mídias (Fotos Extras/Vídeos) automaticamente após o texto.
+        - PERF: Removida lógica pesada de IntersectionObserver para detecção prévia de mídia.
+        - UI: Estilos adicionados para mídias dentro do Sheet.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -269,14 +269,12 @@
             margin-bottom: 8px; width: 100%; min-height: 20px;
         }
         .btn-feat { 
-            font-size: 0.65rem; padding: 2px 8px; border-radius: 50px; font-weight: 600;
-            border: 1px solid; cursor: pointer; display: none; transition: transform 0.2s;
+            font-size: 0.7rem; padding: 4px 12px; border-radius: 50px; font-weight: 600;
+            border: 1px solid; cursor: pointer; transition: transform 0.2s;
             white-space: nowrap; line-height: 1.2;
         }
         .btn-feat:hover { transform: scale(1.05); }
-        .btn-feat.info { background: #eff6ff; border-color: #bfdbfe; color: #1d4ed8; display: inline-block; }
-        .btn-feat.nutri { background: #f0fdf4; border-color: #bbf7d0; color: #15803d; }
-        .btn-feat.video { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+        .btn-feat.info { background: #f1f5f9; border-color: #cbd5e1; color: var(--secondary); }
         
         /* Validity Date Style */
         .pc-validity {
@@ -426,10 +424,14 @@
         .info-text-body { 
             font-size: 1rem; color: var(--text-main); line-height: 1.6; white-space: pre-wrap; 
         }
-        /* CSS for Lists in Info Modal */
         .info-text-body ul { list-style: disc; padding-left: 24px; margin-bottom: 10px; }
         .info-text-body li { margin-bottom: 6px; }
         .info-text-body strong, .info-text-body b { font-weight: 700; color: var(--secondary); }
+
+        /* Styles for Media in Info Sheet */
+        .info-media-grid { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .sheet-media-img { width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0; display: block; }
+        .sheet-media-vid { width: 100%; height: auto; border-radius: 8px; border: 1px solid #e2e8f0; display: block; }
 
         /* CHECKOUT MODAL */
         dialog.modal-checkout {
@@ -585,11 +587,15 @@
         <div class="co-footer"><button class="co-btn" onclick="App.sendWhatsApp()">Confirmar Pedido no WhatsApp</button></div>
     </dialog>
 
-    <!-- INFO SHEET (Features) -->
+    <!-- INFO SHEET (Features + Media) -->
     <div id="info-sheet" class="sheet-overlay" onclick="if(event.target===this) App.closeSheet('info-sheet')">
         <div class="sheet-content">
             <div class="sheet-header"><h3 class="sheet-title" id="info-sheet-title">Informações</h3><span class="sheet-close" onclick="App.closeSheet('info-sheet')" aria-label="Fechar">✕</span></div>
-            <div id="info-sheet-body" class="info-text-body"></div>
+            <div style="padding-bottom: 20px;">
+                <div id="info-sheet-body" class="info-text-body"></div>
+                <!-- Dynamic media container -->
+                <div id="info-media-container" class="info-media-grid"></div>
+            </div>
         </div>
     </div>
 
@@ -902,7 +908,6 @@
                 });
                 extContainer.innerHTML = html || '<p style="text-align:center; padding:40px;">Nenhum produto encontrado.</p>';
                 
-                setTimeout(() => this.setupMediaObservers(), 500); // Trigger Smart Gallery Checks
                 this.updateTotal();
             },
 
@@ -918,15 +923,8 @@
                     `<span class="mc-price-old">R$${p.valor.toFixed(2)}</span><span class="mc-price-new">R$${price.toFixed(2)}</span>` : 
                     `R$ ${price.toFixed(2).replace('.', ',')}`;
                 
-                // Smart Buttons
-                let featBtns = '';
-                // Info Button now opens sheet passing ID
-                if(p.caracteristicas) {
-                    featBtns += `<div class="btn-feat info" onclick="App.openInfo('${p.id}')">Info</div>`;
-                }
-                
-                featBtns += `<div class="btn-feat nutri" id="nutri-${p.id}" onclick="Gallery.open('${p.imagem}','${p.nome}','${p.imagem.replace('.','A.')}')">Nutri</div>`;
-                featBtns += `<div class="btn-feat video" id="vid-btn-${p.id}">Vídeo</div>`;
+                // SINGLE INFO BUTTON
+                let infoBtn = `<div class="btn-feat info" onclick="App.openInfo('${p.id}')">Informações</div>`;
 
                 // Validity Date (BR Format)
                 let valHtml = '';
@@ -943,7 +941,7 @@
                     </div>
                     <div class="mc-title">${p.nome}</div>
                     ${valHtml}
-                    <div class="btn-feat-row">${featBtns}</div>
+                    <div class="btn-feat-row">${infoBtn}</div>
                     <div class="mc-price">${priceHtml}</div>
                     ${btnHtml}
                 </div>`;
@@ -961,52 +959,6 @@
                      return dateStr.replace(/\//g, ' | ');
                  }
                  return dateStr;
-            },
-
-            setupMediaObservers() {
-                const cards = document.querySelectorAll('.mini-card');
-                const observer = new IntersectionObserver((entries, obs) => {
-                    entries.forEach(e => {
-                        if(e.isIntersecting) {
-                            const pid = e.target.id.replace('card-','');
-                            const p = this.data.find(x => x.id === pid);
-                            if(p) this.checkMedia(p);
-                            obs.unobserve(e.target);
-                        }
-                    });
-                }, {rootMargin: "100px"});
-                cards.forEach(c => observer.observe(c));
-            },
-
-            checkMedia(p) {
-                const dot = p.imagem.lastIndexOf('.');
-                if(dot === -1) return;
-                const root = p.imagem.substring(0, dot);
-                const ext = p.imagem.substring(dot);
-                
-                // Check Nutri Image (A)
-                const imgA = new Image();
-                imgA.onload = () => {
-                    const btn = document.getElementById(`nutri-${p.id}`);
-                    if(btn) btn.style.display = 'inline-block';
-                };
-                imgA.src = root + 'A' + ext;
-
-                // Check Video (Standard .mp4 and E.mp4)
-                const checkVid = (url) => {
-                    const v = document.createElement('video');
-                    v.onloadedmetadata = () => {
-                        const btn = document.getElementById(`vid-btn-${p.id}`);
-                        if(btn) {
-                            btn.style.display = 'inline-block';
-                            btn.onclick = () => Gallery.open(p.imagem, p.nome, url);
-                        }
-                    };
-                    v.src = url;
-                };
-                
-                checkVid(root + '.mp4');
-                checkVid(root + 'E.mp4');
             },
 
             countRemovals() {
@@ -1123,13 +1075,9 @@
                 
                 let text = p.caracteristicas || "Sem informações adicionais.";
                 // Markdown Processing
-                // Bold: **text** -> <strong>text</strong>
                 text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                // List: - Item -> <li>Item</li> (Simple wrapper)
-                // We'll wrap lines starting with - in <li> and wrap whole block in <ul> if needed.
-                // Simple approach: Replace newline + hyphen with list item bullet
+                
                 if(text.includes('- ')) {
-                    // split by newline
                     let lines = text.split('\n');
                     let newText = '';
                     let inList = false;
@@ -1150,16 +1098,60 @@
                     text = text.replace(/\n/g, '<br>');
                 }
 
+                // Clear previous media
+                const mediaContainer = document.getElementById('info-media-container');
+                mediaContainer.innerHTML = '';
+
+                // Load Media
+                this.loadInfoMedia(p, mediaContainer);
+
                 document.getElementById('info-sheet-title').innerText = p.nome;
                 document.getElementById('info-sheet-body').innerHTML = text;
                 this.openSheet('info-sheet');
+            },
+
+            loadInfoMedia(p, container) {
+                const dot = p.imagem.lastIndexOf('.');
+                if(dot === -1) return;
+                const root = p.imagem.substring(0, dot);
+                const ext = p.imagem.substring(dot);
+
+                // Load extra images (A, B, C, D, E)
+                // Note: 'A' is typically Nutritional info
+                ['A', 'B', 'C', 'D', 'E'].forEach(suffix => {
+                    const url = root + suffix + ext;
+                    const img = new Image();
+                    img.onload = () => {
+                         const el = document.createElement('img');
+                         el.src = url;
+                         el.className = 'sheet-media-img';
+                         el.loading = 'lazy';
+                         container.appendChild(el);
+                    };
+                    img.src = url;
+                });
+
+                // Load video
+                const loadVid = (url) => {
+                    const v = document.createElement('video');
+                    v.onloadedmetadata = () => {
+                        const vidEl = document.createElement('video');
+                        vidEl.src = url;
+                        vidEl.className = 'sheet-media-vid';
+                        vidEl.controls = true;
+                        container.appendChild(vidEl);
+                    };
+                    v.src = url;
+                };
+                
+                loadVid(root + '.mp4');
+                loadVid(root + 'E.mp4');
             },
 
             renderOffersInSheet() {
                 const grid = document.getElementById('mob-offers-grid');
                 const offers = this.data.filter(p => p.isOffer);
                 grid.innerHTML = offers.length ? offers.map(p => this.buildCard(p, false)).join('') : '<p style="grid-column:1/-1; text-align:center;">Sem ofertas.</p>';
-                setTimeout(() => this.setupMediaObservers(), 300);
             },
             
             openCheckout() {
