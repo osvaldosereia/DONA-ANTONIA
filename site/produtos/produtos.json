@@ -615,10 +615,10 @@
     "nome": "DESINFETANTE REMMUS 2L - AMAZON (VERDE)",
     "ean": "7898964012046",
     "categoria": "LIMPEZA",
-    "fornecedor": "",
+    "fornecedor": "FORT",
     "caracteristicas": "",
     "custo": 3.99,
-    "valor": 5.79,
+    "valor": 5.29,
     "batches": [
       {
         "date": "",
@@ -628,7 +628,7 @@
     "estoque": 294,
     "estoqueFiscal": 600,
     "peso": 2,
-    "limit": 2,
+    "limit": 6,
     "imagem": "../site/img/produtos/desinfetante-remmus-2l-amazon-verde-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
@@ -650,7 +650,7 @@
     "refId": "NFe51250509477652002806551000000870281120717234-2",
     "fator": "6",
     "unidade": "UN",
-    "Limit": 2,
+    "Limit": 6,
     "Oferta": "Não",
     "Valor_Oferta": 0
   },
@@ -800,7 +800,13 @@
     "fornecedor": "",
     "caracteristicas": "",
     "custo": 1.99,
-    "valor": 2.75,
+    "valor": 2.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 576
+      }
+    ],
     "estoque": 576,
     "estoqueFiscal": 3936,
     "peso": 0.5,
@@ -808,6 +814,8 @@
     "imagem": "../site/img/produtos/lava-louca-ype-500ml-neutro-amarelo-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "LAV LOUC YPE 500ML CX24 NEUTRO (AGRUPADO)"
     ],
@@ -882,7 +890,7 @@
     "fornecedor": "ASSAI",
     "caracteristicas": "",
     "custo": 1.15,
-    "valor": 1.69,
+    "valor": 1.49,
     "batches": [
       {
         "date": "2026-07-12",
@@ -928,7 +936,13 @@
     "fornecedor": "",
     "caracteristicas": "",
     "custo": 1.1,
-    "valor": 1.79,
+    "valor": 1.49,
+    "batches": [
+      {
+        "date": "",
+        "qty": 1250
+      }
+    ],
     "estoque": 1250,
     "estoqueFiscal": 1250,
     "peso": 0.1,
@@ -936,6 +950,8 @@
     "imagem": "../site/img/produtos/macarrao-instantaneo-apti-70g-galinha-caipira-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "MAC INST APTI 70G GALINHA CAIPIRA (UN)"
     ],
@@ -1499,7 +1515,7 @@
     "fornecedor": "ASSAI",
     "caracteristicas": "",
     "custo": 2.09,
-    "valor": 3.29,
+    "valor": 2.99,
     "batches": [
       {
         "date": "",
@@ -1744,10 +1760,16 @@
     "nome": "FARINHA DE MANDIOCA DONA DÊ DE 1KG",
     "ean": "",
     "categoria": "ALIMENTOS",
-    "fornecedor": "",
+    "fornecedor": "ASSAI",
     "caracteristicas": "",
     "custo": 5,
-    "valor": 6.9,
+    "valor": 5.99,
+    "batches": [
+      {
+        "date": "",
+        "qty": 30
+      }
+    ],
     "estoque": 30,
     "estoqueFiscal": 0,
     "peso": 1,
@@ -1755,6 +1777,8 @@
     "imagem": "../site/img/produtos/farinha-de-mandioca-dona-de-de-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [],
     "variacoesEan": [],
     "ncm": "",
@@ -1940,13 +1964,13 @@
   {
     "id": "1768440505068518",
     "codigo": "P080",
-    "nome": "BALAO IDEATEX LISO N7 SORTIDO PCT 50UN",
+    "nome": "BALÕES IDEATEX LISO N7 SORTIDO PCT 50UN",
     "ean": "7896491404457",
     "categoria": "FESTA",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 5.5,
-    "valor": 9.9,
+    "valor": 8.9,
     "batches": [
       {
         "date": "",
@@ -1957,7 +1981,7 @@
     "estoqueFiscal": 10,
     "peso": 0.2,
     "limit": 3,
-    "imagem": "../site/img/produtos/balao-ideatex-liso-n7-sortido-pct-50un-cesta-basica-cuiaba-varzea-grande.webp",
+    "imagem": "../site/img/produtos/baloes-ideatex-liso-n7-sortido-pct-50un-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
     "isOffer": false,
@@ -3075,7 +3099,7 @@
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 2.2021,
-    "valor": 3.5,
+    "valor": 3.49,
     "batches": [
       {
         "date": "",
@@ -3808,8 +3832,8 @@
     ],
     "estoque": 10,
     "estoqueFiscal": 10,
-    "peso": 0,
-    "limit": 0,
+    "peso": 0.1,
+    "limit": 3,
     "imagem": "../site/img/produtos/algodao-topz-rolo-25g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
@@ -3831,7 +3855,7 @@
     "refId": "NFe51260103483492000101550020012130701203106223-35",
     "fator": "10",
     "unidade": "UN",
-    "Limit": 0,
+    "Limit": 3,
     "Oferta": "Não",
     "Valor_Oferta": 0
   },
@@ -4107,14 +4131,14 @@
   },
   {
     "id": "1768617090017521",
-    "codigo": "P110",
+    "codigo": "P190",
     "nome": "BICARBONATO DIODORO 20GR",
     "ean": "7898568540198",
     "categoria": "TEMPEROS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 1.46,
-    "valor": 2.49,
+    "valor": 2.29,
     "batches": [
       {
         "date": "",
@@ -4152,14 +4176,14 @@
   },
   {
     "id": "1768617090018629",
-    "codigo": "P110",
+    "codigo": "P193",
     "nome": "COLORAU DIODORO 20GR",
     "ean": "7898568540204",
     "categoria": "TEMPEROS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 1.56,
-    "valor": 2.89,
+    "valor": 2.29,
     "batches": [
       {
         "date": "",
@@ -4242,14 +4266,14 @@
   },
   {
     "id": "1768617090019250",
-    "codigo": "P110",
+    "codigo": "P192",
     "nome": "OREGANO DIODORO 5GR",
     "ean": "7898568540273",
     "categoria": "TEMPEROS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 1.46,
-    "valor": 2.69,
+    "valor": 2.29,
     "batches": [
       {
         "date": "",
@@ -4332,14 +4356,14 @@
   },
   {
     "id": "1768617090020498",
-    "codigo": "P110",
+    "codigo": "P191",
     "nome": "PIMENTA REINO PÓ DIODORO 20GR",
     "ean": "7898568540228",
     "categoria": "TEMPEROS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 1.955,
-    "valor": 3.49,
+    "valor": 2.89,
     "batches": [
       {
         "date": "",
@@ -4520,7 +4544,7 @@
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 2.3542,
-    "valor": 3.47,
+    "valor": 3.39,
     "batches": [
       {
         "date": "",
@@ -4740,14 +4764,14 @@
   },
   {
     "id": "1768617090027141",
-    "codigo": "P110",
+    "codigo": "P187",
     "nome": "EXTRATO TOMATE OLE COPO 190GR",
     "ean": "7891032015505",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 2.455,
-    "valor": 3.99,
+    "valor": 3.69,
     "batches": [
       {
         "date": "",
@@ -4921,14 +4945,14 @@
   },
   {
     "id": "1768617090030648",
-    "codigo": "P110",
+    "codigo": "P186",
     "nome": "LEITE CONDENSADO TRIANGULO 395GR",
     "ean": "7896434921133",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 4.6115,
-    "valor": 5.99,
+    "valor": 6.29,
     "batches": [
       {
         "date": "2026-11-03",
@@ -5059,14 +5083,14 @@
   },
   {
     "id": "1768617090031147",
-    "codigo": "P110",
+    "codigo": "P189",
     "nome": "MACARRÃO QDELICIA PARAFUSO OVOS 500G",
     "ean": "7896763621742",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "ALÉRGICOS: CONTÉM OVOS E DERIVADOS DE TRIGO. PODE CONTER SOJA, CENTEIO, CEVADA E AVEIA. CONTÉM GLÚTEN.\n\nO Macarrão Penne com Ovos Massas Paulista (500g) é produzido com farinha de trigo enriquecida com ferro e ácido fólico, ovos e corantes naturais (cúrcuma e urucum).\nMassa curta com formato de tubo, ideal para reter molhos mais encorpados. Porção de 80g fornece 272 kcal.",
     "custo": 2.3807,
-    "valor": 3.79,
+    "valor": 3.49,
     "batches": [
       {
         "date": "2026-12-09",
@@ -5105,14 +5129,14 @@
   },
   {
     "id": "1768617090032476",
-    "codigo": "P110",
+    "codigo": "P188",
     "nome": "MOLHO SHOYU CASTELO 150ML",
     "ean": "7896048280039",
     "categoria": "ALIMENTOS",
     "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 2.6542,
-    "valor": 0,
+    "valor": 3.9,
     "batches": [
       {
         "date": "",
@@ -5293,7 +5317,7 @@
     "fornecedor": "ASSAI",
     "caracteristicas": "### **Alertas e Avisos Críticos**\n\n* **Contém Glúten.**\n* **Alérgicos:** Contém derivados de trigo, soja e ovos.\n* **Pode conter:** Leite, centeio, cevada, aveia, amendoim e crustáceos (camarão).\n* **Aviso de Consumo:** Não é um alimento pronto para o consumo (precisa de cozimento).\n\n### **Informação Nutricional (Por pacote de 70g)**\n\n* **Valor Energético:** 262 kcal.\n* **Carboidratos:** 38 g.\n* **Sódio:** 1285 mg (valor bastante elevado, correspondendo a 64% do valor diário recomendado).\n* **Gorduras Totais:** 11 g (sendo 4,7 g de gorduras saturadas).\n* **Proteínas:** 4,6 g.\n* **Fibras Alimentares:** 1,4 g.\n\n### **Destaques dos Ingredientes**\n\n* **Composição do Macarrão:** Farinha de trigo enriquecida com ferro e ácido fólico, gordura vegetal e reguladores de acidez.\n* **Tempero em Pó:** Contém sal, farinha de milho, cebola e alho em pó, além de realçadores de sabor (glutamato monossódico, inosinato de sódio e guanilato de sódio).\n\n### **Modo de Preparo Rápido**\n\n* **Fogão:** Cozinhar o macarrão em 400 ml de água por 3 minutos e depois misturar o tempero.\n* **Micro-ondas:** Cozinhar em recipiente próprio com 400 ml de água por 5 minutos em potência alta, interrompendo na metade para mexer.\n\n",
     "custo": 1.15,
-    "valor": 1.69,
+    "valor": 1.49,
     "batches": [
       {
         "date": "2026-07-12",
