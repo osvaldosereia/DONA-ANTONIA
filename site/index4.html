@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+    <meta name="color-scheme" content="light only">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Cestas Básicas em Cuiabá e Várzea Grande. Entrega grátis*. Pagamento na entrega.">
+    <title>Dona Antônia | Cestas Básicas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="produtos/produtos.json" as="fetch" crossorigin="anonymous">
+
+    <style>
+        :root {
+            --p: #dc2626; --pd: #b91c1c; --s: #1e293b; --t: #334155; --tl: #475569;
+            --bg: #fff; --bc: #e2e8f0; --hh: 60px; --abh: 60px; --cbh: 80px;
+            --rad: 16px; --sf: 0 10px 30px -5px rgba(0,0,0,0.15); --sc: 0 4px 6px -1px rgba(0,0,0,0.05);
+            --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        /* Reset & Base */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { scroll-behavior: smooth; background: var(--bg); }
+        body { font-family: var(--font); color: var(--t); line-height: 1.5; padding-bottom: var(--abh); width: 100%; -webkit-font-smoothing: antialiased; }
+        @media(min-width:1024px) { body { padding-bottom: 0; } }
+        img, video { display: block; max-width: 100%; height: auto; }
+        button, select, input { font: inherit; border: none; background: none; cursor: pointer; }
+        .hidden, [hidden] { display: none !important; }
+        .container { max-width: 1320px; margin: 0 auto; padding: 0 16px; width: 100%; }
+        
+        /* Typography & Utils */
+        .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+        h1, h2, h3 { color: var(--s); font-weight: 800; line-height: 1.2; }
+        
+        /* Header */
+        header { position: fixed; inset: 0 0 auto 0; height: var(--hh); background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--bc); z-index: 1000; display: flex; align-items: center; backdrop-filter: blur(8px); transition: transform .3s; }
+        body.header-hidden header { transform: translateY(-100%); }
+        @media(min-width:1024px) { header { position: relative; } body.header-hidden header { transform: none; } }
+        .header-inner { display: flex; justify-content: space-between; align-items: center; height: 100%; }
+        .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.2rem; color: var(--s); text-decoration: none; }
+        .logo-circle { width: 36px; height: 36px; background: #f1f5f9; border-radius: 50%; display: flex; center; color: var(--pd); font-weight: 800; font-size: .9rem; align-items: center; justify-content: center; }
+        .loc-pill { font-size: .8rem; font-weight: 600; color: var(--s); background: #f8fafc; padding: 6px 14px; border-radius: 50px; border: 1px solid var(--bc); display: flex; align-items: center; gap: 6px; }
+
+        /* Mobile Bars */
+        .mobile-app-bar { position: fixed; bottom: 0; inset-inline: 0; height: var(--abh); background: #fff; border-top: 1px solid var(--bc); z-index: 9999; display: grid; grid-template-columns: repeat(4, 1fr); box-shadow: 0 -4px 20px rgba(0,0,0,.03); }
+        .app-bar-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--tl); font-size: .7rem; font-weight: 500; height: 100%; }
+        .app-bar-btn svg { width: 24px; height: 24px; stroke-width: 2px; }
+        .app-bar-btn.highlight { color: #b45309; }
+        @media(min-width:1024px) { .mobile-app-bar, .mobile-checkout-bar { display: none !important; } }
+
+        .mobile-checkout-bar { position: fixed; bottom: var(--abh); inset-inline: 0; height: var(--cbh); background: #fff; border-top: 1px solid var(--bc); z-index: 9998; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 -4px 25px rgba(0,0,0,.1); animation: slideUp .3s ease-out; }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .mcb-total { display: flex; flex-direction: column; line-height: 1.2; }
+        .mcb-val { font-size: 1.3rem; font-weight: 800; color: var(--p); }
+        .mcb-btn { background: #16a34a; color: #fff; border-radius: 50px; padding: 12px 24px; font-weight: 700; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(22,163,74,.25); }
+
+        /* Hero */
+        #home-view { padding-top: var(--hh); }
+        @media(min-width:1024px) { #home-view { padding-top: 0; } }
+        .hero { padding: 40px 0 60px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .hero-title { font-size: 2rem; margin-bottom: 16px; letter-spacing: -.5px; }
+        .hero-title span { color: var(--p); }
+        .hero p { color: var(--tl); font-size: 1.1rem; max-width: 500px; margin: 0 auto 30px; }
+        .btn-cta { background: var(--p); color: #fff; font-weight: 700; padding: 14px 36px; border-radius: 50px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(220,38,38,.3); display: inline-flex; transition: transform .2s; }
+        .btn-cta:hover { transform: scale(1.03); background: var(--pd); }
+        .trust-badges { display: flex; center; gap: 12px; margin: 30px 0 24px; flex-wrap: wrap; justify-content: center; }
+        .badge { background: #fff; padding: 8px 16px; border: 1px solid var(--bc); border-radius: 50px; font-size: .85rem; font-weight: 600; color: var(--s); }
+
+        /* Home Grid */
+        .grid-container { padding: 40px 16px 80px; }
+        .grid { display: grid; gap: 24px; max-width: 1280px; margin: 0 auto; grid-template-columns: 1fr; }
+        @media(min-width:600px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media(min-width:1024px) { .grid { grid-template-columns: repeat(4, 1fr); gap: 30px; } }
+        
+        .card { background: #fff; border-radius: var(--rad); border: 1px solid var(--bc); overflow: hidden; display: flex; flex-direction: column; transition: .2s; }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--sf); border-color: #cbd5e1; }
+        .c-img-wrap { aspect-ratio: 1; padding: 20px; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #f8fafc; }
+        .c-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+        .c-body { padding: 20px; flex: 1; display: flex; flex-direction: column; text-align: center; }
+        .c-title { font-size: 1.35rem; color: var(--s); margin-bottom: 8px; font-weight: 700; }
+        .c-price { font-size: 1.5rem; font-weight: 800; color: var(--p); margin-bottom: 20px; }
+        .c-actions { margin-top: auto; display: grid; gap: 10px; }
+        .btn-out { border: 1px solid var(--bc); color: var(--s); padding: 10px; border-radius: 50px; font-weight: 600; width: 100%; }
+        .btn-fill { background: var(--s); color: #fff; padding: 12px; border-radius: 50px; font-weight: 600; width: 100%; }
+
+        /* Customizer */
+        #customizer-view { padding-top: var(--hh); background: #f8fafc; min-height: 100vh; padding-bottom: 150px; }
+        @media(min-width:1024px) { #customizer-view { padding: 0; } }
+        .cust-bar { background: rgba(255,255,255,.98); border-bottom: 1px solid var(--bc); position: sticky; top: var(--hh); z-index: 900; backdrop-filter: blur(10px); padding: 12px 0; }
+        @media(min-width:1024px) { .cust-bar { top: 0; z-index: 1050; } }
+        .cb-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .cb-back { width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--bc); background: #fff; font-size: 1.2rem; flex-shrink: 0; }
+        .cb-info h2 { font-size: 1.1rem; margin: 0; }
+        .limit-badge { font-size: .75rem; color: #b45309; background: #fffbeb; border: 1px solid #fde68a; padding: 2px 8px; border-radius: 4px; display: inline-block; }
+        .limit-badge.error { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
+        .search-box { flex: 1; max-width: 500px; position: relative; }
+        .inp-search { width: 100%; height: 42px; border-radius: 50px; border: 1px solid var(--bc); padding: 0 40px 0 20px; background: #f1f5f9; }
+        .desk-cart { display: none; align-items: center; gap: 16px; }
+        @media(min-width:1024px) { .desk-cart { display: flex; } .app-grid { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; margin-top: 24px; } }
+        
+        .section-head { background: #fff; padding: 16px; border: 1px solid var(--bc); border-bottom: 0; border-radius: 12px 12px 0 0; margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .prod-box { background: #fff; border: 1px solid var(--bc); border-radius: 0 0 12px 12px; padding: 16px; }
+        .prod-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        @media(min-width:600px) { .prod-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media(min-width:1024px) { .prod-grid { grid-template-columns: repeat(4, 1fr) !important; gap: 20px; } }
+
+        /* Mini Card */
+        .mini { display: flex; flex-direction: column; padding: 10px; border-radius: 8px; border: 1px solid transparent; transition: .2s; position: relative; height: 100%; text-align: center; }
+        .mini:hover { background: #fff; border-color: var(--bc); box-shadow: 0 4px 10px rgba(0,0,0,.05); }
+        .mini-img { width: 100%; aspect-ratio: 1; object-fit: contain; mix-blend-mode: multiply; margin-bottom: 8px; cursor: zoom-in; }
+        .mini-tag { position: absolute; top: 0; left: 0; background: #16a34a; color: #fff; font-size: .6rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; z-index: 2; }
+        .mini-title { font-size: .75rem; color: var(--s); height: 3.9em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; line-height: 1.3; font-weight: 500; }
+        .mini-price { font-size: .95rem; font-weight: 700; color: var(--t); margin-bottom: 8px; }
+        .mini-old { font-size: .8rem; text-decoration: line-through; color: #94a3b8; margin-right: 6px; }
+        .btn-add { width: 100%; height: 32px; background: var(--p); color: #fff; border-radius: 6px; font-weight: 700; font-size: .75rem; text-transform: uppercase; margin-top: auto; }
+        .qty-ctrl { width: 100%; height: 32px; display: flex; justify-content: space-between; border: 1px solid var(--p); border-radius: 6px; background: #fff; margin-top: auto; align-items: center; }
+        .qc-btn { width: 28px; height: 100%; display: flex; center; color: var(--s); font-size: 1.1rem; justify-content: center; align-items: center; }
+        
+        /* Sidebar & Features */
+        .sidebar { display: none; }
+        @media(min-width:1024px) { .sidebar { display: block; position: sticky; top: 80px; background: #fff; border: 1px solid var(--bc); border-radius: 12px; padding: 16px; max-height: calc(100vh - 100px); overflow-y: auto; } }
+        .chip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 24px; }
+        .chip { background: #f8fafc; border: 1px solid var(--bc); border-radius: 6px; font-size: .7rem; padding: 8px 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chip:hover { background: var(--bc); }
+        
+        /* Modals & Sheets */
+        .sheet { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1200; display: flex; flex-direction: column; justify-content: flex-end; opacity: 0; pointer-events: none; transition: .3s; }
+        .sheet.open { opacity: 1; pointer-events: auto; }
+        .sheet-box { background: #fff; width: 100%; border-radius: 20px 20px 0 0; padding: 20px; max-height: 85vh; overflow-y: auto; transform: translateY(100%); transition: transform .3s; padding-bottom: 160px; }
+        .sheet.open .sheet-box { transform: translateY(0); }
+        @media(min-width:1024px) { 
+            .sheet { justify-content: center; } 
+            .sheet-box { max-width: 500px; margin: 0 auto; border-radius: 12px; padding-bottom: 20px; transform: translateY(-50%); top: 50%; position: absolute; } 
+        }
+        .sheet-head { display: flex; justify-content: space-between; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; }
+        .sheet-close { font-size: 1.2rem; padding: 5px; }
+
+        dialog { margin: auto; border: none; border-radius: 16px; width: 90%; max-width: 400px; padding: 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); }
+        dialog::backdrop { background: rgba(0,0,0,.5); backdrop-filter: blur(4px); }
+        .co-body { padding: 24px; overflow-y: auto; max-height: 60vh; }
+        .co-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f1f5f9; font-size: .85rem; }
+        
+        /* Gallery */
+        .gallery { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 2000; display: none; flex-direction: column; padding: 20px; }
+        .gallery.active { display: flex; }
+        .g-stage { flex: 1; display: flex; center; position: relative; justify-content: center; align-items: center; }
+        .g-img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .g-thumbs { height: 60px; display: flex; justify-content: center; gap: 8px; overflow-x: auto; margin-top: 10px; }
+        .g-t { width: 50px; height: 50px; border-radius: 4px; opacity: .5; object-fit: cover; border: 2px solid transparent; }
+        .g-t.active { border-color: var(--p); opacity: 1; }
+        .g-nav { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.3); color: #fff; width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        
+        /* Components */
+        .toast { position: fixed; bottom: 150px; left: 50%; transform: translate(-50%, 20px); background: var(--s); color: #fff; padding: 12px 24px; border-radius: 50px; font-size: .9rem; opacity: 0; pointer-events: none; transition: .3s; z-index: 2500; white-space: nowrap; }
+        .toast.visible { opacity: 1; transform: translate(-50%, 0); }
+        @media(min-width:1024px) { .toast { bottom: 40px; } }
+        .loader { border: 3px solid #f3f3f3; border-top-color: var(--p); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        details.faq { border: 1px solid var(--bc); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+        details.faq summary { padding: 20px; cursor: pointer; font-weight: 600; list-style: none; display: flex; justify-content: space-between; }
+        .btn-feat { font-size: .7rem; padding: 4px 12px; border-radius: 50px; font-weight: 600; border: 1px solid #cbd5e1; background: #f1f5f9; color: var(--s); display: inline-block; margin-bottom: 6px; }
+        .pc-validity { font-size: .75rem; color: #15803d; background: #f0fdf4; padding: 2px 8px; border-radius: 4px; margin-bottom: 6px; display: inline-block; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-inner">
+            <a href="#" class="logo" onclick="location.reload()">
+                <div class="logo-circle">DA</div> <span>Dona Antônia</span>
+            </a>
+            <div class="loc-pill"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Cuiabá & VG</div>
+        </div>
+    </header>
+
+    <nav class="mobile-app-bar">
+        <button onclick="App.sh('cat-sheet')" class="app-bar-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path></svg>Categorias</button>
+        <button onclick="App.sh('tags-sheet')" class="app-bar-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>Busca</button>
+        <button onclick="App.sh('offers-sheet')" class="app-bar-btn highlight"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg><strong>Ofertas</strong></button>
+        <button onclick="App.sh('faq-sheet')" class="app-bar-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>Dúvidas</button>
+    </nav>
+
+    <main id="home-view">
+        <section class="hero">
+            <div class="container">
+                <div class="trust-badges"><div class="badge">🔒 Pagamento na Entrega</div><div class="badge">🚀 Entrega em 24h</div></div>
+                <h1 class="hero-title">A Melhor Cesta Básica <br> na Porta da <span>Sua Casa</span></h1>
+                <p>Personalize com marcas líderes e receba sem filas.</p>
+                <button class="btn-cta" onclick="$('baskets-anchor').scrollIntoView({behavior:'smooth'})">Escolher Minha Cesta</button>
+            </div>
+        </section>
+        <section class="grid-container" id="baskets-anchor">
+            <div id="home-list" class="grid"><div class="loader"></div></div>
+        </section>
+        <footer style="text-align:center; padding: 40px; color: var(--tl); font-size:.9rem;">&copy; 2024 Dona Antônia Alimentos</footer>
+    </main>
+
+    <div id="customizer-view" class="hidden">
+        <div class="cust-bar">
+            <div class="container cb-inner">
+                <button class="cb-back" onclick="App.goHome()">❮</button>
+                <div class="cb-info"><h2 id="cust-title">Minha Cesta</h2><span id="changes-badge" class="limit-badge">Alterações: 0/0</span></div>
+                <div class="search-box"><input type="text" id="main-search" class="inp-search" placeholder="Buscar..."><span style="position:absolute; right:15px; top:50%; transform:translateY(-50%)">🔍</span></div>
+                <div class="desk-cart">
+                    <div style="text-align:right; line-height:1.2"><small>Total</small><br><strong id="desk-total-val" style="color:var(--p); font-size:1.2rem">R$ 0,00</strong></div>
+                    <button class="mcb-btn" onclick="App.checkout()">WhatsApp <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg></button>
+                </div>
+            </div>
+        </div>
+        <div class="container app-grid">
+            <div style="width:100%">
+                <div class="section-head" style="border-top:4px solid var(--s)"><h3>📦 Itens Inclusos</h3></div>
+                <div class="prod-box"><div id="included-list" class="prod-grid"></div></div>
+                <div id="extras-container"></div>
+            </div>
+            <aside class="sidebar">
+                <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">CATEGORIAS</div>
+                <div id="desk-cat-list" class="chip-grid"></div>
+                <div style="font-size:.9rem;font-weight:700;margin-bottom:12px">BUSCA RÁPIDA</div>
+                <div id="desk-tag-list" class="chip-grid"></div>
+                <div style="background:#f8fafc;padding:15px;border-radius:8px;border:1px solid #e2e8f0;text-align:center">
+                    <strong style="color:var(--s)">Dúvida?</strong><br>
+                    <button class="btn-out" style="margin-top:10px" onclick="App.sh('faq-sheet')">Perguntas Frequentes</button>
+                </div>
+            </aside>
+        </div>
+        <div class="mobile-checkout-bar">
+            <div class="mcb-total"><span style="font-size:.75rem;text-transform:uppercase">Total Estimado</span><span class="mcb-val" id="mcb-total-val">R$ 0,00</span></div>
+            <button class="mcb-btn" onclick="App.checkout()">Encomendar <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"><span id="toast-msg"></span></div>
+
+    <div id="gallery" class="gallery">
+        <button class="sheet-close" style="position:absolute;top:20px;right:20px;color:#fff;z-index:2010;background:rgba(255,255,255,.2);border-radius:50px" onclick="Gallery.close()">FECHAR</button>
+        <div class="g-stage">
+            <div class="g-nav" style="left:15px" onclick="Gallery.prev()">❮</div>
+            <img id="gallery-img" class="g-img" src="">
+            <video id="gallery-video" class="g-img hidden" controls></video>
+            <div class="g-nav" style="right:15px" onclick="Gallery.next()">❯</div>
+        </div>
+        <div id="gallery-thumbs" class="g-thumbs"></div>
+    </div>
+
+    <dialog id="checkout-modal">
+        <div class="sheet-head" style="padding:16px"><span style="font-weight:700">Resumo</span><button onclick="document.getElementById('checkout-modal').close()">✕</button></div>
+        <div class="co-body">
+            <div id="checkout-items" style="border:1px solid #e2e8f0;border-radius:8px;margin-bottom:20px"></div>
+            <div style="display:flex;justify-content:space-between;border-top:2px solid #f1f5f9;padding-top:10px;margin-bottom:20px"><span style="font-weight:700">Total</span><span id="co-total" style="font-weight:800;color:var(--p);font-size:1.5rem">R$ 0,00</span></div>
+            <label style="display:block;margin-bottom:10px;font-weight:600">Forma de Pagamento:</label>
+            <select id="payment-method" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:6px"><option>Pix</option><option>Dinheiro</option><option>Cartão de Crédito</option><option>Cartão de Débito</option><option>Vale Alimentação</option></select>
+        </div>
+        <div style="padding:16px;background:#f8fafc;border-top:1px solid #f1f5f9"><button class="mcb-btn" style="width:100%;justify-content:center" onclick="App.sendWA()">Confirmar no WhatsApp</button></div>
+    </dialog>
+
+    <div id="info-sheet" class="sheet" onclick="if(e.target===this)App.ch('info-sheet')"><div class="sheet-box"><div class="sheet-head"><h3 id="info-title">Info</h3><span class="sheet-close" onclick="App.ch('info-sheet')">✕</span></div><div id="info-body" style="white-space:pre-wrap;line-height:1.6"></div><div id="info-media" style="margin-top:20px;display:grid;gap:15px"></div></div></div>
+    <div id="cat-sheet" class="sheet" onclick="if(e.target===this)App.ch('cat-sheet')"><div class="sheet-box"><div class="sheet-head"><h3>Categorias</h3><span class="sheet-close" onclick="App.ch('cat-sheet')">✕</span></div><div id="mob-cat-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:10px"></div></div></div>
+    <div id="tags-sheet" class="sheet" onclick="if(e.target===this)App.ch('tags-sheet')"><div class="sheet-box"><div class="sheet-head"><h3>Busca</h3><span class="sheet-close" onclick="App.ch('tags-sheet')">✕</span></div><input type="text" class="inp-search" placeholder="Digite..." onchange="App.search(this.value)" style="margin-bottom:20px"><div id="mob-tags-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div></div></div>
+    <div id="offers-sheet" class="sheet" onclick="if(e.target===this)App.ch('offers-sheet')"><div class="sheet-box"><div class="sheet-head"><h3 style="color:#b45309">🔥 Ofertas</h3><span class="sheet-close" onclick="App.ch('offers-sheet')">✕</span></div><div id="mob-offers-grid" class="prod-grid" style="grid-template-columns:1fr 1fr!important"></div></div></div>
+    <div id="faq-sheet" class="sheet" onclick="if(e.target===this)App.ch('faq-sheet')"><div class="sheet-box"><div class="sheet-head"><h3>Dúvidas</h3><span class="sheet-close" onclick="App.ch('faq-sheet')">✕</span></div>
+        <details class="faq"><summary>Pagamento</summary><div style="padding:0 20px 20px">Dinheiro, Pix, Cartão e Vales. Pagamento na entrega.</div></details>
+        <details class="faq"><summary>Entrega Grátis?</summary><div style="padding:0 20px 20px">Sim, acima de R$ 85,00 para Cuiabá e VG.</div></details>
+        <details class="faq"><summary>Trocas?</summary><div style="padding:0 20px 20px">Sim, clique em "Personalizar".</div></details>
+    </div></div>
+
+    <script>
+        const $ = i => document.getElementById(i);
+        const C = {
+            TAGS: ["Abs","Acetona","Achocolatado","Açúcar","Água","Algodão","Amaciante","Aparelho","Arroz","Azeite","Balão","Biscoito","Café","Caldo","Caneta","Canjica","Cesta","Chá","Coco","Cola","Creme de Leite","Curativo","Desinfetante","Desodorante","Detergente","Erva","Escova","Esponja","Extrato","Farinha","Feijão","Fermento","Fio Dental","Flocos","Fósforo","Fubá","Gelatina","Goiabada","Inseticida","Lâmpada","Leite","Lenço","Limpa","Linha","Lixa","Loção","Macarrão","Milharina","Milho","Mistura","Molho","Óleo","Pano","Papel","Pilha","Pimenta","Pipoca","Prendedor","Purificador","Rodo","Sabão","Sabonete","Saco","Sacola","Sal","Sardinha","Seleta","Suco","Talco","Tempero","Vassoura","Veja","Vinagre"],
+            THEMES: {'DEFAULT':'#f1f5f9','ALIMENTOS':'#ffedd5','LIMPEZA':'#dbeafe','HIGIENE':'#dcfce7','BEBIDAS':'#fae8ff','CARNES':'#fee2e2'},
+            PHONE: "5565996813588",
+            LIMITS: {'econômica':5,'economica':5,'mini':7,'pequena':9,'média':11,'media':11,'grande':13}
+        };
+
+        const Gallery = {
+            tx: 0,
+            open(src, name, start=null) {
+                const isV = start && start.includes('.mp4');
+                $('gallery-img').classList.toggle('hidden', isV);
+                $('gallery-video').classList.toggle('hidden', !isV);
+                if(isV) { $('gallery-video').src=start; $('gallery-video').play(); } else { $('gallery-img').src=start||src; $('gallery-img').alt=name; }
+                $('gallery-thumbs').innerHTML = '';
+                this.addT(src, 'img', !start);
+                ['A','B','C'].forEach(s => { const u=src.replace('.',s+'.'); (new Image()).onload=()=>this.addT(u,'img',u===start); (new Image()).src=u; });
+                ['.mp4','E.mp4'].forEach(s => { const u=src.replace(/\.[^/.]+$/, "")+s; const v=document.createElement('video'); v.onloadedmetadata=()=>this.addT(u,'vid',u===start); v.src=u; });
+                $('gallery').classList.add('active');
+                const st = document.querySelector('.g-stage');
+                st.ontouchstart = e => this.tx = e.changedTouches[0].screenX;
+                st.ontouchend = e => { const d = this.tx - e.changedTouches[0].screenX; if(d>50)this.next(); if(d<-50)this.prev(); };
+            },
+            addT(src, type, act) {
+                const t = document.createElement('img'); t.className=`g-t ${act?'active':''}`;
+                t.src = type==='vid'?'img/video-placeholder.png':src; t.onerror=()=>t.src='https://placehold.co/50?text=VID';
+                t.onclick = () => {
+                    document.querySelectorAll('.g-t').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+                    if(type==='vid'){ $('gallery-img').classList.add('hidden'); $('gallery-video').src=src; $('gallery-video').classList.remove('hidden'); $('gallery-video').play(); }
+                    else { $('gallery-video').classList.add('hidden'); $('gallery-video').pause(); $('gallery-img').src=src; $('gallery-img').classList.remove('hidden'); }
+                };
+                t.dataset.n = src; $('gallery-thumbs').appendChild(t);
+            },
+            next() { (document.querySelector('.g-t.active').nextElementSibling||{click:()=>{}}).click(); },
+            prev() { (document.querySelector('.g-t.active').previousElementSibling||{click:()=>{}}).click(); },
+            close() { $('gallery').classList.remove('active'); $('gallery-video').pause(); }
+        };
+
+        const App = {
+            d: [], cart: {}, cb: null, oc: {}, lim: 99,
+            async init() {
+                try {
+                    const r = await fetch('produtos/produtos.json?v='+Date.now());
+                    const j = await r.json();
+                    this.d = j.map(p => ({
+                        ...p, id:String(p.id), nome:p.nome.trim(), v: parseFloat(p.valor||0), ov: parseFloat(p.Valor_Oferta||0),
+                        io: (p.Oferta||'').toLowerCase()==='sim', cat:(p.categoria||'OUTROS').trim().toUpperCase(),
+                        img: p.imagem?(!p.imagem.includes('/')?`img/produtos/${p.imagem}`:p.imagem):'img/placeholder.jpg',
+                        lim: parseInt(p.Limit||p.limit||0), est: parseInt(p.estoque||0), val: p.Validade||p.validade, car: p.Caracteristicas||p.caracteristicas
+                    }));
+                    this.home(); this.side(); $('main-search').addEventListener('input', e=>this.render(e.target.value));
+                } catch(e) { $('home-list').innerHTML = '<p>Erro ao carregar.</p>'; }
+            },
+            home() {
+                const bs = this.d.filter(p => p.cat.includes('CESTA') && p.cat.includes('BASICA'));
+                $('home-list').innerHTML = bs.map(p => `
+                    <article class="card">
+                        <div class="c-img-wrap" onclick="Gallery.open('${p.img}','${p.nome}')"><img src="${p.img}" class="c-img" loading="lazy" fetchpriority="high" onerror="this.onerror=null;this.src='https://placehold.co/500?text=Indisponível'"></div>
+                        <div class="c-body"><h3 class="c-title">${p.nome}</h3><div class="c-price">R$ ${(p.io&&p.ov>0?p.ov:p.v).toFixed(2).replace('.',',')}</div>
+                        <div class="c-actions"><button class="btn-fill" onclick="App.cust('${p.id}')">Personalizar Cesta</button><button class="btn-out" onclick="App.link('${p.nome}')">Pedir Direto</button></div></div>
+                    </article>`).join('');
+            },
+            side() {
+                const cs = [...new Set(this.d.filter(p=>!p.cat.includes('CESTA')).map(p=>p.cat))].sort();
+                const btn = (t,f) => `<button class="chip" onclick="App.${f}('${t}')">${t}</button>`;
+                $('desk-cat-list').innerHTML = cs.map(c=>btn(c,'fil')).join('');
+                $('mob-cat-grid').innerHTML = cs.map(c=>`<div class="chip" style="text-align:center;padding:12px" onclick="App.fil('${c}')">${c}</div>`).join('');
+                $('desk-tag-list').innerHTML = C.TAGS.map(t=>btn(t,'search')).join('');
+                $('mob-tags-grid').innerHTML = C.TAGS.map(t=>`<div class="chip" style="text-align:center" onclick="App.search('${t}')">${t}</div>`).join('');
+            },
+            cust(id) {
+                this.cb = this.d.find(p=>p.id===id);
+                this.cart={}; this.oc={};
+                (this.cb.items||[]).forEach(i => {
+                    let m = this.d.find(p=>p.id===String(i.id)) || this.d.find(p=>!p.cat.includes('CESTA')&&p.nome.toLowerCase().includes(i.nome.toLowerCase()));
+                    if(m) this.cart[m.id] = (this.cart[m.id]||0)+(parseInt(i.qtd||1));
+                });
+                this.oc = {...this.cart};
+                let k = Object.keys(C.LIMITS).find(x=>this.cb.nome.toLowerCase().includes(x));
+                this.lim = k ? C.LIMITS[k] : 99;
+                let sum = 0; for(let i in this.cart) { let p=this.d.find(x=>x.id===i); if(p) sum += (p.io?p.ov:p.v)*this.cart[i]; }
+                this.fee = Math.max(0, this.cb.v - sum);
+                $('cust-title').innerText = this.cb.nome;
+                $('home-view').classList.add('hidden'); $('customizer-view').classList.remove('hidden'); window.scrollTo(0,0);
+                this.render();
+            },
+            goHome() { $('customizer-view').classList.add('hidden'); $('home-view').classList.remove('hidden'); },
+            render(term="") {
+                if(!this.cb) return;
+                const mkCard = (p) => {
+                    const q = this.cart[p.id]||0; const pr = p.io&&p.ov>0?p.ov:p.v;
+                    const date = p.val ? (p.val.match(/^\d{4}/)?p.val.split('-').reverse().join('/'):p.val) : '';
+                    return `<div class="mini">
+                        ${p.io&&p.ov>0?'<span class="mini-tag">OFERTA</span>':''}
+                        <img src="${p.img}" class="mini-img" onclick="Gallery.open('${p.img}','${p.nome}')" loading="lazy" onerror="this.onerror=null;this.src='https://placehold.co/300?text=X'">
+                        <div class="mini-title">${p.nome}</div>
+                        ${date?`<div class="pc-validity">Val: ${date}</div>`:''}
+                        ${p.car?`<div class="btn-feat" onclick="App.info('${p.id}')">Info</div>`:''}
+                        <div class="mini-price">${p.io&&p.ov>0?`<span class="mini-old">R$${p.v.toFixed(2)}</span>`:''}R$${pr.toFixed(2).replace('.',',')}</div>
+                        ${q===0 ? `<button class="btn-add" onclick="App.mod('${p.id}',1)">Adicionar</button>` : 
+                        `<div class="qty-ctrl"><button class="qc-btn" onclick="App.mod('${p.id}',-1)">-</button><strong>${q}</strong><button class="qc-btn" onclick="App.mod('${p.id}',1)">+</button></div>`}
+                    </div>`;
+                };
+                $('included-list').innerHTML = Object.keys(this.cart).map(id=>mkCard(this.d.find(x=>x.id===id))).join('') || '<p style="padding:10px">Vazia.</p>';
+                
+                let ex = this.d.filter(p => !p.cat.includes('CESTA'));
+                if(term) ex = ex.filter(p => p.nome.toLowerCase().includes(term.toLowerCase()) || p.cat.toLowerCase().includes(term.toLowerCase()));
+                const cats = {}; ex.forEach(p=>{if(!cats[p.cat])cats[p.cat]=[];cats[p.cat].push(p)});
+                
+                $('extras-container').innerHTML = (term?'':`<div style="text-align:center;padding:20px"><h3>Adicionar Extras</h3></div>`) + 
+                Object.keys(cats).sort().map(c=>`<div class="section-head" style="background:${C.THEMES[Object.keys(C.THEMES).find(k=>c.includes(k))||'DEFAULT']}"><h3>${c}</h3></div><div class="prod-box"><div class="prod-grid">${cats[c].map(mkCard).join('')}</div></div>`).join('');
+                
+                this.calc();
+            },
+            calc() {
+                let sum = 0; for(let i in this.cart) { let p=this.d.find(x=>x.id===i); if(p) sum += (p.io?p.ov:p.v)*this.cart[i]; }
+                let tot = Math.max(sum+this.fee, this.cb.v);
+                let rem = 0; for(let i in this.oc) if(this.oc[i]>0 && (!this.cart[i])) rem++;
+                
+                $('changes-badge').innerText = `Alterações: ${rem}/${this.lim}`;
+                $('changes-badge').className = rem>=this.lim?'limit-badge error':'limit-badge';
+                
+                const txt = 'R$ '+tot.toFixed(2).replace('.',',');
+                $('desk-total-val').innerText = txt; $('mcb-total-val').innerText = txt; $('co-total').innerText = txt;
+                
+                let cred = tot < this.cb.v ? this.cb.v - tot : 0; // Fix logic based on original
+                if(sum+this.fee < this.cb.v) cred = this.cb.v - (sum+this.fee);
+                
+                const t = $('toast');
+                if(cred>0) { $('toast-msg').innerText=`Crédito: R$ ${cred.toFixed(2).replace('.',',')}`; t.classList.add('visible'); } else t.classList.remove('visible');
+            },
+            mod(id, d) {
+                const p = this.d.find(x=>x.id===id);
+                if(!this.cart[id]) this.cart[id]=0;
+                let n = this.cart[id]+d;
+                if(d>0 && p.lim>0 && n>p.lim) return alert(`Limite: ${p.lim}`);
+                if(this.oc[id] && d<0 && n===0) {
+                    let r = 0; for(let i in this.oc) if(this.oc[i]>0 && (!this.cart[i] || (i===id && n===0))) r++;
+                    if(r > this.lim) return alert(`Limite de ${this.lim} trocas.`);
+                }
+                this.cart[id]=n; if(n<=0) delete this.cart[id];
+                this.render($('main-search').value);
+            },
+            search(t) { this.ch('tags-sheet'); if(!this.cb)return alert("Selecione uma cesta."); $('main-search').value=t; this.render(t); $('extras-container').scrollIntoView(); },
+            fil(c) { this.ch('cat-sheet'); if(!this.cb)return alert("Selecione uma cesta."); $('main-search').value=""; this.render(""); setTimeout(()=>{try{$(`cat-${c}`).scrollIntoView()}catch{}},100); },
+            sh(id) { document.querySelectorAll('.sheet.open').forEach(e=>e.classList.remove('open')); if(id==='offers-sheet')this.renderOff(); $(id).classList.add('open'); },
+            ch(id) { $(id).classList.remove('open'); },
+            renderOff() { $('mob-offers-grid').innerHTML = this.d.filter(p=>p.io).map(p=>`<div class="mini"><span class="mini-tag">OFERTA</span><img src="${p.img}" class="mini-img"><div class="mini-title">${p.nome}</div><div class="mini-price">R$ ${p.ov.toFixed(2)}</div><button class="btn-add" onclick="App.cust('${p.id}')">Ver</button></div>`).join('')||'Vazio'; },
+            info(id) {
+                const p = this.d.find(x=>x.id===id); if(!p)return;
+                let t = (p.car||"").replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/- /g,'• ').replace(/\n/g,'<br>');
+                $('info-title').innerText=p.nome; $('info-body').innerHTML=t;
+                $('info-media').innerHTML='';
+                ['A','B','C','D','E'].forEach(s=>{const u=p.img.replace('.',s+'.'); (new Image()).onload=()=>$('info-media').insertAdjacentHTML('beforeend',`<img src="${u}" style="border-radius:8px;border:1px solid #ddd">`); (new Image()).src=u;});
+                this.sh('info-sheet');
+            },
+            checkout() { if(!Object.keys(this.cart).length)return alert("Vazia."); $('checkout-items').innerHTML=Object.keys(this.cart).map(id=>`<div class="co-item"><span>${this.cart[id]}x ${this.d.find(x=>x.id===id).nome}</span></div>`).join(''); $('checkout-modal').showModal(); },
+            sendWA() {
+                let m = `*PEDIDO: ${this.cb.nome}*\n------------------\n`; for(let i in this.cart) m+=`${this.cart[i]}x ${this.d.find(x=>x.id===i).nome}\n`;
+                m += `------------------\n*TOTAL: ${$('co-total').innerText}*\n*Pagamento:* ${$('payment-method').value}`;
+                window.open(`https://api.whatsapp.com/send?phone=${C.PHONE}&text=${encodeURIComponent(m)}`,'_blank');
+            },
+            link(n) { window.open(`https://api.whatsapp.com/send?phone=${C.PHONE}&text=${encodeURIComponent('Quero pedir '+n)}`,'_blank'); }
+        };
+        document.addEventListener('DOMContentLoaded',()=>App.init());
+    </script>
+</body>
+</html>
