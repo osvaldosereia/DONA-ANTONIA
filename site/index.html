@@ -4,15 +4,13 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.26 - Refinamentos Visuais e Limpeza
+        VERSION: 9.27 - Centralização e Scroll Behavior
         CHANGELOG:
-        - UI (Mobile): Imagem do produto aumentada (110px).
-        - UI (Mobile): Nome do produto reduzido (0.75rem).
-        - UI (Mobile): Alinhamento dos cards forçado para esquerda.
-        - UI (Desktop): Alinhamento dos cards mantido ao centro.
-        - FEAT: Barra inferior (Mobile App Bar) removida.
-        - FEAT: Funcionalidade "Busca Rápida" (Tags) removida completamente.
-        - NAV: Botão "Ofertas" movido para o topo da lista de categorias.
+        - UI (Mobile): Conteúdo do card centralizado (texto, botão, preço).
+        - UI (Mobile): Título do produto exibe até 3 linhas.
+        - UX (Mobile): Header (Logo) se esconde ao rolar para baixo.
+        - UX (Nav): Botão "Minha Cesta" adicionado como padrão (substitui Ver Tudo).
+        - UX (Nav): Botão "Ver Tudo" removido.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -41,7 +39,7 @@
             --bg-body: #ffffff;
             --border-color: #e2e8f0;
             --header-height: 60px;
-            --app-bar-height: 0px; /* Removida altura da barra inferior */
+            --app-bar-height: 0px; 
             --checkout-bar-height: 80px; 
             --radius-lg: 16px;
             --shadow-float: 0 10px 30px -5px rgba(0, 0, 0, 0.15);
@@ -88,15 +86,17 @@
         header { 
             position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); 
             background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border-color); z-index: 1000; 
-            display: flex; align-items: center; backdrop-filter: blur(8px); transition: transform 0.3s ease;
+            display: flex; align-items: center; backdrop-filter: blur(8px); 
+            transition: transform 0.3s ease; /* Smooth hide transition */
         }
         
+        /* Class to hide header on scroll */
+        body.header-hidden header { transform: translateY(-100%); }
+
         @media (min-width: 1024px) {
             header { position: relative; } 
             body.header-hidden header { transform: none; } 
         }
-        
-        body.header-hidden header { transform: translateY(-100%); }
 
         .header-inner { display: flex; justify-content: space-between; align-items: center; height: 100%; }
         
@@ -112,7 +112,7 @@
         /* --- 4. MOBILE CHECKOUT BAR --- */
         .mobile-checkout-bar {
             position: fixed; 
-            bottom: 0; /* Adjusted since app bar is gone */
+            bottom: 0; 
             left: 0; right: 0; height: var(--checkout-bar-height);
             background: #ffffff; border-top: 1px solid var(--border-color);
             z-index: 9998; 
@@ -185,7 +185,12 @@
             background: rgba(255,255,255,0.98); border-bottom: 1px solid var(--border-color);
             position: sticky; top: var(--header-height); z-index: 900; backdrop-filter: blur(10px);
             padding: 12px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            transition: top 0.3s ease; /* Adjust sticky position smoothly */
         }
+        
+        /* When header is hidden, sticky bar moves to top */
+        body.header-hidden .cust-header-bar { top: 0; }
+
         @media(min-width: 1024px) {
             .cust-header-bar { top: 0; z-index: 1050; } 
         }
@@ -210,22 +215,19 @@
         .ch-clear-btn:hover { background: var(--text-light); }
         
         /* Updated Sidebar Button Styles */
-        .sidebar-chip.ver-todos { background: var(--secondary); color: white; border-color: var(--secondary); }
+        .sidebar-chip.minha-cesta { background: var(--secondary); color: white; border-color: var(--secondary); }
         .sidebar-chip.ofertas-btn { background: #b45309; color: white; border-color: #b45309; }
         
-        .mobile-cat-btn.ver-todos { background: var(--secondary); color: white; border-color: var(--secondary); }
-
         .ch-desktop-cart { display: none; }
 
         /* === SPLIT LAYOUT MOBILE (Products | Nav) === */
         .app-grid { 
             display: grid; 
-            /* Mobile Default: 1fr (Prod) + 90px (Nav) */
             grid-template-columns: 1fr 90px; 
             gap: 10px; 
             margin-top: 24px; 
             padding-bottom: 40px; 
-            padding-right: 0; /* Nav sticks to edge */
+            padding-right: 0; 
         }
 
         .products-section { width: 100%; min-width: 0; }
@@ -234,14 +236,17 @@
         .mobile-nav-sidebar {
             display: block;
             position: sticky;
-            top: calc(var(--header-height) + 70px); /* Adjust based on sticky header + customizer header */
+            top: calc(var(--header-height) + 70px); 
             height: calc(100vh - 150px);
             overflow-y: auto;
             padding-right: 4px;
-            /* Scrollbar styling for sleekness */
             scrollbar-width: thin;
+            transition: top 0.3s ease;
         }
         
+        /* Adjust Nav Sidebar top when header hides */
+        body.header-hidden .mobile-nav-sidebar { top: 70px; } /* 0 header + 70 customizer bar */
+
         /* Nav Item Styles */
         .nav-side-btn {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -251,12 +256,15 @@
             cursor: pointer; transition: all 0.2s; line-height: 1.2; word-break: break-word;
         }
         .nav-side-btn.active { background: var(--secondary); color: white; border-color: var(--secondary); transform: scale(1.05); }
-        /* Special style for Offers Nav */
+        
+        /* Special styles for Chips */
         .nav-side-btn.nav-ofertas { color: #b45309; border-color: #fcd34d; background: #fffbeb; }
         .nav-side-btn.nav-ofertas.active { background: #b45309; color: white; border-color: #b45309; }
+        
+        .nav-side-btn.nav-cesta { color: var(--secondary); border-color: var(--secondary); background: #f8fafc; }
+        .nav-side-btn.nav-cesta.active { background: var(--secondary); color: white; }
 
         .nav-side-btn:hover { border-color: #cbd5e1; }
-        .nav-icon { font-size: 1.2rem; margin-bottom: 4px; display: block; }
 
         @media (min-width: 1024px) {
             .app-grid { grid-template-columns: 1fr 340px; gap: 40px; align-items: start; padding-right: 16px; }
@@ -276,7 +284,7 @@
         .extras-separator-banner h3 { font-size: 1.4rem; font-weight: 300; color: var(--secondary); margin-bottom: 5px; }
         .extras-separator-banner p { color: var(--text-light); font-size: 0.9rem; }
 
-        /* GRID: 1 Column on Mobile now */
+        /* GRID: 1 Column on Mobile */
         .grid-products { display: grid; grid-template-columns: 1fr; gap: 12px; align-items: stretch; }
         @media (min-width: 600px) { .grid-products { grid-template-columns: repeat(3, 1fr); } }
         @media (min-width: 1024px) { .grid-products { grid-template-columns: repeat(4, 1fr) !important; gap: 20px; } }
@@ -284,20 +292,20 @@
         /* PRODUCT MINI CARD (MOBILE LAYOUT) */
         .mini-card {
             display: grid; 
-            grid-template-columns: 110px 1fr; /* Image Increased to 110px */
+            grid-template-columns: 110px 1fr; /* Image 110px */
             grid-template-rows: auto auto;
-            gap: 12px; align-items: center; text-align: left; /* Left align for mobile */
+            gap: 12px; align-items: center; text-align: center; /* Center Text */
             padding: 10px; border-radius: 8px; border: 1px solid transparent;
             transition: background 0.2s; position: relative; height: auto; min-width: 0;
             background: #fff; border: 1px solid #f1f5f9;
         }
         
-        /* DESKTOP LAYOUT (Center Align) */
+        /* DESKTOP LAYOUT */
         @media (min-width: 600px) {
             .mini-card { display: flex; flex-direction: column; text-align: center; height: 100%; }
             .mc-img-box { margin-right: 0; margin-bottom: 8px; width: 100%; height: auto; aspect-ratio: 1/1; }
-            .mc-info-col { align-items: center; text-align: center; } /* Center text */
-            .mc-action-col { justify-content: center; margin-top: auto; } /* Center buttons */
+            .mc-info-col { align-items: center; text-align: center; } 
+            .mc-action-col { justify-content: center; margin-top: auto; } 
             .btn-feat-row { justify-content: center; }
             .mc-title { text-align: center; }
         }
@@ -306,26 +314,26 @@
         .tag-offer { position: absolute; top: 0; left: 0; background: #16a34a; color: white; font-size: 0.6rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; z-index: 2; }
         
         .mc-img-box { 
-            width: 110px; height: 110px; /* Increased Size */
+            width: 110px; height: 110px; 
             position: relative; display: flex; 
             align-items: center; justify-content: center; 
             cursor: zoom-in; background-color: transparent; border-radius: 8px;
-            grid-row: 1 / 3; /* Image spans both rows on mobile */
+            grid-row: 1 / 3; 
         }
         .mc-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
         
-        /* Mobile Content Layout */
-        .mc-info-col { display: flex; flex-direction: column; justify-content: center; width: 100%; align-items: flex-start; text-align: left; }
-        .mc-action-col { display: flex; align-items: center; justify-content: flex-start; width: 100%; margin-top: 4px; }
+        /* Mobile Content Layout - CENTERED */
+        .mc-info-col { display: flex; flex-direction: column; justify-content: center; width: 100%; align-items: center; text-align: center; }
+        .mc-action-col { display: flex; align-items: center; justify-content: center; width: 100%; margin-top: 6px; }
 
-        .btn-feat-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; width: 100%; min-height: 0; justify-content: flex-start; }
+        .btn-feat-row { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; width: 100%; min-height: 0; justify-content: center; }
         .btn-feat { font-size: 0.65rem; padding: 2px 8px; border-radius: 50px; font-weight: 600; border: 1px solid; cursor: pointer; white-space: nowrap; }
         .btn-feat.info { background: #f1f5f9; border-color: #cbd5e1; color: var(--secondary); }
         
         .pc-validity { font-size: 0.65rem; color: #15803d; font-weight: 600; background: #f0fdf4; padding: 1px 6px; border-radius: 4px; margin-bottom: 4px; width: fit-content; }
 
-        /* Font Size Reduced to 0.75rem */
-        .mc-title { font-size: 0.75rem; font-weight: 600; color: var(--secondary); margin-bottom: 2px; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: auto; text-align: left; }
+        /* Font Size Reduced to 0.75rem - 3 Lines - Centered */
+        .mc-title { font-size: 0.75rem; font-weight: 600; color: var(--secondary); margin-bottom: 4px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; height: auto; text-align: center; width: 100%; }
         .mc-price { font-size: 0.95rem; font-weight: 800; color: var(--text-main); }
         .mc-price-old { font-size: 0.75rem; text-decoration: line-through; color: #94a3b8; margin-right: 4px; }
         .mc-price-new { color: var(--primary); }
@@ -505,7 +513,6 @@
             <aside class="sidebar-desktop">
                 <div class="sidebar-title">Categorias</div>
                 <div id="desk-cat-list" class="sidebar-nav-grid"></div>
-                <!-- Busca Rápida removida aqui -->
                 <div style="margin-top:30px; background:#f8fafc; padding:15px; border-radius:8px; border:1px solid #e2e8f0;">
                     <strong style="color:var(--secondary);">Dúvida?</strong>
                     <p style="font-size:0.85rem; color:var(--text-light); margin-bottom:10px;">Fale conosco no WhatsApp ou veja as perguntas frequentes.</p>
@@ -783,16 +790,16 @@
             renderSidebar() {
                 const cats = [...new Set(this.data.filter(p => !p.categoria.includes('CESTA')).map(p => p.categoria))].sort();
                 
-                // DESKTOP: Ofertas (Laranja) > Ver Todos > Categorias
+                // DESKTOP: Minha Cesta > Ofertas > Categorias
                 const deskBtns = [
-                    `<button class="sidebar-chip ofertas-btn" onclick="App.showOffers()">🔥 Ofertas</button>`,
-                    `<button class="sidebar-chip ver-todos" onclick="App.clearSearch()">Ver Todos</button>`
+                    `<button class="sidebar-chip minha-cesta" onclick="App.clearSearch()">Minha Cesta</button>`,
+                    `<button class="sidebar-chip ofertas-btn" onclick="App.showOffers()">🔥 Ofertas</button>`
                 ].concat(cats.map(c => `<button class="sidebar-chip" onclick="App.filterCat('${c}')">${c}</button>`));
                 
-                // MOBILE NAV: Ofertas (Laranja) > Ver Tudo > Categorias
+                // MOBILE NAV: Minha Cesta > Ofertas > Categorias
                 const mobNavBtns = [
-                    `<div class="nav-side-btn nav-ofertas" onclick="App.showOffers(); App.highlightNav(this);">🔥 Ofertas</div>`,
-                    `<div class="nav-side-btn active" onclick="App.clearSearch(); App.highlightNav(this);">Ver Tudo</div>`
+                    `<div class="nav-side-btn nav-cesta active" onclick="App.clearSearch(); App.highlightNav(this);">Minha Cesta</div>`,
+                    `<div class="nav-side-btn nav-ofertas" onclick="App.showOffers(); App.highlightNav(this);">🔥 Ofertas</div>`
                 ].concat(cats.map(c => `<div class="nav-side-btn" onclick="App.filterCat('${c}'); App.highlightNav(this);">${c}</div>`));
 
                 document.getElementById('desk-cat-list').innerHTML = deskBtns.join('');
@@ -844,16 +851,11 @@
                 this.currentBasket = null;
             },
 
-            // NEW FUNCTION: Show only offers
             showOffers() {
                 this.closeSheet('cat-sheet');
                 if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
                 document.getElementById('main-search').value = "";
-                
-                // We pass a special flag or handle it inside renderAllLists, but to keep it simple,
-                // we can just call renderAllLists with a special instruction or handle the filtering logic here.
-                // Reusing renderAllLists is better for consistency.
-                this.renderAllLists("", true); // Add a 'showOffersOnly' param
+                this.renderAllLists("", true); 
             },
 
             renderAllLists(searchTerm = "", showOffersOnly = false) {
@@ -867,10 +869,8 @@
                 const extContainer = document.getElementById('extras-container');
                 let extras = this.data.filter(p => !p.categoria.includes('CESTA'));
                 
-                // FILTER LOGIC
                 if(showOffersOnly) {
                     extras = extras.filter(p => p.isOffer);
-                    // Update header if exists
                     const mobSearch = document.getElementById('main-search');
                     if(mobSearch) mobSearch.value = "";
                 } else if(searchTerm) {
@@ -879,7 +879,6 @@
                     document.getElementById('main-search').value = searchTerm;
                 }
 
-                // TOGGLE CLEAR BUTTONS
                 const showClear = searchTerm.length > 0 || showOffersOnly;
                 const deskBtn = document.getElementById('desk-clear-btn');
                 if(deskBtn) showClear ? deskBtn.classList.remove('hidden') : deskBtn.classList.add('hidden');
@@ -915,7 +914,6 @@
                 
                 extContainer.innerHTML = html;
                 
-                // If it's offers, scroll to it
                 if(showOffersOnly && extContainer) extContainer.scrollIntoView({behavior:'smooth'});
                 
                 this.updateTotal();
@@ -1054,11 +1052,21 @@
                          }
                     });
                 }
+
+                // SCROLL LISTENER FOR HEADER HIDING
+                let lastScroll = 0;
+                window.addEventListener('scroll', () => {
+                    const currentScroll = window.pageYOffset;
+                    if (currentScroll > lastScroll && currentScroll > 60) {
+                        document.body.classList.add('header-hidden');
+                    } else {
+                        document.body.classList.remove('header-hidden');
+                    }
+                    lastScroll = currentScroll;
+                });
             },
 
             search(term) {
-                // Legacy support if needed, but UI for tags removed.
-                // Redirect to main search logic
                 if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
                 this.renderAllLists(term);
             },
@@ -1166,7 +1174,6 @@
             },
 
             renderOffersInSheet() {
-                // Kept as fallback if sheet logic is reused elsewhere
                 const grid = document.getElementById('mob-offers-grid');
                 if(!grid) return;
                 const offers = this.data.filter(p => p.isOffer);
