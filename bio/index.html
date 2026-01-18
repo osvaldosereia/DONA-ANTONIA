@@ -143,7 +143,8 @@
             object-fit: contain; 
             cursor: grab;
         }
-        canvas.brush-active { cursor: crosshair !important; }
+        /* No modo Brush, escondemos o cursor nativo para usar o nosso desenhado */
+        canvas.brush-active { cursor: none !important; }
         canvas:active { cursor: grabbing; }
 
         /* --- ZOOM BAR --- */
@@ -402,7 +403,9 @@
             // Brush Vars
             isRestoring: false,
             brushSize: 20,
-            isBrushing: false
+            isBrushing: false,
+            cursorX: -100, // Coordenadas para visualização do pincel
+            cursorY: -100
         };
 
         const els = {
@@ -471,15 +474,23 @@
             els.btnRec.onclick = processVideo;
             els.btnMagic.onclick = toggleMagicBackground;
             els.btnRestore.onclick = toggleRestoreMode;
-            els.brushSize.oninput = (e) => { state.brushSize = parseInt(e.target.value); els.brushSizeVal.innerText = state.brushSize; };
+            els.brushSize.oninput = (e) => { 
+                state.brushSize = parseInt(e.target.value); 
+                els.brushSizeVal.innerText = state.brushSize; 
+                requestRender(); // Atualiza para ver tamanho do pincel
+            };
 
             // Touch Gestures (Pan & Pinch & Brush)
             els.canvas.addEventListener('mousedown', handlePointerDown);
             els.canvas.addEventListener('touchstart', handleTouchStart, {passive: false});
+            // Ouvinte global para movimento do mouse (mesmo sem clique) para mostrar cursor
             window.addEventListener('mousemove', handlePointerMove);
             window.addEventListener('touchmove', handleTouchMove, {passive: false});
             window.addEventListener('mouseup', handlePointerUp);
             window.addEventListener('touchend', handlePointerUp);
+            els.canvas.addEventListener('mouseleave', () => {
+                state.cursorX = -100; state.cursorY = -100; requestRender();
+            });
             document.addEventListener('paste', handlePaste);
             
             window.setFormat = setFormat; 
@@ -549,7 +560,15 @@
         }
 
         function handlePointerMove(e, originalEvent) {
-            // Brush Move
+            // Atualizar Posição do Cursor para Visualização (Sempre que restaurar estiver ativo)
+            if (state.isRestoring) {
+                const rect = els.canvas.getBoundingClientRect();
+                state.cursorX = (e.clientX || e.pageX) - rect.left;
+                state.cursorY = (e.clientY || e.pageY) - rect.top;
+                requestRender(); // Re-renderizar para desenhar o círculo do pincel
+            }
+
+            // Brush Action
             if (state.isBrushing) {
                 if (originalEvent) originalEvent.preventDefault();
                 applyBrush(e);
@@ -601,6 +620,8 @@
                 els.brushControls.classList.remove('visible');
                 els.canvas.classList.remove('brush-active');
                 els.btnRestore.innerHTML = "🖌️ Pincel Restaurar";
+                state.cursorX = -100; state.cursorY = -100; // Esconder cursor ao sair
+                requestRender();
             }
         }
 
@@ -768,9 +789,20 @@
             ctx.filter = getFilterString();
             ctx.drawImage(source, dx, dy, dw, dh);
             
-            // Indicador de Pincel (opcional, só visual)
-            if (state.isRestoring && state.isBrushing) {
-                 // Poderíamos desenhar um círculo aqui, mas o cursor já ajuda
+            // Indicador de Pincel (VISUAL)
+            if (state.isRestoring && state.cursorX > -50) {
+                ctx.filter = 'none';
+                ctx.save();
+                ctx.beginPath();
+                // Desenha o círculo do pincel na posição do cursor
+                ctx.arc(state.cursorX, state.cursorY, state.brushSize / 2, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.9)'; // Branco forte
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)'; // Sombra preta para contraste
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
             }
 
             ctx.filter = 'none';
