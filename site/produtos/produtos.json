@@ -48,6 +48,72 @@
     "Valor_Oferta": 8.99
   },
   {
+    "id": "1767965729886343",
+    "codigo": "P003",
+    "nome": "AÇÚCAR CRISTAL BARRALCOOL 2KG",
+    "ean": "7897062500141",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "",
+    "caracteristicas": "",
+    "custo": 4.89,
+    "valor": 7.5,
+    "batches": [
+      {
+        "date": "",
+        "qty": 360
+      }
+    ],
+    "estoque": 360,
+    "estoqueFiscal": 860,
+    "peso": 0,
+    "limit": 0,
+    "imagem": "../site/img/produtos/acucar-cristal-barralcool-2kg-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "AÇÚCAR CRISTAL BARRALCOOL 2KG",
+      "ACUCAR CRISTAL BARRALCOOL 2KG (UN)"
+    ],
+    "variacoesEan": [
+      "7897062500141"
+    ],
+    "ncm": "17019900",
+    "cest": "1710100",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "266198",
+    "refId": "NFe51250106057223029153553000002319271402535964-1",
+    "fator": "10",
+    "unidade": "UN",
+    "jsonData": {
+      "id_referencia": "NFe51251206057223029153553000002661981487609079-1",
+      "Numero_Nota": "266198",
+      "Quantidade_Nota": 36,
+      "cProd_Sugestao": "96714-UN",
+      "cEAN": "7897062500141",
+      "xProd": "ACUCAR CRISTAL BARRALCOOL 2KG (UN)",
+      "NCM": "17019900",
+      "CEST": "1710100",
+      "CFOP_SAIDA": "5405",
+      "CSOSN_SAIDA": "500",
+      "Unidade_Venda": "UN",
+      "Fator_Conversao_Entrada": 10,
+      "Quantidade_Total_Unidades": 360,
+      "Custo_Unitario": 4.89,
+      "Custo_Real_Caixa": 48.9,
+      "Valor_Desconto_Total": 0,
+      "_TIPO": "VAREJO (SAIDA)",
+      "_OBS": "Desconto de R$ 0 abatido do custo"
+    },
+    "Limit": 0,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
     "id": "1767965736886738",
     "codigo": "P004",
     "nome": "AÇÚCAR CRISTAL DOCE DIA 2KG",
@@ -225,17 +291,25 @@
     "nome": "ARROZ TIO BONINI 5KG ",
     "ean": "7897738400089",
     "categoria": "ALIMENTOS",
-    "fornecedor": "",
+    "fornecedor": "FORT",
     "caracteristicas": "",
     "custo": 11.9,
-    "valor": 15.9,
+    "valor": 14.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 432
+      }
+    ],
     "estoque": 432,
     "estoqueFiscal": 7602,
     "peso": 5,
-    "limit": 5,
+    "limit": 4,
     "imagem": "../site/img/produtos/arroz-tio-bonini-5kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "ARROZ TIO BONINI 5KG (UN)"
     ],
@@ -252,7 +326,7 @@
     "refId": "NFe51250709477652002806551000000890131120902132-1",
     "fator": "6",
     "unidade": "UN",
-    "Limit": 5,
+    "Limit": 4,
     "Oferta": "Não",
     "Valor_Oferta": 0
   },
@@ -441,6 +515,51 @@
     "Valor_Oferta": 0
   },
   {
+    "id": "1767970374575367",
+    "codigo": "P019",
+    "nome": "CAFÉ PREMIADO 250G",
+    "ean": "7891018000075",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 10.9,
+    "valor": 14.9,
+    "batches": [
+      {
+        "date": "",
+        "qty": 10
+      }
+    ],
+    "estoque": 10,
+    "estoqueFiscal": 920,
+    "peso": 0.25,
+    "limit": 2,
+    "imagem": "../site/img/produtos/cafe-premiado-250g-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "CAFE PREMIADO ALMOF 250G SUPER (UN)"
+    ],
+    "variacoesEan": [
+      "7891018000075"
+    ],
+    "ncm": "21011110",
+    "cest": "1710700",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "244234",
+    "refId": "NFe51250506057223029153553000002442341431835030-1",
+    "fator": "20",
+    "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
     "id": "1767994950374116",
     "codigo": "P022",
     "nome": "LAVA ROUPA PÓ OMO 800G - LAVAGEM PERFEITA",
@@ -544,7 +663,7 @@
     "fornecedor": "RIO VERMELHO",
     "caracteristicas": "",
     "custo": 1.1897,
-    "valor": 2,
+    "valor": 1.9,
     "batches": [
       {
         "date": "",
@@ -592,6 +711,12 @@
     "caracteristicas": "",
     "custo": 2.99,
     "valor": 3.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 1020
+      }
+    ],
     "estoque": 1020,
     "estoqueFiscal": 3950,
     "peso": 1,
@@ -599,6 +724,8 @@
     "imagem": "../site/img/produtos/trigo-vitoriosa-1kg-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "FAR TRIGO VITORIOSA 1KG (UN)"
     ],
@@ -710,7 +837,13 @@
     "fornecedor": "FORT E ASSAI",
     "caracteristicas": "",
     "custo": 1.89,
-    "valor": 3.29,
+    "valor": 2.69,
+    "batches": [
+      {
+        "date": "",
+        "qty": 810
+      }
+    ],
     "estoque": 810,
     "estoqueFiscal": 1000,
     "peso": 0.4,
@@ -718,6 +851,8 @@
     "imagem": "../site/img/produtos/espaguete-badotti-400g-cesta-basica-cuiaba-varzea-grande.webp",
     "items": [],
     "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
     "variacoesNome": [
       "MAC BADOTTI SEMOLA 400G ESPAGUETE (UN)"
     ],
@@ -957,6 +1092,53 @@
     "Limit": 6,
     "Oferta": "Não",
     "Valor_Oferta": 0
+  },
+  {
+    "id": "1767997324107351",
+    "codigo": "P048",
+    "nome": "MISTURA PRA BOLO APTI 400G - QUATRO LEITES ",
+    "ean": "17896327511516",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 3.59,
+    "valor": 4.79,
+    "batches": [
+      {
+        "date": "2026-07-30",
+        "qty": 360
+      }
+    ],
+    "estoque": 360,
+    "estoqueFiscal": 360,
+    "peso": 0.4,
+    "limit": 6,
+    "imagem": "../site/img/produtos/mistura-pra-bolo-apti-400g-quatro-leites-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [
+      "MIST BOLO APTI 400G QUATRO LEITES (UN)"
+    ],
+    "variacoesEan": [
+      "17896327511516",
+      "7896327511519"
+    ],
+    "ncm": "19012090",
+    "cest": "1704600",
+    "cfop": "5405",
+    "csosn": "500",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "250208",
+    "refId": "NFe51250706057223029153553000002502081446534409-1",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 6,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-07-30"
   },
   {
     "id": "1767997372171002",
@@ -4334,8 +4516,8 @@
     "codigo": "P179",
     "nome": "CURATIVOS SALVELOX 10UN",
     "ean": "7896004816678",
-    "categoria": "",
-    "fornecedor": "",
+    "categoria": "HIGIENE",
+    "fornecedor": "CASA DOMINGOS",
     "caracteristicas": "",
     "custo": 2.3542,
     "valor": 3.47,
@@ -7579,8 +7761,8 @@
     "codigo": "P128",
     "nome": "REMOVEDOR ESMALTE FARMAX PERF UVA 100 ML",
     "ean": "7896902208469",
-    "categoria": "",
-    "fornecedor": "",
+    "categoria": "HIGIENE",
+    "fornecedor": "RIO VERMELHO",
     "caracteristicas": "",
     "custo": 3.9092,
     "valor": 5.99,
@@ -8065,6 +8247,130 @@
     "refId": "NFe51260110912900000592550010004576251213642080-null",
     "fator": "12",
     "unidade": "UN",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768761691205906",
+    "codigo": "P183",
+    "nome": "MISTURA PRA BOLO APTI 400G - COCO",
+    "ean": "",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 3.59,
+    "valor": 4.79,
+    "batches": [
+      {
+        "date": "2026-07-30",
+        "qty": 60
+      }
+    ],
+    "estoque": 60,
+    "estoqueFiscal": 0,
+    "peso": 0.4,
+    "limit": 3,
+    "imagem": "../site/img/produtos/mistura-pra-bolo-apti-400g-coco-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "250208",
+    "refId": "NFe51250706057223029153553000002502081446534409-1",
+    "fator": "12",
+    "unidade": "UN",
+    "Limit": 3,
+    "Oferta": "Não",
+    "Valor_Oferta": 0,
+    "validade": "2026-07-30"
+  },
+  {
+    "id": "1768762435044668",
+    "codigo": "P184",
+    "nome": "VINAGRE COLORIDO NEVAL 750ML",
+    "ean": "7896057800464",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 1.99,
+    "valor": 2.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 12
+      }
+    ],
+    "estoque": 12,
+    "estoqueFiscal": 0,
+    "peso": 0.75,
+    "limit": 2,
+    "imagem": "../site/img/produtos/vinagre-colorido-neval-750ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": "",
+    "Limit": 2,
+    "Oferta": "Não",
+    "Valor_Oferta": 0
+  },
+  {
+    "id": "1768762468224640",
+    "codigo": "P185",
+    "nome": "VINAGRE NEVAL ALCOOL 750ML",
+    "ean": "7896057800051",
+    "categoria": "ALIMENTOS",
+    "fornecedor": "ASSAI",
+    "caracteristicas": "",
+    "custo": 1.99,
+    "valor": 2.79,
+    "batches": [
+      {
+        "date": "",
+        "qty": 60
+      }
+    ],
+    "estoque": 60,
+    "estoqueFiscal": 0,
+    "peso": 0.75,
+    "limit": 2,
+    "imagem": "../site/img/produtos/vinagre-neval-alcool-750ml-cesta-basica-cuiaba-varzea-grande.webp",
+    "items": [],
+    "personalized": false,
+    "isOffer": false,
+    "offerPrice": 0,
+    "variacoesNome": [],
+    "variacoesEan": [],
+    "ncm": "",
+    "cest": "",
+    "cfop": "",
+    "csosn": "",
+    "obs": "",
+    "subcategoria": "",
+    "nota": "",
+    "refId": "",
+    "fator": "",
+    "unidade": "",
     "Limit": 2,
     "Oferta": "Não",
     "Valor_Oferta": 0
