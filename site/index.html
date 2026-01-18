@@ -4,12 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.29 - Smart Offers & UX Polish
+        VERSION: 9.30 - Scroll Indicator & Mobile Nav UX
         CHANGELOG:
-        - UX (Ofertas): Implementado "Agrupamento Dinâmico". Ofertas são exibidas separadas por categoria.
-        - UI (Headers): Adicionado contador de itens ao lado do nome da categoria (ex: Alimentos (3)).
-        - UI (Mobile): Campo de busca aumentado para 54px para toque fácil.
-        - FIX: Lógica de rolagem e renderização otimizada.
+        - UX (Mobile Nav): Adicionada seta visual (indicador de scroll) na base da lista de categorias.
+        - FEAT: Função scrollNavDown() para rolar a lista ao clicar na seta.
+        - CSS: Animação 'bounce' para a seta chamar atenção.
+        - LAYOUT: Refatoração da sidebar mobile para suportar o overlay do botão.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -89,10 +89,7 @@
             transition: transform 0.3s ease;
         }
         
-        /* Rule to Hide Header completely when in Customizer Mode */
         body.customizer-mode header { display: none !important; }
-
-        /* Legacy Scroll Hide */
         body.header-hidden header { transform: translateY(-100%); }
 
         @media (min-width: 1024px) {
@@ -207,10 +204,10 @@
         }
         .limit-badge.error { color: #b91c1c; background: #fee2e2; border-color: #fca5a5; }
 
-        /* Search Box Updated to 54px Height */
+        /* Search Box */
         .ch-search-box { flex: 1; position: relative; margin-left: 10px; }
         .ch-input { 
-            width: 100%; height: 54px; /* Increased height */
+            width: 100%; height: 54px; 
             border-radius: 50px; border: 1px solid var(--border-color); 
             padding: 0 45px 0 24px; font-size: 1.05rem; 
             background: #f1f5f9; 
@@ -236,14 +233,54 @@
 
         .products-section { width: 100%; min-width: 0; }
         
-        .mobile-nav-sidebar {
+        /* WRAPPER FOR MOBILE NAV (SCROLL + ARROW) */
+        .mobile-nav-wrapper {
             display: block;
             position: sticky;
             top: 85px; 
             height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .mobile-nav-sidebar {
+            flex: 1;
             overflow-y: auto;
             padding-right: 4px;
             scrollbar-width: thin;
+            padding-bottom: 60px; /* Space for the arrow */
+        }
+        
+        /* SCROLL ARROW INDICATOR */
+        .nav-scroll-indicator {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 60px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1) 40%);
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 10px;
+            cursor: pointer;
+            z-index: 5;
+            pointer-events: auto;
+        }
+        
+        .nav-scroll-arrow-icon {
+            width: 32px; height: 32px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            animation: bounce 2s infinite;
+            font-size: 0.8rem;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-5px);}
+            60% {transform: translateY(-3px);}
         }
         
         .nav-side-btn {
@@ -262,7 +299,7 @@
 
         @media (min-width: 1024px) {
             .app-grid { grid-template-columns: 1fr 340px; gap: 40px; align-items: start; padding-right: 16px; }
-            .mobile-nav-sidebar { display: none; }
+            .mobile-nav-wrapper { display: none; }
             .ch-desktop-cart { display: flex; align-items: center; gap: 16px; }
             .desk-price { text-align: right; line-height: 1.2; }
             .desk-price small { display: block; font-size: 0.75rem; text-transform: uppercase; color: var(--text-light); }
@@ -510,8 +547,13 @@
             </aside>
             
             <!-- MOBILE NAV SIDEBAR (Replaces Right Column) -->
-            <aside id="mobile-nav-sidebar" class="mobile-nav-sidebar">
-                <!-- Injected via JS -->
+            <aside class="mobile-nav-wrapper">
+                <div id="mobile-nav-sidebar" class="mobile-nav-sidebar">
+                    <!-- Injected via JS -->
+                </div>
+                <div class="nav-scroll-indicator" onclick="App.scrollNavDown()">
+                    <div class="nav-scroll-arrow-icon">▼</div>
+                </div>
             </aside>
         </div>
         
@@ -798,6 +840,14 @@
             highlightNav(el) {
                 document.querySelectorAll('.nav-side-btn').forEach(b => b.classList.remove('active'));
                 el.classList.add('active');
+            },
+
+            // NEW SCROLL FUNCTION
+            scrollNavDown() {
+                const el = document.getElementById('mobile-nav-sidebar');
+                if(el) {
+                    el.scrollBy({ top: 150, behavior: 'smooth' });
+                }
             },
 
             openCustomizer(id) {
