@@ -4,13 +4,12 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.35 - Category Fix (Filter Mode)
+        VERSION: 9.36 - Fully Dynamic Categories
         CHANGELOG:
-        - FIX (Core): Mudança de estratégia de 'Scroll' para 'Filtro'. 
-          Ao clicar na categoria, o sistema agora filtra e exibe apenas aquela categoria.
-          Isso resolve o problema de "clique sem resposta" causado por falhas na âncora.
-        - LOGIC: Função renderAllLists atualizada para aceitar 'exactCategory'.
-        - SECURITY: Adicionado escape de aspas simples nos botões gerados dinamicamente.
+        - CORE: Removida lista manual de categorias. Agora é 100% gerada do JSON.
+        - FIX: Resolvido conflito de nomes. O botão usa exatamente a string do produto.
+        - UI: Menu lateral mostra Minha Cesta > Ofertas > [Lista Alfabética Automática].
+        - LOGIC: Categorias "Cesta..." são excluídas do menu lateral automaticamente.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -239,7 +238,6 @@
             display: block;
             position: sticky;
             top: 85px; 
-            /* Fixed: Ensure enough space above the 80px checkout bar */
             height: calc(100vh - 180px); 
             display: flex;
             flex-direction: column;
@@ -264,7 +262,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 10; /* Higher Z-index to float above */
+            z-index: 10;
             pointer-events: auto;
         }
         
@@ -626,53 +624,6 @@
     </div>
 
     <script>
-        // CONFIGURAÇÃO DA ORDEM DAS CATEGORIAS
-        // O sistema normaliza automaticamente (ignora acentos e maiúsculas) para encontrar os produtos.
-        const CATEGORY_SEQUENCE = [
-            "ARROZ",
-            "FEIJÃO",
-            "ÓLEO",
-            "SAL",
-            "AÇÚCAR",
-            "OVOS",
-            "GRÃOS, FARINHAS E CEREAIS",
-            "MACARRÃO",
-            "MOLHOS E EXTRATOS",
-            "MOLHOS E TEMPEROS",
-            "TEMPEROS, VINAGRE E AZEITE",
-            "CAFÉ",
-            "CHÁ E TERERÉ",
-            "LEITES",
-            "ACHOCOLATADOS",
-            "SUCO EM PÓ",
-            "BISCOITOS, BOLACHAS E SALGADINHOS",
-            "BOLO",
-            "BOLOS E SOBREMESAS",
-            "BOLOS, DOCES E SOBREMESAS",
-            "CASA",
-            "COZINHA",
-            "EMBALAGEM",
-            "FESTA",
-            "COSTURA",
-            "LÂMPADA",
-            "PILHAS E BATERIAS",
-            "LIMPEZA",
-            "ÁGUA SANITÁRIA",
-            "DETERGENTES",
-            "SABÃO EM PÓ, BARRA E LÍQUIDO",
-            "AMACIANTE",
-            "BUCHAS, ESPONJAS E ESCOVAS",
-            "PANOS",
-            "INSETICÍDA",
-            "PURIFICADOR DE AR",
-            "HIGIENE",
-            "SABONETES",
-            "DESODORANTES",
-            "CREMES E HIDRATANTES",
-            "MANUCIRE",
-            "DESCOLORANTE"
-        ];
-
         const CONSTANTS = {
             THEMES: { 'DEFAULT': '#f1f5f9', 'ALIMENTOS': '#ffedd5', 'LIMPEZA': '#dbeafe', 'HIGIENE': '#dcfce7', 'BEBIDAS': '#fae8ff', 'CARNES': '#fee2e2' },
             PHONE: "5565996813588",
@@ -842,11 +793,6 @@
                 return path.includes('/') ? `img/produtos/${path.split('/').pop()}` : `img/produtos/${path}`;
             },
 
-            // Normalization Helper
-            normalizeString(str) {
-                return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase().trim();
-            },
-
             renderHome() {
                 const list = document.getElementById('home-list');
                 const baskets = this.data.filter(p => p.categoria.includes('CESTA') && (p.categoria.includes('BÁSICA') || p.categoria.includes('BASICA')));
@@ -873,48 +819,23 @@
             },
 
             renderSidebar() {
-                // Collect all available unique categories from product data (Excluding Cesta Basica)
-                const availableCatsRaw = [...new Set(this.data.filter(p => !p.categoria.includes('CESTA')).map(p => p.categoria))];
-                
-                // Map for normalized comparison
-                const availableCatsNormalized = availableCatsRaw.map(c => ({
-                    original: c,
-                    normalized: this.normalizeString(c)
-                }));
-
-                // Build the list strictly following CATEGORY_SEQUENCE
-                let finalCats = [];
-                let usedOriginals = new Set();
-
-                CATEGORY_SEQUENCE.forEach(seqItem => {
-                    const seqNorm = this.normalizeString(seqItem);
-                    // Find if any available category matches this sequence item
-                    const match = availableCatsNormalized.find(ac => ac.normalized === seqNorm);
-                    
-                    if (match && !usedOriginals.has(match.original)) {
-                        finalCats.push(match.original); // Use the original name from JSON for display/ID
-                        usedOriginals.add(match.original);
-                    }
-                });
-
-                // Optional: Append categories found in JSON but NOT in the list (Safety fallback)
-                availableCatsRaw.forEach(cat => {
-                    if (!usedOriginals.has(cat)) {
-                        finalCats.push(cat);
-                    }
-                });
+                // 1. Get unique categories from items that are NOT baskets
+                const categories = [...new Set(this.data
+                    .filter(p => !p.categoria.toUpperCase().includes('CESTA')) // Exclude baskets from side menu
+                    .map(p => p.categoria.trim()) // Get category name
+                )].sort(); // Alphabetical order
 
                 // DESKTOP
                 const deskBtns = [
                     `<button class="sidebar-chip minha-cesta" onclick="App.clearSearch()">Minha Cesta</button>`,
                     `<button class="sidebar-chip ofertas-btn" onclick="App.showOffers()">🔥 Ofertas</button>`
-                ].concat(finalCats.map(c => `<button class="sidebar-chip" onclick="App.filterCat('${c.replace(/'/g, "\\'")}')">${c}</button>`));
+                ].concat(categories.map(c => `<button class="sidebar-chip" onclick="App.filterCat('${c.replace(/'/g, "\\'")}')">${c}</button>`));
                 
                 // MOBILE NAV
                 const mobNavBtns = [
                     `<div class="nav-side-btn nav-cesta active" onclick="App.clearSearch(); App.highlightNav(this);">Minha Cesta</div>`,
                     `<div class="nav-side-btn nav-ofertas" onclick="App.showOffers(); App.highlightNav(this);">🔥 Ofertas</div>`
-                ].concat(finalCats.map(c => `<div class="nav-side-btn" onclick="App.filterCat('${c.replace(/'/g, "\\'")}'); App.highlightNav(this);">${c}</div>`));
+                ].concat(categories.map(c => `<div class="nav-side-btn" onclick="App.filterCat('${c.replace(/'/g, "\\'")}'); App.highlightNav(this);">${c}</div>`));
 
                 document.getElementById('desk-cat-list').innerHTML = deskBtns.join('');
                 document.getElementById('mobile-nav-sidebar').innerHTML = mobNavBtns.join('');
@@ -1008,7 +929,7 @@
                 let extras = this.data.filter(p => !p.categoria.includes('CESTA'));
                 
                 if(exactCategory) {
-                    // EXACT FILTER MODE
+                    // EXACT FILTER MODE - uses exact string match from button click
                     extras = extras.filter(p => p.categoria === exactCategory);
                 } else if(showOffersOnly) {
                     extras = extras.filter(p => p.isOffer);
@@ -1028,25 +949,7 @@
                 const groups = {};
                 extras.forEach(p => { if(!groups[p.categoria]) groups[p.categoria] = []; groups[p.categoria].push(p); });
                 
-                const groupKeys = Object.keys(groups);
-                
-                // Sort the groups based on CATEGORY_SEQUENCE + normalization
-                let sortedCats = [];
-                let usedGroupKeys = new Set();
-
-                CATEGORY_SEQUENCE.forEach(seqItem => {
-                    const seqNorm = this.normalizeString(seqItem);
-                    const matchKey = groupKeys.find(k => this.normalizeString(k) === seqNorm);
-                    if (matchKey && !usedGroupKeys.has(matchKey)) {
-                        sortedCats.push(matchKey);
-                        usedGroupKeys.add(matchKey);
-                    }
-                });
-
-                // Append any remaining
-                groupKeys.forEach(k => {
-                    if (!usedGroupKeys.has(k)) sortedCats.push(k);
-                });
+                const sortedCats = Object.keys(groups).sort();
                 
                 let html = '';
                 
