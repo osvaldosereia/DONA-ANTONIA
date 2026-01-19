@@ -4,12 +4,11 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.29 - Mobile List View & Width Optimization
+        VERSION: 9.30 - Mobile Sidebar Widening
         CHANGELOG:
-        - UI (Mobile): Transformação dos cards em lista contínua (sem bordas laterais).
-        - UI (Mobile): Remoção do padding do container de produtos para ganho de largura (>10px).
-        - UI (Mobile): Adicionadas linhas separadoras entre os itens.
-        - UI (Desktop): Mantido o layout original de cards e grid.
+        - UI (Mobile): Aumentada a largura da coluna lateral (nav) de 90px para 115px.
+        - UI (Mobile): Botões de categoria mais largos (+25px).
+        - UI (Mobile): Mantida a lista contínua de produtos com linhas separadoras.
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -228,9 +227,10 @@
         .ch-desktop-cart { display: none; }
 
         /* === SPLIT LAYOUT MOBILE (Products | Nav) === */
+        /* Changed: Width increased from 90px to 115px */
         .app-grid { 
             display: grid; 
-            grid-template-columns: 1fr 90px; 
+            grid-template-columns: 1fr 115px; 
             gap: 10px; 
             margin-top: 24px; 
             padding-bottom: 40px; 
