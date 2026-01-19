@@ -4,11 +4,11 @@
     <!-- 
         ================================================================
         ARCHITECT: SEO Code Architect (SCA)
-        VERSION: 9.32 - Custom Category Sequence
+        VERSION: 9.33 - Category Logic Update
         CHANGELOG:
-        - FEAT: Adicionada configuração manual 'CATEGORY_SEQUENCE' para ordem do menu.
-        - LOGIC: renderSidebar() agora respeita a ordem definida pelo usuário.
-        - UI: Mantida a lógica de botões especiais (Minha Cesta/Ofertas) no topo.
+        - CONFIG: Lista 'CATEGORY_SEQUENCE' atualizada com a nova estrutura de produtos.
+        - LOGIC: 'CESTA BÁSICA' removida explicitamente da lista de navegação lateral.
+        - UI: Mantida a lógica de exibição condicional (só mostra se tiver produto).
         ================================================================
     -->
     <meta charset="UTF-8">
@@ -628,7 +628,7 @@
         // Edite esta lista para mudar a ordem ou os nomes que aparecem no menu.
         // O sistema só vai mostrar as categorias que tiverem produtos disponíveis.
         const CATEGORY_SEQUENCE = [
-           "CESTA BÁSICA", "ARROZ", "FEIJÃO", "ÓLEO", "SAL", "AÇÚCAR", "OVOS", "GRÃOS, FARINHAS E CEREAIS", "MACARRÃO", "MOLHOS E EXTRATOS", "TEMPEROS, VINAGRE E AZEITE", "CAFÉ", "CHÁ E TERERÉ", "LEITES", "ACHOCOLATADOS", "SUCO EM PÓ", "BISCOITOS, BOLACHAS E SALGADINHOS", "BOLO", "BOLOS, DOCES E SOBREMESAS", "CASA", "COZINHA", "EMBALAGEM", "FESTA", "COSTURA", "LÂMPADA", "PILHAS E BATERIAS", "LIMPEZA", "ÁGUA SANITÁRIA", "DETERGENTES", "SABÃO EM PÓ, BARRA E LÍQUIDO", "AMACIANTE", "BUCHAS, ESPONJAS E ESCOVAS", "PANOS", "INSETICÍDA", "PURIFICADOR DE AR", "HIGIENE", "SABONETES", "DESODORANTES", "CREMES E HIDRATANTES", "MANUCIRE", "DESCOLORANTE",
+            "CESTA BÁSICA", "ARROZ", "FEIJÃO", "ÓLEO", "SAL", "AÇÚCAR", "OVOS", "GRÃOS, FARINHAS E CEREAIS", "MACARRÃO", "MOLHOS E EXTRATOS", "TEMPEROS, VINAGRE E AZEITE", "CAFÉ", "CHÁ E TERERÉ", "LEITES", "ACHOCOLATADOS", "SUCO EM PÓ", "BISCOITOS, BOLACHAS E SALGADINHOS", "BOLOS, DOCES E SOBREMESAS", "LEITE CONDENSADO", "CREME DE LEITE", "CASA", "COZINHA", "EMBALAGEM", "FESTA", "COSTURA", "LÂMPADA", "PILHAS E BATERIAS", "LIMPEZA", "ÁGUA SANITÁRIA", "DESINFETANTES", "DETERGENTES", "SABÃO EM PÓ, BARRA E LÍQUIDO", "AMACIANTE", "BUCHAS, ESPONJAS E ESCOVAS", "RODOS E VASSOURAS", "PANOS", "INSETICÍDA", "PURIFICADOR DE AR", "HIGIENE", "SABONETES", "DESODORANTES", "CREMES E HIDRATANTES", "ABSORVENTE", "MANUCIRE", "DESCOLORANTE"
         ];
 
         const CONSTANTS = {
@@ -1168,143 +1168,6 @@
             search(term) {
                 if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
                 this.renderAllLists(term);
-            },
-
-            clearSearch() {
-                document.getElementById('main-search').value = "";
-                
-                this.closeSheet('cat-sheet');
-                
-                this.renderAllLists("");
-                
-                setTimeout(() => {
-                    const topEl = document.querySelector('.products-section');
-                    if(topEl) {
-                        const y = topEl.getBoundingClientRect().top + window.scrollY - 120; 
-                        window.scrollTo({top: y > 0 ? y : 0, behavior: 'smooth'});
-                    } else {
-                        window.scrollTo({top: 0, behavior: 'smooth'});
-                    }
-                }, 50);
-            },
-
-            filterCat(cat) {
-                this.closeSheet('cat-sheet');
-                if(!this.currentBasket) return alert("Selecione uma cesta primeiro.");
-                document.getElementById('main-search').value = "";
-
-                this.renderAllLists("");
-                setTimeout(() => {
-                    const el = document.getElementById(`cat-${cat}`);
-                    if(el) { window.scrollTo({top: el.offsetTop - 140, behavior:'smooth'}); }
-                }, 100);
-            },
-
-            openSheet(id) { 
-                document.querySelectorAll('.sheet-overlay.open').forEach(el => el.classList.remove('open'));
-                if(id === 'offers-sheet') this.renderOffersInSheet();
-                document.getElementById(id).classList.add('open'); 
-            },
-            closeSheet(id) { document.getElementById(id).classList.remove('open'); },
-            
-            openInfo(pid) {
-                const p = this.data.find(x => x.id === pid);
-                if(!p) return;
-                
-                let text = p.caracteristicas || "Sem informações adicionais.";
-                text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-                
-                if(text.includes('- ')) {
-                    let lines = text.split('\n');
-                    let newText = '';
-                    let inList = false;
-                    
-                    lines.forEach(line => {
-                        const trimmed = line.trim();
-                        if(trimmed.startsWith('- ')) {
-                            if(!inList) { newText += '<ul>'; inList = true; }
-                            newText += `<li>${trimmed.substring(2)}</li>`;
-                        } else {
-                            if(inList) { newText += '</ul>'; inList = false; }
-                            newText += line + '<br>';
-                        }
-                    });
-                    if(inList) newText += '</ul>';
-                    text = newText;
-                } else {
-                    text = text.replace(/\n/g, '<br>');
-                }
-
-                const mediaContainer = document.getElementById('info-media-container');
-                mediaContainer.innerHTML = '';
-                this.loadInfoMedia(p, mediaContainer);
-
-                document.getElementById('info-sheet-title').innerText = p.nome;
-                document.getElementById('info-sheet-body').innerHTML = text;
-                this.openSheet('info-sheet');
-            },
-
-            loadInfoMedia(p, container) {
-                const dot = p.imagem.lastIndexOf('.');
-                if(dot === -1) return;
-                const root = p.imagem.substring(0, dot);
-                const ext = p.imagem.substring(dot);
-
-                ['A', 'B', 'C', 'D', 'E'].forEach(suffix => {
-                    const url = root + suffix + ext;
-                    const img = new Image();
-                    img.onload = () => {
-                         const el = document.createElement('img');
-                         el.src = url;
-                         el.className = 'sheet-media-img';
-                         el.loading = 'lazy';
-                         container.appendChild(el);
-                    };
-                    img.src = url;
-                });
-
-                const loadVid = (url) => {
-                    const v = document.createElement('video');
-                    v.onloadedmetadata = () => {
-                        const vidEl = document.createElement('video');
-                        vidEl.src = url;
-                        vidEl.className = 'sheet-media-vid';
-                        vidEl.controls = true;
-                        container.appendChild(vidEl);
-                    };
-                    v.src = url;
-                };
-                
-                loadVid(root + '.mp4');
-                loadVid(root + 'E.mp4');
-            },
-
-            renderOffersInSheet() {
-                const grid = document.getElementById('mob-offers-grid');
-                if(!grid) return;
-                const offers = this.data.filter(p => p.isOffer);
-                grid.innerHTML = offers.length ? offers.map(p => this.buildCard(p)).join('') : '<p style="grid-column:1/-1; text-align:center;">Sem ofertas.</p>';
-            },
-            
-            openCheckout() {
-                if(Object.keys(this.cart).length === 0) return alert("Cesta vazia.");
-                document.getElementById('checkout-items').innerHTML = Object.keys(this.cart).map(id => {
-                    const p = this.data.find(x => x.id === id);
-                    return `<li class="co-item"><span>${this.cart[id]}x ${p.nome}</span></li>`;
-                }).join('');
-                document.getElementById('checkout-modal').showModal();
-            },
-
-            sendWhatsApp() {
-                const method = document.getElementById('payment-method').value;
-                const total = document.getElementById('co-total').innerText;
-                let msg = `*NOVO PEDIDO: ${this.currentBasket.nome}*\n------------------\n`;
-                for(let id in this.cart) {
-                    const p = this.data.find(x => x.id === id);
-                    if(p) msg += `${this.cart[id]}x ${p.nome}\n`;
-                }
-                msg += `------------------\n*TOTAL: ${total}*\n*Pagamento:* ${method}`;
-                window.open(`https://api.whatsapp.com/send?phone=${CONSTANTS.PHONE}&text=${encodeURIComponent(msg)}`, '_blank');
             },
 
             directLink(name) { window.open(`https://api.whatsapp.com/send?phone=${CONSTANTS.PHONE}&text=${encodeURIComponent('Quero pedir ' + name)}`, '_blank'); }
